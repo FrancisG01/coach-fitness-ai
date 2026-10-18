@@ -1,0 +1,31 @@
+name: Error
+description: Algo no funciona como debería
+labels: [error]
+body:
+  - type: textarea
+    id: pasos
+    attributes:
+      label: Pasos para reproducirlo
+      value: |
+        1.
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: Qué esperabas
+    validations:
+      required: true
+  - type: textarea
+    id: obtenido
+    attributes:
+      label: Qué pasó
+    validations:
+      required: true
+  - type: dropdown
+    id: plataforma
+    attributes:
+      label: Dónde
+      options: [web, Android, reloj, backend]
+    validations:
+      required: true

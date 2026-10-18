@@ -24,3 +24,6 @@ test-results/
 # Impeccable: binario del detector (se descarga solo) y consentimiento local
 .claude/skills/impeccable/scripts/bin/
 .impeccable/config.local.json
+
+# Cobertura
+.coverage
