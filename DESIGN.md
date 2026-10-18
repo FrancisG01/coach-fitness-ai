@@ -564,10 +564,10 @@ No existen componentes en código todavía. Lo que sigue describe cómo aparecen
 ### Navigation
 - **Móvil y Android:** barra inferior en superficie con borde superior de 1 px, cinco pestañas (Hoy, Gym, Comida, Salud, Coach). Inactiva: ícono y etiqueta en texto secundario. Activa: ícono y etiqueta en texto de acento con la etiqueta en peso 650 y `aria-current="page"`. Pressed: capa de estado en un óvalo detrás del ícono. Tocar la pestaña activa vuelve al inicio de la sección.
 - **Tablet:** rail de íconos con las mismas cinco secciones y el botón de cuenta al pie.
-- **Escritorio:** barra lateral con logo y nombre desde `packages/brand`, las cinco secciones con sus subsecciones, Ajustes y el estado de sincronización al pie. El activo va sobre fondo elevado con texto de acento.
+- **Escritorio:** barra lateral con logo y nombre desde `packages/brand`, las cinco secciones con sus subsecciones, Ajustes y el estado de sincronización al pie. El activo va sobre fondo elevado con texto de acento sobre elevado (`textoAcentoSobreElevado`: A5 en claro, A2 en oscuro), porque A4 sobre elevado se queda en 4.28 a 4.49:1.
 
 ### Fila de serie (modo gym)
-La pieza central de GYM-04. Cada serie es una fila de 56 px con casilla, nombre ("Rampa 1 · 50 %", "Trabajo 2") y la carga en cifras condensadas ("40 × 10"). La serie actual lleva borde de acción de 2 px; las hechas llevan la casilla llena de acción con `check`. Tocar la fila o la casilla tacha la serie: háptica de impacto medio en el mismo fotograma, casilla llena en 120 ms y aviso "Serie guardada" con "Deshacer". Debajo, el temporizador de descanso en cifra de descanso (96 px) con barra de progreso y los atajos "−15 s", "Saltar" y "+15 s", de 56 px.
+La pieza central de GYM-04. Cada serie es una fila de 56 px con casilla, nombre ("Rampa 1 · 50 %", "Trabajo 2") y la carga en cifras condensadas ("40 × 10"). La serie actual lleva borde de acción de 2 px; las hechas llevan la casilla llena de acción con `check`. Tocar la fila o la casilla tacha la serie: háptica de impacto medio en el mismo fotograma, casilla llena en 120 ms y aviso "Serie guardada" con "Deshacer" en la ranura de avisos, encima del botón grande. Debajo, el temporizador de descanso en cifra de descanso (96 px) con barra de progreso y los atajos "−15 s", "Saltar" y "+15 s", de 56 px. Durante el descanso, la tarjeta destacada "Sigue" (fondo suave del acento) dice qué viene: serie, ejercicio en título de sección y carga en cifra métrica.
 
 ### Estado de sincronización (modo gym)
 Una línea en detalle con ícono de 16 px en la cabecera de la sesión, nunca un diálogo:
@@ -597,7 +597,9 @@ Pista en elevado y relleno en acción. Las barras de macros usan las tres series
 
 ### Avisos (snackbar)
 - **Anatomía:** superficie invertida (texto tiza en oscuro, texto grafito en claro), radio de control, relleno de 12 × 16 px, máximo dos líneas de cuerpo y una acción de texto opcional a la derecha en el color de acción del modo contrario (A4 sobre tiza, A2 sobre grafito; 4.65:1 como mínimo).
-- **Dónde:** abajo, centrado, 8 px por encima de la barra de navegación; en web ancha, abajo a la izquierda del contenido. Uno a la vez: el nuevo reemplaza al anterior.
+- **Dónde:** en el teléfono no flota sobre el contenido: ocupa una ranura reservada de 56 px al pie del contenido, justo encima de la zona de acciones del modo gym o, si no hay acciones fijas, encima de la barra de navegación. La ranura existe aunque no haya aviso, así nada salta al aparecer. En web ancha, abajo a la izquierda del contenido, sin cubrir botones. Uno a la vez: el nuevo reemplaza al anterior.
+
+**The Never Cover Rule.** Un aviso nunca tapa la acción principal, los atajos ni ningún control que la persona necesite para seguir (feedback de Francis al probar el flujo 1, 18-oct-2026).
 - **Duración:** 4 s sin acción, 8 s con acción; no desaparece mientras tiene el foco o el puntero encima. Se anuncia con `role="status"`.
 - **Cuándo:** confirmar algo que ya pasó ("Serie guardada", "Comida registrada") o un fallo leve con salida ("No se pudo enviar el mensaje · Reintentar"). Nunca para errores que bloquean ni para pedir una decisión.
 - **Movimiento:** entra en normal (200 ms) con curva de entrada, sale en rapido (120 ms) con curva de salida.

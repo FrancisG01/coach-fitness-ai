@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>B2 láminas 6 y 13</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +21,7 @@
   --fondo: #F3F4F1; --superficie: #FFFFFF; --elevado: #E9EBE7; --borde: #DADDD8;
   --texto: #1E2228; --texto-2: #5B626B; --error: #C9333A; --dato-gris: #B5BBC2;
   /* uso del acento · claro */
-  --accion: var(--a4); --accion-alta: var(--a5); --texto-accion: #FFFFFF; --texto-acento: var(--a4);
+  --accion: var(--a4); --accion-alta: var(--a5); --texto-accion: #FFFFFF; --texto-acento: var(--a4); --texto-acento-elevado: var(--a5);
   --suave: color-mix(in srgb, var(--a3) 13%, var(--superficie));
   --dato-1: var(--a5); --dato-2: var(--a3); --dato-3: var(--dato-gris);
   --capa-pressed: color-mix(in srgb, var(--texto) 10%, transparent);
@@ -38,7 +43,7 @@
   :root:not([data-theme="light"]) {
     --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
     --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
-    --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2);
+    --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
     --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
     --dato-1: var(--a1); --dato-2: var(--a3);
     color-scheme: dark;
@@ -47,7 +52,7 @@
 :root[data-theme="dark"] {
   --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
   --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
-  --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2);
+  --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
   --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
   --dato-1: var(--a1); --dato-2: var(--a3);
   color-scheme: dark;
@@ -110,8 +115,8 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
 @media (max-width: 420px) { figure { zoom: 0.88; } }
 
 /* ---------- teléfono ---------- */
-.telefono { width: 376px; padding: var(--e2); border-radius: 36px; background: var(--borde); }
-.pantalla { height: 780px; border-radius: 28px; overflow: hidden; background: var(--fondo); display: flex; flex-direction: column; position: relative; }
+.telefono { width: 376px; padding: var(--e2); border-radius: var(--r-tarjeta); background: var(--borde); }
+.pantalla { height: 780px; border-radius: var(--r-control); overflow: hidden; background: var(--fondo); display: flex; flex-direction: column; position: relative; }
 .estado { height: 28px; flex: none; display: flex; align-items: center; justify-content: space-between; padding-inline: var(--e5); font-size: 13px; font-weight: 600; }
 .cuerpo { flex: 1; min-height: 0; overflow: hidden; padding: var(--e2) var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e3); }
 .barra { height: var(--barra); flex: none; background: var(--superficie); border-top: var(--t-borde) solid var(--borde); display: grid; grid-template-columns: repeat(5, 1fr); }
@@ -155,7 +160,8 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
 
 /* sesión */
 .serie { min-height: var(--tactil-gym); background: var(--superficie); border-radius: var(--r-control); padding-inline: var(--e3) var(--e4); display: flex; align-items: center; gap: var(--e3); border: var(--t-sel) solid transparent; }
-.serie.actual { border-color: var(--accion); }
+/* serie actual: trazo de acción de 2 px como contorno hacia dentro (no cuenta como tarjeta anidada) */
+.serie.actual { outline: var(--t-sel) solid var(--accion); outline-offset: calc(-1 * var(--t-sel)); }
 .serie .nombre { flex: 1; }
 .serie.hecha .nombre { color: var(--texto-2); }
 .serie .carga { font-size: 25px; line-height: 24px; }
@@ -189,9 +195,12 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
 .interruptor::after { content: ""; position: absolute; width: 24px; height: 24px; border-radius: var(--r-pildora); background: var(--texto-accion); top: 4px; right: 4px; }
 
 /* color propio (selector: colores del usuario, no tokens) */
-.selector-sv { height: 196px; border-radius: var(--r-tarjeta); position: relative; background: linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, hsl(197 100% 50%)); }
-.tirador { position: absolute; width: 24px; height: 24px; border-radius: var(--r-pildora); border: var(--t-sel) solid #fff; background: var(--c); transform: translate(-50%, -50%); box-shadow: 0 0 0 1px rgb(0 0 0 / .35); }
-.selector-h { height: 16px; border-radius: var(--r-pildora); position: relative; background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); }
+/* el área del selector se pinta en un canvas: representa el color que elige la persona, no es decoración */
+.selector-sv { height: 196px; border-radius: var(--r-tarjeta); position: relative; background: var(--elevado); overflow: hidden; }
+.selector-sv canvas, .selector-h canvas { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: inherit; }
+.selector-sv .tirador, .selector-h .tirador { z-index: 1; }
+.tirador { position: absolute; width: 24px; height: 24px; border-radius: var(--r-pildora); border: var(--t-sel) solid #fff; background: var(--c); transform: translate(-50%, -50%); outline: var(--t-borde) solid var(--texto); }
+.selector-h { height: 16px; border-radius: var(--r-pildora); position: relative; background: var(--elevado); }
 .campo { min-height: var(--tactil); background: var(--elevado); border-radius: var(--r-control); padding-inline: var(--e4) var(--e3); display: flex; align-items: center; justify-content: space-between; }
 .campo .chip-color { width: 24px; height: 24px; border-radius: var(--r-casilla); background: #2E9FCF; }
 .escala { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--e1); }
@@ -228,7 +237,8 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
 .item[aria-current="page"] { background: var(--elevado); color: var(--texto-acento); font-weight: 650; }
 .item.abierto { color: var(--texto); font-weight: 650; }
 .subitem { min-height: 36px; display: flex; align-items: center; padding-left: 44px; border-radius: var(--r-control); color: var(--texto-2); font-size: 15px; }
-.subitem[aria-current="page"] { background: var(--elevado); color: var(--texto-acento); font-weight: 650; }
+/* texto de acento sobre elevado: A5 en claro, A2 en oscuro (tokens.json · textoAcentoSobreElevado) */
+.subitem[aria-current="page"] { background: var(--elevado); color: var(--texto-acento-elevado); font-weight: 650; }
 .unidad.web { padding-inline: 0; }
 .lateral .pie { margin-top: auto; border-top: var(--t-borde) solid var(--borde); padding-top: var(--e3); display: flex; flex-direction: column; gap: var(--e1); }
 .lateral .pie .sinc { padding: var(--e2) var(--e3); }
@@ -252,6 +262,8 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
 .macro .pista i { background: var(--m); }
 .macro .cifra { font-size: 20px; text-align: right; }
 </style>
+</head>
+<body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <!-- Tabler Icons 3.49.0, outline (MIT, © Paweł Kuna) -->
@@ -846,5 +858,30 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
   document.querySelectorAll("#ctl-modo button").forEach((b) => b.addEventListener("click", () => ponerModo(b.dataset.modo)));
   let inicial = "caribe";
   try { inicial = localStorage.getItem("b2-acento") || "caribe"; } catch (e) {}
+  // Selector de color propio: saturación y brillo (tono 197) y barra de tonos, en canvas.
+  function pintarSelector(el, tipo) {
+    const c = document.createElement("canvas");
+    c.setAttribute("aria-hidden", "true");
+    const r = el.getBoundingClientRect();
+    c.width = Math.max(1, Math.round(r.width)); c.height = Math.max(1, Math.round(r.height));
+    const g = c.getContext("2d");
+    if (tipo === "sv") {
+      let h = g.createLinearGradient(0, 0, c.width, 0);
+      h.addColorStop(0, "hsl(197 0% 100%)"); h.addColorStop(1, "hsl(197 100% 50%)");
+      g.fillStyle = h; g.fillRect(0, 0, c.width, c.height);
+      h = g.createLinearGradient(0, c.height, 0, 0);
+      h.addColorStop(0, "hsl(0 0% 0% / 1)"); h.addColorStop(1, "hsl(0 0% 0% / 0)");
+      g.fillStyle = h; g.fillRect(0, 0, c.width, c.height);
+    } else {
+      const h = g.createLinearGradient(0, 0, c.width, 0);
+      for (let k = 0; k <= 6; k++) h.addColorStop(k / 6, `hsl(${k * 60} 100% 50%)`);
+      g.fillStyle = h; g.fillRect(0, 0, c.width, c.height);
+    }
+    el.prepend(c);
+  }
+  document.querySelectorAll(".selector-sv").forEach((el) => pintarSelector(el, "sv"));
+  document.querySelectorAll(".selector-h").forEach((el) => pintarSelector(el, "h"));
   ponerAcento(inicial);
 </script>
+</body>
+</html>

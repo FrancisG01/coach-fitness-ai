@@ -19,7 +19,7 @@
   --fondo: #F3F4F1; --superficie: #FFFFFF; --elevado: #E9EBE7; --borde: #DADDD8;
   --texto: #1E2228; --texto-2: #5B626B; --error: #C9333A; --dato-gris: #B5BBC2;
   /* uso del acento · claro */
-  --accion: var(--a4); --accion-alta: var(--a5); --texto-accion: #FFFFFF; --texto-acento: var(--a4);
+  --accion: var(--a4); --accion-alta: var(--a5); --texto-accion: #FFFFFF; --texto-acento: var(--a4); --texto-acento-elevado: var(--a5);
   --suave: color-mix(in srgb, var(--a3) 13%, var(--superficie));
   --capa-hover: color-mix(in srgb, var(--texto) 6%, transparent);
   --capa-pressed: color-mix(in srgb, var(--texto) 10%, transparent);
@@ -45,7 +45,7 @@
   :root:not([data-theme="light"]) {
     --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
     --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
-    --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2);
+    --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
     --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
     --velo: color-mix(in srgb, #1B1E23 72%, transparent);
     --hoja: var(--elevado);
@@ -57,7 +57,7 @@
 :root[data-theme="dark"] {
   --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
   --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
-  --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2);
+  --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
   --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
   --velo: color-mix(in srgb, #1B1E23 72%, transparent);
   --hoja: var(--elevado);
@@ -419,7 +419,7 @@ const RUTINAS = {
     { n: "Jalón al pecho", s: 3, r: 10 }, { n: "Curl bíceps mancuernas", s: 3, r: 12, manc: true },
     { n: "Curl femoral tumbado", s: 3, r: 12 }, { n: "Hiperextensiones", s: 3, r: 12 }] },
   C: { nombre: "Día C", foco: "Full Body + Cardio", extra: "Caminata inclinada 15 min", ej: [
-    { n: "Sentadilla búlgara", s: 3, r: 10, lado: true }, { n: "Press inclinado mancuernas", s: 3, r: 10, manc: true },
+    { n: "Sentadilla búlgara", s: 3, r: 10, lado: true, manc: true }, { n: "Press inclinado mancuernas", s: 3, r: 10, manc: true },
     { n: "Face pull", s: 3, r: 15 }, { n: "Hip thrust", s: 3, r: 12 }, { n: "Pantorrillas", s: 3, r: 15 }] },
 };
 const SEMANA_TIPO = { 0: "A", 2: "B", 4: "C" };
@@ -459,7 +459,7 @@ const repsDe = (k, i) => {
 const primera = () => { const ks = [...Object.keys(sesiones), ...Object.keys(PASEOS)].sort(); return ks[0] || null; };
 const semanaN = (k) => { const p = primera(); if (!p) return null; return Math.round((aFecha(lunesDe(k)) - aFecha(lunesDe(p))) / 6048e5) + 1; };
 const conSemana = (k) => { const n = semanaN(k); return n && n > 0 ? ` · semana ${n}` : ""; };
-// Las mancuernas cuentan las dos en el volumen (D-30).
+// Las mancuernas cuentan las dos en el volumen (D-30); la búlgara con mancuernas cuenta ×4 (dos mancuernas, por pierna).
 const volumen = (k) => sesiones[k].pesos.reduce((t, p, i) => t + p * repsDe(k, i).reduce((a, b) => a + b, 0) * (RUTINAS[sesiones[k].r].ej[i].lado ? 2 : 1) * (RUTINAS[sesiones[k].r].ej[i].manc ? 2 : 1), 0);
 const series = (k) => planDe(k).reduce((t, p) => t + p.s, 0);
 const carga = (k, i) => {

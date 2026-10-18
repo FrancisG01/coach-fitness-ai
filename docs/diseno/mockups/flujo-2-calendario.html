@@ -19,7 +19,7 @@
   --fondo: #F3F4F1; --superficie: #FFFFFF; --elevado: #E9EBE7; --borde: #DADDD8;
   --texto: #1E2228; --texto-2: #5B626B; --error: #C9333A; --dato-gris: #B5BBC2;
   /* uso del acento · claro */
-  --accion: var(--a4); --accion-alta: var(--a5); --texto-accion: #FFFFFF; --texto-acento: var(--a4);
+  --accion: var(--a4); --accion-alta: var(--a5); --texto-accion: #FFFFFF; --texto-acento: var(--a4); --texto-acento-elevado: var(--a5);
   --suave: color-mix(in srgb, var(--a3) 13%, var(--superficie));
   --capa-hover: color-mix(in srgb, var(--texto) 6%, transparent);
   --capa-pressed: color-mix(in srgb, var(--texto) 10%, transparent);
@@ -45,7 +45,7 @@
   :root:not([data-theme="light"]) {
     --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
     --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
-    --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2);
+    --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
     --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
     --velo: color-mix(in srgb, #1B1E23 72%, transparent);
     --hoja: var(--elevado);
@@ -57,7 +57,7 @@
 :root[data-theme="dark"] {
   --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
   --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
-  --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2);
+  --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
   --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
   --velo: color-mix(in srgb, #1B1E23 72%, transparent);
   --hoja: var(--elevado);
@@ -342,7 +342,8 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
 .item { min-height: 44px; border-radius: var(--r-control); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; }
 .item.abierto { color: var(--texto); font-weight: 650; }
 .subitem { min-height: 36px; display: flex; align-items: center; padding-left: 44px; border-radius: var(--r-control); color: var(--texto-2); font-size: 15px; }
-.subitem[aria-current="page"] { background: var(--elevado); color: var(--texto-acento); font-weight: 650; }
+/* texto de acento sobre elevado: A5 en claro, A2 en oscuro (tokens.json · textoAcentoSobreElevado) */
+.subitem[aria-current="page"] { background: var(--elevado); color: var(--texto-acento-elevado); font-weight: 650; }
 .lateral .pie { margin-top: auto; border-top: var(--t-borde) solid var(--borde); padding-top: var(--e3); display: flex; flex-direction: column; gap: var(--e1); }
 .lateral .pie .sinc { padding: var(--e2) var(--e3); }
 .principal { padding: var(--e6); display: flex; flex-direction: column; gap: var(--e5); position: relative; }

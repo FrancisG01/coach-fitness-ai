@@ -18,7 +18,7 @@
   --fondo: #F3F4F1; --superficie: #FFFFFF; --elevado: #E9EBE7; --borde: #DADDD8;
   --texto: #1E2228; --texto-2: #5B626B; --error: #C9333A; --dato-gris: #B5BBC2;
   /* uso del acento · claro */
-  --accion: var(--a4); --accion-alta: var(--a5); --texto-accion: #FFFFFF; --texto-acento: var(--a4);
+  --accion: var(--a4); --accion-alta: var(--a5); --texto-accion: #FFFFFF; --texto-acento: var(--a4); --texto-acento-elevado: var(--a5);
   --suave: color-mix(in srgb, var(--a3) 13%, var(--superficie));
   --capa-hover: color-mix(in srgb, var(--texto) 6%, transparent);
   --capa-pressed: color-mix(in srgb, var(--texto) 10%, transparent);
@@ -44,7 +44,7 @@
   :root:not([data-theme="light"]) {
     --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
     --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
-    --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2);
+    --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
     --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
     --velo: color-mix(in srgb, #1B1E23 72%, transparent);
     --hoja: var(--elevado);
@@ -56,7 +56,7 @@
 :root[data-theme="dark"] {
   --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
   --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
-  --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2);
+  --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
   --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
   --velo: color-mix(in srgb, #1B1E23 72%, transparent);
   --hoja: var(--elevado);
@@ -289,7 +289,8 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
 .item { min-height: 44px; border-radius: var(--r-control); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; }
 .item.abierto { color: var(--texto); font-weight: 650; }
 .subitem { min-height: 36px; display: flex; align-items: center; padding-left: 44px; border-radius: var(--r-control); color: var(--texto-2); font-size: 15px; }
-.subitem[aria-current="page"] { background: var(--elevado); color: var(--texto-acento); font-weight: 650; }
+/* texto de acento sobre elevado: A5 en claro, A2 en oscuro (tokens.json · textoAcentoSobreElevado) */
+.subitem[aria-current="page"] { background: var(--elevado); color: var(--texto-acento-elevado); font-weight: 650; }
 .lateral .pie { margin-top: auto; border-top: var(--t-borde) solid var(--borde); padding-top: var(--e3); display: flex; flex-direction: column; gap: var(--e1); }
 .lateral .pie .sinc { padding: var(--e2) var(--e3); }
 .principal { padding: var(--e6); display: flex; flex-direction: column; gap: var(--e5); position: relative; }
@@ -381,10 +382,20 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
 .atajos button { min-height: var(--tactil-gym); border-radius: var(--r-control); background: var(--elevado); display: grid; place-items: center; font-size: 15px; line-height: 20px; font-weight: 650; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; position: relative; transition: background var(--rapido) var(--estandar); }
 .atajos button:active { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); }
 .listo .i.s32 { color: var(--texto-2); }
-.sigue { display: flex; align-items: center; gap: var(--e3); background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e1) var(--e1) var(--e1) var(--e4); min-height: 64px; position: relative; }
+/* Sigue: tarjeta destacada (fondo suave del acento) para leer de un vistazo ejercicio, serie y carga */
+.sigue { display: flex; align-items: center; gap: var(--e3); background: var(--suave); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e2) var(--e3) var(--e4); min-height: 80px; position: relative; }
+.sigue .carga-btn { font-size: 32px; line-height: 32px; }
+.sigue .carga-btn .x { font-size: 16px; }
+/* sobre el fondo suave, el texto secundario no llega a 4.5:1 con Mango en oscuro: va en texto principal */
+.sigue .txt .t-detalle, .sigue .carga-btn .x { color: var(--texto); }
 .sigue .txt { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-.sigue .txt .t-detalle { color: var(--texto-2); }
-.aviso.gym { bottom: var(--e4); }
+/* aviso en ranura reservada: encima de la zona de acciones o al pie del contenido, nunca encima de un control */
+.ranura-aviso { margin-top: auto; min-height: var(--tactil-gym); display: flex; align-items: flex-end; flex: none; }
+.ranura-aviso .aviso { position: relative; left: auto; right: auto; bottom: auto; flex: 1; }
+.ranura-aviso + .accion-gym, .acciones + .ranura-aviso { margin-top: 0; }
+.destino { display: flex; flex-direction: column; gap: 2px; position: relative; font-size: 15px; line-height: 20px; }
+.destino b { font-weight: 650; }
+.destino .t-detalle { color: var(--texto-2); }
 .stepper.gym button { width: var(--tactil-gym); height: var(--tactil-gym); }
 .hoja .segmento button { min-height: var(--tactil); }
 .hoja .segmento button::after { display: none; }
@@ -571,7 +582,6 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
     <div id="franja-hueco"></div>
     <nav class="barra" id="barra" aria-label="Secciones"><button type="button" class="pestana" data-acc="nada"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</button><button type="button" class="pestana" data-acc="nada" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</button><button type="button" class="pestana" data-acc="nada"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</button><button type="button" class="pestana" data-acc="nada"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</button><button type="button" class="pestana" data-acc="nada"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</button></nav>
     <div id="capa"></div>
-    <div class="aviso" id="aviso" role="status" hidden></div>
   </div></div>
   <aside class="guion" aria-label="Guion de prueba">
     <p class="titulo">Prototipo · flujo 1</p>
@@ -580,12 +590,13 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
     <ol>
       <li><b>Empezar:</b> toca Empezar sesión. La sentadilla trae su rampa calculada (45 × 6, la barra sola).</li>
       <li><b>Tachar y descansar:</b> Serie hecha. Corre el descanso con −15 s, Saltar y +15 s; al llegar a cero vibra (si tu navegador lo permite) y cuenta el tiempo extra.</li>
-      <li><b>Deshacer:</b> el aviso «Serie guardada» trae Deshacer durante 8 s.</li>
-      <li><b>Ajustar al vuelo:</b> toca la cifra de una serie pendiente, sube a 95 lb y aplica a las que faltan.</li>
+      <li><b>Deshacer:</b> el aviso «Serie guardada» trae Deshacer durante 8 s. Los avisos van en su propia franja al pie y nunca tapan un botón.</li>
+      <li><b>Ajustar al vuelo:</b> toca la cifra de una serie pendiente, sube a 95 lb y cambia entre «Solo esta serie» y «Las que faltan»: la hoja dice a qué series se aplicará.</li>
       <li><b>Rampa:</b> en la banca, Saltar rampa; en el press militar verás una sola serie de tanteo (15 × 3).</li>
       <li><b>Serie por tiempo:</b> la plancha cuenta 40 s y se tacha sola; Terminé antes guarda los segundos reales.</li>
       <li><b>Minimizar:</b> la flecha abajo deja una franja con el descanso corriendo; Volver regresa.</li>
       <li><b>Finalizar:</b> desde la cabecera cuando quieras. El resumen calcula tiempos, volumen (con las dos mancuernas), récords e hito; Seguir entrenando vuelve, Guardar cierra.</li>
+      <li><b>Otra sesión:</b> tras guardar, Empezar otra sesión abre la hoja para elegir rutina o vacía.</li>
     </ol>
     <div><button type="button" class="btn secundario" id="de-nuevo">Empezar de nuevo</button></div>
     <div class="controles">
@@ -667,14 +678,14 @@ let S;
 function reiniciar() {
   S = { vista: "inicio", fase: null, ej: nuevaSesion(), i: 0, j: 0, sig: null, tInicio: null, tPlay: 0,
     descFin: 0, descDur: 0, descDesde: 0, listoDesde: 0, tSeries: 0, tDesc: 0, tExtra: 0, ajustes: [],
-    hoja: null, aviso: null, deshacer: null, guardada: null };
+    hoja: null, elegir: null, otra: null, aviso: null, deshacer: null, guardada: null };
   V = 0;
 }
 reiniciar();
 
 // ------------------------------------------------------------ utilidades
 const $ = (s) => document.querySelector(s);
-const $cuerpo = $("#cuerpo"), $capa = $("#capa"), $aviso = $("#aviso"), $barra = $("#barra"), $hora = $("#hora");
+const $cuerpo = $("#cuerpo"), $capa = $("#capa"), $barra = $("#barra"), $hora = $("#hora");
 const ico = (n, t = "") => `<svg class="i ${t}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
 const mmss = (ms) => { const s = Math.max(0, Math.round(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
 const mmssArriba = (ms) => { const s = Math.max(0, Math.ceil(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
@@ -779,9 +790,15 @@ function filaSigue() {
   if (!S.sig) return "";
   const x = S.ej[S.sig.i].series[S.sig.j];
   const otro = S.sig.i !== S.i;
-  return `<div class="sigue"><div class="txt"><span class="t-detalle">${otro ? "Sigue otro ejercicio" : "Sigue"}</span><span>${otro ? `${S.ej[S.sig.i].n} · ` : ""}${x.nombre}</span></div>
+  const e = S.ej[S.sig.i];
+  const tr = e.series.filter((y) => y.tipo === x.tipo).length;
+  const serieTxt = x.tipo === "rampa" ? x.nombre.toLowerCase() : `${x.nombre.toLowerCase()} de ${tr}`;
+  return `<div class="sigue"><div class="txt"><span class="t-detalle">${otro ? "Sigue otro ejercicio" : "Sigue"} · ${serieTxt}</span><span class="t-seccion">${e.n}</span></div>
     <button type="button" class="carga-btn cifra" data-acc="ajustar" data-i="${S.sig.i}" data-j="${S.sig.j}" aria-label="Cambiar ${cargaTexto(x)}">${cargaIn(x)}</button></div>`;
 }
+
+// Ranura reservada para el aviso: va encima de la zona de acciones o al pie, nunca encima de un control.
+const RAN = () => '<div class="ranura-aviso" id="ranura" role="status"></div>';
 
 // ------------------------------------------------------------ vistas
 function vistaInicio() {
@@ -794,7 +811,7 @@ function vistaInicio() {
   const estado = enCurso ? `<span class="m prog"></span>En curso desde las 8:04&nbsp;a.&nbsp;m.` : `<span class="m prog"></span>Programada · 8:00&nbsp;a.&nbsp;m. · unos 55 min`;
   return `${subTabs()}<div class="dia-cab"><span class="t-detalle sec">Lunes 19 de octubre · semana 3</span><h2 class="t-pantalla">Día A · Push + Legs</h2>
     <span class="estado-dia tnum">${estado}</span></div><div class="lista lista-proto">${filas}</div>
-    ${enCurso ? "" : `<div class="acciones"><button type="button" class="btn primario gym ancho" data-acc="empezar">${ico("player-play", "s20")}Empezar sesión</button></div>`}`;
+    ${enCurso ? "" : `<div class="acciones"><button type="button" class="btn primario gym ancho" data-acc="empezar">${ico("player-play", "s20")}Empezar sesión</button></div>`}${RAN()}`;
 }
 
 function subTabs() {
@@ -824,11 +841,11 @@ function vistaGym() {
         <span class="cifra c-descanso" data-t="tiempo" role="timer" aria-label="Cuenta regresiva de la serie">${mmssArriba(resta)}</span>
         <span class="lbl tnum">de ${mmss(x.seg * 1000)}</span><div class="barra-prog" aria-hidden="true"><i data-t="tiempo-barra" style="--v:${Math.min(100, (V - S.tPlay) / (x.seg * 10))}"></i></div></div>`;
       h += listaSeries(S.i);
-      h += `<div class="accion-gym"><button type="button" class="btn secundario gym ancho" data-acc="tachar" data-foco>${ico("check", "s20")}Terminé antes</button></div>`;
+      h += RAN() + `<div class="accion-gym"><button type="button" class="btn secundario gym ancho" data-acc="tachar" data-foco>${ico("check", "s20")}Terminé antes</button></div>`;
     } else {
       h += listaSeries(S.i);
       const hayRampa = x.tipo === "rampa";
-      h += `<div class="accion-gym"><button type="button" class="btn primario gym ancho" data-acc="tachar" data-foco>${ico("check", "s20")}Serie hecha</button>
+      h += RAN() + `<div class="accion-gym"><button type="button" class="btn primario gym ancho" data-acc="tachar" data-foco>${ico("check", "s20")}Serie hecha</button>
         ${hayRampa ? `<button type="button" class="btn texto gym" data-acc="saltar-rampa">${ico("player-skip-forward", "s20")}Saltar ${e.caliente ? "tanteo" : "rampa"}</button>` : ""}</div>`;
     }
   } else if (f === "descanso" || f === "listo" || f === "espera") {
@@ -841,19 +858,19 @@ function vistaGym() {
         <span class="cifra c-descanso" data-t="desc" role="timer" aria-label="Descanso restante">${mmssArriba(S.descFin - V)}</span>
         <span class="lbl tnum" data-t="desc-de">de ${mmss(S.descDur * 1000)}</span><div class="barra-prog" aria-hidden="true"><i data-t="desc-barra" style="--v:0"></i></div>
         <div class="atajos"><button type="button" data-acc="menos15" aria-label="Quitar 15 segundos">−15 s</button><button type="button" data-acc="saltar-desc" data-foco>Saltar</button><button type="button" data-acc="mas15" aria-label="Sumar 15 segundos">+15 s</button></div></div>`;
-      h += filaSigue();
+      h += filaSigue() + RAN();
     } else {
       const x = S.ej[S.sig.i].series[S.sig.j];
       const verbo = x.seg != null ? `Empezar ${x.seg} s` : `Empezar ${x.nombre.toLowerCase()}`;
       if (f === "listo") h += `<div class="descanso listo"><span class="vibra">${ico("vibrar", "s32")}</span><span class="t-seccion">Listo cuando quieras</span>
         <span class="lbl">Tiempo extra</span><span class="cifra c-heroe" data-t="extra" role="timer" aria-label="Tiempo extra">+${mmss(V - S.listoDesde)}</span></div>`;
       h += filaSigue();
-      h += `<div class="accion-gym"><button type="button" class="btn primario gym ancho" data-acc="play" data-foco>${ico("player-play", "s20")}${verbo}</button></div>`;
+      h += RAN() + `<div class="accion-gym"><button type="button" class="btn primario gym ancho" data-acc="play" data-foco>${ico("player-play", "s20")}${verbo}</button></div>`;
     }
   } else if (f === "fin") {
     h += ejCab(S.ej.length - 1) + listaSeries(S.ej.length - 1);
     h += `<p class="nota tnum">${ico("check", "s16")}<span>Hiciste las ${hechasTrabajo()} series de trabajo y ${hechasRampa()} de rampa.</span></p>
-      <div class="accion-gym"><button type="button" class="btn primario gym ancho" data-acc="finalizar" data-foco>${ico("check", "s20")}Finalizar sesión</button></div>`;
+      ${RAN()}<div class="accion-gym"><button type="button" class="btn primario gym ancho" data-acc="finalizar" data-foco>${ico("check", "s20")}Finalizar sesión</button></div>`;
   }
   return h;
 }
@@ -899,7 +916,8 @@ function vistaGuardada() {
     <div><span class="t-detalle sec">Series</span><span class="cifra">${hechasTrabajo()}</span></div></div>
     ${l.length ? `<div class="tarjeta record">${ico("trophy")}<div class="txt"><span class="t-detalle sec">${l[0][0]}</span><span class="tnum">${l[0][1]}</span></div></div>` : ""}
     <div class="lista-mini"><div class="fila"><div class="txt"><span class="t-detalle">Próxima</span><span>Miércoles 21 · Día B · Pull + Legs</span></div><span class="m prog"></span></div></div>
-    <p class="nota">${ico("info-circle", "s16")}<span>En el calendario, el lunes 19 pasa a punto lleno y queda de solo lectura.</span></p>`;
+    <p class="nota">${ico("info-circle", "s16")}<span>En el calendario, el lunes 19 pasa a punto lleno y queda de solo lectura.</span></p>
+    <div class="acciones"><button type="button" class="btn secundario gym ancho" data-acc="otra">${ico("plus", "s20")}Empezar otra sesión</button></div>${RAN()}`;
 }
 
 function hojaAjuste() {
@@ -919,32 +937,72 @@ function hojaAjuste() {
   return `<div class="velo" data-acc="cerrar-hoja"><div class="hoja" role="dialog" aria-modal="true" aria-labelledby="hj-t">
     <div class="cabeza"><span class="t-seccion" id="hj-t">${x.nombre} · ${e.n.split(" ")[0].toLowerCase()}</span><button type="button" class="icono-btn" data-acc="cerrar-hoja" aria-label="Cerrar">${ico("x")}</button></div>
     <div class="lista-mini">${ctl}</div>${seg}
-    <p class="nota">${ico("info-circle", "s16")}<span>Solo cambia esta sesión. La rutina no cambia.</span></p>
-    <button type="button" class="btn primario gym ancho" data-acc="hj-aplicar">Aplicar cambio</button></div></div>`;
+    <div class="destino" id="hj-destino" aria-live="polite">${destinoHtml()}</div>
+    <button type="button" class="btn primario gym ancho" data-acc="hj-aplicar" id="hj-boton">${botonHoja()}</button></div></div>`;
+}
+
+function destinoSeries() {
+  const hj = S.hoja, e = S.ej[hj.i], x = e.series[hj.j];
+  return x.tipo === "trabajo" && hj.aplica === "faltan" ? e.series.filter((y, k) => k >= hj.j && y.tipo === "trabajo" && y.estado === "pend") : [x];
+}
+const unir = (a) => (a.length < 2 ? a.join("") : `${a.slice(0, -1).join(", ")} y ${a[a.length - 1]}`);
+function destinoHtml() {
+  const e = S.ej[S.hoja.i], d = destinoSeries();
+  const base = e.peso != null ? `la rutina sigue en ${e.peso} lb` : e.seg != null ? `la rutina sigue en ${e.seg} s` : `la rutina sigue en ${e.reps} reps`;
+  return `<span>${d.length > 1 ? "Se aplicará a" : "Solo se aplicará a"} <b>${unir(d.map((y) => y.nombre.toLowerCase()))}</b> en ${e.n.toLowerCase()}.</span><span class="t-detalle">Solo en esta sesión; ${base}.</span>`;
+}
+function botonHoja() { const n = destinoSeries().length; return n > 1 ? `Aplicar a ${n} series` : "Aplicar a esta serie"; }
+function actualizarHoja() {
+  const hj = S.hoja, x = S.ej[hj.i].series[hj.j];
+  $capa.querySelectorAll(".stepper").forEach((st) => {
+    const k = st.querySelector("button").dataset.k, c = st.querySelector(".cifra");
+    c.textContent = hj[k]; c.classList.toggle("sube", hj[k] !== x[k]);
+  });
+  $capa.querySelectorAll("[data-acc='hj-aplica']").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === hj.aplica)));
+  $("#hj-destino").innerHTML = destinoHtml();
+  $("#hj-boton").textContent = botonHoja();
+}
+
+const OTRAS = { B: ["Día B · Pull + Legs", "Sigue en tu rotación · pesos de tu última sesión B"], C: ["Día C · Full Body + Cardio", "5 ejercicios"], v: ["Sesión vacía", "Agregas los ejercicios sobre la marcha"] };
+function hojaElegir() {
+  const ops = Object.entries(OTRAS).map(([k, [t, d]]) => `<button type="button" class="opcion-rutina" role="radio" data-acc="otra-op" data-v="${k}" aria-checked="${S.elegir.v === k}"><span class="radio"></span><span class="txt"><span>${t}</span><span class="t-detalle">${d}</span></span></button>`).join("");
+  return `<div class="velo" data-acc="otra-cerrar"><div class="hoja" role="dialog" aria-modal="true" aria-labelledby="ot-t">
+    <div class="cabeza"><span class="t-seccion" id="ot-t">¿Con qué entrenas ahora?</span><button type="button" class="icono-btn" data-acc="otra-cerrar" aria-label="Cerrar">${ico("x")}</button></div>
+    <div class="lista-mini" role="radiogroup" aria-label="Rutina">${ops}</div>
+    <button type="button" class="btn primario gym ancho" data-acc="otra-empezar">${ico("player-play", "s20")}Empezar sesión</button></div></div>`;
+}
+function vistaOtra() {
+  const [t] = OTRAS[S.otra];
+  const vacia = S.otra === "v";
+  return `<div class="gym-cab"><button type="button" class="icono-btn" data-acc="otra-volver" aria-label="Volver a Gym">${ico("chevron-down")}</button>
+    <div class="txt"><span class="t-detalle sec">${vacia ? "Sesión libre" : t}</span><span class="cifra reloj">0:00</span></div></div>
+    <div class="vacio">${ico(vacia ? "plus" : "info-circle", "s32")}<span class="t-seccion">${vacia ? "Agrega el primer ejercicio" : "Aquí empezaría tu segunda sesión"}</span>
+    <p class="sec">${vacia ? "Búscalo en la biblioteca y pon el peso y las repeticiones. La rampa se calcula igual que en una rutina." : "Este prototipo recorre completo solo el Día A; la sesión de hoy sigue guardada y de solo lectura."}</p></div>
+    ${RAN()}<div class="accion-gym">${vacia ? `<button type="button" class="btn primario gym ancho" data-acc="agregar">${ico("search", "s20")}Agregar ejercicio</button>` : ""}<button type="button" class="btn ${vacia ? "texto" : "secundario"} gym ancho" data-acc="otra-volver">Volver a Gym</button></div>`;
 }
 
 // ------------------------------------------------------------ render
 let focoSig = null;
 function render() {
-  const enGym = S.vista === "gym";
+  const enGym = S.vista === "gym" || S.vista === "otra";
   $barra.hidden = enGym || S.vista === "resumen";
-  const v = { inicio: vistaInicio, gym: vistaGym, resumen: vistaResumen, guardada: vistaGuardada }[S.vista];
+  const v = { inicio: vistaInicio, gym: vistaGym, resumen: vistaResumen, guardada: vistaGuardada, otra: vistaOtra }[S.vista];
   $cuerpo.innerHTML = v();
   const fr = $("#franja-hueco");
   fr.innerHTML = franja();
-  $capa.innerHTML = S.hoja ? hojaAjuste() : "";
+  $capa.innerHTML = S.hoja ? hojaAjuste() : S.elegir ? hojaElegir() : "";
   pintarAviso();
   tickVisual();
   if (S.hoja) { const b = $capa.querySelector(".hoja button[data-acc='hj-aplicar']"); b && b.focus({ preventScroll: true }); }
+  else if (S.elegir) { const b = $capa.querySelector("[data-acc='otra-empezar']"); b && b.focus({ preventScroll: true }); }
   else if (focoSig) { const b = document.querySelector(focoSig) || $cuerpo.querySelector("[data-foco]"); b && b.focus({ preventScroll: true }); }
   focoSig = null;
 }
 
 function pintarAviso() {
-  if (!S.aviso) { $aviso.hidden = true; $aviso.innerHTML = ""; return; }
-  $aviso.hidden = false;
-  $aviso.className = `aviso${S.vista === "gym" ? " gym" : ""} entra`;
-  $aviso.innerHTML = `<span>${S.aviso.texto}</span>${S.aviso.accion ? `<button type="button" class="btn texto" data-acc="${S.aviso.accion[1]}">${S.aviso.accion[0]}</button>` : ""}`;
+  const r = document.getElementById("ranura");
+  if (!r) return;
+  r.innerHTML = S.aviso ? `<div class="aviso entra"><span>${S.aviso.texto}</span>${S.aviso.accion ? `<button type="button" class="btn texto" data-acc="${S.aviso.accion[1]}">${S.aviso.accion[0]}</button>` : ""}</div>` : "";
 }
 function avisar(texto, accion, ms) { S.aviso = { texto, accion, hasta: V + ms * vel }; S.avisoReal = performance.now() + ms; }
 
@@ -1055,12 +1113,18 @@ const acciones = {
     S.hoja = { i, j, peso: x.peso, reps: x.reps, seg: x.seg, aplica: "faltan", origen: b.getAttribute("aria-label") };
     render();
   },
-  "hj-menos"(b) { const k = b.dataset.k; const paso = k === "peso" ? PASO : k === "seg" ? 5 : 1; const min = k === "peso" ? 5 : 1; S.hoja[k] = Math.max(min, S.hoja[k] - paso); render(); },
-  "hj-mas"(b) { const k = b.dataset.k; const paso = k === "peso" ? PASO : k === "seg" ? 5 : 1; S.hoja[k] += paso; render(); },
-  "hj-aplica"(b) { S.hoja.aplica = b.dataset.v; render(); },
+  "hj-menos"(b) { const k = b.dataset.k; const paso = k === "peso" ? PASO : k === "seg" ? 5 : 1; const min = k === "peso" ? 5 : 1; S.hoja[k] = Math.max(min, S.hoja[k] - paso); actualizarHoja(); },
+  "hj-mas"(b) { const k = b.dataset.k; const paso = k === "peso" ? PASO : k === "seg" ? 5 : 1; S.hoja[k] += paso; actualizarHoja(); },
+  "hj-aplica"(b) { S.hoja.aplica = b.dataset.v; actualizarHoja(); },
+  otra() { S.elegir = { v: "B" }; render(); },
+  "otra-op"(b) { S.elegir.v = b.dataset.v; $capa.querySelectorAll("[data-acc='otra-op']").forEach((x) => x.setAttribute("aria-checked", String(x === b))); },
+  "otra-cerrar"(b, ev) { if (ev && ev.target !== b) return; S.elegir = null; render(); },
+  "otra-empezar"() { S.otra = S.elegir.v; S.elegir = null; S.vista = "otra"; S.aviso = null; render(); },
+  "otra-volver"() { S.otra = null; S.vista = "guardada"; render(); },
+  "agregar"() { avisar("La biblioteca de ejercicios se prueba en otro flujo", null, 4000); pintarAviso(); },
   "hj-aplicar"() {
     const hj = S.hoja, e = S.ej[hj.i], x = e.series[hj.j];
-    const destino = x.tipo === "trabajo" && hj.aplica === "faltan" ? e.series.filter((y, k) => k >= hj.j && y.tipo === "trabajo" && y.estado === "pend") : [x];
+    const destino = destinoSeries();
     destino.forEach((y) => { if (hj.peso != null) y.peso = hj.peso; if (hj.reps != null) y.reps = hj.reps; if (hj.seg != null) y.seg = hj.seg; });
     const quePaso = hj.seg != null ? `${hj.seg} s` : hj.peso != null ? `${hj.peso} lb × ${hj.reps}` : `${hj.reps} reps`;
     if (x.tipo === "trabajo") S.ajustes.push(`${e.n.split(" ")[0]}: ${quePaso} en ${destino.length === 1 ? x.nombre.toLowerCase() : `las ${destino.length} que faltaban`}.`);
@@ -1079,8 +1143,8 @@ document.addEventListener("click", (ev) => {
   if (f) { ev.preventDefault(); f(b, ev); }
 });
 document.addEventListener("keydown", (ev) => {
-  if (!S.hoja) return;
-  if (ev.key === "Escape") { ev.preventDefault(); S.hoja = null; render(); return; }
+  if (!S.hoja && !S.elegir) return;
+  if (ev.key === "Escape") { ev.preventDefault(); S.hoja = null; S.elegir = null; render(); return; }
   if (ev.key === "Tab") {
     const f = [...$capa.querySelectorAll("button")];
     const i = f.indexOf(document.activeElement);
