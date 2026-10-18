@@ -199,6 +199,22 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
 .chequeo { display: flex; align-items: center; justify-content: space-between; gap: var(--e2); font-size: 16px; line-height: 24px; }
 .chequeo span:last-child { display: inline-flex; align-items: center; gap: var(--e1); color: var(--texto-acento); }
 
+/* ajustes */
+.perfil { flex-direction: row; align-items: center; gap: var(--e3); }
+.perfil .avatar { width: 48px; height: 48px; border-radius: var(--r-pildora); background: var(--elevado); display: grid; place-items: center; font-weight: 650; font-size: 20px; flex: none; }
+.opcion { min-height: 64px; padding: var(--e2) var(--e3) var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); text-align: left; width: 100%; }
+.opcion .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.opcion .txt .t-detalle { color: var(--texto-2); }
+.opcion > .i:last-child { color: var(--texto-2); }
+.unidad { min-height: 72px; padding: var(--e3) var(--e3) var(--e3) var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); }
+.unidad .txt { display: flex; flex-direction: column; min-width: 0; }
+.unidad .segmento button { min-height: 40px; min-width: 48px; padding-inline: var(--e2); }
+.nota { display: flex; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.muestra-datos { display: flex; flex-direction: column; }
+.muestra-datos > div { display: flex; justify-content: space-between; align-items: baseline; gap: var(--e3); padding-block: var(--e3); }
+.muestra-datos > div + div { border-top: var(--t-borde) solid var(--borde); }
+.muestra-datos .cifra { font-size: 20px; line-height: 24px; text-align: right; }
+
 /* ---------- web ---------- */
 .web-envoltura { overflow-x: auto; border-radius: var(--r-tarjeta); }
 .navegador { min-width: 1180px; background: var(--borde); border-radius: var(--r-tarjeta); padding: 0 var(--t-borde) var(--t-borde); }
@@ -210,6 +226,10 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
 .logo { width: 32px; height: 32px; border-radius: var(--r-control); background: var(--elevado); color: var(--texto); display: grid; place-items: center; }
 .item { min-height: 44px; border-radius: var(--r-control); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; }
 .item[aria-current="page"] { background: var(--elevado); color: var(--texto-acento); font-weight: 650; }
+.item.abierto { color: var(--texto); font-weight: 650; }
+.subitem { min-height: 36px; display: flex; align-items: center; padding-left: 44px; border-radius: var(--r-control); color: var(--texto-2); font-size: 15px; }
+.subitem[aria-current="page"] { background: var(--elevado); color: var(--texto-acento); font-weight: 650; }
+.unidad.web { padding-inline: 0; }
 .lateral .pie { margin-top: auto; border-top: var(--t-borde) solid var(--borde); padding-top: var(--e3); display: flex; flex-direction: column; gap: var(--e1); }
 .lateral .pie .sinc { padding: var(--e2) var(--e3); }
 .principal { padding: var(--e6); display: flex; flex-direction: column; gap: var(--e5); }
@@ -246,9 +266,35 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
   <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M5 12l14 0"/><path d="M5 12l6 6"/><path d="M5 12l6 -6"/></symbol>
   <symbol id="i-color-picker" viewBox="0 0 24 24"><path d="M11 7l6 6"/><path d="M4 16l11.7 -11.7a1 1 0 0 1 1.4 0l2.6 2.6a1 1 0 0 1 0 1.4l-11.7 11.7h-4v-4"/></symbol>
   <symbol id="i-settings" viewBox="0 0 24 24"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065"/><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25"/><path d="M7.5 10.5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M11.5 7.5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M15.5 10.5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/></symbol>
+  <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M19.875 12c.621 0 1.125 .512 1.125 1.143v5.714c0 .631 -.504 1.143 -1.125 1.143h-15.875a1 1 0 0 1 -1 -1v-5.857c0 -.631 .504 -1.143 1.125 -1.143h15.75"/><path d="M9 12v2"/><path d="M6 12v3"/><path d="M12 12v3"/><path d="M18 12v3"/><path d="M15 12v2"/><path d="M3 3v4"/><path d="M3 5h18"/><path d="M21 3v4"/></symbol>
+  <symbol id="i-shield-lock" viewBox="0 0 24 24"><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"/><path d="M11 11a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M12 12l0 2.5"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 11l5 5l5 -5"/><path d="M12 4l0 12"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 16v.01"/><path d="M12 13a2 2 0 0 0 .914 -3.782a1.98 1.98 0 0 0 -2.414 .483"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"/><path d="M9 12h12l-3 -3"/><path d="M18 15l3 -3"/></symbol>
   <!-- logo provisional: glifo de packages/brand (barbell) -->
   <symbol id="logo" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
 </svg>
+
+<template id="lateral-tpl">
+  <aside class="lateral">
+    <div class="marca"><span class="logo"><svg class="i s20"><use href="#logo"/></svg></span><span data-brand-name>Coach Fitness AI</span></div>
+    <a class="item"><svg class="i s20"><use href="#i-home"/></svg>Hoy</a>
+    <a class="item"><svg class="i s20"><use href="#i-barbell"/></svg>Gym</a>
+    <a class="item"><svg class="i s20"><use href="#i-kitchen"/></svg>Comida</a>
+    <a class="item"><svg class="i s20"><use href="#i-heart"/></svg>Salud</a>
+    <a class="item"><svg class="i s20"><use href="#i-message"/></svg>Coach</a>
+    <div class="pie">
+      <a class="item abierto"><svg class="i s20"><use href="#i-settings"/></svg>Ajustes</a>
+      <a class="subitem" data-sub="apariencia">Apariencia</a>
+      <a class="subitem" data-sub="unidades">Unidades</a>
+      <a class="subitem" data-sub="cuenta">Cuenta y seguridad</a>
+      <a class="subitem" data-sub="exportar">Exportar datos</a>
+      <span class="sinc t-detalle"><svg class="i s16"><use href="#i-cloud-check"/></svg>Sincronizado hace 2 min</span>
+    </div>
+  </aside>
+</template>
 
 <template id="barra-tpl">
   <nav class="barra" aria-label="Secciones">
@@ -264,7 +310,7 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
   <header class="cabecera">
     <div>
       <h1>Láminas 6 y 13 del PDF B2, corregidas</h1>
-      <p>Fase 0.5 · borrador para revisar. Aplican lo aprobado el 18-oct-2026 en DESIGN.md: línea del coach sin franja, cinco pestañas con Coach y Ajustes desde el botón de cuenta.</p>
+      <p>Fase 0.5 · páginas 6 y 13 aprobadas el 18-oct-2026; Ajustes y Unidades (SIS-07, D-24) en revisión. Las cargas van en libras, que es lo de fábrica.</p>
     </div>
     <div class="controles">
       <div class="control">
@@ -297,6 +343,7 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
         <li><strong>Línea del coach:</strong> sin la barra de acento pegada al borde; ahora lleva ícono y etiqueta "Coach" en acento, igual que en la web.</li>
         <li><strong>Hoy:</strong> botón de cuenta arriba a la derecha (abre Ajustes); orden de DESIGN.md: entreno, nutrición, coach y suplementos; meta de 2,350 kcal del PRD.</li>
         <li><strong>Sesión en curso:</strong> ocupa toda la pantalla y oculta la barra; la sincronización va en la cabecera con su ícono; filas y atajos de 56 px.</li>
+        <li><strong>Libras:</strong> las cargas del gym van en lb, lo de fábrica (D-24), con cifras reales de disco: 90 lb en vez de 88.2.</li>
       </ul>
     </header>
     <div class="fila-telefonos">
@@ -363,11 +410,11 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
             </div>
             <span class="t-detalle sec">Lunes 19 · Día A · semana 1</span>
             <div class="lista">
-              <div class="fila"><span>Sentadilla con barra</span><span class="cifra carga">3 × 10 · 40 kg</span></div>
-              <div class="fila"><span>Press de banca</span><span class="cifra carga">3 × 8 · 40 kg</span></div>
-              <div class="fila"><span>Press militar manc.</span><span class="cifra carga">3 × 10 · 10 kg</span></div>
-              <div class="fila"><span>Extensión tríceps</span><span class="cifra carga">3 × 12 · 15 kg</span></div>
-              <div class="fila"><span>Elevación lateral</span><span class="cifra carga">3 × 12 · 5 kg</span></div>
+              <div class="fila"><span>Sentadilla con barra</span><span class="cifra carga">3 × 10 · 90 lb</span></div>
+              <div class="fila"><span>Press de banca</span><span class="cifra carga">3 × 8 · 90 lb</span></div>
+              <div class="fila"><span>Press militar manc.</span><span class="cifra carga">3 × 10 · 20 lb</span></div>
+              <div class="fila"><span>Extensión tríceps</span><span class="cifra carga">3 × 12 · 35 lb</span></div>
+              <div class="fila"><span>Elevación lateral</span><span class="cifra carga">3 × 12 · 10 lb</span></div>
             </div>
             <div class="par">
               <button type="button" class="btn secundario">Cambiar rutina</button>
@@ -389,11 +436,12 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
               <span class="sinc t-detalle"><svg class="i s16"><use href="#i-cloud-off"/></svg>Sin conexión · 3 por subir</span>
             </div>
             <h3 class="t-pantalla">Press de banca plano</h3>
-            <div class="serie hecha"><span class="casilla gym hecha"><svg class="i s20"><use href="#i-check"/></svg></span><span class="nombre">Rampa 1 · 50 %</span><span class="cifra carga">20 × 5</span></div>
-            <div class="serie hecha"><span class="casilla gym hecha"><svg class="i s20"><use href="#i-check"/></svg></span><span class="nombre">Rampa 2 · 70 %</span><span class="cifra carga">27.5 × 3</span></div>
-            <div class="serie hecha"><span class="casilla gym hecha"><svg class="i s20"><use href="#i-check"/></svg></span><span class="nombre">Trabajo 1</span><span class="cifra carga">40 × 10</span></div>
-            <div class="serie actual"><span class="casilla gym"></span><span class="nombre">Trabajo 2</span><span class="cifra carga">40 × 10</span></div>
-            <div class="serie"><span class="casilla gym"></span><span class="nombre sec">Trabajo 3</span><span class="cifra carga sec">40 × 10</span></div>
+            <span class="t-detalle sec">Cargas en lb</span>
+            <div class="serie hecha"><span class="casilla gym hecha"><svg class="i s20"><use href="#i-check"/></svg></span><span class="nombre">Rampa 1 · 50 %</span><span class="cifra carga">45 × 5</span></div>
+            <div class="serie hecha"><span class="casilla gym hecha"><svg class="i s20"><use href="#i-check"/></svg></span><span class="nombre">Rampa 2 · 70 %</span><span class="cifra carga">65 × 3</span></div>
+            <div class="serie hecha"><span class="casilla gym hecha"><svg class="i s20"><use href="#i-check"/></svg></span><span class="nombre">Trabajo 1</span><span class="cifra carga">90 × 10</span></div>
+            <div class="serie actual"><span class="casilla gym"></span><span class="nombre">Trabajo 2</span><span class="cifra carga">90 × 10</span></div>
+            <div class="serie"><span class="casilla gym"></span><span class="nombre sec">Trabajo 3</span><span class="cifra carga sec">90 × 10</span></div>
             <div class="tarjeta" style="align-items:center; gap: var(--e3)">
               <span class="t-detalle sec">Descanso</span>
               <span class="cifra c-heroe">1:12</span>
@@ -404,7 +452,7 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
                 <button type="button" class="btn gym secundario tnum">+15 s</button>
               </div>
             </div>
-            <span class="t-detalle sec tnum" style="text-align:center">Última vez: 37.5 × 10, 10, 9</span>
+            <span class="t-detalle sec tnum" style="text-align:center">Última vez: 85 × 10, 10, 9 lb</span>
           </div>
         </div></div>
         <figcaption><b>Sesión en curso</b>Series, rampa y temporizador con vibración, sin señal. Sin barra inferior. GYM-04, GYM-05.</figcaption>
@@ -417,24 +465,24 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
           <div class="cuerpo">
             <h3 class="t-pantalla">Sesión terminada</h3>
             <div class="tarjeta destacada" style="align-items:center; text-align:center">
-              <span class="t-detalle sec">Nuevo récord · press de banca</span>
-              <span class="cifra c-heroe">42.5 × 10</span>
-              <span class="t-detalle sec tnum">1RM estimado 56.7 kg · +2.8 kg</span>
+              <span class="t-detalle sec">Nuevo récord · press de banca · lb</span>
+              <span class="cifra c-heroe">95 × 10</span>
+              <span class="t-detalle sec tnum">1RM estimado 126.7 lb · +6.2 lb</span>
             </div>
             <div class="tres">
               <div class="mini"><span class="cifra">74</span><span class="t-detalle sec">min</span></div>
               <div class="mini"><span class="cifra">18</span><span class="t-detalle sec">series</span></div>
-              <div class="mini"><span class="cifra">5,240</span><span class="t-detalle sec">kg totales</span></div>
+              <div class="mini"><span class="cifra">11,550</span><span class="t-detalle sec">lb totales</span></div>
             </div>
             <span class="t-detalle sec">Récords por repeticiones</span>
             <div class="lista">
-              <div class="fila"><span>1RM</span><span class="cifra carga">56.7 kg</span></div>
-              <div class="fila"><span>5RM</span><span class="cifra carga">49.6 kg</span></div>
-              <div class="fila"><span>10RM</span><span class="cifra carga">42.5 kg</span></div>
+              <div class="fila"><span>1RM</span><span class="cifra carga">126.7 lb</span></div>
+              <div class="fila"><span>5RM</span><span class="cifra carga">108.6 lb</span></div>
+              <div class="fila"><span>10RM</span><span class="cifra carga">95 lb</span></div>
             </div>
             <div class="tarjeta coach">
               <div class="coach-cab"><svg class="i s16"><use href="#i-message"/></svg><span class="t-detalle">Coach</span></div>
-              <p>Completaste todo con buena técnica. El lunes sube 2.5 kg en banca.</p>
+              <p>Completaste todo con buena técnica. El lunes sube 5 lb en banca.</p>
             </div>
           </div>
           <div data-barra="gym"></div>
@@ -554,18 +602,7 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
         <div class="navegador">
           <div class="barra-nav"><span class="url">coach.tail72ec86.ts.net/ajustes/apariencia</span></div>
           <div class="app-web">
-            <aside class="lateral">
-              <div class="marca"><span class="logo"><svg class="i s20"><use href="#logo"/></svg></span><span data-brand-name>Coach Fitness AI</span></div>
-              <a class="item"><svg class="i s20"><use href="#i-home"/></svg>Hoy</a>
-              <a class="item"><svg class="i s20"><use href="#i-barbell"/></svg>Gym</a>
-              <a class="item"><svg class="i s20"><use href="#i-kitchen"/></svg>Comida</a>
-              <a class="item"><svg class="i s20"><use href="#i-heart"/></svg>Salud</a>
-              <a class="item"><svg class="i s20"><use href="#i-message"/></svg>Coach</a>
-              <div class="pie">
-                <a class="item" aria-current="page"><svg class="i s20"><use href="#i-settings"/></svg>Ajustes</a>
-                <span class="sinc t-detalle"><svg class="i s16"><use href="#i-cloud-check"/></svg>Sincronizado hace 2 min</span>
-              </div>
-            </aside>
+            <div data-lateral="apariencia"></div>
             <div class="principal">
               <div class="cabeza">
                 <div><div class="t-detalle sec">Ajustes</div><h3 class="t-pantalla">Apariencia</h3></div>
@@ -622,7 +659,121 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
           </div>
         </div>
       </div>
-      <figcaption style="max-width:none"><b>La misma sección en la web</b>Barra lateral con las cinco secciones; Ajustes y sincronización al pie. El tema se guarda en tu cuenta y se aplica en web y móvil.</figcaption>
+      <figcaption style="max-width:none"><b>La misma sección en la web</b>Barra lateral con las cinco secciones; Ajustes al pie, abierto con sus subsecciones, y la sincronización debajo. El tema se guarda en tu cuenta y se aplica en web y móvil.</figcaption>
+    </figure>
+  </section>
+  <!-- ===================== AJUSTES Y UNIDADES ===================== -->
+  <section class="pagina" aria-labelledby="pu">
+    <header>
+      <h2 id="pu">Nuevo · Ajustes y unidades</h2>
+      <ul class="cambios">
+        <li><strong>Ajustes:</strong> se abre con el botón de cuenta de Hoy y reúne Apariencia, Unidades, Cuenta y seguridad, Exportar datos y Centro de ayuda.</li>
+        <li><strong>Unidades (SIS-07):</strong> cinco opciones con un ejemplo de tus propios datos al lado. Se guardan al tocarlas, sin botón, y valen en web, móvil, reloj y coach.</li>
+        <li><strong>Pruébalo:</strong> toca las opciones; los ejemplos y la vista previa web cambian juntos.</li>
+      </ul>
+    </header>
+    <div class="fila-telefonos">
+
+      <!-- Ajustes -->
+      <figure>
+        <div class="telefono"><div class="pantalla">
+          <div class="estado tnum"><span>21:28</span></div>
+          <div class="cuerpo">
+            <div>
+              <button type="button" class="atras" aria-label="Atrás"><svg class="i"><use href="#i-arrow-left"/></svg></button>
+              <h3 class="t-pantalla">Ajustes</h3>
+            </div>
+            <div class="tarjeta perfil">
+              <span class="avatar">F</span>
+              <div class="txt"><div class="t-seccion">Francis Guzman</div><div class="t-detalle sec">Verificación en dos pasos activa</div></div>
+            </div>
+            <div class="lista">
+              <button type="button" class="opcion"><svg class="i"><use href="#i-palette"/></svg><span class="txt"><span>Apariencia</span><span class="t-detalle">Sistema · Caribe</span></span><svg class="i s20"><use href="#i-chevron-right"/></svg></button>
+              <button type="button" class="opcion"><svg class="i"><use href="#i-ruler"/></svg><span class="txt"><span>Unidades</span><span class="t-detalle" data-resumen-unidades>lb · cm · km</span></span><svg class="i s20"><use href="#i-chevron-right"/></svg></button>
+              <button type="button" class="opcion"><svg class="i"><use href="#i-shield-lock"/></svg><span class="txt"><span>Cuenta y seguridad</span><span class="t-detalle">Contraseña y verificación en dos pasos</span></span><svg class="i s20"><use href="#i-chevron-right"/></svg></button>
+              <button type="button" class="opcion"><svg class="i"><use href="#i-download"/></svg><span class="txt"><span>Exportar datos</span><span class="t-detalle">Todos tus datos en CSV o JSON</span></span><svg class="i s20"><use href="#i-chevron-right"/></svg></button>
+              <button type="button" class="opcion"><svg class="i"><use href="#i-help"/></svg><span class="txt"><span>Centro de ayuda</span><span class="t-detalle">Guías de web, Android y reloj</span></span><svg class="i s20"><use href="#i-chevron-right"/></svg></button>
+            </div>
+            <button type="button" class="btn secundario ancho"><svg class="i s20"><use href="#i-logout"/></svg>Cerrar sesión</button>
+            <span class="t-detalle sec tnum" style="text-align:center"><span data-brand-name>Coach Fitness AI</span> · versión 0.1.0</span>
+          </div>
+          <div data-barra="hoy"></div>
+        </div></div>
+        <figcaption><b>Ajustes</b>Se abre desde el botón de cuenta de Hoy como pantalla apilada. SIS-02, SIS-04, SIS-06, SIS-07.</figcaption>
+      </figure>
+
+      <!-- Unidades -->
+      <figure>
+        <div class="telefono"><div class="pantalla">
+          <div class="estado tnum"><span>21:29</span></div>
+          <div class="cuerpo">
+            <div>
+              <button type="button" class="atras" aria-label="Atrás"><svg class="i"><use href="#i-arrow-left"/></svg></button>
+              <div class="t-detalle sec">Ajustes</div>
+              <h3 class="t-pantalla">Unidades</h3>
+            </div>
+            <div class="lista">
+              <div class="unidad"><div class="txt"><span>Peso corporal</span><span class="t-detalle sec tnum" data-fmt="peso"></span></div>
+                <div class="segmento" role="group" aria-label="Peso corporal" data-grupo="peso"><button type="button" data-v="kg">kg</button><button type="button" data-v="lb">lb</button></div></div>
+              <div class="unidad"><div class="txt"><span>Cargas del gym</span><span class="t-detalle sec tnum" data-fmt="gym"></span></div>
+                <div class="segmento" role="group" aria-label="Cargas del gym" data-grupo="gym"><button type="button" data-v="kg">kg</button><button type="button" data-v="lb">lb</button></div></div>
+              <div class="unidad"><div class="txt"><span>Estatura</span><span class="t-detalle sec tnum" data-fmt="estatura"></span></div>
+                <div class="segmento" role="group" aria-label="Estatura" data-grupo="estatura"><button type="button" data-v="m">m</button><button type="button" data-v="cm">cm</button><button type="button" data-v="ft">pies</button></div></div>
+              <div class="unidad"><div class="txt"><span>Perímetros</span><span class="t-detalle sec tnum" data-fmt="perimetro"></span></div>
+                <div class="segmento" role="group" aria-label="Perímetros" data-grupo="perimetro"><button type="button" data-v="cm">cm</button><button type="button" data-v="in">pulg.</button></div></div>
+              <div class="unidad"><div class="txt"><span>Distancia</span><span class="t-detalle sec tnum" data-fmt="distancia-corta"></span></div>
+                <div class="segmento" role="group" aria-label="Distancia" data-grupo="distancia"><button type="button" data-v="km">km</button><button type="button" data-v="mi">millas</button></div></div>
+            </div>
+            <p class="nota" style="margin:0">Cambiar una unidad no modifica tus datos: solo cambia cómo los ves y en qué unidad escribes los nuevos. En comida eliges la unidad en cada registro.</p>
+          </div>
+          <div data-barra="hoy"></div>
+        </div></div>
+        <figcaption><b>Unidades</b>Peso corporal y cargas del gym por separado; estatura, perímetros y distancia. Se guarda al tocar. SIS-07.</figcaption>
+      </figure>
+    </div>
+
+    <!-- Web: Unidades -->
+    <figure style="width:100%">
+      <div class="web-envoltura">
+        <div class="navegador">
+          <div class="barra-nav"><span class="url">coach.tail72ec86.ts.net/ajustes/unidades</span></div>
+          <div class="app-web">
+            <div data-lateral="unidades"></div>
+            <div class="principal">
+              <div><div class="t-detalle sec">Ajustes</div><h3 class="t-pantalla">Unidades</h3></div>
+              <div class="rejilla">
+                <div class="tarjeta web span-8">
+                  <div><h4 class="t-seccion">Tus unidades</h4><span class="t-detalle sec">Se guardan en tu cuenta y valen en la web, el teléfono, el reloj y las respuestas del coach.</span></div>
+                  <div class="muestra-datos">
+                    <div class="unidad web"><div class="txt"><span>Peso corporal</span><span class="t-detalle sec">Renpho, tendencias y metas</span></div>
+                      <div class="segmento" role="group" aria-label="Peso corporal" data-grupo="peso"><button type="button" data-v="kg">kg</button><button type="button" data-v="lb">lb</button></div></div>
+                    <div class="unidad web"><div class="txt"><span>Cargas del gym</span><span class="t-detalle sec">Series, rampa, récords y progresión, redondeados a tus discos</span></div>
+                      <div class="segmento" role="group" aria-label="Cargas del gym" data-grupo="gym"><button type="button" data-v="kg">kg</button><button type="button" data-v="lb">lb</button></div></div>
+                    <div class="unidad web"><div class="txt"><span>Estatura</span><span class="t-detalle sec">Perfil, IMC y relación cintura/altura</span></div>
+                      <div class="segmento" role="group" aria-label="Estatura" data-grupo="estatura"><button type="button" data-v="m">m</button><button type="button" data-v="cm">cm</button><button type="button" data-v="ft">pies y pulgadas</button></div></div>
+                    <div class="unidad web"><div class="txt"><span>Perímetros</span><span class="t-detalle sec">Cintura, cadera, pecho, brazos y muslos</span></div>
+                      <div class="segmento" role="group" aria-label="Perímetros" data-grupo="perimetro"><button type="button" data-v="cm">cm</button><button type="button" data-v="in">pulgadas</button></div></div>
+                    <div class="unidad web"><div class="txt"><span>Distancia</span><span class="t-detalle sec">MTB y cardio; la velocidad y el desnivel la siguen</span></div>
+                      <div class="segmento" role="group" aria-label="Distancia" data-grupo="distancia"><button type="button" data-v="km">km</button><button type="button" data-v="mi">millas</button></div></div>
+                  </div>
+                </div>
+                <div class="tarjeta web span-4">
+                  <div><h4 class="t-seccion">Así ves tus datos</h4><span class="t-detalle sec">Con tus últimas cifras.</span></div>
+                  <div class="muestra-datos">
+                    <div><span>Peso</span><span class="cifra" data-fmt="peso"></span></div>
+                    <div><span>Press de banca</span><span class="cifra" data-fmt="gym"></span></div>
+                    <div><span>Estatura</span><span class="cifra" data-fmt="estatura"></span></div>
+                    <div><span>Cintura</span><span class="cifra" data-fmt="perimetro"></span></div>
+                    <div><span>Último paseo</span><span class="cifra" data-fmt="distancia"></span></div>
+                  </div>
+                  <p class="nota" style="margin:0">Cambiar una unidad no modifica tus datos.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <figcaption style="max-width:none"><b>Unidades en la web</b>Las mismas cinco opciones con una muestra de tus datos. Mismo estado que en el teléfono.</figcaption>
     </figure>
   </section>
 </main>
@@ -635,6 +786,51 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
     barra.querySelector(`[data-tab="${hueco.dataset.barra}"]`).setAttribute("aria-current", "page");
     hueco.replaceWith(barra);
   });
+
+  // Barra lateral web: una plantilla con la subsección de Ajustes activa.
+  const lat = document.getElementById("lateral-tpl");
+  document.querySelectorAll("[data-lateral]").forEach((hueco) => {
+    const aside = lat.content.firstElementChild.cloneNode(true);
+    aside.querySelector(`[data-sub="${hueco.dataset.lateral}"]`).setAttribute("aria-current", "page");
+    hueco.replaceWith(aside);
+  });
+
+  // Unidades (SIS-07): datos de Francis del Anexo A guardados en kg, cm y m; se convierten al mostrar.
+  const unidades = { peso: "lb", gym: "lb", estatura: "cm", perimetro: "cm", distancia: "km" };
+  const datos = { pesoKg: 78.4, bancaKg: 43.0913, estaturaCm: 172, cinturaCm: 91, paseoM: 18400, velKmh: 21.3, desnivelM: 240 };
+  const uno = (n) => n.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const ent = (n) => Math.round(n).toLocaleString("en-US");
+  const formato = {
+    peso: () => unidades.peso === "kg" ? `${uno(datos.pesoKg)} kg` : `${uno(datos.pesoKg / 0.45359237)} lb`,
+    gym: () => unidades.gym === "kg" ? `${uno(datos.bancaKg)} × 10 kg` : `${ent(datos.bancaKg / 0.45359237)} × 10 lb`,
+    estatura: () => {
+      if (unidades.estatura === "m") return `${(datos.estaturaCm / 100).toFixed(2)} m`;
+      if (unidades.estatura === "cm") return `${datos.estaturaCm} cm`;
+      const pulg = Math.round(datos.estaturaCm / 2.54);
+      return `${Math.floor(pulg / 12)}′ ${pulg % 12}″`;
+    },
+    perimetro: () => unidades.perimetro === "cm" ? `${datos.cinturaCm} cm` : `${uno(datos.cinturaCm / 2.54)} pulg.`,
+    distancia: () => unidades.distancia === "km"
+      ? `${uno(datos.paseoM / 1000)} km · ${uno(datos.velKmh)} km/h · ${ent(datos.desnivelM)} m`
+      : `${uno(datos.paseoM / 1609.344)} mi · ${uno(datos.velKmh / 1.609344)} mph · ${ent(datos.desnivelM / 0.3048)} pies`,
+    "distancia-corta": () => unidades.distancia === "km"
+      ? `${uno(datos.paseoM / 1000)} km · ${uno(datos.velKmh)} km/h`
+      : `${uno(datos.paseoM / 1609.344)} mi · ${uno(datos.velKmh / 1.609344)} mph`,
+  };
+  function pintarUnidades() {
+    document.querySelectorAll("[data-grupo]").forEach((g) =>
+      g.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === unidades[g.dataset.grupo]))));
+    document.querySelectorAll("[data-fmt]").forEach((el) => { el.textContent = formato[el.dataset.fmt](); });
+    const corto = { m: "m", cm: "cm", ft: "pies" };
+    document.querySelectorAll("[data-resumen-unidades]").forEach((el) => {
+      el.textContent = `${unidades.peso} · ${corto[unidades.estatura]} · ${unidades.distancia}`;
+    });
+  }
+  document.querySelectorAll("[data-grupo] button").forEach((b) => b.addEventListener("click", () => {
+    unidades[b.closest("[data-grupo]").dataset.grupo] = b.dataset.v;
+    pintarUnidades();
+  }));
+  pintarUnidades();
 
   const raiz = document.documentElement;
   function ponerAcento(a) {
