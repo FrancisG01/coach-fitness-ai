@@ -1,0 +1,850 @@
+<title>B2 láminas 6 y 13</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
+<style>
+/*
+  Fase 0.5 · mockups corregidos de las páginas 6 y 13 del PDF B2 "Caucho y acento".
+  Todos los valores salen de docs/diseno/tokens.json (18-oct-2026).
+  Excepción: los degradados del selector de color y la escala de "Color propio"
+  representan el color que elige el usuario; no son tokens de la interfaz.
+  Lámina: rejilla de teléfonos a tamaño real (360 × 780) con su pie, como en el PDF.
+*/
+:root {
+  /* neutros · claro (tiza) */
+  --fondo: #F3F4F1; --superficie: #FFFFFF; --elevado: #E9EBE7; --borde: #DADDD8;
+  --texto: #1E2228; --texto-2: #5B626B; --error: #C9333A; --dato-gris: #B5BBC2;
+  /* uso del acento · claro */
+  --accion: var(--a4); --accion-alta: var(--a5); --texto-accion: #FFFFFF; --texto-acento: var(--a4);
+  --suave: color-mix(in srgb, var(--a3) 13%, var(--superficie));
+  --dato-1: var(--a5); --dato-2: var(--a3); --dato-3: var(--dato-gris);
+  --capa-pressed: color-mix(in srgb, var(--texto) 10%, transparent);
+  /* referencias fijas de cada modo (miniaturas de modo y plantillas) */
+  --ref-tiza: #F3F4F1; --ref-tiza-sup: #FFFFFF; --ref-caucho: #1B1E23; --ref-caucho-sup: #23272D;
+  --ref-pizarra: #1A2026; --ref-pizarra-sup: #222A31;
+  /* acentos A1–A5 (por defecto Caribe) */
+  --a1: #CFE6F5; --a2: #7CC0EA; --a3: #3B95D1; --a4: #1F6FA8; --a5: #154E78;
+  /* tipografía */
+  --familia: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  /* espaciado, radios, trazos */
+  --e1: 4px; --e2: 8px; --e3: 12px; --e4: 16px; --e5: 24px; --e6: 32px; --e7: 48px;
+  --r-casilla: 6px; --r-control: 10px; --r-tarjeta: 16px; --r-pildora: 999px;
+  --t-borde: 1px; --t-sel: 2px;
+  --tactil: 48px; --tactil-gym: 56px; --barra: 64px;
+  --rapido: 120ms; --normal: 200ms; --estandar: cubic-bezier(0.2, 0, 0, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+    --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+    --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2);
+    --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+    --dato-1: var(--a1); --dato-2: var(--a3);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+  --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+  --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2);
+  --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+  --dato-1: var(--a1); --dato-2: var(--a3);
+  color-scheme: dark;
+}
+:root[data-accent="mar"]       { --a1: #C8EEEA; --a2: #6FD6CC; --a3: #22A99C; --a4: #157A70; --a5: #0F5850; }
+:root[data-accent="palma"]     { --a1: #CDEEDB; --a2: #6FD19B; --a3: #2FA866; --a4: #1E7D4A; --a5: #155A36; }
+:root[data-accent="mango"]     { --a1: #FCE7C2; --a2: #F7C062; --a3: #E89A1E; --a4: #9A5C06; --a5: #6E4307; }
+:root[data-accent="flamboyan"] { --a1: #FBD6CB; --a2: #F79A7E; --a3: #E8603C; --a4: #B6411F; --a5: #7E2C14; }
+:root[data-accent="uva"]       { --a1: #E3DBFA; --a2: #B4A2F2; --a3: #8466DB; --a4: #6446B8; --a5: #45307F; }
+
+* { box-sizing: border-box; }
+body {
+  background: var(--fondo); color: var(--texto);
+  font-family: var(--familia); font-size: 16px; line-height: 24px;
+  padding-block: var(--e6) var(--e7);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.i { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.i.s16 { width: 16px; height: 16px; stroke-width: 2; }
+.i.s20 { width: 20px; height: 20px; }
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
+/* tipografía (escala de tokens.json) */
+.t-pantalla { font-size: 25px; line-height: 30px; font-weight: 700; font-stretch: 85%; margin: 0; text-wrap: balance; }
+.t-seccion { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.t-detalle { font-size: 13px; line-height: 18px; font-weight: 500; }
+.t-boton { font-size: 15px; line-height: 20px; font-weight: 650; }
+.cifra { font-weight: 800; font-stretch: 62%; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.c-metrica { font-size: 32px; line-height: 32px; }
+.c-heroe { font-size: 56px; line-height: 52px; }
+.sec { color: var(--texto-2); }
+.acento { color: var(--texto-acento); }
+
+/* ---------- lámina ---------- */
+.lamina { max-width: 1560px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--e7); }
+.cabecera { display: flex; flex-wrap: wrap; gap: var(--e5); justify-content: space-between; align-items: end; }
+.cabecera h1 { font-size: 32px; line-height: 32px; font-weight: 800; font-stretch: 75%; margin: 0 0 var(--e2); text-wrap: balance; }
+.cabecera p { margin: 0; max-width: 62ch; color: var(--texto-2); }
+.controles { display: flex; flex-wrap: wrap; gap: var(--e4); }
+.control { display: flex; flex-direction: column; gap: var(--e1); }
+.segmento { display: flex; background: var(--elevado); border-radius: var(--r-control); padding: var(--e1); gap: var(--e1); }
+.segmento button { min-height: 40px; padding-inline: var(--e3); border-radius: var(--r-casilla); color: var(--texto-2); }
+.segmento button[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.puntos { display: flex; gap: var(--e2); align-items: center; min-height: 48px; }
+.punto { width: 32px; height: 32px; border-radius: var(--r-pildora); background: var(--c); }
+.punto[aria-pressed="true"] { outline: var(--t-sel) solid var(--texto); outline-offset: 2px; }
+
+.pagina { display: flex; flex-direction: column; gap: var(--e5); }
+.pagina > header { display: flex; flex-direction: column; gap: var(--e2); border-top: var(--t-borde) solid var(--borde); padding-top: var(--e5); }
+.pagina h2 { font-size: 25px; line-height: 30px; font-weight: 800; font-stretch: 75%; margin: 0; }
+.cambios { margin: 0; padding-left: 1.2em; color: var(--texto-2); max-width: 80ch; display: grid; gap: var(--e1); }
+.cambios strong { color: var(--texto); font-weight: 650; }
+.fila-telefonos { display: flex; flex-wrap: wrap; gap: var(--e6) var(--e4); }
+figure { margin: 0; display: flex; flex-direction: column; gap: var(--e3); width: 376px; }
+figcaption { display: flex; flex-direction: column; gap: 2px; font-size: 13px; line-height: 18px; color: var(--texto-2); max-width: 360px; }
+figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
+@media (max-width: 420px) { figure { zoom: 0.88; } }
+
+/* ---------- teléfono ---------- */
+.telefono { width: 376px; padding: var(--e2); border-radius: 36px; background: var(--borde); }
+.pantalla { height: 780px; border-radius: 28px; overflow: hidden; background: var(--fondo); display: flex; flex-direction: column; position: relative; }
+.estado { height: 28px; flex: none; display: flex; align-items: center; justify-content: space-between; padding-inline: var(--e5); font-size: 13px; font-weight: 600; }
+.cuerpo { flex: 1; min-height: 0; overflow: hidden; padding: var(--e2) var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e3); }
+.barra { height: var(--barra); flex: none; background: var(--superficie); border-top: var(--t-borde) solid var(--borde); display: grid; grid-template-columns: repeat(5, 1fr); }
+.pestana { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--texto-2); font-size: 13px; line-height: 16px; font-weight: 500; }
+.pestana .ovalo { width: 56px; height: 28px; border-radius: var(--r-pildora); display: grid; place-items: center; }
+.pestana[aria-current="page"] { color: var(--texto-acento); font-weight: 650; }
+
+/* piezas */
+.tarjeta { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e2); }
+.tarjeta.destacada { background: var(--suave); }
+.btn { min-height: var(--tactil); border-radius: var(--r-control); padding-inline: var(--e4); display: inline-flex; align-items: center; justify-content: center; gap: var(--e2); font-size: 15px; line-height: 20px; font-weight: 650; transition: background var(--rapido) var(--estandar), transform var(--rapido) var(--estandar); }
+.btn.gym { min-height: var(--tactil-gym); }
+.btn.primario { background: var(--accion); color: var(--texto-accion); }
+.btn.primario:active { background: var(--accion-alta); transform: scale(0.97); }
+.btn.secundario { border: var(--t-borde) solid var(--texto-2); color: var(--texto); }
+.btn.texto { color: var(--texto-acento); padding-inline: var(--e2); }
+@media (hover: hover) and (pointer: fine) { .btn.primario:hover { background: var(--accion-alta); } }
+.ancho { width: 100%; }
+.par { display: grid; grid-template-columns: 1fr 1fr; gap: var(--e3); }
+.casilla { width: 24px; height: 24px; border-radius: var(--r-casilla); border: var(--t-sel) solid var(--texto-2); display: grid; place-items: center; flex: none; }
+.casilla.hecha { background: var(--accion); border-color: var(--accion); color: var(--texto-accion); }
+.casilla.gym { width: 32px; height: 32px; }
+.lista { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; }
+.lista > * + * { border-top: var(--t-borde) solid var(--borde); }
+.fila { min-height: var(--tactil); padding-inline: var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); }
+.cuenta { width: 48px; height: 48px; display: grid; place-items: center; flex: none; }
+.cuenta span { width: 40px; height: 40px; border-radius: var(--r-pildora); background: var(--elevado); display: grid; place-items: center; font-weight: 650; font-size: 16px; }
+.cabeza { display: flex; align-items: center; justify-content: space-between; gap: var(--e2); }
+.atras { width: 48px; height: 48px; display: grid; place-items: center; margin-left: -12px; border-radius: var(--r-pildora); }
+
+/* línea del coach (DESIGN.md: ícono y etiqueta de acento, sin franja lateral) */
+.coach-cab { display: flex; align-items: center; gap: var(--e2); color: var(--texto-acento); }
+.coach p { margin: 0; }
+
+/* calendario */
+.semana { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--e1); text-align: center; }
+.dia { display: flex; flex-direction: column; align-items: center; gap: var(--e1); }
+.dia .num { width: 40px; height: 40px; border-radius: var(--r-pildora); display: grid; place-items: center; background: var(--elevado); color: var(--texto-2); }
+.dia .num.sel { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.carga { font-size: 20px; line-height: 20px; }
+
+/* sesión */
+.serie { min-height: var(--tactil-gym); background: var(--superficie); border-radius: var(--r-control); padding-inline: var(--e3) var(--e4); display: flex; align-items: center; gap: var(--e3); border: var(--t-sel) solid transparent; }
+.serie.actual { border-color: var(--accion); }
+.serie .nombre { flex: 1; }
+.serie.hecha .nombre { color: var(--texto-2); }
+.serie .carga { font-size: 25px; line-height: 24px; }
+.pista { height: 8px; border-radius: var(--r-pildora); background: var(--elevado); overflow: hidden; }
+.pista i { display: block; height: 100%; border-radius: inherit; background: var(--accion); }
+.atajos { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--e2); }
+.sinc { display: inline-flex; align-items: center; gap: var(--e1); color: var(--texto-2); }
+
+/* resumen */
+.tres { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--e2); }
+.mini { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3); text-align: center; display: flex; flex-direction: column; gap: var(--e1); }
+.mini .cifra { font-size: 32px; line-height: 32px; }
+
+/* apariencia */
+.etiqueta { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.grupo { display: flex; flex-direction: column; gap: var(--e2); }
+.muestras { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--e2) var(--e2); }
+.muestra { display: flex; flex-direction: column; align-items: center; gap: var(--e1); font-size: 13px; line-height: 16px; color: var(--texto-2); }
+.muestra .sw { width: 100%; height: 44px; border-radius: var(--r-control); background: var(--c); display: grid; place-items: center; color: var(--texto); }
+.muestra.propio .sw { background: var(--elevado); }
+.muestra[aria-pressed="true"] { color: var(--texto); font-weight: 650; }
+.muestra[aria-pressed="true"] .sw { outline: var(--t-sel) solid var(--texto); outline-offset: 2px; }
+.plantillas { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--e2); }
+.plantilla { display: flex; flex-direction: column; gap: var(--e1); font-size: 13px; line-height: 16px; color: var(--texto-2); text-align: center; }
+.plantilla .mini-tema { height: 48px; border-radius: var(--r-control); border: var(--t-borde) solid var(--borde); background: var(--pf); padding: var(--e2); display: flex; flex-direction: column; justify-content: end; gap: var(--e1); }
+.plantilla .mini-tema i { display: block; height: 6px; border-radius: var(--r-pildora); background: var(--pa); width: 60%; }
+.plantilla .mini-tema i + i { background: var(--ps); width: 85%; }
+.previa { display: flex; align-items: center; gap: var(--e4); }
+.previa .col { flex: 1; display: flex; flex-direction: column; gap: var(--e3); }
+.interruptor { width: 52px; height: 32px; border-radius: var(--r-pildora); background: var(--accion); position: relative; flex: none; }
+.interruptor::after { content: ""; position: absolute; width: 24px; height: 24px; border-radius: var(--r-pildora); background: var(--texto-accion); top: 4px; right: 4px; }
+
+/* color propio (selector: colores del usuario, no tokens) */
+.selector-sv { height: 196px; border-radius: var(--r-tarjeta); position: relative; background: linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, hsl(197 100% 50%)); }
+.tirador { position: absolute; width: 24px; height: 24px; border-radius: var(--r-pildora); border: var(--t-sel) solid #fff; background: var(--c); transform: translate(-50%, -50%); box-shadow: 0 0 0 1px rgb(0 0 0 / .35); }
+.selector-h { height: 16px; border-radius: var(--r-pildora); position: relative; background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); }
+.campo { min-height: var(--tactil); background: var(--elevado); border-radius: var(--r-control); padding-inline: var(--e4) var(--e3); display: flex; align-items: center; justify-content: space-between; }
+.campo .chip-color { width: 24px; height: 24px; border-radius: var(--r-casilla); background: #2E9FCF; }
+.escala { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--e1); }
+.escala i { height: 32px; border-radius: var(--r-casilla); }
+.chequeo { display: flex; align-items: center; justify-content: space-between; gap: var(--e2); font-size: 16px; line-height: 24px; }
+.chequeo span:last-child { display: inline-flex; align-items: center; gap: var(--e1); color: var(--texto-acento); }
+
+/* ajustes */
+.perfil { flex-direction: row; align-items: center; gap: var(--e3); }
+.perfil .avatar { width: 48px; height: 48px; border-radius: var(--r-pildora); background: var(--elevado); display: grid; place-items: center; font-weight: 650; font-size: 20px; flex: none; }
+.opcion { min-height: 64px; padding: var(--e2) var(--e3) var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); text-align: left; width: 100%; }
+.opcion .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.opcion .txt .t-detalle { color: var(--texto-2); }
+.opcion > .i:last-child { color: var(--texto-2); }
+.unidad { min-height: 72px; padding: var(--e3) var(--e3) var(--e3) var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); }
+.unidad .txt { display: flex; flex-direction: column; min-width: 0; }
+.unidad .segmento button { min-height: 40px; min-width: 48px; padding-inline: var(--e2); }
+.nota { display: flex; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.muestra-datos { display: flex; flex-direction: column; }
+.muestra-datos > div { display: flex; justify-content: space-between; align-items: baseline; gap: var(--e3); padding-block: var(--e3); }
+.muestra-datos > div + div { border-top: var(--t-borde) solid var(--borde); }
+.muestra-datos .cifra { font-size: 20px; line-height: 24px; text-align: right; }
+
+/* ---------- web ---------- */
+.web-envoltura { overflow-x: auto; border-radius: var(--r-tarjeta); }
+.navegador { min-width: 1180px; background: var(--borde); border-radius: var(--r-tarjeta); padding: 0 var(--t-borde) var(--t-borde); }
+.navegador .barra-nav { height: 40px; display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e4); }
+.navegador .url { background: var(--fondo); border-radius: var(--r-pildora); padding: 2px var(--e4); font-size: 13px; color: var(--texto-2); }
+.app-web { display: grid; grid-template-columns: 248px 1fr; background: var(--fondo); border-radius: 0 0 var(--r-tarjeta) var(--r-tarjeta); min-height: 760px; }
+.lateral { background: var(--superficie); border-right: var(--t-borde) solid var(--borde); padding: var(--e4) var(--e3); display: flex; flex-direction: column; gap: var(--e1); border-radius: 0 0 0 var(--r-tarjeta); }
+.marca { display: flex; align-items: center; gap: var(--e3); padding: var(--e2) var(--e2) var(--e4); font-weight: 650; font-size: 15px; }
+.logo { width: 32px; height: 32px; border-radius: var(--r-control); background: var(--elevado); color: var(--texto); display: grid; place-items: center; }
+.item { min-height: 44px; border-radius: var(--r-control); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; }
+.item[aria-current="page"] { background: var(--elevado); color: var(--texto-acento); font-weight: 650; }
+.item.abierto { color: var(--texto); font-weight: 650; }
+.subitem { min-height: 36px; display: flex; align-items: center; padding-left: 44px; border-radius: var(--r-control); color: var(--texto-2); font-size: 15px; }
+.subitem[aria-current="page"] { background: var(--elevado); color: var(--texto-acento); font-weight: 650; }
+.unidad.web { padding-inline: 0; }
+.lateral .pie { margin-top: auto; border-top: var(--t-borde) solid var(--borde); padding-top: var(--e3); display: flex; flex-direction: column; gap: var(--e1); }
+.lateral .pie .sinc { padding: var(--e2) var(--e3); }
+.principal { padding: var(--e6); display: flex; flex-direction: column; gap: var(--e5); }
+.rejilla { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--e4); }
+.span-12 { grid-column: span 12; } .span-8 { grid-column: span 8; } .span-4 { grid-column: span 4; }
+.tarjeta.web { padding: var(--e5); gap: var(--e4); }
+.modos { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--e3); }
+.modo { display: flex; align-items: center; gap: var(--e3); padding: var(--e3); border-radius: var(--r-control); background: var(--elevado); border: var(--t-sel) solid transparent; text-align: left; font-weight: 600; font-size: 15px; }
+.modo[aria-pressed="true"] { border-color: var(--accion); background: var(--suave); }
+.modo .mm { width: 56px; height: 36px; border-radius: var(--r-casilla); border: var(--t-borde) solid var(--borde); flex: none; }
+.acentos-web { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--e3); }
+.op-acento { display: flex; flex-direction: column; gap: var(--e2); padding: var(--e3); border-radius: var(--r-control); background: var(--elevado); border: var(--t-sel) solid transparent; text-align: left; }
+.op-acento .sw { height: 32px; border-radius: var(--r-casilla); background: var(--c); display: grid; place-items: center; }
+.op-acento.propio .sw { background: var(--superficie); }
+.op-acento b { font-weight: 650; font-size: 15px; line-height: 18px; }
+.op-acento span { font-size: 13px; line-height: 16px; color: var(--texto-2); }
+.op-acento[aria-pressed="true"] { border-color: var(--accion); background: var(--suave); }
+.macros { display: flex; flex-direction: column; gap: var(--e3); flex: 1; }
+.macro { display: grid; grid-template-columns: 120px 1fr 80px; align-items: center; gap: var(--e3); font-size: 16px; }
+.macro .pista i { background: var(--m); }
+.macro .cifra { font-size: 20px; text-align: right; }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- Tabler Icons 3.49.0, outline (MIT, © Paweł Kuna) -->
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/></symbol>
+  <symbol id="i-barbell" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+  <symbol id="i-kitchen" viewBox="0 0 24 24"><path d="M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12m0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c3.255 2.777 3.695 7.266 1.029 10.501c-2.666 3.235 -7.615 4.215 -11.574 2.293l-4.7 1"/></symbol>
+  <symbol id="i-cloud-check" viewBox="0 0 24 24"><path d="M11 18.004h-4.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.393 -1.762 1.794 -3.2 3.675 -3.773c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.388 0 2.585 .82 3.138 2.007"/><path d="M15 19l2 2l4 -4"/></symbol>
+  <symbol id="i-cloud-off" viewBox="0 0 24 24"><path d="M9.58 5.548c.24 -.11 .492 -.207 .752 -.286c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.913 0 3.464 1.56 3.464 3.486c0 .957 -.383 1.824 -1.003 2.454m-2.997 1.033h-11.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.13 -.582 .37 -1.128 .7 -1.62"/><path d="M3 3l18 18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M5 12l14 0"/><path d="M5 12l6 6"/><path d="M5 12l6 -6"/></symbol>
+  <symbol id="i-color-picker" viewBox="0 0 24 24"><path d="M11 7l6 6"/><path d="M4 16l11.7 -11.7a1 1 0 0 1 1.4 0l2.6 2.6a1 1 0 0 1 0 1.4l-11.7 11.7h-4v-4"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065"/><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25"/><path d="M7.5 10.5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M11.5 7.5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M15.5 10.5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/></symbol>
+  <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M19.875 12c.621 0 1.125 .512 1.125 1.143v5.714c0 .631 -.504 1.143 -1.125 1.143h-15.875a1 1 0 0 1 -1 -1v-5.857c0 -.631 .504 -1.143 1.125 -1.143h15.75"/><path d="M9 12v2"/><path d="M6 12v3"/><path d="M12 12v3"/><path d="M18 12v3"/><path d="M15 12v2"/><path d="M3 3v4"/><path d="M3 5h18"/><path d="M21 3v4"/></symbol>
+  <symbol id="i-shield-lock" viewBox="0 0 24 24"><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"/><path d="M11 11a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M12 12l0 2.5"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 11l5 5l5 -5"/><path d="M12 4l0 12"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 16v.01"/><path d="M12 13a2 2 0 0 0 .914 -3.782a1.98 1.98 0 0 0 -2.414 .483"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"/><path d="M9 12h12l-3 -3"/><path d="M18 15l3 -3"/></symbol>
+  <!-- logo provisional: glifo de packages/brand (barbell) -->
+  <symbol id="logo" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+</svg>
+
+<template id="lateral-tpl">
+  <aside class="lateral">
+    <div class="marca"><span class="logo"><svg class="i s20"><use href="#logo"/></svg></span><span data-brand-name>Coach Fitness AI</span></div>
+    <a class="item"><svg class="i s20"><use href="#i-home"/></svg>Hoy</a>
+    <a class="item"><svg class="i s20"><use href="#i-barbell"/></svg>Gym</a>
+    <a class="item"><svg class="i s20"><use href="#i-kitchen"/></svg>Comida</a>
+    <a class="item"><svg class="i s20"><use href="#i-heart"/></svg>Salud</a>
+    <a class="item"><svg class="i s20"><use href="#i-message"/></svg>Coach</a>
+    <div class="pie">
+      <a class="item abierto"><svg class="i s20"><use href="#i-settings"/></svg>Ajustes</a>
+      <a class="subitem" data-sub="apariencia">Apariencia</a>
+      <a class="subitem" data-sub="unidades">Unidades</a>
+      <a class="subitem" data-sub="cuenta">Cuenta y seguridad</a>
+      <a class="subitem" data-sub="exportar">Exportar datos</a>
+      <span class="sinc t-detalle"><svg class="i s16"><use href="#i-cloud-check"/></svg>Sincronizado hace 2 min</span>
+    </div>
+  </aside>
+</template>
+
+<template id="barra-tpl">
+  <nav class="barra" aria-label="Secciones">
+    <a class="pestana" data-tab="hoy"><span class="ovalo"><svg class="i"><use href="#i-home"/></svg></span>Hoy</a>
+    <a class="pestana" data-tab="gym"><span class="ovalo"><svg class="i"><use href="#i-barbell"/></svg></span>Gym</a>
+    <a class="pestana" data-tab="comida"><span class="ovalo"><svg class="i"><use href="#i-kitchen"/></svg></span>Comida</a>
+    <a class="pestana" data-tab="salud"><span class="ovalo"><svg class="i"><use href="#i-heart"/></svg></span>Salud</a>
+    <a class="pestana" data-tab="coach"><span class="ovalo"><svg class="i"><use href="#i-message"/></svg></span>Coach</a>
+  </nav>
+</template>
+
+<main class="lamina">
+  <header class="cabecera">
+    <div>
+      <h1>Láminas 6 y 13 del PDF B2, corregidas</h1>
+      <p>Fase 0.5 · páginas 6 y 13 aprobadas el 18-oct-2026; Ajustes y Unidades (SIS-07, D-24) en revisión. Las cargas van en libras, que es lo de fábrica.</p>
+    </div>
+    <div class="controles">
+      <div class="control">
+        <span class="t-detalle sec" id="lbl-modo">Modo</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-modo" id="ctl-modo">
+          <button type="button" id="modo-sistema" data-modo="" aria-pressed="true">Sistema</button>
+          <button type="button" id="modo-claro" data-modo="light" aria-pressed="false">Claro</button>
+          <button type="button" id="modo-oscuro" data-modo="dark" aria-pressed="false">Oscuro</button>
+        </div>
+      </div>
+      <div class="control">
+        <span class="t-detalle sec" id="lbl-acento">Acento</span>
+        <div class="puntos" role="group" aria-labelledby="lbl-acento" id="ctl-acento">
+          <button type="button" class="punto" data-a="caribe" style="--c:#3B95D1" aria-label="Caribe" aria-pressed="true"></button>
+          <button type="button" class="punto" data-a="mar" style="--c:#22A99C" aria-label="Mar" aria-pressed="false"></button>
+          <button type="button" class="punto" data-a="palma" style="--c:#2FA866" aria-label="Palma" aria-pressed="false"></button>
+          <button type="button" class="punto" data-a="mango" style="--c:#E89A1E" aria-label="Mango" aria-pressed="false"></button>
+          <button type="button" class="punto" data-a="flamboyan" style="--c:#E8603C" aria-label="Flamboyán" aria-pressed="false"></button>
+          <button type="button" class="punto" data-a="uva" style="--c:#8466DB" aria-label="Uva de playa" aria-pressed="false"></button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== PÁGINA 6 ===================== -->
+  <section class="pagina" aria-labelledby="p6">
+    <header>
+      <h2 id="p6">Página 6 · El día y el entrenamiento</h2>
+      <ul class="cambios">
+        <li><strong>Línea del coach:</strong> sin la barra de acento pegada al borde; ahora lleva ícono y etiqueta "Coach" en acento, igual que en la web.</li>
+        <li><strong>Hoy:</strong> botón de cuenta arriba a la derecha (abre Ajustes); orden de DESIGN.md: entreno, nutrición, coach y suplementos; meta de 2,350 kcal del PRD.</li>
+        <li><strong>Sesión en curso:</strong> ocupa toda la pantalla y oculta la barra; la sincronización va en la cabecera con su ícono; filas y atajos de 56 px.</li>
+        <li><strong>Libras:</strong> las cargas del gym van en lb, lo de fábrica (D-24), con cifras reales de disco: 90 lb en vez de 88.2.</li>
+      </ul>
+    </header>
+    <div class="fila-telefonos">
+
+      <!-- Hoy -->
+      <figure>
+        <div class="telefono"><div class="pantalla">
+          <div class="estado tnum"><span>7:05</span></div>
+          <div class="cuerpo">
+            <div class="cabeza">
+              <div>
+                <div class="t-detalle sec">Sábado 17 de octubre</div>
+                <h3 class="t-pantalla">Buenos días, Francis</h3>
+              </div>
+              <button type="button" class="cuenta" aria-label="Cuenta y ajustes"><span>F</span></button>
+            </div>
+            <div class="tarjeta destacada">
+              <span class="t-detalle sec">Hoy entrenas a las 8:00 a. m.</span>
+              <span class="t-seccion">Día A · Push + Legs</span>
+              <span class="t-detalle sec">5 ejercicios · unos 70 min</span>
+              <div><button type="button" class="btn primario">Empezar sesión</button></div>
+            </div>
+            <div class="par">
+              <div class="tarjeta">
+                <span class="t-detalle sec">Calorías</span>
+                <span class="cifra c-metrica">650</span>
+                <span class="t-detalle sec tnum">de 2,350 kcal</span>
+              </div>
+              <div class="tarjeta">
+                <span class="t-detalle sec">Proteína</span>
+                <span class="cifra c-metrica">42</span>
+                <span class="t-detalle sec tnum">de 187 g</span>
+              </div>
+            </div>
+            <div class="tarjeta coach">
+              <div class="coach-cab"><svg class="i s16"><use href="#i-message"/></svg><span class="t-detalle">Coach</span></div>
+              <p>Ayer cenaste 38 g de proteína menos de lo planificado. Agrega un huevo extra en el desayuno.</p>
+            </div>
+            <div class="tarjeta">
+              <span class="t-detalle sec">Suplementos</span>
+              <div class="cabeza" style="min-height:40px"><span>D3 y creatina</span><span class="casilla hecha"><svg class="i s16"><use href="#i-check"/></svg></span></div>
+              <div class="cabeza" style="min-height:40px"><span class="sec">Whey después del gym</span><span class="casilla"></span></div>
+            </div>
+          </div>
+          <div data-barra="hoy"></div>
+        </div></div>
+        <figcaption><b>Hoy</b>Entreno, nutrición, consejo del coach y suplementos. DSH-01, COA-03.</figcaption>
+      </figure>
+
+      <!-- Calendario -->
+      <figure>
+        <div class="telefono"><div class="pantalla">
+          <div class="estado tnum"><span>21:10</span></div>
+          <div class="cuerpo">
+            <h3 class="t-pantalla">Calendario</h3>
+            <div class="semana tnum">
+              <div class="dia"><span class="t-detalle sec">L</span><span class="num sel">19</span></div>
+              <div class="dia"><span class="t-detalle sec">M</span><span class="num">20</span></div>
+              <div class="dia"><span class="t-detalle sec">M</span><span class="num">21</span></div>
+              <div class="dia"><span class="t-detalle sec">J</span><span class="num">22</span></div>
+              <div class="dia"><span class="t-detalle sec">V</span><span class="num">23</span></div>
+              <div class="dia"><span class="t-detalle sec">S</span><span class="num">24</span></div>
+              <div class="dia"><span class="t-detalle sec">D</span><span class="num">25</span></div>
+            </div>
+            <span class="t-detalle sec">Lunes 19 · Día A · semana 1</span>
+            <div class="lista">
+              <div class="fila"><span>Sentadilla con barra</span><span class="cifra carga">3 × 10 · 90 lb</span></div>
+              <div class="fila"><span>Press de banca</span><span class="cifra carga">3 × 8 · 90 lb</span></div>
+              <div class="fila"><span>Press militar manc.</span><span class="cifra carga">3 × 10 · 20 lb</span></div>
+              <div class="fila"><span>Extensión tríceps</span><span class="cifra carga">3 × 12 · 35 lb</span></div>
+              <div class="fila"><span>Elevación lateral</span><span class="cifra carga">3 × 12 · 10 lb</span></div>
+            </div>
+            <div class="par">
+              <button type="button" class="btn secundario">Cambiar rutina</button>
+              <button type="button" class="btn primario">Guardar plan</button>
+            </div>
+          </div>
+          <div data-barra="gym"></div>
+        </div></div>
+        <figcaption><b>Calendario</b>Programar sesiones con rutina y peso por ejercicio. GYM-03.</figcaption>
+      </figure>
+
+      <!-- Sesión en curso -->
+      <figure>
+        <div class="telefono"><div class="pantalla">
+          <div class="estado tnum"><span>8:24</span></div>
+          <div class="cuerpo">
+            <div class="cabeza">
+              <span class="t-detalle sec">Día A · ejercicio 2 de 5</span>
+              <span class="sinc t-detalle"><svg class="i s16"><use href="#i-cloud-off"/></svg>Sin conexión · 3 por subir</span>
+            </div>
+            <h3 class="t-pantalla">Press de banca plano</h3>
+            <span class="t-detalle sec">Cargas en lb</span>
+            <div class="serie hecha"><span class="casilla gym hecha"><svg class="i s20"><use href="#i-check"/></svg></span><span class="nombre">Rampa 1 · 50 %</span><span class="cifra carga">45 × 5</span></div>
+            <div class="serie hecha"><span class="casilla gym hecha"><svg class="i s20"><use href="#i-check"/></svg></span><span class="nombre">Rampa 2 · 70 %</span><span class="cifra carga">65 × 3</span></div>
+            <div class="serie hecha"><span class="casilla gym hecha"><svg class="i s20"><use href="#i-check"/></svg></span><span class="nombre">Trabajo 1</span><span class="cifra carga">90 × 10</span></div>
+            <div class="serie actual"><span class="casilla gym"></span><span class="nombre">Trabajo 2</span><span class="cifra carga">90 × 10</span></div>
+            <div class="serie"><span class="casilla gym"></span><span class="nombre sec">Trabajo 3</span><span class="cifra carga sec">90 × 10</span></div>
+            <div class="tarjeta" style="align-items:center; gap: var(--e3)">
+              <span class="t-detalle sec">Descanso</span>
+              <span class="cifra c-heroe">1:12</span>
+              <div class="pista" style="width:100%"><i style="width:40%"></i></div>
+              <div class="atajos" style="width:100%">
+                <button type="button" class="btn gym secundario tnum">−15 s</button>
+                <button type="button" class="btn gym secundario">Saltar</button>
+                <button type="button" class="btn gym secundario tnum">+15 s</button>
+              </div>
+            </div>
+            <span class="t-detalle sec tnum" style="text-align:center">Última vez: 85 × 10, 10, 9 lb</span>
+          </div>
+        </div></div>
+        <figcaption><b>Sesión en curso</b>Series, rampa y temporizador con vibración, sin señal. Sin barra inferior. GYM-04, GYM-05.</figcaption>
+      </figure>
+
+      <!-- Resumen -->
+      <figure>
+        <div class="telefono"><div class="pantalla">
+          <div class="estado tnum"><span>9:31</span></div>
+          <div class="cuerpo">
+            <h3 class="t-pantalla">Sesión terminada</h3>
+            <div class="tarjeta destacada" style="align-items:center; text-align:center">
+              <span class="t-detalle sec">Nuevo récord · press de banca · lb</span>
+              <span class="cifra c-heroe">95 × 10</span>
+              <span class="t-detalle sec tnum">1RM estimado 126.7 lb · +6.2 lb</span>
+            </div>
+            <div class="tres">
+              <div class="mini"><span class="cifra">74</span><span class="t-detalle sec">min</span></div>
+              <div class="mini"><span class="cifra">18</span><span class="t-detalle sec">series</span></div>
+              <div class="mini"><span class="cifra">11,550</span><span class="t-detalle sec">lb totales</span></div>
+            </div>
+            <span class="t-detalle sec">Récords por repeticiones</span>
+            <div class="lista">
+              <div class="fila"><span>1RM</span><span class="cifra carga">126.7 lb</span></div>
+              <div class="fila"><span>5RM</span><span class="cifra carga">108.6 lb</span></div>
+              <div class="fila"><span>10RM</span><span class="cifra carga">95 lb</span></div>
+            </div>
+            <div class="tarjeta coach">
+              <div class="coach-cab"><svg class="i s16"><use href="#i-message"/></svg><span class="t-detalle">Coach</span></div>
+              <p>Completaste todo con buena técnica. El lunes sube 5 lb en banca.</p>
+            </div>
+          </div>
+          <div data-barra="gym"></div>
+        </div></div>
+        <figcaption><b>Resumen y récords</b>1RM y RM múltiples, volumen y siguiente progresión. GYM-07.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===================== PÁGINA 13 ===================== -->
+  <section class="pagina" aria-labelledby="p13">
+    <header>
+      <h2 id="p13">Página 13 · Ajustes: tu paleta</h2>
+      <ul class="cambios">
+        <li><strong>Barra móvil:</strong> Hoy, Gym, Comida, Salud, Coach. Ajustes ya no es pestaña: se abre desde el botón de cuenta de Hoy como pantalla apilada, con flecha de atrás.</li>
+        <li><strong>Barra lateral web:</strong> las cinco secciones; Ajustes y el estado de sincronización al pie. Nombre y logo provisionales de packages/brand.</li>
+        <li><strong>Color propio:</strong> la muestra "Propio" usa el ícono de selector en vez de un degradado arcoíris.</li>
+      </ul>
+    </header>
+    <div class="fila-telefonos">
+
+      <!-- Apariencia -->
+      <figure>
+        <div class="telefono"><div class="pantalla">
+          <div class="estado tnum"><span>21:30</span></div>
+          <div class="cuerpo">
+            <div>
+              <button type="button" class="atras" aria-label="Atrás"><svg class="i"><use href="#i-arrow-left"/></svg></button>
+              <div class="t-detalle sec">Ajustes</div>
+              <h3 class="t-pantalla">Apariencia</h3>
+            </div>
+            <div class="grupo">
+              <span class="etiqueta">Modo</span>
+              <div class="segmento" role="group" aria-label="Modo">
+                <button type="button" style="flex:1" aria-pressed="false">Claro</button>
+                <button type="button" style="flex:1" aria-pressed="false">Oscuro</button>
+                <button type="button" style="flex:1" aria-pressed="true">Sistema</button>
+              </div>
+            </div>
+            <div class="grupo">
+              <span class="etiqueta">Color de acento</span>
+              <div class="muestras" data-muestras>
+                <button type="button" class="muestra" data-a="caribe" style="--c:#3B95D1"><span class="sw"></span>Caribe</button>
+                <button type="button" class="muestra" data-a="mar" style="--c:#22A99C"><span class="sw"></span>Mar</button>
+                <button type="button" class="muestra" data-a="palma" style="--c:#2FA866"><span class="sw"></span>Palma</button>
+                <button type="button" class="muestra" data-a="mango" style="--c:#E89A1E"><span class="sw"></span>Mango</button>
+                <button type="button" class="muestra" data-a="flamboyan" style="--c:#E8603C"><span class="sw"></span>Flamboyán</button>
+                <button type="button" class="muestra" data-a="uva" style="--c:#8466DB"><span class="sw"></span>Uva de playa</button>
+                <button type="button" class="muestra propio"><span class="sw"><svg class="i s20"><use href="#i-color-picker"/></svg></span>Propio</button>
+              </div>
+            </div>
+            <div class="grupo">
+              <span class="etiqueta">Plantillas sugeridas</span>
+              <div class="plantillas">
+                <div class="plantilla"><span class="mini-tema" style="--pf:var(--ref-caucho); --pa:#7CC0EA; --ps:var(--ref-caucho-sup)"><i></i><i></i></span>Noche de gym</div>
+                <div class="plantilla"><span class="mini-tema" style="--pf:var(--ref-pizarra); --pa:#6FD6CC; --ps:var(--ref-pizarra-sup)"><i></i><i></i></span>Laguna</div>
+                <div class="plantilla"><span class="mini-tema" style="--pf:var(--ref-tiza); --pa:#9A5C06; --ps:var(--ref-tiza-sup)"><i></i><i></i></span>Amanecer</div>
+              </div>
+              <div><button type="button" class="btn texto" style="min-height:36px">Ver las 8 plantillas</button></div>
+            </div>
+            <div class="tarjeta previa">
+              <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="flex:none">
+                <circle cx="32" cy="32" r="26" fill="none" stroke="var(--elevado)" stroke-width="8"/>
+                <circle cx="32" cy="32" r="26" fill="none" stroke="var(--accion)" stroke-width="8" stroke-linecap="round" stroke-dasharray="113 164" transform="rotate(-90 32 32)"/>
+              </svg>
+              <div class="col">
+                <div class="pista"><i style="width:72%"></i></div>
+                <div><button type="button" class="btn primario">Botón principal</button></div>
+              </div>
+            </div>
+            <div class="cabeza"><span>Aplicar también en la web</span><span class="interruptor" role="switch" aria-checked="true" aria-label="Aplicar también en la web"></span></div>
+          </div>
+          <div data-barra="hoy"></div>
+        </div></div>
+        <figcaption><b>Apariencia</b>Modo claro, oscuro o sistema; seis acentos y uno propio; plantillas; vista previa en vivo. Se abre desde el botón de cuenta.</figcaption>
+      </figure>
+
+      <!-- Color propio -->
+      <figure>
+        <div class="telefono"><div class="pantalla">
+          <div class="estado tnum"><span>21:32</span></div>
+          <div class="cuerpo">
+            <div>
+              <button type="button" class="atras" aria-label="Atrás"><svg class="i"><use href="#i-arrow-left"/></svg></button>
+              <div class="t-detalle sec">Apariencia</div>
+              <h3 class="t-pantalla">Color propio</h3>
+            </div>
+            <div class="selector-sv"><span class="tirador" style="left:72%; top:22%; --c:#2E9FCF"></span></div>
+            <div class="selector-h"><span class="tirador" style="left:55%; top:50%; --c:hsl(197 100% 50%)"></span></div>
+            <div class="grupo">
+              <span class="etiqueta">Código HEX</span>
+              <div class="campo"><span class="tnum">#2E9FCF</span><span class="chip-color"></span></div>
+            </div>
+            <div class="grupo">
+              <span class="etiqueta">Escala generada</span>
+              <div class="escala"><i style="background:#CBE9F6"></i><i style="background:#7FCBEA"></i><i style="background:#2E9FCF"></i><i style="background:#1D74A0"></i><i style="background:#134F6F"></i></div>
+            </div>
+            <div class="tarjeta" style="gap: var(--e1)">
+              <div class="chequeo"><span>Texto sobre botón oscuro</span><span class="tnum">8.6:1 <svg class="i s16"><use href="#i-check"/></svg></span></div>
+              <div class="chequeo"><span>Botón en modo claro</span><span class="tnum">5.4:1 <svg class="i s16"><use href="#i-check"/></svg></span></div>
+              <div class="chequeo"><span>Distinto del color de error</span><span><svg class="i s16"><use href="#i-check"/></svg></span></div>
+            </div>
+            <div class="par">
+              <button type="button" class="btn secundario">Cancelar</button>
+              <button type="button" class="btn primario">Usar este color</button>
+            </div>
+          </div>
+          <div data-barra="hoy"></div>
+        </div></div>
+        <figcaption><b>Color propio</b>Selector, campo HEX, escala generada y verificación de contraste antes de aplicar.</figcaption>
+      </figure>
+    </div>
+
+    <!-- Web -->
+    <figure style="width:100%">
+      <div class="web-envoltura">
+        <div class="navegador">
+          <div class="barra-nav"><span class="url">coach.tail72ec86.ts.net/ajustes/apariencia</span></div>
+          <div class="app-web">
+            <div data-lateral="apariencia"></div>
+            <div class="principal">
+              <div class="cabeza">
+                <div><div class="t-detalle sec">Ajustes</div><h3 class="t-pantalla">Apariencia</h3></div>
+                <button type="button" class="btn secundario">Restablecer</button>
+              </div>
+              <div class="rejilla">
+                <div class="tarjeta web span-12">
+                  <div><h4 class="t-seccion">Modo</h4><span class="t-detalle sec">Sistema sigue el modo de tu dispositivo.</span></div>
+                  <div class="modos">
+                    <button type="button" class="modo" aria-pressed="false"><span class="mm" style="background:var(--ref-tiza)"></span>Claro</button>
+                    <button type="button" class="modo" aria-pressed="false"><span class="mm" style="background:var(--ref-caucho)"></span>Oscuro</button>
+                    <button type="button" class="modo" aria-pressed="true"><span class="mm" style="background:linear-gradient(90deg, var(--ref-tiza) 50%, var(--ref-caucho) 50%)"></span>Sistema</button>
+                  </div>
+                </div>
+                <div class="tarjeta web span-8">
+                  <div><h4 class="t-seccion">Color de acento</h4><span class="t-detalle sec">Se usa en botones, progreso y datos. El resto de la app se queda neutro.</span></div>
+                  <div class="acentos-web" data-muestras>
+                    <button type="button" class="op-acento" data-a="caribe" style="--c:#3B95D1"><span class="sw"></span><b>Caribe</b><span>Azul del mar abierto</span></button>
+                    <button type="button" class="op-acento" data-a="mar" style="--c:#22A99C"><span class="sw"></span><b>Mar</b><span>Turquesa de laguna</span></button>
+                    <button type="button" class="op-acento" data-a="palma" style="--c:#2FA866"><span class="sw"></span><b>Palma</b><span>Verde de palma</span></button>
+                    <button type="button" class="op-acento" data-a="mango" style="--c:#E89A1E"><span class="sw"></span><b>Mango</b><span>Ámbar de mango maduro</span></button>
+                    <button type="button" class="op-acento" data-a="flamboyan" style="--c:#E8603C"><span class="sw"></span><b>Flamboyán</b><span>Rojo naranja del flamboyán</span></button>
+                    <button type="button" class="op-acento" data-a="uva" style="--c:#8466DB"><span class="sw"></span><b>Uva de playa</b><span>Violeta de la uva de playa</span></button>
+                    <button type="button" class="op-acento propio"><span class="sw"><svg class="i s20"><use href="#i-color-picker"/></svg></span><b>Propio</b><span>Elige o escribe tu color</span></button>
+                  </div>
+                </div>
+                <div class="tarjeta web span-4">
+                  <div><h4 class="t-seccion">Color propio</h4><span class="t-detalle sec">Selector o código HEX</span></div>
+                  <div class="selector-sv" style="height:120px"><span class="tirador" style="left:72%; top:22%; --c:#2E9FCF"></span></div>
+                  <div class="selector-h"><span class="tirador" style="left:55%; top:50%; --c:hsl(197 100% 50%)"></span></div>
+                  <div class="campo"><span class="tnum">#2E9FCF</span><span class="chip-color"></span></div>
+                  <span class="t-detalle acento">Contraste verificado en claro y oscuro</span>
+                </div>
+                <div class="tarjeta web span-12">
+                  <div><h4 class="t-seccion">Vista previa</h4><span class="t-detalle sec">Así se verá el inicio con tu elección.</span></div>
+                  <div class="previa" style="gap: var(--e6)">
+                    <svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true" style="flex:none">
+                      <circle cx="48" cy="48" r="40" fill="none" stroke="var(--elevado)" stroke-width="10"/>
+                      <circle cx="48" cy="48" r="40" fill="none" stroke="var(--accion)" stroke-width="10" stroke-linecap="round" stroke-dasharray="174 252" transform="rotate(-90 48 48)"/>
+                    </svg>
+                    <div class="macros">
+                      <div class="macro"><span>Proteína</span><div class="pista"><i style="width:86%; --m:var(--dato-1)"></i></div><span class="cifra">160 / 187 g</span></div>
+                      <div class="macro"><span>Carbohidratos</span><div class="pista"><i style="width:73%; --m:var(--dato-2)"></i></div><span class="cifra">190 / 260 g</span></div>
+                      <div class="macro"><span>Grasas</span><div class="pista"><i style="width:38%; --m:var(--dato-3)"></i></div><span class="cifra">24 / 64 g</span></div>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap: var(--e2)">
+                      <button type="button" class="btn primario">Botón principal</button>
+                      <button type="button" class="btn secundario">Secundario</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <figcaption style="max-width:none"><b>La misma sección en la web</b>Barra lateral con las cinco secciones; Ajustes al pie, abierto con sus subsecciones, y la sincronización debajo. El tema se guarda en tu cuenta y se aplica en web y móvil.</figcaption>
+    </figure>
+  </section>
+  <!-- ===================== AJUSTES Y UNIDADES ===================== -->
+  <section class="pagina" aria-labelledby="pu">
+    <header>
+      <h2 id="pu">Nuevo · Ajustes y unidades</h2>
+      <ul class="cambios">
+        <li><strong>Ajustes:</strong> se abre con el botón de cuenta de Hoy y reúne Apariencia, Unidades, Cuenta y seguridad, Exportar datos y Centro de ayuda.</li>
+        <li><strong>Unidades (SIS-07):</strong> cinco opciones con un ejemplo de tus propios datos al lado. Se guardan al tocarlas, sin botón, y valen en web, móvil, reloj y coach.</li>
+        <li><strong>Pruébalo:</strong> toca las opciones; los ejemplos y la vista previa web cambian juntos.</li>
+      </ul>
+    </header>
+    <div class="fila-telefonos">
+
+      <!-- Ajustes -->
+      <figure>
+        <div class="telefono"><div class="pantalla">
+          <div class="estado tnum"><span>21:28</span></div>
+          <div class="cuerpo">
+            <div>
+              <button type="button" class="atras" aria-label="Atrás"><svg class="i"><use href="#i-arrow-left"/></svg></button>
+              <h3 class="t-pantalla">Ajustes</h3>
+            </div>
+            <div class="tarjeta perfil">
+              <span class="avatar">F</span>
+              <div class="txt"><div class="t-seccion">Francis Guzman</div><div class="t-detalle sec">Verificación en dos pasos activa</div></div>
+            </div>
+            <div class="lista">
+              <button type="button" class="opcion"><svg class="i"><use href="#i-palette"/></svg><span class="txt"><span>Apariencia</span><span class="t-detalle">Sistema · Caribe</span></span><svg class="i s20"><use href="#i-chevron-right"/></svg></button>
+              <button type="button" class="opcion"><svg class="i"><use href="#i-ruler"/></svg><span class="txt"><span>Unidades</span><span class="t-detalle" data-resumen-unidades>lb · cm · km</span></span><svg class="i s20"><use href="#i-chevron-right"/></svg></button>
+              <button type="button" class="opcion"><svg class="i"><use href="#i-shield-lock"/></svg><span class="txt"><span>Cuenta y seguridad</span><span class="t-detalle">Contraseña y verificación en dos pasos</span></span><svg class="i s20"><use href="#i-chevron-right"/></svg></button>
+              <button type="button" class="opcion"><svg class="i"><use href="#i-download"/></svg><span class="txt"><span>Exportar datos</span><span class="t-detalle">Todos tus datos en CSV o JSON</span></span><svg class="i s20"><use href="#i-chevron-right"/></svg></button>
+              <button type="button" class="opcion"><svg class="i"><use href="#i-help"/></svg><span class="txt"><span>Centro de ayuda</span><span class="t-detalle">Guías de web, Android y reloj</span></span><svg class="i s20"><use href="#i-chevron-right"/></svg></button>
+            </div>
+            <button type="button" class="btn secundario ancho"><svg class="i s20"><use href="#i-logout"/></svg>Cerrar sesión</button>
+            <span class="t-detalle sec tnum" style="text-align:center"><span data-brand-name>Coach Fitness AI</span> · versión 0.1.0</span>
+          </div>
+          <div data-barra="hoy"></div>
+        </div></div>
+        <figcaption><b>Ajustes</b>Se abre desde el botón de cuenta de Hoy como pantalla apilada. SIS-02, SIS-04, SIS-06, SIS-07.</figcaption>
+      </figure>
+
+      <!-- Unidades -->
+      <figure>
+        <div class="telefono"><div class="pantalla">
+          <div class="estado tnum"><span>21:29</span></div>
+          <div class="cuerpo">
+            <div>
+              <button type="button" class="atras" aria-label="Atrás"><svg class="i"><use href="#i-arrow-left"/></svg></button>
+              <div class="t-detalle sec">Ajustes</div>
+              <h3 class="t-pantalla">Unidades</h3>
+            </div>
+            <div class="lista">
+              <div class="unidad"><div class="txt"><span>Peso corporal</span><span class="t-detalle sec tnum" data-fmt="peso"></span></div>
+                <div class="segmento" role="group" aria-label="Peso corporal" data-grupo="peso"><button type="button" data-v="kg">kg</button><button type="button" data-v="lb">lb</button></div></div>
+              <div class="unidad"><div class="txt"><span>Cargas del gym</span><span class="t-detalle sec tnum" data-fmt="gym"></span></div>
+                <div class="segmento" role="group" aria-label="Cargas del gym" data-grupo="gym"><button type="button" data-v="kg">kg</button><button type="button" data-v="lb">lb</button></div></div>
+              <div class="unidad"><div class="txt"><span>Estatura</span><span class="t-detalle sec tnum" data-fmt="estatura"></span></div>
+                <div class="segmento" role="group" aria-label="Estatura" data-grupo="estatura"><button type="button" data-v="m">m</button><button type="button" data-v="cm">cm</button><button type="button" data-v="ft">pies</button></div></div>
+              <div class="unidad"><div class="txt"><span>Perímetros</span><span class="t-detalle sec tnum" data-fmt="perimetro"></span></div>
+                <div class="segmento" role="group" aria-label="Perímetros" data-grupo="perimetro"><button type="button" data-v="cm">cm</button><button type="button" data-v="in">pulg.</button></div></div>
+              <div class="unidad"><div class="txt"><span>Distancia</span><span class="t-detalle sec tnum" data-fmt="distancia-corta"></span></div>
+                <div class="segmento" role="group" aria-label="Distancia" data-grupo="distancia"><button type="button" data-v="km">km</button><button type="button" data-v="mi">millas</button></div></div>
+            </div>
+            <p class="nota" style="margin:0">Cambiar una unidad no modifica tus datos: solo cambia cómo los ves y en qué unidad escribes los nuevos. En comida eliges la unidad en cada registro.</p>
+          </div>
+          <div data-barra="hoy"></div>
+        </div></div>
+        <figcaption><b>Unidades</b>Peso corporal y cargas del gym por separado; estatura, perímetros y distancia. Se guarda al tocar. SIS-07.</figcaption>
+      </figure>
+    </div>
+
+    <!-- Web: Unidades -->
+    <figure style="width:100%">
+      <div class="web-envoltura">
+        <div class="navegador">
+          <div class="barra-nav"><span class="url">coach.tail72ec86.ts.net/ajustes/unidades</span></div>
+          <div class="app-web">
+            <div data-lateral="unidades"></div>
+            <div class="principal">
+              <div><div class="t-detalle sec">Ajustes</div><h3 class="t-pantalla">Unidades</h3></div>
+              <div class="rejilla">
+                <div class="tarjeta web span-8">
+                  <div><h4 class="t-seccion">Tus unidades</h4><span class="t-detalle sec">Se guardan en tu cuenta y valen en la web, el teléfono, el reloj y las respuestas del coach.</span></div>
+                  <div class="muestra-datos">
+                    <div class="unidad web"><div class="txt"><span>Peso corporal</span><span class="t-detalle sec">Renpho, tendencias y metas</span></div>
+                      <div class="segmento" role="group" aria-label="Peso corporal" data-grupo="peso"><button type="button" data-v="kg">kg</button><button type="button" data-v="lb">lb</button></div></div>
+                    <div class="unidad web"><div class="txt"><span>Cargas del gym</span><span class="t-detalle sec">Series, rampa, récords y progresión, redondeados a tus discos</span></div>
+                      <div class="segmento" role="group" aria-label="Cargas del gym" data-grupo="gym"><button type="button" data-v="kg">kg</button><button type="button" data-v="lb">lb</button></div></div>
+                    <div class="unidad web"><div class="txt"><span>Estatura</span><span class="t-detalle sec">Perfil, IMC y relación cintura/altura</span></div>
+                      <div class="segmento" role="group" aria-label="Estatura" data-grupo="estatura"><button type="button" data-v="m">m</button><button type="button" data-v="cm">cm</button><button type="button" data-v="ft">pies y pulgadas</button></div></div>
+                    <div class="unidad web"><div class="txt"><span>Perímetros</span><span class="t-detalle sec">Cintura, cadera, pecho, brazos y muslos</span></div>
+                      <div class="segmento" role="group" aria-label="Perímetros" data-grupo="perimetro"><button type="button" data-v="cm">cm</button><button type="button" data-v="in">pulgadas</button></div></div>
+                    <div class="unidad web"><div class="txt"><span>Distancia</span><span class="t-detalle sec">MTB y cardio; la velocidad y el desnivel la siguen</span></div>
+                      <div class="segmento" role="group" aria-label="Distancia" data-grupo="distancia"><button type="button" data-v="km">km</button><button type="button" data-v="mi">millas</button></div></div>
+                  </div>
+                </div>
+                <div class="tarjeta web span-4">
+                  <div><h4 class="t-seccion">Así ves tus datos</h4><span class="t-detalle sec">Con tus últimas cifras.</span></div>
+                  <div class="muestra-datos">
+                    <div><span>Peso</span><span class="cifra" data-fmt="peso"></span></div>
+                    <div><span>Press de banca</span><span class="cifra" data-fmt="gym"></span></div>
+                    <div><span>Estatura</span><span class="cifra" data-fmt="estatura"></span></div>
+                    <div><span>Cintura</span><span class="cifra" data-fmt="perimetro"></span></div>
+                    <div><span>Último paseo</span><span class="cifra" data-fmt="distancia"></span></div>
+                  </div>
+                  <p class="nota" style="margin:0">Cambiar una unidad no modifica tus datos.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <figcaption style="max-width:none"><b>Unidades en la web</b>Las mismas cinco opciones con una muestra de tus datos. Mismo estado que en el teléfono.</figcaption>
+    </figure>
+  </section>
+</main>
+
+<script>
+  // Barra inferior: una sola plantilla con la pestaña activa por pantalla.
+  const tpl = document.getElementById("barra-tpl");
+  document.querySelectorAll("[data-barra]").forEach((hueco) => {
+    const barra = tpl.content.firstElementChild.cloneNode(true);
+    barra.querySelector(`[data-tab="${hueco.dataset.barra}"]`).setAttribute("aria-current", "page");
+    hueco.replaceWith(barra);
+  });
+
+  // Barra lateral web: una plantilla con la subsección de Ajustes activa.
+  const lat = document.getElementById("lateral-tpl");
+  document.querySelectorAll("[data-lateral]").forEach((hueco) => {
+    const aside = lat.content.firstElementChild.cloneNode(true);
+    aside.querySelector(`[data-sub="${hueco.dataset.lateral}"]`).setAttribute("aria-current", "page");
+    hueco.replaceWith(aside);
+  });
+
+  // Unidades (SIS-07): datos de Francis del Anexo A guardados en kg, cm y m; se convierten al mostrar.
+  const unidades = { peso: "lb", gym: "lb", estatura: "cm", perimetro: "cm", distancia: "km" };
+  const datos = { pesoKg: 78.4, bancaKg: 43.0913, estaturaCm: 172, cinturaCm: 91, paseoM: 18400, velKmh: 21.3, desnivelM: 240 };
+  const uno = (n) => n.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const ent = (n) => Math.round(n).toLocaleString("en-US");
+  const formato = {
+    peso: () => unidades.peso === "kg" ? `${uno(datos.pesoKg)} kg` : `${uno(datos.pesoKg / 0.45359237)} lb`,
+    gym: () => unidades.gym === "kg" ? `${uno(datos.bancaKg)} × 10 kg` : `${ent(datos.bancaKg / 0.45359237)} × 10 lb`,
+    estatura: () => {
+      if (unidades.estatura === "m") return `${(datos.estaturaCm / 100).toFixed(2)} m`;
+      if (unidades.estatura === "cm") return `${datos.estaturaCm} cm`;
+      const pulg = Math.round(datos.estaturaCm / 2.54);
+      return `${Math.floor(pulg / 12)}′ ${pulg % 12}″`;
+    },
+    perimetro: () => unidades.perimetro === "cm" ? `${datos.cinturaCm} cm` : `${uno(datos.cinturaCm / 2.54)} pulg.`,
+    distancia: () => unidades.distancia === "km"
+      ? `${uno(datos.paseoM / 1000)} km · ${uno(datos.velKmh)} km/h · ${ent(datos.desnivelM)} m`
+      : `${uno(datos.paseoM / 1609.344)} mi · ${uno(datos.velKmh / 1.609344)} mph · ${ent(datos.desnivelM / 0.3048)} pies`,
+    "distancia-corta": () => unidades.distancia === "km"
+      ? `${uno(datos.paseoM / 1000)} km · ${uno(datos.velKmh)} km/h`
+      : `${uno(datos.paseoM / 1609.344)} mi · ${uno(datos.velKmh / 1.609344)} mph`,
+  };
+  function pintarUnidades() {
+    document.querySelectorAll("[data-grupo]").forEach((g) =>
+      g.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === unidades[g.dataset.grupo]))));
+    document.querySelectorAll("[data-fmt]").forEach((el) => { el.textContent = formato[el.dataset.fmt](); });
+    const corto = { m: "m", cm: "cm", ft: "pies" };
+    document.querySelectorAll("[data-resumen-unidades]").forEach((el) => {
+      el.textContent = `${unidades.peso} · ${corto[unidades.estatura]} · ${unidades.distancia}`;
+    });
+  }
+  document.querySelectorAll("[data-grupo] button").forEach((b) => b.addEventListener("click", () => {
+    unidades[b.closest("[data-grupo]").dataset.grupo] = b.dataset.v;
+    pintarUnidades();
+  }));
+  pintarUnidades();
+
+  const raiz = document.documentElement;
+  function ponerAcento(a) {
+    if (a === "caribe") delete raiz.dataset.accent; else raiz.dataset.accent = a;
+    document.querySelectorAll("[data-a]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.a === a)));
+    try { localStorage.setItem("b2-acento", a); } catch (e) {}
+  }
+  function ponerModo(m) {
+    if (m) raiz.dataset.theme = m; else delete raiz.dataset.theme;
+    document.querySelectorAll("#ctl-modo button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.modo === m)));
+  }
+  document.querySelectorAll("[data-a]").forEach((b) => b.addEventListener("click", () => ponerAcento(b.dataset.a)));
+  document.querySelectorAll("#ctl-modo button").forEach((b) => b.addEventListener("click", () => ponerModo(b.dataset.modo)));
+  let inicial = "caribe";
+  try { inicial = localStorage.getItem("b2-acento") || "caribe"; } catch (e) {}
+  ponerAcento(inicial);
+</script>
