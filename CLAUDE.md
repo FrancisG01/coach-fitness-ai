@@ -51,6 +51,13 @@ Si algo choca con el plan, no improvises: pregunta a Francis y registra la decis
 7. Cada funcionalidad terminada lleva su guía de uso en el Centro de ayuda (agente `documentador`).
 8. Al cerrar la sesión: actualiza `docs/estado.md`.
 
+## Gestión de contexto
+
+- Al terminar cada tarea o cada commit, actualiza `docs/estado.md` sin que te lo pidan: qué se hizo, qué sigue, decisiones tomadas y pendientes. Mantenlo corto (menos de 100 líneas): se inyecta al inicio de cada conversación.
+- Delega a los agentes todo trabajo que lea muchos archivos o produzca salidas largas; la conversación principal solo coordina.
+- Al cerrar un bloque grande de trabajo, dile a Francis: "Buen momento para abrir una conversación nueva".
+- Un hook `SessionStart` (`.claude/settings.json`) inyecta `docs/estado.md` al iniciar, al usar `/clear`, tras compactar y al reanudar (ADR 0019).
+
 ## Modelos
 
 - Opus 5.5 es el modelo por defecto para el trabajo diario: pantallas, endpoints, pruebas, documentación, configuración.

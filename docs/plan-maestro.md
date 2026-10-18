@@ -797,6 +797,7 @@ Decisiones ya tomadas; al arrancar el repo cada una se convierte en un ADR en `d
 | D-16 | 17-oct-2026 | Desarrollo en Windows con WSL2; Fase S de setup antes de la Fase 0; backlog v1.0 cerrado | Entorno idéntico al servidor y alcance controlado |
 | D-17 | 17-oct-2026 | Dirección visual B2 "Caucho y acento": base neutra caucho/tiza, un acento elegible (6 de fábrica + propio), 8 plantillas, modo claro y oscuro. Nombre y logo provisionales y configurables | Preferencia del dueño del producto; personalización como función |
 | D-18 | 17-oct-2026 | App para Galaxy Watch nativa (Kotlin + Compose for Wear OS), Wear OS 3+, conectada a la app Android por Data Layer; fase 7b. Cronometría de sesión (tiempo extra de descanso) en todo el sistema | Entrenar sin sacar el teléfono; Wear OS no admite React Native |
+| D-19 | 17-oct-2026 | Gestión automática del contexto: hook SessionStart que inyecta docs/estado.md (inicio, /clear, compactación, reanudar), estado.md actualizado en cada tarea y delegación a agentes (ADR 0019) | Que ninguna conversación ni compactación pierda el estado del proyecto |
 
 ## 21. Pendientes: lo que necesito de ti
 
