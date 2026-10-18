@@ -1,0 +1,22 @@
+.env
+.env.*
+!.env.example
+node_modules/
+__pycache__/
+.venv/
+dist/
+build/
+.expo/
+.claude/agent-memory-local/
+.claude/settings.local.json
+
+# Herramientas
+.turbo/
+coverage/
+playwright-report/
+test-results/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.log
+.DS_Store
