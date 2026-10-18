@@ -1,3 +1,3 @@
-- [Verificación de mockups](verificacion-mockups.md) — detector Impeccable en modo URL, Playwright, hallazgo A4 sobre elevado < 4.5:1
+- [Verificación de mockups](verificacion-mockups.md) — detector Impeccable en modo URL, Playwright, A5 sobre elevado, láminas con charset
 - [Flujo 2 calendario](flujo-2-calendario.md) — 3 pasos, semana 1 por usuario, Salud › análisis, MTB con zonas FC
-- [Flujo 1 gym](flujo-1-gym.md) — 4 piezas entregadas; D-30 aprobado; piezas 3 y 4 sin aprobar
+- [Flujo 1 gym](flujo-1-gym.md) — 4 piezas aprobadas; ranura de avisos, Sigue destacada, búlgara ×4

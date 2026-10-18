@@ -11,7 +11,7 @@ Aprobado por Francis (D-30, 18-oct-2026): piezas 1 y 2 y todas mis decisiones (p
 
 Cifras de ejemplo: Día A con 7 ejercicios, 53 min (15:40 + 27:00 + 10:20), 8,050 lb, 21 + 3 rampa. Flujo 2 corregido a 8,015 lb.
 
-Piezas 3 y 4 entregadas, sin aprobar todavía. La fila actual usa un contorno de 2 px en vez de borde porque el detector marcaba la fila con borde como tarjeta anidada.
+Las 4 piezas están aprobadas. Feedback del prototipo aplicado (commit 26f72e1): avisos en una ranura reservada, la hoja de ajuste dice a qué series se aplica, «Sigue» como tarjeta destacada, «Empezar otra sesión», búlgara ×4 (flujo 2: el 16-oct pasa de 11,820 a 13,020 lb). La fila actual usa un contorno de 2 px en vez de borde porque el detector marcaba la fila con borde como tarjeta anidada.
 
-**Why:** Francis tiene la última palabra; las piezas 3 y 4 esperan su revisión.
-**How to apply:** al retomar, revisa qué respondió sobre las piezas 3 y 4 antes de cerrar el flujo. Ver [[flujo-2-calendario]] y [[verificacion-mockups]].
+**Why:** es el patrón aprobado del modo gym y los demás flujos (reloj, flujo 9) lo reutilizan.
+**How to apply:** reutiliza la ranura de avisos, la tarjeta «Sigue» y la cifra de descanso en el flujo del reloj y en el código. Ver [[flujo-2-calendario]] y [[verificacion-mockups]].

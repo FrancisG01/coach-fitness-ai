@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Última actualización: 18-oct-2026 (D-29 y D-30: flujo 1, rama `docs/flujo-1-gym`)
+Última actualización: 18-oct-2026 (flujo 1 aprobado, D-29 a D-31)
 
 ## Fase actual: 0 (fundaciones)
 
@@ -48,8 +48,10 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 5. Paso 4A hecho (rama `docs/calendario`): D-25 en plan v1.5, GYM-03 reescrito, flujo 2 ampliado en plan y PRD v1.2, agrupación de DESIGN.md corregida.
 6. Paso 4B hecho y aprobado (PR #15): flujo 2 en `docs/diseno/mockups/flujo-2-calendario.html` (https://claude.ai/artifact/289fc21Nzt8UpHPNpznbk3) y `flujo-2-calendario-prototipo.html` (https://claude.ai/artifact/CWy7xv7P44k4nZgzMEP6a8). Francis confirmó: primera actividad = cualquier sesión (aunque sea programada) o paseo; series 1-10 y reps 1-30; editar sesión no cambia la rutina; mover o copiar lleva series, reps y pesos de la sesión; volumen con lo del día; zonas de FC solo con % visible; 50 % de kcal MTB.
 7. Paso 5A hecho (PR #17): D-28 en plan v1.7 y PRD v1.4 (criterios de aceptación en su §2), ADR 0024, DESIGN.md y PRODUCT.md.
-8. **En curso: flujo 1 (entrenar en el gym)** en 4 piezas; **aprobado** (D-31; últimos ajustes del prototipo en curso): `flujo-1-gym.html` (https://claude.ai/artifact/Pp72v5qCzadtjWrMJdoYNB) y `flujo-1-gym-prototipo.html` (https://claude.ai/artifact/HmQQCjVWTSwXmfdyonyod6). Token nuevo `cifraDescanso` 96/88; volumen del flujo 2 corregido a 8,015 lb en el repo (artefactos del flujo 2 sin republicar), reutilizando lo del flujo 2 (tres pasos, steppers, pestañas de Gym). Luego el flujo 10 (bienvenida, con sus 7 ilustraciones). Después, el modelo conceptual de la BD (califica para Fable 5.1: avisar antes).
-9. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
+8. Flujo 1 (entrenar en el gym) **aprobado** (D-29 a D-31, PR de `docs/flujo-1-gym`): `flujo-1-gym.html` (https://claude.ai/artifact/Pp72v5qCzadtjWrMJdoYNB) y `flujo-1-gym-prototipo.html` (https://claude.ai/artifact/HmQQCjVWTSwXmfdyonyod6). Tokens nuevos `cifraDescanso` y `textoAcentoSobreElevado`; regla de avisos "Never Cover" en DESIGN.md; artefactos del flujo 2 y B2 republicados.
+9. **Siguiente: flujo 10 (bienvenida, 7 pasos con sus ilustraciones).** Después, el modelo conceptual de la BD (califica para Fable 5.1: avisar antes).
+10. Pendiente menor del flujo 2: renombrar "Sentadilla búlgara" a "Sentadilla búlgara mancuernas · por mancuerna" en la lámina (preguntar a Francis).
+11. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
 
 ## Pendientes de Francis
 
