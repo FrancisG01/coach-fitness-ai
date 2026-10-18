@@ -9,7 +9,7 @@ Oct 17, 2026 · @Almonte
 | Campo | Valor |
 | --- | --- |
 | Proyecto | Coach Fitness AI (nombre provisional) |
-| Versión | 1.8 |
+| Versión | 1.9 |
 | Estado | En definición — Fase 0 |
 | Dueño del producto | Francis Guzman |
 | Responsable técnico | Claude (agente Project Manager) |
@@ -30,6 +30,7 @@ Oct 17, 2026 · @Almonte
 | 1.6 | 18-oct-2026 | Revisión del flujo 2 (D-26): programar en tres pasos (rutina, series y repeticiones, pesos); semana 1 = semana de la primera actividad registrada; pestañas internas de Gym en móvil; subsección Análisis en Salud. Datos del paseo MTB y calorías del día (D-27): CAR-01 y CAR-02 reescritos, flujo 5 con dos capturas |
 | 1.7 | 18-oct-2026 | Objetivos, bienvenida y medidas corporales completas (D-28, excepción al backlog cerrado): módulo nuevo Objetivos (OBJ-01 a OBJ-04), bienvenida de primer uso (SIS-08), perfil editable (SIS-09), SAL-02 reescrito con la lista completa de medidas, medidas calculadas (SAL-07), re-preguntas del coach (COA-05); contexto fijo del coach ampliado; flujo 10 de la Fase 0.5 (bienvenida) y flujos 6 y 8 ampliados; ilustraciones solo en la bienvenida (ADR 0024) |
 | 1.8 | 18-oct-2026 | Revisión del flujo 1 (D-29): regla de la rampa según las reps objetivo (GYM-05), descanso, ajustes al vuelo y resumen al cerrar (GYM-04); ciclos de entrenamiento al backlog |
+| 1.9 | 18-oct-2026 | Guía del flujo 1 aprobada (D-30): modo gym también en la web como PWA, sesión sin programar, redondeo de la rampa, mancuernas, series por tiempo y cifra del descanso |
 
 ## 1. Resumen ejecutivo
 
@@ -218,6 +219,17 @@ Decidido en la revisión del flujo 1 (D-29).
 - Redondeo a pasos de disco en la unidad elegida (5 lb de fábrica); si dos series quedan con el mismo peso se elimina una; nunca menos que la barra.
 - La potenciación viene apagada y se activa por ejercicio en la rutina (GYM-02).
 - Las series rampa no cuentan para el volumen (GYM-06) y se pueden saltar o editar en la sesión.
+
+**Detalles aprobados con la guía del flujo 1 (D-30):**
+
+- **Dónde se entrena:** teléfono (app Android o la web como PWA, con el mismo modo gym) y reloj; en la web de escritorio la sesión en curso es de solo lectura.
+- **Pantalla:** el modo gym ocupa toda la pantalla y oculta la barra inferior; una flecha lo minimiza. La serie se tacha con la casilla o con el botón grande "Serie hecha" abajo. Finalizar está siempre en la cabecera, sin confirmación.
+- **Ajuste al vuelo:** se abre tocando la cifra de la serie; aplica a "Las que faltan" del ejercicio de fábrica, o a "Solo esta serie".
+- **Sesión sin programar:** parte de una rutina (de fábrica, la siguiente de la rotación) o vacía.
+- **Redondeo de la rampa:** cuando cae justo en medio, hacia abajo.
+- **Mancuernas:** la mínima es 5 lb de fábrica; el volumen en carga cuenta las dos mancuernas.
+- **Series por tiempo:** ejercicios como la plancha se registran en segundos, con su cuenta regresiva.
+- **Descanso:** cifra más grande que la cifra héroe, solo en el modo gym (token propio).
 
 ### Centro de ayuda (guía de uso)
 
@@ -911,6 +923,7 @@ Decisiones ya tomadas; al arrancar el repo cada una se convierte en un ADR en `d
 | D-27 | 18-oct-2026 | Cada paseo MTB guarda distancia, desnivel positivo, tiempo en movimiento, velocidad media, calorías, FC promedio y, por zona de FC (Z1 a Z5), el % de tiempo y el rango en ppm, leídos de dos capturas de Strava. El día del paseo, el objetivo calórico sube con el 50 % de sus kcal (de fábrica; Strava suele sobrestimar); el coach usa FC y zonas para medir el esfuerzo y su variación | El coach necesita el esfuerzo real de cada paseo, y las calorías del MTB deben llegar a Comida |
 | D-28 | 18-oct-2026 | Objetivos, bienvenida y medidas corporales completas entran en la v1.0 (M), como excepción al backlog cerrado (D-16): módulo Objetivos (OBJ-01 a OBJ-04: objetivo principal con meta y fecha, metas intermedias cada 4 semanas, metas por medida y por fuerza con línea punteada en los gráficos, hitos; tarjeta en Hoy y página propia, sin sexta pestaña), bienvenida de primer uso en 7 pasos con ilustraciones (SIS-08, ADR 0024), perfil editable con historial (SIS-09), SAL-02 con la lista completa de medidas, medidas calculadas con el método de la Marina (SAL-07) y re-preguntas del coach (COA-05). Las rachas siguen en el backlog. Suma ~1 semana a la estimación; el modo gym no se mueve | Decisión del dueño del producto; sin objetivo con fecha ni perfil completo, el coach no puede juzgar el progreso ni cuidar la seguridad, y añadirlo después obliga a rehacer el modelo de datos |
 | D-29 | 18-oct-2026 | Revisión del flujo 1: la rampa (GYM-05) depende de las reps objetivo y el peso de trabajo de cada ejercicio (1-5 reps: 4 series y potenciación opcional; 6-12: 1 a 3 series según el peso; 13 o más: 1 o ninguna), con una sola serie de tanteo si el músculo ya está caliente y sin rampa en aislamiento. Descanso con +15 s, −15 s y saltar, vibración y tiempo extra; ajustar peso o reps al vuelo solo cambia esa sesión; resumen al cerrar con tiempos, volumen, récords e hitos. Los ciclos de entrenamiento (bloques de fuerza o hipertrofia) quedan fuera de la v1.0 | Criterio de coach: para recomposición la rampa solo prepara, y una rampa fija suma fatiga y tiempo; las reps reflejan la intensidad real en cualquier ciclo. La nutrición depende del objetivo de composición (OBJ-01), no del ciclo. La rutina A/B/C ya trae su progresión y el coach puede proponer un bloque de fuerza (COA-04) |
+| D-30 | 18-oct-2026 | Guía del flujo 1 aprobada: el modo gym existe en la app Android y en la web como PWA en el teléfono (escritorio: solo lectura); pantalla completa con flecha para minimizar; tachar con casilla o botón "Serie hecha"; Finalizar sin confirmación; ajuste al vuelo de fábrica en "Las que faltan"; sesión sin programar desde una rutina (la siguiente de la rotación) o vacía; redondeo de la rampa hacia abajo; mancuerna mínima 5 lb y volumen con las dos mancuernas; series por tiempo (plancha); cifra del descanso con token propio del modo gym | La Fase 2 entrega el modo gym como PWA antes que la app Android; calentar de menos es más seguro que pasarse; contar las dos mancuernas da la carga real y se compara con la barra; la plancha está en la rutina A/B/C; en el gym el teléfono se mira desde el banco |
 
 ## 21. Pendientes: lo que necesito de ti
 

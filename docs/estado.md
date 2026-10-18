@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Última actualización: 18-oct-2026 (D-29: revisión del flujo 1, rama `docs/flujo-1-gym`)
+Última actualización: 18-oct-2026 (D-29 y D-30: flujo 1, rama `docs/flujo-1-gym`)
 
 ## Fase actual: 0 (fundaciones)
 
@@ -27,6 +27,7 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 - D-27: paseo MTB con distancia, desnivel +, tiempo en movimiento, velocidad media, kcal, FC promedio y zonas Z1-Z5 (% y ppm) desde dos capturas de Strava; el objetivo calórico del día sube con el 50 % de las kcal del paseo.
 - D-28 / ADR 0024 (plan v1.7, PRD v1.4; excepción al backlog cerrado, todo M): módulo Objetivos OBJ-01 a 04 (objetivo principal con meta y fecha, metas intermedias cada 4 semanas, metas por medida y fuerza con línea punteada que no cuenta como serie, hitos; tarjeta en Hoy y página propia, sin sexta pestaña); bienvenida de 7 pasos con ilustraciones solo ahí (SIS-08); perfil con historial (SIS-09); SAL-02 con medidas completas; SAL-07 calculadas (Marina); COA-05 re-preguntas. Rachas siguen fuera. Se construye en las fases 3, 5 y 6.
 - D-29 (plan v1.8, PRD v1.5): rampa según reps objetivo y peso de trabajo (1-5 reps: 4 series + potenciación opcional; 6-12: 1-3 series según peso; 13+: 1 o ninguna), una serie de tanteo si el músculo ya está caliente, sin rampa en aislamiento, 60 s entre rampas. Descanso +15/−15/saltar con vibración y tiempo extra; ajustes al vuelo solo en la sesión; resumen al cerrar con tiempos, volumen, récords, hitos y "Guardar". Ciclos de entrenamiento (fuerza/hipertrofia) al backlog; la nutrición sigue al objetivo, no al ciclo.
+- D-30 (plan v1.9, PRD v1.6): guía del flujo 1 aprobada (https://claude.ai/artifact/Pp72v5qCzadtjWrMJdoYNB). Modo gym también en la web como PWA en el teléfono (escritorio solo lectura); sesión sin programar desde rutina o vacía; rampa redondea hacia abajo; volumen con las dos mancuernas (cambia el 7,055 lb del flujo 2); series por tiempo (plancha); token propio para la cifra del descanso.
 - Francis quiere que Claude tome iniciativas y las liste para confirmar ("Decisiones que tomé y necesito que confirmes").
 - D-21 / ADR 0021: embeddings de la memoria del coach con modelo local en el servidor; el modelo se elige en la Fase 1 con benchmark.
 - Plan maestro v1.2: título "Coach Fitness AI".
@@ -46,7 +47,7 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 5. Paso 4A hecho (rama `docs/calendario`): D-25 en plan v1.5, GYM-03 reescrito, flujo 2 ampliado en plan y PRD v1.2, agrupación de DESIGN.md corregida.
 6. Paso 4B hecho y aprobado (PR #15): flujo 2 en `docs/diseno/mockups/flujo-2-calendario.html` (https://claude.ai/artifact/289fc21Nzt8UpHPNpznbk3) y `flujo-2-calendario-prototipo.html` (https://claude.ai/artifact/CWy7xv7P44k4nZgzMEP6a8). Francis confirmó: primera actividad = cualquier sesión (aunque sea programada) o paseo; series 1-10 y reps 1-30; editar sesión no cambia la rutina; mover o copiar lleva series, reps y pesos de la sesión; volumen con lo del día; zonas de FC solo con % visible; 50 % de kcal MTB.
 7. Paso 5A hecho (PR #17): D-28 en plan v1.7 y PRD v1.4 (criterios de aceptación en su §2), ADR 0024, DESIGN.md y PRODUCT.md.
-8. **En curso: flujo 1 (entrenar en el gym)** en 4 piezas; primero diagrama y guía (piezas 1 y 2) para aprobar, reutilizando lo del flujo 2 (tres pasos, steppers, pestañas de Gym). Luego el flujo 10 (bienvenida, con sus 7 ilustraciones). Después, el modelo conceptual de la BD (califica para Fable 5.1: avisar antes).
+8. **En curso: flujo 1 (entrenar en el gym)** en 4 piezas; piezas 1 y 2 aprobadas (`docs/diseno/mockups/flujo-1-gym.html`); siguen mockups y prototipo (3 y 4), reutilizando lo del flujo 2 (tres pasos, steppers, pestañas de Gym). Luego el flujo 10 (bienvenida, con sus 7 ilustraciones). Después, el modelo conceptual de la BD (califica para Fable 5.1: avisar antes).
 9. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
 
 ## Pendientes de Francis
