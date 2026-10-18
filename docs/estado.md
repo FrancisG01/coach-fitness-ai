@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Última actualización: 18-oct-2026 (cierre de la Fase S, arranque de la Fase 0)
+Última actualización: 18-oct-2026 (PRD aprobado)
 
 ## Fase actual: 0 (fundaciones)
 
@@ -18,6 +18,10 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 
 ### Decisiones vigentes
 
+- PRD v1.0 aprobado (`docs/prd.md`, decisiones en su sección 9): Max 5x; coach con tope de $80/mes y $8/día, al 80 % el chat pasa a Sonnet 5.5 y avisa; metas de enero 2027 aprobadas; 2,350 kcal objetivo único con revisión a las 6 semanas; fotos de progreso y mapa corporal fuera de la v1.0; requisitos S posponibles; 9 flujos en la Fase 0.5.
+- D-21 / ADR 0021: embeddings de la memoria del coach con modelo local en el servidor; el modelo se elige en la Fase 1 con benchmark.
+- Plan maestro v1.2: título "Coach Fitness AI".
+- Estimación (Francis a tiempo completo): ~11 semanas optimista / ~18.5 probable. Modo gym usable ~7-nov a ~22-nov-2026; v1.0 ~2-ene a ~25-feb-2027.
 - D-20 / ADR 0020: servidor Oracle. Carpeta `infra/` para configuración de servidores.
 - Claude Code solo puede `ssh oracle` y `scp … oracle:`; lo que toca el acceso SSH lo ejecuta Francis con un script preparado. Llave `~/.ssh/coach_oracle`, alias `oracle` y `oracle-deploy`.
 - Dirección B2 confirmada: acento de fábrica Caribe, modo según el sistema, nombre provisional "Coach Fitness AI" (casilla marcada en la sección 21 del plan).
@@ -27,13 +31,15 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 ## Siguiente (Fase 0, un paso a la vez)
 
 1. ADRs 0001 a 0018 escritos (PR #7). Contradicciones del plan resueltas con Francis (plan v1.1, PR #8): Archivo única fuente, modo según el sistema, coach solo con créditos Max, staging por Tailscale, backlog v1.0 cerrado.
-2. PRD (agente `pm`): incluye recálculo de metas del Anexo A con la medición del 17-oct, estimación del costo de la API del coach y estimaciones de tiempo por fase. Lo aprueba Francis.
-3. `/impeccable init`: PRODUCT.md y DESIGN.md desde B2 y `docs/diseno/tokens.json`. Lo aprueba Francis.
+2. PRD hecho y aprobado por Francis el 18-oct-2026 (`docs/prd.md`).
+3. **Siguiente:** `/impeccable init`: PRODUCT.md y DESIGN.md desde B2 y `docs/diseno/tokens.json`. Lo aprueba Francis.
 4. Después: Fase 0.5 (mockups).
 5. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
 
 ## Pendientes de Francis
 
+- Medidas con cinta de octubre: cintura, cadera, pecho, brazos y muslos (fijan las metas del Anexo A.3).
+- Empezar ya la rutina A/B/C en papel (riesgo principal del plan).
 - Plan Max: en la Fase 5, vincular los créditos de API a Claude Console y crear la clave del coach.
 - Nombre definitivo y logo (más adelante).
 

@@ -28,3 +28,4 @@ Formato de cada ADR: contexto, decisión, alternativas consideradas, consecuenci
 | [0018](0018-app-galaxy-watch-nativa.md) | App nativa para Galaxy Watch y cronometría de sesión |
 | [0019](0019-gestion-automatica-del-contexto.md) | Gestión automática del contexto |
 | [0020](0020-servidor-oracle.md) | Servidor Oracle: preparación, acceso y publicación por Tailscale |
+| [0021](0021-embeddings-locales-en-el-servidor.md) | Embeddings de la memoria del coach con un modelo local en el servidor |
