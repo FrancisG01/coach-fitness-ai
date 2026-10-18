@@ -12,3 +12,5 @@ metadata:
 - En oscuro, el texto principal y A2 casi no se distinguen en luminancia (1.5 a 2:1): no usar "fondo invertido" contra "relleno de acento" como única diferencia.
 
 Ver [[flujo-2-calendario]].
+
+- Detector (18-oct-2026): una fila con borde visible dentro de otra superficie con radio cuenta como "tarjeta anidada"; para la fila actual usa un contorno (outline) hacia dentro. Las láminas con mockups web siempre dan 5 avisos A4 sobre elevado en el subitem activo (excepción aceptada); avisa a quien pida `[]`.
