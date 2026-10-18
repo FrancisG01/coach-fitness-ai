@@ -2,12 +2,12 @@
 
 | Campo | Valor |
 | --- | --- |
-| Versión | 1.1 |
+| Versión | 1.2 |
 | Fecha | 18-oct-2026 |
 | Estado | Aprobado por Francis, 18-oct-2026 |
 | Dueño del producto | Francis Guzman |
 | Redacta | Agente `pm` |
-| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.4, [`adr/`](adr/), [`diseno/`](diseno/) |
+| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.5, [`adr/`](adr/), [`diseno/`](diseno/) |
 
 Este documento resume qué se construye en la v1.0, para quién y cómo sabremos que funcionó. No añade alcance: el backlog de la v1.0 está cerrado (D-16, [ADR 0016](adr/0016-wsl2-fase-s-y-backlog-cerrado.md)). El detalle de cada requisito vive en el plan maestro; aquí solo se resume y se enlaza. Junto con el diseño (`/impeccable init`), cierra la Fase 0.
 
@@ -100,7 +100,7 @@ La [sección 13](plan-maestro.md#13-calidad-y-pruebas) pide pruebas E2E en Playw
 | # | Flujo | Pasos | Requisitos | Prueba |
 | --- | --- | --- | --- | --- |
 | 1 | Entrenar en el gym | Abrir sesión programada → rampa → tachar series → ajustar peso → descanso → cerrar sesión | GYM-04, 05, 09, 10 | Playwright + Maestro |
-| 2 | Programar entrenamientos | Calendario → elegir rutina → asignar pesos por ejercicio → guardar | GYM-02, 03 | Playwright |
+| 2 | Programar entrenamientos | Calendario en Gym (mes y semana) → ver día pasado con su resumen → elegir día futuro → elegir rutina → asignar pesos por ejercicio → guardar; mover o copiar una sesión, copiar la semana anterior | GYM-02, 03 | Playwright |
 | 3 | Registrar una comida | Buscar alimento → elegir unidad → confirmar → ver macros y micros del día | NUT-02, 03, 09 | Playwright |
 | 4 | Crear receta o plan | Ingredientes → porciones → plan día/semana/mes con suplementos | NUT-04, 05, SUP-01 | Playwright |
 | 5 | Registrar paseo MTB | Subir captura al chat → tarjeta de confirmación → guardar | CAR-01 | Playwright |
@@ -109,7 +109,7 @@ La [sección 13](plan-maestro.md#13-calidad-y-pruebas) pide pruebas E2E en Playw
 | 8 | Empezar el día | Dashboard: entreno, comidas, suplementos pendientes, alertas | DSH-01, COA-03 | Playwright |
 | 9 | Entrenar desde el reloj | Iniciar sesión del día → serie → check → descanso → vibración → espera → play → siguiente → resumen de tiempos | WAT-01, 02, 05, 06 | Compose for Wear OS + reloj real |
 
-Cada flujo se entrega en la Fase 0.5 en cuatro piezas: diagrama, guía paso a paso en imágenes, mockups de alta fidelidad (web y móvil) y prototipo navegable.
+Cada flujo se entrega en la Fase 0.5 en cuatro piezas: diagrama, guía paso a paso en imágenes, mockups de alta fidelidad (web y móvil) y prototipo navegable. Orden: primero el flujo 2 (calendario) y después el flujo 1 (D-25).
 
 ---
 
@@ -328,3 +328,4 @@ Respuestas de Francis a las preguntas del borrador.
 | 11 | Disponibilidad | Día completo; estimación recalculada en la sección 7 |
 | 12 | Nombre del plan | El plan maestro pasa a titularse "Coach Fitness AI" |
 | 13 | Unidades (añadida tras aprobar el PRD) | SIS-07 entra en la v1.0 con prioridad M: peso corporal y cargas del gym por separado en kg o lb (lb de fábrica); estatura en m, cm o pies y pulgadas; perímetros en cm o pulgadas; distancia en km o millas (métrico de fábrica). D-24, [ADR 0023](adr/0023-unidades-preferidas.md) |
+| 14 | Calendario (añadida tras aprobar el PRD) | Vive en Gym. Muestra días pasados (sesión hecha o no hecha, con resumen), hoy y futuros (programar, mover, copiar), paseos MTB y citas de análisis de sangre de solo lectura que llevan a Salud. Una sesión no hecha ofrece "Mover a otro día"; existe "Copiar la semana anterior". El flujo 2 se diseña antes que el flujo 1. D-25 |

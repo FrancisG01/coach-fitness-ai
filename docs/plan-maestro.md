@@ -9,7 +9,7 @@ Oct 17, 2026 · @Almonte
 | Campo | Valor |
 | --- | --- |
 | Proyecto | Coach Fitness AI (nombre provisional) |
-| Versión | 1.4 |
+| Versión | 1.5 |
 | Estado | En definición — Fase 0 |
 | Dueño del producto | Francis Guzman |
 | Responsable técnico | Claude (agente Project Manager) |
@@ -26,6 +26,7 @@ Oct 17, 2026 · @Almonte
 | 1.2 | 18-oct-2026 | PRD aprobado (`docs/prd.md`): título "Coach Fitness AI"; fotos de progreso y mapa corporal fuera de la v1.0; embeddings locales en el servidor (D-21); estimación de tiempos en el PRD |
 | 1.3 | 18-oct-2026 | PRODUCT.md y DESIGN.md (Impeccable); MTB solo por captura de Strava en §1; íconos Tabler (D-22); barra inferior Hoy, Gym, Comida, Salud, Coach (D-23); logo provisional: mancuerna en `packages/brand` |
 | 1.4 | 18-oct-2026 | Unidades preferidas por usuario (SIS-07, D-24, ADR 0023): peso corporal y cargas del gym en lb de fábrica; estatura, perímetros y distancia en métrico de fábrica; RNF-10 actualizado |
+| 1.5 | 18-oct-2026 | Calendario de entrenamientos (D-25): GYM-03 reescrito con días pasados, hoy y futuros, mover y copiar sesiones, paseos MTB y citas de análisis; el calendario vive en Gym; flujo 2 de la Fase 0.5 ampliado |
 
 ## 1. Resumen ejecutivo
 
@@ -105,7 +106,7 @@ Siete módulos sobre una sola base de datos; el coach lee todos.
 | --- | --- |
 | **Dashboard** | Resumen del día: entreno programado, macros vs objetivo, suplementos pendientes, peso y tendencia, volumen muscular semanal, alertas del coach |
 | **Salud y composición** | Mediciones Renpho (todos los campos), medidas con cinta, análisis de sangre con rangos, entrada manual de cualquier dato, gráficos de tendencia |
-| **Entrenamiento (Gym)** | Biblioteca de ejercicios con implicación por músculo, rutinas personalizadas, calendario de sesiones futuras con pesos por ejercicio, modo gym (tachar series, cambiar peso/reps, temporizador de descanso), series rampa automáticas, historial y récords, volumen por músculo individual |
+| **Entrenamiento (Gym)** | Biblioteca de ejercicios con implicación por músculo, rutinas personalizadas, calendario de sesiones pasadas y futuras con pesos por ejercicio, modo gym (tachar series, cambiar peso/reps, temporizador de descanso), series rampa automáticas, historial y récords, volumen por músculo individual |
 | **Cardio / MTB** | Paseos registrados desde captura de pantalla de Strava en el chat del coach (distancia, tiempo, desnivel, velocidad, FC, calorías y lo que muestre la captura), con confirmación antes de guardar; carga cardiovascular, efecto sobre recuperación y calorías |
 | **Nutrición** | Registro de comidas, base de alimentos dominicanos con nutrientes completos, recetas y platos, planes día/semana/mes, objetivos por tipo de día, micronutrientes, importación opcional de Cronometer |
 | **Suplementación** | Catálogo, inventario y compras, dosis y horarios, registro de toma, aporte de nutrientes sumado al plan, alertas (ej. stock bajo, dosis olvidada) |
@@ -174,7 +175,7 @@ Cada requisito tiene un identificador que se usa en tareas, tests y pull request
 | --- | --- | --- |
 | GYM-01 | Biblioteca de ejercicios con implicación ponderada por músculo, equipo, instrucciones y sustitutos | M |
 | GYM-02 | Crear y editar rutinas (ejercicios, series, reps, descanso, si aplica rampa) | M |
-| GYM-03 | Calendario para programar sesiones futuras con rutina y peso por ejercicio | M |
+| GYM-03 | Calendario de entrenamientos con días pasados (sesión hecha o no hecha, con su resumen), hoy y futuros (programar, mover y copiar sesiones con rutina y peso por ejercicio); muestra también paseos MTB y citas de análisis de sangre | M |
 | GYM-04 | Modo gym: tachar series, editar peso y reps al vuelo, temporizador de descanso con vibración y aviso | M |
 | GYM-05 | Series rampa y de potenciación calculadas automáticamente desde el peso de trabajo | M |
 | GYM-06 | Volumen semanal por músculo individual vs rango objetivo | M |
@@ -697,7 +698,7 @@ Cada flujo clave se entrega en cuatro piezas: diagrama del flujo, guía paso a p
 | Flujo | Qué se ve paso a paso |
 | --- | --- |
 | Entrenar en el gym | Abrir sesión programada → rampa → tachar series → ajustar peso → descanso → cerrar sesión |
-| Programar entrenamientos | Calendario → elegir rutina → asignar pesos por ejercicio → guardar |
+| Programar entrenamientos | Calendario en Gym (mes y semana) → ver día pasado con su resumen → elegir día futuro → elegir rutina → asignar pesos por ejercicio → guardar; mover o copiar una sesión, copiar la semana anterior |
 | Registrar una comida | Buscar alimento → elegir unidad (g, lb, oz, ml…) → confirmar → ver macros y micros del día |
 | Crear receta o plan | Ingredientes → porciones → plan día/semana/mes con suplementos |
 | Registrar paseo MTB | Subir captura al chat → tarjeta de confirmación → guardar |
@@ -825,6 +826,7 @@ Decisiones ya tomadas; al arrancar el repo cada una se convierte en un ADR en `d
 | D-22 | 18-oct-2026 | Íconos de trazo Tabler Icons en web, Android y reloj; trazo 1.75, tamaños 16/20/24/32 (ADR 0022) | Única candidata con paquetes oficiales para React y React Native y con báscula de baño; MIT |
 | D-23 | 18-oct-2026 | Navegación inferior: Hoy, Gym, Comida, Salud, Coach; Ajustes en el botón de cuenta de Hoy; logo provisional = mancuerna de Tabler en casilla, desde `packages/brand` | Preferencia del dueño del producto; las cinco secciones de uso diario a un toque |
 | D-24 | 18-oct-2026 | Unidades preferidas por usuario (SIS-07, M, entra en la v1.0 por decisión del dueño): peso corporal y cargas del gym por separado en kg o lb (lb de fábrica), estatura en m, cm o pies y pulgadas, perímetros en cm o pulgadas, distancia en km o millas (métrico de fábrica). Todo se guarda en kg, cm y m con la unidad escrita (ADR 0023) | El dueño entrena con discos en libras; diseñarlo desde la Fase 1 es barato y añadirlo después obliga a migrar datos y pantallas |
+| D-25 | 18-oct-2026 | Calendario de entrenamientos (GYM-03): muestra días pasados (hecha o no hecha, con resumen), hoy y futuros (programar, mover, copiar); incluye paseos MTB y citas de análisis de sangre (de solo lectura, llevan a Salud); vive en Gym, no en Hoy. Marcas: punto lleno de acento = hecha, contorno = programada, gris con ✕ = no hecha, `bike` = MTB, ícono propio = análisis. Una sesión no hecha ofrece "Mover a otro día"; existe "Copiar la semana anterior". En la Fase 0.5 se diseña primero el flujo 2 y después el flujo 1 | Decisión del dueño del producto; el calendario es parte de entrenar, y ver lo hecho junto a lo programado da contexto para planear |
 
 ## 21. Pendientes: lo que necesito de ti
 
