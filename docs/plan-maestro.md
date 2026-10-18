@@ -9,7 +9,7 @@ Oct 17, 2026 · @Almonte
 | Campo | Valor |
 | --- | --- |
 | Proyecto | Coach Fitness AI (nombre provisional) |
-| Versión | 1.5 |
+| Versión | 1.6 |
 | Estado | En definición — Fase 0 |
 | Dueño del producto | Francis Guzman |
 | Responsable técnico | Claude (agente Project Manager) |
@@ -27,6 +27,7 @@ Oct 17, 2026 · @Almonte
 | 1.3 | 18-oct-2026 | PRODUCT.md y DESIGN.md (Impeccable); MTB solo por captura de Strava en §1; íconos Tabler (D-22); barra inferior Hoy, Gym, Comida, Salud, Coach (D-23); logo provisional: mancuerna en `packages/brand` |
 | 1.4 | 18-oct-2026 | Unidades preferidas por usuario (SIS-07, D-24, ADR 0023): peso corporal y cargas del gym en lb de fábrica; estatura, perímetros y distancia en métrico de fábrica; RNF-10 actualizado |
 | 1.5 | 18-oct-2026 | Calendario de entrenamientos (D-25): GYM-03 reescrito con días pasados, hoy y futuros, mover y copiar sesiones, paseos MTB y citas de análisis; el calendario vive en Gym; flujo 2 de la Fase 0.5 ampliado |
+| 1.6 | 18-oct-2026 | Revisión del flujo 2 (D-26): programar en tres pasos (rutina, series y repeticiones, pesos); semana 1 = semana de la primera actividad registrada; pestañas internas de Gym en móvil; subsección Análisis en Salud. Datos del paseo MTB y calorías del día (D-27): CAR-01 y CAR-02 reescritos, flujo 5 con dos capturas |
 
 ## 1. Resumen ejecutivo
 
@@ -107,7 +108,7 @@ Siete módulos sobre una sola base de datos; el coach lee todos.
 | **Dashboard** | Resumen del día: entreno programado, macros vs objetivo, suplementos pendientes, peso y tendencia, volumen muscular semanal, alertas del coach |
 | **Salud y composición** | Mediciones Renpho (todos los campos), medidas con cinta, análisis de sangre con rangos, entrada manual de cualquier dato, gráficos de tendencia |
 | **Entrenamiento (Gym)** | Biblioteca de ejercicios con implicación por músculo, rutinas personalizadas, calendario de sesiones pasadas y futuras con pesos por ejercicio, modo gym (tachar series, cambiar peso/reps, temporizador de descanso), series rampa automáticas, historial y récords, volumen por músculo individual |
-| **Cardio / MTB** | Paseos registrados desde captura de pantalla de Strava en el chat del coach (distancia, tiempo, desnivel, velocidad, FC, calorías y lo que muestre la captura), con confirmación antes de guardar; carga cardiovascular, efecto sobre recuperación y calorías |
+| **Cardio / MTB** | Paseos registrados desde capturas de pantalla de Strava en el chat del coach (distancia, desnivel positivo, tiempo en movimiento, velocidad media, calorías, frecuencia cardiaca promedio y, de una segunda captura, el % de tiempo y el rango en ppm de cada zona de FC (Z1 a Z5)), con confirmación antes de guardar; carga cardiovascular, efecto sobre recuperación y calorías |
 | **Nutrición** | Registro de comidas, base de alimentos dominicanos con nutrientes completos, recetas y platos, planes día/semana/mes, objetivos por tipo de día, micronutrientes, importación opcional de Cronometer |
 | **Suplementación** | Catálogo, inventario y compras, dosis y horarios, registro de toma, aporte de nutrientes sumado al plan, alertas (ej. stock bajo, dosis olvidada) |
 | **Coach IA** | Chat con acceso a todos los datos vía herramientas, memoria de decisiones, revisiones semanales automáticas, generación de planes y rutinas |
@@ -175,7 +176,7 @@ Cada requisito tiene un identificador que se usa en tareas, tests y pull request
 | --- | --- | --- |
 | GYM-01 | Biblioteca de ejercicios con implicación ponderada por músculo, equipo, instrucciones y sustitutos | M |
 | GYM-02 | Crear y editar rutinas (ejercicios, series, reps, descanso, si aplica rampa) | M |
-| GYM-03 | Calendario de entrenamientos con días pasados (sesión hecha o no hecha, con su resumen), hoy y futuros (programar, mover y copiar sesiones con rutina y peso por ejercicio); muestra también paseos MTB y citas de análisis de sangre | M |
+| GYM-03 | Calendario de entrenamientos con días pasados (sesión hecha o no hecha, con su resumen), hoy y futuros (programar, mover y copiar sesiones con rutina, series, repeticiones y peso por ejercicio); muestra también paseos MTB y citas de análisis de sangre | M |
 | GYM-04 | Modo gym: tachar series, editar peso y reps al vuelo, temporizador de descanso con vibración y aviso | M |
 | GYM-05 | Series rampa y de potenciación calculadas automáticamente desde el peso de trabajo | M |
 | GYM-06 | Volumen semanal por músculo individual vs rango objetivo | M |
@@ -207,8 +208,8 @@ Cada requisito tiene un identificador que se usa en tareas, tests y pull request
 | SUP-01 | Catálogo de suplementos con nutrientes, dosis y horario | M |
 | SUP-02 | Registro de toma; aporte sumado a los totales del día | M |
 | SUP-03 | Inventario y alerta de stock bajo | S |
-| CAR-01 | Registro de paseo MTB desde captura, con tarjeta de confirmación | M |
-| CAR-02 | Carga combinada gym + MTB: efecto en calorías, recuperación y programación de sesiones | M |
+| CAR-01 | Registro de paseo MTB desde dos capturas de Strava (actividad y zonas de FC), con tarjeta de confirmación: distancia, desnivel positivo, tiempo en movimiento, velocidad media, calorías, frecuencia cardiaca promedio y el % de tiempo y el rango en ppm de cada zona de FC (Z1 a Z5) | M |
+| CAR-02 | Carga combinada gym + MTB: efecto en calorías (el objetivo del día del paseo sube con una parte de sus kcal, D-27), recuperación y programación de sesiones; el coach usa FC y zonas para medir el esfuerzo de cada paseo | M |
 | COA-01 | Chat con el coach con acceso a todos los módulos vía herramientas | M |
 | COA-02 | Memoria de decisiones y preferencias | M |
 | COA-03 | Consejos y alertas del coach en el inicio del día y el panel web (diarios), más revisión semanal automática | M |
@@ -698,10 +699,10 @@ Cada flujo clave se entrega en cuatro piezas: diagrama del flujo, guía paso a p
 | Flujo | Qué se ve paso a paso |
 | --- | --- |
 | Entrenar en el gym | Abrir sesión programada → rampa → tachar series → ajustar peso → descanso → cerrar sesión |
-| Programar entrenamientos | Calendario en Gym (mes y semana) → ver día pasado con su resumen → elegir día futuro → elegir rutina → asignar pesos por ejercicio → guardar; mover o copiar una sesión, copiar la semana anterior |
+| Programar entrenamientos | Calendario en Gym (mes y semana) → ver día pasado con su resumen → elegir hoy o un día futuro → elegir rutina → confirmar o editar series y repeticiones → confirmar o editar pesos → guardar; editar una sesión programada; mover o copiar una sesión, copiar la semana anterior |
 | Registrar una comida | Buscar alimento → elegir unidad (g, lb, oz, ml…) → confirmar → ver macros y micros del día |
 | Crear receta o plan | Ingredientes → porciones → plan día/semana/mes con suplementos |
-| Registrar paseo MTB | Subir captura al chat → tarjeta de confirmación → guardar |
+| Registrar paseo MTB | Subir las capturas de Strava al chat (actividad y zonas de FC) → tarjeta de confirmación → guardar |
 | Registrar medición | Renpho automático o manual → medidas con cinta |
 | Hablar con el coach | Pregunta → respuesta con tus datos → aprobar plan propuesto |
 | Empezar el día | Dashboard: entreno, comidas, suplementos pendientes, alertas |
@@ -827,6 +828,8 @@ Decisiones ya tomadas; al arrancar el repo cada una se convierte en un ADR en `d
 | D-23 | 18-oct-2026 | Navegación inferior: Hoy, Gym, Comida, Salud, Coach; Ajustes en el botón de cuenta de Hoy; logo provisional = mancuerna de Tabler en casilla, desde `packages/brand` | Preferencia del dueño del producto; las cinco secciones de uso diario a un toque |
 | D-24 | 18-oct-2026 | Unidades preferidas por usuario (SIS-07, M, entra en la v1.0 por decisión del dueño): peso corporal y cargas del gym por separado en kg o lb (lb de fábrica), estatura en m, cm o pies y pulgadas, perímetros en cm o pulgadas, distancia en km o millas (métrico de fábrica). Todo se guarda en kg, cm y m con la unidad escrita (ADR 0023) | El dueño entrena con discos en libras; diseñarlo desde la Fase 1 es barato y añadirlo después obliga a migrar datos y pantallas |
 | D-25 | 18-oct-2026 | Calendario de entrenamientos (GYM-03): muestra días pasados (hecha o no hecha, con resumen), hoy y futuros (programar, mover, copiar); incluye paseos MTB y citas de análisis de sangre (de solo lectura, llevan a Salud); vive en Gym, no en Hoy. Marcas: punto lleno de acento = hecha, contorno = programada, gris con ✕ = no hecha, `bike` = MTB, ícono propio = análisis. Una sesión no hecha ofrece "Mover a otro día"; existe "Copiar la semana anterior". En la Fase 0.5 se diseña primero el flujo 2 y después el flujo 1 | Decisión del dueño del producto; el calendario es parte de entrenar, y ver lo hecho junto a lo programado da contexto para planear |
+| D-26 | 18-oct-2026 | Revisión del flujo 2: programar va en tres pasos (elegir rutina → confirmar o editar series y repeticiones, que vienen de la rutina → confirmar o editar pesos); una sesión programada sin hacer se edita igual; un día pasado hecho es de solo lectura. La semana 1 de cada usuario es la de su primera actividad registrada en la app; el historial previo del Anexo A no se carga. Gym tiene pestañas internas en móvil (sesión, calendario, rutinas, historial, cardio y MTB). Salud suma la subsección Análisis (SAL-04) | Decisión del dueño del producto; arranca desde cero con la app y su gym |
+| D-27 | 18-oct-2026 | Cada paseo MTB guarda distancia, desnivel positivo, tiempo en movimiento, velocidad media, calorías, FC promedio y, por zona de FC (Z1 a Z5), el % de tiempo y el rango en ppm, leídos de dos capturas de Strava. El día del paseo, el objetivo calórico sube con el 50 % de sus kcal (de fábrica; Strava suele sobrestimar); el coach usa FC y zonas para medir el esfuerzo y su variación | El coach necesita el esfuerzo real de cada paseo, y las calorías del MTB deben llegar a Comida |
 
 ## 21. Pendientes: lo que necesito de ti
 
@@ -937,7 +940,7 @@ Renpho clasifica el tipo de cuerpo como "sobrepeso" y sugiere un peso óptimo de
 | Recomposición (Novato) | 2,300-2,400 |
 | Volumen limpio (Principiante) | 2,800-3,000 |
 
-El MTB añade gasto que estas cifras no incluyen; el coach lo ajusta con los paseos registrados.
+El MTB añade gasto que estas cifras no incluyen: el día de un paseo, el objetivo sube con el 50 % de las kcal que reporta Strava (D-27), y el coach revisa ese porcentaje en la revisión de las 6 semanas.
 
 ### A.6 Plan de entrenamiento: Full Body A/B/C
 

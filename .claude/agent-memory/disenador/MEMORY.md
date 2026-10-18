@@ -1,0 +1,2 @@
+- [Verificación de mockups](verificacion-mockups.md) — detector Impeccable en modo URL, Playwright, hallazgo A4 sobre elevado < 4.5:1
+- [Flujo 2 calendario](flujo-2-calendario.md) — 3 pasos, semana 1 por usuario, Salud › análisis, MTB con zonas FC
