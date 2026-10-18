@@ -1,0 +1,1269 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototipo bienvenida</title>
+<meta name="description" content="Fase 0.5 · flujo 10, prototipo navegable de la bienvenida de primer uso (SIS-08, D-32, D-33), en teléfono y web.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
+<style>
+/* Fase 0.5 · flujo 10, pieza 4: prototipo navegable. Mismos tokens y piezas que flujo-10-bienvenida.html. */
+:root {
+  /* neutros · claro (tiza) */
+  --fondo: #F3F4F1; --superficie: #FFFFFF; --elevado: #E9EBE7; --borde: #DADDD8;
+  --texto: #1E2228; --texto-2: #5B626B; --error: #C9333A; --dato-gris: #B5BBC2;
+  /* uso del acento · claro */
+  --accion: var(--a4); --accion-alta: var(--a5); --texto-accion: #FFFFFF; --texto-acento: var(--a4); --texto-acento-elevado: var(--a5);
+  --suave: color-mix(in srgb, var(--a3) 13%, var(--superficie));
+  --capa-hover: color-mix(in srgb, var(--texto) 6%, transparent);
+  --capa-pressed: color-mix(in srgb, var(--texto) 10%, transparent);
+  /* superposiciones · claro: velo texto al 40 %, hoja en superficie, aviso invertido con acción A2 */
+  --velo: color-mix(in srgb, #1E2228 40%, transparent);
+  --hoja: var(--superficie);
+  --aviso-accion: var(--a2);
+  /* serie única de datos (Three Series Rule: A5 en claro, A1 en oscuro) */
+  --dato-1: var(--a5);
+  /* acentos A1–A5 (por defecto Caribe) */
+  --a1: #CFE6F5; --a2: #7CC0EA; --a3: #3B95D1; --a4: #1F6FA8; --a5: #154E78;
+  /* tipografía */
+  --familia: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  /* espaciado, radios, trazos */
+  --e1: 4px; --e2: 8px; --e3: 12px; --e4: 16px; --e5: 24px; --e6: 32px; --e7: 48px;
+  --r-casilla: 6px; --r-control: 10px; --r-tarjeta: 16px; --r-pildora: 999px;
+  --t-borde: 1px; --t-sel: 2px;
+  --tactil: 48px; --tactil-gym: 56px; --barra: 64px;
+  --rapido: 120ms; --normal: 200ms; --lento: 320ms;
+  --estandar: cubic-bezier(0.2, 0, 0, 1); --entrar: cubic-bezier(0.05, 0.7, 0.1, 1); --salir: cubic-bezier(0.3, 0, 0.8, 0.15);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+    --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+    --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
+    --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+    --velo: color-mix(in srgb, #1B1E23 72%, transparent);
+    --hoja: var(--elevado);
+    --aviso-accion: var(--a4);
+    --dato-1: var(--a1);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+  --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+  --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
+  --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+  --velo: color-mix(in srgb, #1B1E23 72%, transparent);
+  --hoja: var(--elevado);
+  --aviso-accion: var(--a4);
+  --dato-1: var(--a1);
+  color-scheme: dark;
+}
+:root[data-accent="mar"]       { --a1: #C8EEEA; --a2: #6FD6CC; --a3: #22A99C; --a4: #157A70; --a5: #0F5850; }
+:root[data-accent="palma"]     { --a1: #CDEEDB; --a2: #6FD19B; --a3: #2FA866; --a4: #1E7D4A; --a5: #155A36; }
+:root[data-accent="mango"]     { --a1: #FCE7C2; --a2: #F7C062; --a3: #E89A1E; --a4: #9A5C06; --a5: #6E4307; }
+:root[data-accent="flamboyan"] { --a1: #FBD6CB; --a2: #F79A7E; --a3: #E8603C; --a4: #B6411F; --a5: #7E2C14; }
+:root[data-accent="uva"]       { --a1: #E3DBFA; --a2: #B4A2F2; --a3: #8466DB; --a4: #6446B8; --a5: #45307F; }
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--fondo); color: var(--texto);
+  font-family: var(--familia); font-size: 16px; line-height: 24px;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+:focus-visible { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.i { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.i.s16 { width: 16px; height: 16px; stroke-width: 2; }
+.i.s20 { width: 20px; height: 20px; }
+.i.s32 { width: 32px; height: 32px; }
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* tipografía (escala de tokens.json) */
+.t-pantalla { font-size: 25px; line-height: 30px; font-weight: 700; font-stretch: 85%; margin: 0; text-wrap: balance; }
+.t-seccion { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.t-detalle { font-size: 13px; line-height: 18px; font-weight: 500; }
+.t-boton { font-size: 15px; line-height: 20px; font-weight: 650; }
+.cifra { font-weight: 800; font-stretch: 62%; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.c-metrica { font-size: 32px; line-height: 32px; }
+.c-heroe { font-size: 56px; line-height: 52px; }
+.sec { color: var(--texto-2); }
+.acento { color: var(--texto-acento); }
+p { margin: 0; }
+
+/* ---------- teléfono ---------- */
+.telefono { width: 376px; padding: var(--e2); border-radius: var(--r-tarjeta); background: var(--borde); flex: none; }
+.pantalla { height: 780px; border-radius: var(--r-control); overflow: hidden; background: var(--fondo); display: flex; flex-direction: column; position: relative; }
+.estado { height: 28px; padding-top: var(--e1); flex: none; display: flex; align-items: center; justify-content: space-between; padding-inline: var(--e5); font-size: 13px; font-weight: 600; }
+.cuerpo { flex: 1; min-height: 0; overflow: hidden; padding: 0 var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e3); }
+.cuerpo > * { flex-shrink: 0; }
+.barra { height: var(--barra); flex: none; background: var(--superficie); border-top: var(--t-borde) solid var(--borde); display: grid; grid-template-columns: repeat(5, 1fr); }
+.pestana { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--texto-2); font-size: 13px; line-height: 16px; font-weight: 500; text-decoration: none; }
+.pestana .ovalo { width: 56px; height: 28px; border-radius: var(--r-pildora); display: grid; place-items: center; transition: background var(--rapido) var(--estandar); }
+.pestana:active .ovalo { background: var(--capa-pressed); }
+.pestana[aria-current="page"] { color: var(--texto-acento); font-weight: 650; }
+
+/* piezas comunes */
+.tarjeta { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e2); }
+.tarjeta.destacada { background: var(--suave); }
+.btn { min-height: var(--tactil); border-radius: var(--r-control); padding-inline: var(--e4); display: inline-flex; align-items: center; justify-content: center; gap: var(--e2); font-size: 15px; line-height: 20px; font-weight: 650; text-align: center; transition: background var(--rapido) var(--estandar), transform var(--rapido) var(--estandar), color var(--rapido) var(--estandar); }
+.btn.primario { background: var(--accion); color: var(--texto-accion); }
+.btn.primario:active { background: var(--accion-alta); transform: scale(0.97); }
+.btn.secundario { border: var(--t-borde) solid var(--texto-2); color: var(--texto); }
+.btn.secundario:active { background: var(--capa-pressed); }
+.btn.texto { color: var(--texto-acento); padding-inline: var(--e3); }
+.btn.texto:active { background: var(--capa-pressed); color: var(--accion-alta); }
+@media (hover: hover) and (pointer: fine) {
+  .btn.primario:hover { background: var(--accion-alta); }
+  .btn.secundario:hover { background: var(--capa-hover); }
+  .btn.texto:hover { background: var(--capa-hover); color: var(--accion-alta); }
+}
+.ancho { width: 100%; }
+.par { display: grid; grid-template-columns: 1fr 1fr; gap: var(--e3); }
+.lista { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; overflow: hidden; }
+.lista > * + * { border-top: var(--t-borde) solid var(--borde); }
+.fila { min-height: var(--tactil); padding: var(--e2) var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); width: 100%; }
+.fila .txt { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+button.fila:active { background: var(--capa-pressed); }
+.cabeza { display: flex; align-items: center; justify-content: space-between; gap: var(--e2); }
+.atras { width: 48px; height: 48px; display: grid; place-items: center; margin-left: -12px; border-radius: var(--r-pildora); }
+.atras:active, .icono-btn:active { background: var(--capa-pressed); }
+.icono-btn { width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--r-pildora); flex: none; }
+.carga { font-size: 20px; line-height: 24px; }
+.segmento { display: flex; background: var(--elevado); border-radius: var(--r-control); padding: var(--e1); gap: var(--e1); }
+.segmento button { min-height: 40px; padding-inline: var(--e3); border-radius: var(--r-casilla); color: var(--texto-2); flex: 1; text-align: center; position: relative; }
+/* el área táctil del segmento llega a 48 px con el relleno del contenedor */
+.segmento button::after { content: ""; position: absolute; inset: calc(-1 * var(--e1)) 0; }
+.segmento button[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.pildora { display: inline-flex; align-items: center; gap: var(--e1); min-height: 24px; padding-inline: var(--e2); border-radius: var(--r-pildora); background: var(--elevado); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.nota { display: flex; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.sinc { display: inline-flex; align-items: center; gap: var(--e1); color: var(--texto-2); }
+.error-linea { display: flex; align-items: center; gap: var(--e2); color: var(--error); font-size: 13px; line-height: 18px; font-weight: 500; }
+/* hoja inferior y aviso */
+.velo { position: absolute; inset: 0; background: var(--velo); display: flex; flex-direction: column; justify-content: flex-end; z-index: 2; }
+.hoja { background: var(--hoja); border-top-left-radius: var(--r-tarjeta); border-top-right-radius: var(--r-tarjeta); padding: var(--e5) var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e4); }
+.hoja .mes .celda[aria-disabled="true"] { cursor: default; }
+.opcion-hoy { min-height: var(--tactil-gym); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); border-radius: var(--r-control); background: var(--elevado); border: var(--t-sel) solid transparent; width: 100%; text-align: left; }
+.opcion-hoy[aria-pressed="true"] { border-color: var(--accion); }
+.opcion-hoy .txt { flex: 1; display: flex; flex-direction: column; }
+.aviso { position: absolute; left: var(--e4); right: var(--e4); bottom: calc(var(--barra) + var(--e2)); background: var(--texto); color: var(--fondo); border-radius: var(--r-control); padding: var(--e1) var(--e1) var(--e1) var(--e4); min-height: var(--tactil-gym); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); z-index: 3; }
+.aviso .btn.texto { color: var(--aviso-accion); }
+.aviso .btn.texto:active { background: color-mix(in srgb, var(--fondo) 10%, transparent); }
+
+/* esqueleto */
+.esq { background: var(--elevado); border-radius: var(--r-casilla); }
+.esq.bloque { height: var(--e7); }
+@media (prefers-reduced-motion: no-preference) { .esq.pulso { animation: pulso 1600ms var(--estandar) infinite; } }
+@keyframes pulso { 50% { opacity: 0.5; } }
+/* ---------- lámina ---------- */
+body { padding-block: var(--e6) var(--e7); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.lamina { max-width: 1560px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--e7); }
+.cabecera { display: flex; flex-wrap: wrap; gap: var(--e5); justify-content: space-between; align-items: end; }
+.cabecera h1 { font-size: 32px; line-height: 32px; font-weight: 800; font-stretch: 75%; margin: 0 0 var(--e2); text-wrap: balance; }
+.cabecera p { margin: 0; max-width: 62ch; color: var(--texto-2); }
+.controles { display: flex; flex-wrap: wrap; gap: var(--e4); }
+.control { display: flex; flex-direction: column; gap: var(--e1); }
+.controles .segmento button { flex: none; }
+.puntos { display: flex; gap: var(--e2); align-items: center; min-height: 48px; }
+.punto { width: 32px; height: 32px; border-radius: var(--r-pildora); background: var(--c); }
+.punto[aria-pressed="true"] { outline: var(--t-sel) solid var(--texto); outline-offset: 2px; }
+.indice { display: flex; flex-wrap: wrap; gap: var(--e2); }
+.indice a { color: var(--texto-acento); font-weight: 650; font-size: 15px; min-height: 48px; display: inline-flex; align-items: center; padding-inline: var(--e3); border-radius: var(--r-control); text-decoration: none; }
+.indice a:active { background: var(--capa-pressed); }
+@media (hover: hover) and (pointer: fine) { .indice a:hover { background: var(--capa-hover); } }
+
+.pagina { display: flex; flex-direction: column; gap: var(--e5); scroll-margin-top: var(--e5); }
+.pagina > header { display: flex; flex-direction: column; gap: var(--e2); border-top: var(--t-borde) solid var(--borde); padding-top: var(--e5); }
+.pagina h2 { font-size: 25px; line-height: 30px; font-weight: 800; font-stretch: 75%; margin: 0; }
+.pagina h3.sub { font-size: 20px; line-height: 26px; font-weight: 650; margin: var(--e3) 0 0; }
+.cambios { margin: 0; padding-left: 1.2em; color: var(--texto-2); max-width: 86ch; display: grid; gap: var(--e1); }
+.cambios strong { color: var(--texto); font-weight: 650; }
+.fila-telefonos { display: flex; flex-wrap: wrap; gap: var(--e6) var(--e4); }
+figure { margin: 0; display: flex; flex-direction: column; gap: var(--e3); width: 376px; }
+figcaption { display: flex; flex-direction: column; gap: 2px; font-size: 13px; line-height: 18px; color: var(--texto-2); max-width: 360px; }
+figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
+@media (max-width: 420px) { figure { zoom: 0.88; } }
+
+/* diagrama */
+.diagrama-envoltura { overflow-x: auto; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); }
+.diagrama { display: block; min-width: 1240px; width: 100%; height: auto; font-family: var(--familia); }
+.diagrama .nodo rect { fill: var(--elevado); stroke: var(--borde); stroke-width: 1; }
+.diagrama .nodo.inicio rect { fill: var(--suave); stroke: var(--accion); stroke-width: 2; }
+.diagrama .nodo.aviso rect { fill: var(--texto); stroke: none; }
+.diagrama .nodo.aviso .t1, .diagrama .nodo.aviso .t2 { fill: var(--fondo); }
+.diagrama .nodo.salud rect { fill: var(--superficie); stroke: var(--texto-2); stroke-dasharray: 4 4; }
+.diagrama .t1 { fill: var(--texto); font-size: 15px; font-weight: 650; }
+.diagrama .t2 { fill: var(--texto-2); font-size: 13px; font-weight: 500; }
+.diagrama .rama { fill: var(--texto-2); font-size: 13px; font-weight: 500; }
+.diagrama .flecha { fill: none; stroke: var(--texto-2); stroke-width: 1.75; }
+.diagrama .punta { fill: var(--texto-2); }
+.diagrama .paso circle { fill: var(--texto); }
+.diagrama .paso text { fill: var(--fondo); font-size: 13px; font-weight: 650; }
+.diagrama .estados rect { fill: var(--fondo); stroke: var(--borde); }
+.diagrama .estados .t1 { font-size: 15px; }
+.diagrama .fuerte { fill: var(--texto); font-weight: 650; }
+
+/* guía */
+.guia { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--e6) var(--e5); }
+.paso-guia { display: flex; flex-direction: column; gap: var(--e3); }
+.paso-guia .mini { zoom: 0.64; align-self: flex-start; }
+.paso-guia h3 { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.paso-guia ol { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--e2); }
+.paso-guia li { display: grid; grid-template-columns: 24px 1fr; gap: var(--e2); font-size: 15px; line-height: 20px; }
+.paso-guia li .num-a { width: 24px; height: 24px; border-radius: var(--r-pildora); background: var(--texto); color: var(--fondo); display: grid; place-items: center; font-size: 13px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.paso-guia .etapa { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.con-anota { position: relative; }
+.mini .lista { overflow: visible; }
+.anota { position: absolute; top: -10px; right: -6px; width: 28px; height: 28px; border-radius: var(--r-pildora); background: var(--texto); color: var(--fondo); border: var(--t-sel) solid var(--fondo); display: grid; place-items: center; font-size: 15px; line-height: 20px; font-weight: 650; font-variant-numeric: tabular-nums; z-index: 4; pointer-events: none; }
+.pestana .anota { top: 2px; right: 4px; }
+.sub-tab .anota { top: 2px; right: -4px; }
+.radio { width: 24px; height: 24px; border-radius: var(--r-pildora); border: var(--t-sel) solid var(--texto-2); display: grid; place-items: center; flex: none; }
+.radio::after { content: ""; width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); background: transparent; }
+[aria-checked="true"] .radio { border-color: var(--accion); }
+[aria-checked="true"] .radio::after { background: var(--accion); }
+.ranura-aviso { margin-top: auto; min-height: var(--tactil-gym); display: flex; align-items: flex-end; flex: none; }
+.ranura-aviso .aviso { position: relative; left: auto; right: auto; bottom: auto; flex: 1; }
+.ranura-aviso + .accion-gym, .acciones + .ranura-aviso { margin-top: 0; }
+.tiempos { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e1); }
+.tiempos .total { display: flex; align-items: baseline; gap: var(--e2); }
+.unidad-c { font-size: 15px; line-height: 20px; font-weight: 650; font-stretch: 85%; color: var(--texto-2); }
+.desglose { display: flex; flex-direction: column; margin-top: var(--e2); }
+.desglose > div { display: flex; justify-content: space-between; align-items: baseline; min-height: 32px; padding-block: var(--e1); border-top: var(--t-borde) solid var(--borde); }
+.desglose .cifra { font-size: 20px; line-height: 24px; }
+.desglose .sec { font-size: 15px; line-height: 20px; }
+.diagrama .nodo.pregunta rect { fill: var(--superficie); stroke: var(--texto-2); stroke-dasharray: 4 4; }
+.diagrama .titulo-alt { fill: var(--texto); font-size: 15px; font-weight: 650; }
+
+/* anotaciones de la guía */
+.anota.izq { right: auto; left: -6px; }
+/* tabla de la rampa */
+.tabla-envoltura { overflow-x: auto; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e2) var(--e4); }
+.tabla { width: 100%; min-width: 720px; border-collapse: collapse; font-size: 15px; line-height: 20px; }
+.tabla th { text-align: left; font-size: 13px; line-height: 18px; font-weight: 500; color: var(--texto-2); padding: var(--e2) var(--e3) var(--e2) 0; }
+.tabla td { padding: var(--e3) var(--e3) var(--e3) 0; border-top: var(--t-borde) solid var(--borde); vertical-align: top; }
+.tabla td .cifra { font-size: 20px; line-height: 24px; }
+.tabla td.sec { color: var(--texto-2); }
+.casos { display: grid; gap: var(--e2); color: var(--texto-2); max-width: 86ch; margin: 0; padding-left: 1.2em; }
+.casos b { color: var(--texto); font-weight: 650; }
+.bv-cab .atras { margin-left: 0; }
+.opcion-rutina { min-height: 64px; padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); width: 100%; text-align: left; }
+.opcion-rutina:active { background: var(--capa-pressed); }
+.opcion-rutina .txt { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.opcion-rutina .txt .t-detalle { color: var(--texto-2); }
+/* ---------- web ---------- */
+.web-envoltura { overflow-x: auto; border-radius: var(--r-tarjeta); }
+.navegador { min-width: 1180px; background: var(--borde); border-radius: var(--r-tarjeta); padding: var(--e1); }
+.navegador .barra-nav { height: 32px; display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e4); }
+.navegador .url { background: var(--fondo); border-radius: var(--r-pildora); padding: 2px var(--e4); font-size: 13px; color: var(--texto-2); }
+.app-web { display: grid; grid-template-columns: 248px 1fr; background: var(--fondo); border-radius: 0 0 var(--r-tarjeta) var(--r-tarjeta); min-height: 820px; }
+.lateral { background: var(--superficie); border-right: var(--t-borde) solid var(--borde); padding: var(--e4) var(--e3); display: flex; flex-direction: column; gap: var(--e1); border-radius: 0 0 0 var(--r-tarjeta); }
+.marca { display: flex; align-items: center; gap: var(--e3); padding: var(--e2) var(--e2) var(--e4); font-weight: 650; font-size: 15px; }
+.logo { width: 32px; height: 32px; border-radius: var(--r-control); background: var(--elevado); color: var(--texto); display: grid; place-items: center; }
+.item { min-height: 44px; border-radius: var(--r-control); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; }
+.item.abierto { color: var(--texto); font-weight: 650; }
+.subitem { min-height: 36px; display: flex; align-items: center; padding-left: 44px; border-radius: var(--r-control); color: var(--texto-2); font-size: 15px; }
+/* texto de acento sobre elevado: A5 en claro, A2 en oscuro (tokens.json · textoAcentoSobreElevado) */
+.subitem[aria-current="page"] { background: var(--elevado); color: var(--texto-acento-elevado); font-weight: 650; }
+.lateral .pie { margin-top: auto; border-top: var(--t-borde) solid var(--borde); padding-top: var(--e3); display: flex; flex-direction: column; gap: var(--e1); }
+.lateral .pie .sinc { padding: var(--e2) var(--e3); }
+.principal { padding: var(--e6); display: flex; flex-direction: column; gap: var(--e5); position: relative; }
+.rejilla { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--e4); align-items: start; }
+.span-12 { grid-column: span 12; } .span-8 { grid-column: span 8; } .span-4 { grid-column: span 4; }
+.tarjeta.web { padding: var(--e5); gap: var(--e4); }
+
+
+/* ---------- bienvenida (SIS-08, D-32) ---------- */
+.bv-cab { display: flex; align-items: center; justify-content: space-between; gap: var(--e2); margin-inline: -12px calc(-1 * var(--e3)); min-height: var(--tactil); }
+.bv-cab .hueco { width: 48px; height: 48px; flex: none; }
+.bv-barras { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--e1); margin-top: calc(-1 * var(--e1)); }
+.bv-barras i { height: var(--e1); border-radius: var(--r-pildora); background: var(--elevado); }
+.bv-barras i.hecho { background: var(--accion); }
+.bv-barras i.actual { background: var(--texto-2); }
+.bv-scroll { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: var(--e4); }
+.bv-scroll > * { flex-shrink: 0; }
+.bv-titulo { display: flex; gap: var(--e3); align-items: flex-start; }
+.bv-titulo .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--e1); }
+.bv-titulo .txt p { color: var(--texto-2); font-size: 15px; line-height: 20px; }
+.ilus { width: 112px; height: 112px; flex: none; outline: var(--t-borde) dashed var(--texto-2); outline-offset: calc(-1 * var(--t-borde)); border-radius: var(--r-control); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: var(--e2); text-align: center; color: var(--texto-2); font-size: 13px; line-height: 16px; font-weight: 500; position: relative; }
+.ilus b { color: var(--texto); font-weight: 650; }
+.campo { display: flex; flex-direction: column; gap: var(--e1); }
+.campo > .lbl { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.campo > .ayuda { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.entrada { min-height: var(--tactil); background: var(--elevado); border-radius: var(--r-control); padding-inline: var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e2); position: relative; }
+.entrada .u { color: var(--texto-2); font-size: 15px; line-height: 20px; }
+.entrada.foco { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.entrada.error { outline: var(--t-sel) solid var(--error); outline-offset: calc(-1 * var(--t-sel)); }
+.origen { display: inline-flex; align-items: center; gap: var(--e1); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.chips { display: flex; flex-wrap: wrap; gap: var(--e3) var(--e2); }
+.chip { min-height: 36px; padding-inline: var(--e3); border-radius: var(--r-pildora); background: var(--elevado); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; display: inline-flex; align-items: center; position: relative; transition: background var(--rapido) var(--estandar); }
+.chip::after { content: ""; position: absolute; inset: calc(-1 * var(--e2) + 2px) 0; }
+.chip:active { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); color: var(--texto); }
+.chip[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.segmento.dias button { padding-inline: 0; }
+.todo-ninguna { min-height: var(--tactil-gym); display: flex; align-items: center; gap: var(--e3); padding: var(--e2) var(--e3); border-radius: var(--r-control); background: var(--elevado); width: 100%; text-align: left; position: relative; }
+.todo-ninguna[aria-pressed="true"] { outline: var(--t-sel) solid var(--accion); outline-offset: calc(-1 * var(--t-sel)); }
+.todo-ninguna .marca-c { width: 24px; height: 24px; border-radius: var(--r-casilla); border: var(--t-sel) solid var(--texto-2); display: grid; place-items: center; flex: none; }
+.todo-ninguna[aria-pressed="true"] .marca-c { background: var(--accion); border-color: var(--accion); color: var(--texto-accion); }
+.todo-ninguna .txt { flex: 1; display: flex; flex-direction: column; }
+.todo-ninguna .txt .t-detalle { color: var(--texto-2); }
+.conexion { min-height: 64px; padding: var(--e2) var(--e3) var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); }
+.conexion > .i { color: var(--texto-2); }
+.conexion .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.conexion .txt .t-detalle { color: var(--texto-2); }
+.conexion .ok { color: var(--texto-acento); }
+.conexion .btn { min-height: 40px; position: relative; }
+.conexion .btn::after { content: ""; position: absolute; inset: calc(-1 * var(--e1)) 0; }
+.conexion .error-linea { margin-top: 2px; }
+.acciones-bv { display: flex; flex-direction: column; gap: var(--e2); flex: none; }
+.bv-scroll + .ranura-aviso { margin-top: 0; }
+.plan-cifras { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e3); }
+.plan-cifras .par-c { display: flex; }
+.plan-cifras .par-c > div { flex: 1; display: flex; flex-direction: column; gap: var(--e1); }
+.plan-cifras .par-c > div + div { border-left: var(--t-borde) solid var(--borde); padding-left: var(--e4); }
+.plan-cifras .cifra { font-size: 32px; line-height: 32px; white-space: nowrap; }
+.plan-cifras .pie-c { display: flex; align-items: center; justify-content: space-between; gap: var(--e2); margin-block: calc(-1 * var(--e1)) calc(-1 * var(--e2)); }
+.plan-cifras .pie-c .btn.texto { margin-left: calc(-1 * var(--e3)); white-space: nowrap; flex: none; }
+.coach { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e4); display: flex; flex-direction: column; gap: var(--e1); }
+.coach .quien { display: inline-flex; align-items: center; gap: var(--e1); color: var(--texto-acento); font-size: 13px; line-height: 18px; font-weight: 650; }
+.coach p { font-size: 15px; line-height: 20px; }
+.metas { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; }
+.metas > div { min-height: 44px; padding: var(--e2) var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); }
+.metas > div + div { border-top: var(--t-borde) solid var(--borde); }
+.metas .cifra { font-size: 20px; line-height: 24px; }
+.metas .ppal { display: flex; flex-direction: column; }
+.metas .ppal .t-detalle { color: var(--texto-2); }
+.hoja .desglose > div { align-items: center; gap: var(--e3); min-height: 48px; }
+.hoja .desglose .txt { display: flex; flex-direction: column; min-width: 0; }
+.hoja .desglose .txt .t-detalle { color: var(--texto-2); }
+.hoja .desglose .total .cifra { font-size: 25px; line-height: 26px; }
+.hoja .nota { margin-top: calc(-1 * var(--e1)); }
+.hoja .desglose .anota { left: -16px; top: -14px; }
+.cuerpo > .bv-scroll { flex-shrink: 1; }
+.bv-scroll { overflow-x: visible; overflow-y: clip; padding-top: var(--e3); }
+.segmento.auto button { flex: 1 1 auto; white-space: nowrap; padding-inline: var(--e2); }
+.bv-barras { position: relative; }
+
+/* tablas de la lámina */
+.cambios, .casos { max-width: 60ch; }
+.tabla td .cifra { white-space: nowrap; }
+.tabla tr.res td { font-weight: 650; }
+.ilus-tabla td:first-child { white-space: nowrap; }
+.anota.abajo { top: auto; bottom: -10px; }
+.ilus .anota { right: -10px; }
+.chip .anota { top: -14px; right: -10px; }
+.entrada .anota { right: -10px; }
+
+
+/* ---------- ilustraciones (ADR 0024) ---------- */
+.ilus-svg { width: 112px; height: 112px; flex: none; display: block; color: var(--texto); --ilus-secundario: var(--texto-2); --ilus-acento: var(--texto-acento); fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.ilus-svg.grande { width: 200px; height: 200px; }
+.temas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 720px), 1fr)); gap: var(--e4); }
+.tema { background: var(--fondo); color: var(--texto); border-radius: var(--r-tarjeta); padding: var(--e5); display: flex; flex-direction: column; gap: var(--e4); }
+.tema .rotulo { font-size: 15px; line-height: 20px; font-weight: 650; }
+.tema .rotulo span { color: var(--texto-2); font-weight: 500; }
+.tema-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: var(--e5) var(--e4); }
+.tema-grid figure { width: auto; gap: var(--e2); }
+.tema-grid figcaption { color: var(--texto-2); }
+.tema-grande { display: flex; flex-wrap: wrap; gap: var(--e5); align-items: center; }
+.tema-grande p { color: var(--texto-2); max-width: 46ch; font-size: 15px; line-height: 20px; }
+
+/* ---------- estados móvil ---------- */
+.girar { animation: girar 900ms linear infinite; transform-origin: 50% 50%; }
+@media (prefers-reduced-motion: reduce) { .girar { animation: none; } }
+@keyframes girar { to { transform: rotate(360deg); } }
+.sinc.bv { margin-top: calc(-1 * var(--e2)); font-size: 13px; line-height: 18px; font-weight: 500; }
+.entrada.vacia > span:first-child { color: var(--texto-2); }
+.aviso .txt-av { flex: 1; font-size: 15px; line-height: 20px; }
+
+/* ---------- Hoy (móvil y web) ---------- */
+.hoy-cab { display: flex; align-items: center; justify-content: space-between; gap: var(--e2); }
+.cuenta { width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--r-pildora); margin-right: calc(-1 * var(--e1)); }
+.cuenta span { width: 40px; height: 40px; border-radius: var(--r-pildora); background: var(--elevado); display: grid; place-items: center; font-weight: 650; }
+.cuenta:active { background: var(--capa-pressed); }
+.termina { background: var(--suave); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e3); width: 100%; text-align: left; transition: background var(--rapido) var(--estandar); }
+.termina:active { background: color-mix(in srgb, var(--texto) 10%, var(--suave)); }
+.termina .fila-t { display: flex; align-items: center; justify-content: space-between; gap: var(--e3); }
+.termina .txt { display: flex; flex-direction: column; gap: 2px; }
+/* sobre el fondo suave el texto secundario no llega a 4.5:1 con todos los acentos: va en texto principal */
+.termina .t-detalle { color: var(--texto); }
+.termina .bv-barras { margin-top: 0; }
+.termina .bv-barras i { background: color-mix(in srgb, var(--texto) 12%, transparent); }
+.termina .bv-barras i.hecho { background: var(--accion); }
+.vacio-t { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; align-items: flex-start; gap: var(--e2); }
+.vacio-t > .i { color: var(--texto-2); }
+.vacio-t p { color: var(--texto-2); font-size: 15px; line-height: 20px; }
+
+/* ---------- bienvenida en la web ---------- */
+.bv-web { background: var(--fondo); border-radius: 0 0 var(--r-tarjeta) var(--r-tarjeta); min-height: 780px; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+.bv-web-cab { display: flex; align-items: center; justify-content: space-between; gap: var(--e4); padding: var(--e3) var(--e6); border-bottom: var(--t-borde) solid var(--borde); }
+.bv-web-cab .marca { padding: 0; }
+.bv-web-cuerpo { flex: 1; display: grid; grid-template-columns: 280px minmax(0, 520px); gap: var(--e7); justify-content: center; padding: var(--e7) var(--e6) var(--e6); }
+.bv-lado { display: flex; flex-direction: column; gap: var(--e4); }
+.bv-lado .prog { display: flex; flex-direction: column; gap: var(--e2); }
+.bv-lado .bv-barras { margin-top: 0; }
+.bv-lado p { color: var(--texto-2); }
+.bv-form { display: flex; flex-direction: column; gap: var(--e4); }
+.bv-form .ranura-aviso { margin-top: auto; }
+.bv-acciones { display: flex; justify-content: flex-end; gap: var(--e3); }
+.bv-acciones .btn { min-width: 128px; }
+.solo-android { display: inline-flex; align-items: center; gap: var(--e1); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; white-space: nowrap; }
+.velo.centro { justify-content: center; align-items: center; }
+.dialogo { background: var(--hoja); border-radius: var(--r-tarjeta); padding: var(--e5); width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: var(--e4); }
+.dialogo .desglose > div { align-items: center; gap: var(--e3); min-height: 48px; }
+.dialogo .desglose .txt { display: flex; flex-direction: column; min-width: 0; }
+.dialogo .desglose .txt .t-detalle { color: var(--texto-2); }
+.dialogo .botones { display: flex; justify-content: flex-end; }
+.item .i { flex: none; }
+
+
+/* ---------- prototipo ---------- */
+.proto { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: var(--e6); padding: var(--e6) var(--e4) var(--e7); }
+.vista[hidden] { display: none !important; }
+#v-telefono { width: 376px; max-width: 100%; flex: none; }
+.guion { max-width: 600px; display: flex; flex-direction: column; gap: var(--e4); }
+.guion .titulo { font-size: 32px; line-height: 32px; font-weight: 800; font-stretch: 75%; margin: 0; }
+.guion h2 { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.guion ol { margin: 0; padding-left: 1.4em; display: grid; gap: var(--e2); color: var(--texto-2); }
+.guion ol b { color: var(--texto); font-weight: 650; }
+.guion .controles { display: flex; flex-wrap: wrap; gap: var(--e4); }
+.guion .control { display: flex; flex-direction: column; gap: var(--e1); }
+.guion .segmento { flex-wrap: wrap; }
+.guion .segmento button { flex: none; }
+.guion .botones-g { display: flex; flex-wrap: wrap; gap: var(--e2); }
+.proto .cuerpo { overflow: hidden; }
+.proto .bv-scroll { overflow-y: auto; overflow-x: hidden; padding: var(--e3) 4px var(--e4); margin-inline: -4px; scrollbar-width: thin; }
+.proto .bv-scroll > .campo, .proto .bv-scroll > .par { flex-shrink: 0; }
+.entrada { border: var(--t-sel) solid transparent; }
+.entrada.error { outline: none; border-color: var(--error); }
+.entrada:focus-within { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.entrada input, .entrada select { flex: 1; min-width: 0; border: 0; background: none; font: inherit; color: inherit; padding: 0; height: 40px; outline: none; appearance: none; -webkit-appearance: none; }
+.entrada input::placeholder { color: var(--texto-2); opacity: 1; }
+.entrada input, .entrada select { width: 100%; }
+.par > * { min-width: 0; }
+.entrada select + .i { color: var(--texto-2); transform: rotate(90deg); }
+.btn.texto.alinear { align-self: flex-start; margin-left: calc(-1 * var(--e3)); }
+.nota.alerta { color: var(--texto); }
+.semanas { margin-top: calc(-1 * var(--e2)); }
+.semanas:empty { display: none; }
+.web-cab-der { display: flex; align-items: center; gap: var(--e4); }
+.app-web { position: relative; }
+#capa-web { position: absolute; inset: 0; pointer-events: none; }
+#capa-web:empty { display: none; }
+#capa-web > * { pointer-events: auto; }
+.proto .web-envoltura { width: min(100%, 1180px); overflow-x: auto; }
+.proto .navegador { min-width: 980px; }
+.proto .bv-web { min-height: 760px; }
+.proto .bv-web .bv-form { min-height: 560px; }
+.ranura-aviso.web { margin-top: 0; }
+.ranura-aviso .aviso { z-index: auto; }
+.hoja { max-height: 92%; overflow-y: auto; }
+.dialogo { max-height: 90%; overflow-y: auto; }
+.hoja .campo, .dialogo .campo { flex-shrink: 0; }
+#barra[hidden] { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .hoja { animation: sube var(--lento) var(--entrar); }
+  .dialogo { animation: sube-poco var(--lento) var(--entrar); }
+  .velo { animation: funde var(--normal) var(--entrar); }
+  .aviso.entra { animation: sube-poco var(--normal) var(--entrar); }
+}
+@media (prefers-reduced-motion: reduce) { .hoja, .dialogo, .velo, .aviso.entra { animation: funde var(--rapido) var(--estandar); } }
+@keyframes sube { from { transform: translateY(var(--e5)); opacity: 0; } }
+@keyframes sube-poco { from { transform: translateY(var(--e2)); opacity: 0; } }
+@keyframes funde { from { opacity: 0; } }
+@media (max-width: 440px) {
+  body { padding: 0; }
+  .proto { padding: 0; gap: var(--e6); }
+  #v-telefono { width: 100%; }
+  .proto .telefono { width: 100%; padding: 0; border-radius: 0; background: none; }
+  .proto .pantalla { height: 100dvh; border-radius: 0; }
+  .guion { padding: 0 var(--e4) var(--e7); }
+}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- Tabler Icons 3.49.0, outline (MIT, © Paweł Kuna) -->
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M5 12l14 0"/><path d="M5 12l6 6"/><path d="M5 12l6 -6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></symbol>
+  <symbol id="i-alert-circle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-info-circle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 9h.01"/><path d="M11 12h1v4h1"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5l0 14"/><path d="M5 12l14 0"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1 -7 0a5 5 0 0 0 -7 0v-9"/><path d="M5 21v-7"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c3.255 2.777 3.695 7.266 1.029 10.501c-2.666 3.235 -7.615 4.215 -11.574 2.293l-4.7 1"/></symbol>
+  <symbol id="i-scale" viewBox="0 0 24 24"><path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3l0 -12"/><path d="M12 7c1.956 0 3.724 .802 5 2.095l-2.956 2.904a3 3 0 0 0 -2.038 -.799a3 3 0 0 0 -2.038 .798l-2.956 -2.903a6.979 6.979 0 0 1 5 -2.095"/></symbol>
+  <symbol id="i-heartbeat" viewBox="0 0 24 24"><path d="M19.5 13.572l-7.5 7.428l-2.896 -2.868m-6.117 -8.104a5 5 0 0 1 9.013 -3.022a5 5 0 1 1 7.5 6.572"/><path d="M3 13h2l2 3l2 -6l1 3h3"/></symbol>
+  <symbol id="i-device-watch" viewBox="0 0 24 24"><path d="M6 9a3 3 0 0 1 3 -3h6a3 3 0 0 1 3 3v6a3 3 0 0 1 -3 3h-6a3 3 0 0 1 -3 -3v-6"/><path d="M9 18v3h6v-3"/><path d="M9 6v-3h6v3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 7v5l3 3"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></symbol>
+  <symbol id="i-device-mobile" viewBox="0 0 24 24"><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14"/><path d="M11 4h2"/><path d="M12 17v.01"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/></symbol>
+  <symbol id="i-barbell" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+  <symbol id="i-kitchen" viewBox="0 0 24 24"><path d="M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12m0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"/></symbol>
+  <symbol id="i-cloud-off" viewBox="0 0 24 24"><path d="M9.58 5.548c.24 -.11 .492 -.207 .752 -.286c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.913 0 3.464 1.56 3.464 3.486c0 .957 -.383 1.824 -1.003 2.454m-2.997 1.033h-11.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.13 -.582 .37 -1.128 .7 -1.62"/><path d="M3 3l18 18"/></symbol>
+  <symbol id="i-cloud-check" viewBox="0 0 24 24"><path d="M11 18.004h-4.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.393 -1.762 1.794 -3.2 3.675 -3.773c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.388 0 2.585 .82 3.138 2.007"/><path d="M15 19l2 2l4 -4"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065"/><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></symbol>
+  <symbol id="i-loader-2" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6"/><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"/><path d="M8 11v-4a4 4 0 1 1 8 0v4"/></symbol>
+  <symbol id="ilu-01-tu" viewBox="0 0 112 112"><path d="M14 30a8 8 0 0 1 8 -8h44a8 8 0 0 1 8 8v60a8 8 0 0 1 -8 8h-44a8 8 0 0 1 -8 -8z"/><path d="M34 48a10 10 0 1 0 20 0a10 10 0 1 0 -20 0"/><path d="M28 80a16 16 0 0 1 32 0"/><path d="M30 89h28" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M86 16a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v80a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M86 26h7M86 46h7M86 66h7M86 86h7M86 56h4M86 76h4" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M80 36h22M76 32l4 4l-4 4" style="stroke: var(--ilus-acento, currentColor)"/></symbol>
+  <symbol id="ilu-02-tu-objetivo" viewBox="0 0 112 112"><path d="M10 102L44 92L30 78L62 70L50 56L84 48" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M24 97a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M43 74a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M64 52a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M84 50V14"/><path d="M84 16h20l-6 7l6 7h-20" style="stroke: var(--ilus-acento, currentColor)"/></symbol>
+  <symbol id="ilu-03-tu-actividad" viewBox="0 0 112 112"><path d="M24 102V40M60 102V40M16 102h52"/><path d="M8 46h68"/><path d="M10 36a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v20a2 2 0 0 1 -2 2h-4a2 2 0 0 1 -2 -2z"/><path d="M66 36a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v20a2 2 0 0 1 -2 2h-4a2 2 0 0 1 -2 -2z"/><path d="M71 84a17 17 0 1 0 34 0a17 17 0 1 0 -34 0" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M85 84a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M88 67v14M88 87v14M71 84h14M91 84h14" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M85 22a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" style="stroke: var(--ilus-acento, currentColor)"/><path d="M92 10V7M92 37V34M80 22h-3M107 22h-3M83.5 13.5l-2 -2M100.5 30.5l2 2M100.5 13.5l2 -2M83.5 30.5l-2 2" style="stroke: var(--ilus-acento, currentColor)"/></symbol>
+  <symbol id="ilu-04-tu-salud" viewBox="0 0 112 112"><path d="M56 12l34 12v28c0 24 -14 40 -34 48c-20 -8 -34 -24 -34 -48v-28z"/><path d="M56 76l-16 -15.5a10 10 0 1 1 16 -12a10 10 0 1 1 16 12z" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M32 58h10l5 -9l6 17l5 -12l3 4h21" style="stroke: var(--ilus-acento, currentColor)"/></symbol>
+  <symbol id="ilu-05-conexiones" viewBox="0 0 112 112"><path d="M44 14a4 4 0 0 1 4 -4h16a4 4 0 0 1 4 4v32a4 4 0 0 1 -4 4h-16a4 4 0 0 1 -4 -4z"/><path d="M54 15h4" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M8 74a6 6 0 0 1 6 -6h24a6 6 0 0 1 6 6v24a6 6 0 0 1 -6 6h-24a6 6 0 0 1 -6 -6z"/><path d="M18 84a8 8 0 0 1 16 0M26 84l3 -4" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M76 78a6 6 0 0 1 6 -6h12a6 6 0 0 1 6 6v12a6 6 0 0 1 -6 6h-12a6 6 0 0 1 -6 -6z"/><path d="M82 72v-6h12v6M82 96v6h12v-6" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M56 55V66M45 81L49 78.5M75 82L64 77" style="stroke: var(--ilus-secundario, currentColor); stroke-dasharray: 0.1 5"/><path d="M51 74a5 5 0 1 0 10 0a5 5 0 1 0 -10 0" style="stroke: var(--ilus-acento, currentColor)"/></symbol>
+  <symbol id="ilu-06-tu-punto-de-partida" viewBox="0 0 112 112"><path d="M10 58a18 18 0 1 0 36 0a18 18 0 1 0 -36 0"/><path d="M23 58a5 5 0 1 0 10 0a5 5 0 1 0 -10 0" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M28 76H102V64H44M102 61v18"/><path d="M58 64v5M66 64v3M74 64v5M82 64v3M90 64v5" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M50 54v32" style="stroke: var(--ilus-acento, currentColor)"/></symbol>
+  <symbol id="ilu-07-tu-plan" viewBox="0 0 112 112"><path d="M18 22a6 6 0 0 1 6 -6h40a6 6 0 0 1 6 6v72a6 6 0 0 1 -6 6h-40a6 6 0 0 1 -6 -6z"/><path d="M36 10h16a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-16a2 2 0 0 1 -2 -2v-8a2 2 0 0 1 2 -2z"/><path d="M31 50a13 13 0 1 0 26 0a13 13 0 1 0 -26 0" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M37 50a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M28 86L40 80L52 83L88 76" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M88 78V44"/><path d="M88 46h16l-5 6l5 6h-16" style="stroke: var(--ilus-acento, currentColor)"/></symbol>
+  <!-- logo provisional: glifo de packages/brand (barbell) -->
+  <symbol id="logo" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+</svg>
+<div class="proto">
+  <div class="vista" id="v-telefono"><div class="telefono"><div class="pantalla" id="pantalla">
+    <div class="estado tnum" aria-hidden="true"><span>9:02</span></div>
+    <main class="cuerpo" id="cuerpo"></main>
+    <nav class="barra" id="barra" aria-label="Secciones" hidden><button type="button" class="pestana" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</button><button type="button" class="pestana"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</button><button type="button" class="pestana"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</button><button type="button" class="pestana"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</button><button type="button" class="pestana"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</button></nav>
+    <div id="capa"></div>
+  </div></div></div>
+  <div class="vista web-envoltura" id="v-web" hidden><div class="navegador"><div class="barra-nav"><span class="url" id="url"></span></div><div id="web-app"></div></div></div>
+  <aside class="guion" aria-label="Guion de prueba">
+    <p class="titulo">Prototipo · flujo 10</p>
+    <p class="sec">Bienvenida de primer uso, sábado 17 de octubre de 2026. Todo vive en memoria: recarga para empezar de cero.</p>
+    <div class="botones-g"><button type="button" class="btn primario" id="ejemplo">Cargar ejemplo de Francis</button><button type="button" class="btn secundario" id="blanco">Empezar en blanco</button></div>
+    <h2>Qué puedes probar</h2>
+    <ol>
+      <li><b>Validación:</b> en blanco, toca Siguiente: cada campo obligatorio dice qué falta y el foco va al primero.</li>
+      <li><b>Unidades:</b> en el paso 1 cambia peso a kg o perímetros a pulgadas; los pasos 2 y 6 se muestran en esa unidad.</li>
+      <li><b>Atrás:</b> vuelve con lo escrito, con la flecha del teléfono o con Atrás en la web.</li>
+      <li><b>Tu salud:</b> «Nada de esto» marca las tres «Ninguna» de un toque.</li>
+      <li><b>Renpho:</b> conecta y mira el paso 6 lleno. Con Renpho en «Falla» verás Reintentar y Seguir sin conectar; sin Renpho y con meta de % de grasa, el cuello pasa a ser obligatorio.</li>
+      <li><b>Tu plan:</b> calculado con lo que escribiste (Katch-McArdle o Mifflin-St Jeor). Con el ejemplo de Francis, el plan fijo de 2,350 kcal y 172 g junto a la fórmula.</li>
+      <li><b>Salir y retomar:</b> Salir lleva a Hoy con «Termina tu bienvenida»; tócala para volver al mismo paso. «Retomar en el otro dispositivo» cambia entre teléfono y web.</li>
+      <li><b>Sin conexión:</b> se guarda en el dispositivo; Renpho y el otro dispositivo esperan a la red.</li>
+    </ol>
+    <div class="controles">
+      <div class="control"><span class="t-detalle sec" id="lbl-vista">Dispositivo</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-vista" id="ctl-vista">
+          <button type="button" data-v="telefono" aria-pressed="true">Teléfono</button>
+          <button type="button" data-v="web" aria-pressed="false">Web</button></div></div>
+      <div class="control"><span class="t-detalle sec" id="lbl-red">Conexión</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-red" id="ctl-red">
+          <button type="button" data-v="on" aria-pressed="true">En línea</button>
+          <button type="button" data-v="off" aria-pressed="false">Sin conexión</button></div></div>
+      <div class="control"><span class="t-detalle sec" id="lbl-renpho">Renpho</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-renpho" id="ctl-renpho">
+          <button type="button" data-v="ok" aria-pressed="true">Conecta</button>
+          <button type="button" data-v="falla" aria-pressed="false">Falla</button></div></div>
+      <div class="control"><span class="t-detalle sec" id="lbl-modo">Modo</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-modo" id="ctl-modo">
+          <button type="button" data-modo="" aria-pressed="true">Sistema</button>
+          <button type="button" data-modo="light" aria-pressed="false">Claro</button>
+          <button type="button" data-modo="dark" aria-pressed="false">Oscuro</button></div></div>
+      <div class="control"><span class="t-detalle sec" id="lbl-acento">Acento</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-acento" id="ctl-acento">
+          <button type="button" data-a="caribe" aria-pressed="true">Caribe</button>
+          <button type="button" data-a="mar" aria-pressed="false">Mar</button>
+          <button type="button" data-a="palma" aria-pressed="false">Palma</button>
+          <button type="button" data-a="mango" aria-pressed="false">Mango</button>
+          <button type="button" data-a="flamboyan" aria-pressed="false">Flamboyán</button>
+          <button type="button" data-a="uva" aria-pressed="false">Uva</button></div></div>
+    </div>
+    <div><button type="button" class="btn secundario" id="otro-disp"><svg class="i s20" aria-hidden="true"><use href="#i-device-mobile"/></svg>Retomar en el otro dispositivo</button></div>
+  </aside>
+</div>
+<script>
+// Prototipo navegable del flujo 10 (bienvenida de primer uso, SIS-08, D-32, D-33). Estado solo en memoria.
+"use strict";
+
+// ------------------------------------------------------------ constantes
+const HOY = new Date(2026, 9, 17);                 // sábado 17 de octubre de 2026
+const KG_LB = 2.20462, CM_IN = 2.54;
+const ILUS = ["01-tu", "02-tu-objetivo", "03-tu-actividad", "04-tu-salud", "05-conexiones", "06-tu-punto-de-partida", "07-tu-plan"];
+const TITULOS = ["Tú", "Tu objetivo", "Tu actividad", "Tu salud", "Conexiones", "Tu punto de partida", "Tu plan"];
+const SUBS = [
+  "Unos 3 minutos para que el coach te conozca. Puedes salir y seguir luego.",
+  "Una meta que se pueda medir, con fecha. Contra ella se mide tu avance.",
+  "Con esto el coach ajusta tus calorías y arma tus semanas.",
+  "Para cuidarte al proponer ejercicios y comidas.",
+  "Traen tus datos solas. Todas se pueden saltar y conectar luego en Ajustes.",
+  "Solo peso y cintura son obligatorios. Lo de Renpho ya viene lleno.",
+  "Esto es lo que el coach sabe de ti. Todo se cambia luego en su sección.",
+];
+const TIPOS = {
+  "Perder grasa": { desc: "Bajar grasa cuidando el músculo.", medida: "peso", ajuste: -0.15, prot: 2.2 },
+  "Ganar músculo": { desc: "Subir músculo con el menor aumento de grasa posible.", medida: "peso", ajuste: 0.05, prot: 2.0 },
+  "Recomposición": { desc: "Bajar grasa y ganar músculo a la vez.", medida: "grasa", ajuste: -0.10, prot: 2.2 },
+  "Fuerza": { desc: "Subir tus cargas; el peso se mantiene.", medida: "peso", ajuste: 0, prot: 2.0 },
+  "Salud general": { desc: "Moverte, comer mejor y mantener tus medidas.", medida: "cintura", ajuste: 0, prot: 1.8 },
+  "Rendimiento MTB": { desc: "Rodar más y mejor; el peso se mantiene.", medida: "peso", ajuste: 0, prot: 1.8 },
+};
+const slug = (t) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "-");
+const MEDIDAS = { grasa: "% de grasa", peso: "Peso", cintura: "Cintura", otra: "Otra" };
+const OTRAS = ["Cuello", "Hombros", "Pecho", "Cadera", "Brazo contraído", "Muslo"];
+const RECOMENDADAS = ["Hombros", "Pecho", "Cadera", "Brazo relajado", "Brazo contraído", "Muslo", "Pantorrilla"];
+const FUERA = [
+  ["sentado", "Sentado casi todo el día", ""],
+  ["caminatas", "Sentado, con caminatas o cardio", "2 días o más por semana"],
+  ["de-pie", "De pie o caminando buena parte del día", ""],
+  ["fisico", "Trabajo físico", ""],
+];
+const NIVELES = [["sedentaria", 1.2], ["ligera", 1.375], ["moderada", 1.55], ["alta", 1.725], ["muy alta", 1.9]];
+const GRUPOS = {
+  lesiones: ["Lesiones o molestias", ["Ninguna", "Rodilla", "Hombro", "Espalda baja", "Otra"]],
+  condiciones: ["Condiciones de salud", ["Ninguna", "Presión alta", "Diabetes", "Asma", "Otra"]],
+  alergias: ["Alergias y restricciones", ["Ninguna", "Lactosa", "Gluten", "Maní", "Otra"]],
+};
+const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+
+// ------------------------------------------------------------ estado
+let S;
+function datosVacios() {
+  return {
+    nombre: "", nacimiento: "", sexo: null, estatura: null,
+    u: { peso: "lb", cargas: "lb", estatura: "cm", medidas: "cm", distancia: "km" },
+    tipo: null, medida: null, otra: "Cuello", meta: null, fecha: "", metasMedida: [],
+    experiencia: null, dias: null, duracion: 60, hora: "", fuera: null, mtb: "No",
+    nada: false, salud: { lesiones: [], condiciones: [], alergias: [] }, saludOtra: { lesiones: "", condiciones: "", alergias: "" },
+    renpho: "no", renphoFecha: null, hc: false, reloj: false,
+    peso: null, grasa: null, musculo: null, cintura: null, cuello: null, cadera: null, recomendadas: "luego", extra: {},
+    origen: {},
+  };
+}
+function reiniciar(conEjemplo) {
+  S = { vista: S ? S.vista : "telefono", pantalla: "bienvenida", paso: 1, d: datosVacios(), fijo: false, err: {},
+        hoja: null, aviso: null, offline: S ? S.offline : false, renphoFalla: S ? S.renphoFalla : false, cargando: null };
+  if (conEjemplo) ejemploFrancis();
+}
+function ejemploFrancis() {
+  Object.assign(S.d, {
+    nombre: "Francis", nacimiento: "27/07/1996", sexo: "hombre", estatura: 172,
+    tipo: "Recomposición", medida: "grasa", meta: 17.5, fecha: "2027-01-15",
+    metasMedida: [{ medida: "Peso", valor: 76 }, { medida: "Cintura", valor: 88 }],
+    experiencia: "Vuelvo tras una pausa", dias: 3, duracion: 60, hora: "08:00", fuera: "caminatas", mtb: "1 o 2",
+    nada: true, salud: { lesiones: ["Ninguna"], condiciones: ["Ninguna"], alergias: ["Ninguna"] },
+    cintura: 91,
+  });
+  S.fijo = true;  // plan fijo de Francis: 2,350 kcal y 172 g (D-33)
+}
+
+// ------------------------------------------------------------ utilidades
+const $ = (s, r = document) => r.querySelector(s);
+const ic = (n, s = "", c = "") => `<svg class="i${s ? " s" + s : ""}${c ? " " + c : ""}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const ilu = (n, g) => `<svg class="ilus-svg${g ? " grande" : ""}" aria-hidden="true" focusable="false"><use href="#ilu-${ILUS[n - 1]}"/></svg>`;
+const num = (x, d = 0) => Number(x).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const leer = (v) => { const x = parseFloat(String(v).replace(",", ".")); return Number.isFinite(x) ? x : null; };
+const r10 = (x) => Math.round(x / 10) * 10;
+const fechaCorta = (d) => `${d.getDate()} ${MESES[d.getMonth()]}`;
+const sumaDias = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const diasEntre = (a, b) => Math.round((b - a) / 86400000);
+const deISO = (s) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ""); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; };
+const enWeb = () => S.vista === "web";
+
+// unidades (D-24): todo se guarda en kg y cm; solo cambia cómo se muestra
+const uPeso = () => S.d.u.peso;
+const pesoVer = (kg, d = 1) => kg == null ? "" : num(uPeso() === "lb" ? kg * KG_LB : kg, d);
+const pesoLeer = (v) => { const x = leer(v); return x == null ? null : (uPeso() === "lb" ? x / KG_LB : x); };
+const uMed = () => (S.d.u.medidas === "in" ? "pulg." : "cm");
+const medVer = (cm) => cm == null ? "" : (S.d.u.medidas === "in" ? num(cm / CM_IN, 1) : num(cm, cm % 1 ? 1 : 0));
+const medLeer = (v) => { const x = leer(v); return x == null ? null : (S.d.u.medidas === "in" ? x * CM_IN : x); };
+
+function edad() {
+  const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(S.d.nacimiento.trim());
+  if (!m) return null;
+  const dd = +m[1], mm = +m[2] - 1, aa = +m[3], f = new Date(aa, mm, dd);
+  if (f.getDate() !== dd || f.getMonth() !== mm) return null;
+  let e = HOY.getFullYear() - aa;
+  if (HOY.getMonth() < mm || (HOY.getMonth() === mm && HOY.getDate() < dd)) e--;
+  return e;
+}
+
+// ------------------------------------------------------------ cálculo del plan (D-32, D-33)
+function marina() {
+  const d = S.d;
+  if (!d.estatura || !d.cintura || !d.cuello) return null;
+  const h = d.estatura / CM_IN, c = d.cintura / CM_IN, n = d.cuello / CM_IN;
+  if (d.sexo === "mujer") {
+    if (!d.cadera) return null;
+    return 163.205 * Math.log10(c + d.cadera / CM_IN - n) - 97.684 * Math.log10(h) - 78.387;
+  }
+  if (c - n <= 0) return null;
+  return 86.010 * Math.log10(c - n) - 70.041 * Math.log10(h) + 36.76;
+}
+function grasaConocida() {
+  if (S.d.grasa != null) return { valor: S.d.grasa, fuente: S.d.origen.grasa ? "Renpho" : "lo que escribiste" };
+  const m = marina();
+  return m == null ? null : { valor: Math.round(m * 10) / 10, fuente: "método de la Marina" };
+}
+function nivel() {
+  const d = S.d;
+  let n = d.dias + (d.fuera === "caminatas" ? 2 : 0);
+  let i = n === 0 ? 0 : n <= 3 ? 1 : n <= 5 ? 2 : 3;
+  if (d.fuera === "de-pie") i += 1;
+  if (d.fuera === "fisico") i += 2;
+  i = Math.min(i, 4);
+  return { i, sesiones: n, nombre: NIVELES[i][0], f: NIVELES[i][1] };
+}
+function calcular() {
+  const d = S.d, g = grasaConocida(), a = edad(), t = TIPOS[d.tipo];
+  let reposo, metodo, base;
+  if (g) {
+    const magra = d.peso * (1 - g.valor / 100);
+    reposo = 370 + 21.6 * magra; metodo = "Katch-McArdle"; base = `${pesoVer(magra)} ${uPeso()} sin grasa (${g.fuente})`;
+  } else {
+    reposo = 10 * d.peso + 6.25 * d.estatura - 5 * a + (d.sexo === "mujer" ? -161 : 5);
+    metodo = "Mifflin-St Jeor"; base = `peso, estatura, ${a} años y sexo`;
+  }
+  const nv = nivel(), gasto = reposo * nv.f, kcal = r10(gasto * (1 + t.ajuste));
+  const prot = Math.round(t.prot * d.peso);
+  return { reposo, metodo, base, nv, gasto, ajuste: t.ajuste, kcal, prot, gkg: t.prot, grasa: g };
+}
+function inicioMeta() {
+  const d = S.d;
+  if (d.medida === "grasa") { const g = grasaConocida(); return g ? g.valor : null; }
+  if (d.medida === "peso") return d.peso;
+  if (d.medida === "cintura") return d.cintura;
+  return d.otra === "Cuello" ? d.cuello : d.otra === "Cadera" ? d.cadera : d.extra[slug(d.otra)] ?? null;
+}
+function verMeta(v) {
+  const m = S.d.medida;
+  if (m === "grasa") return `${num(v, 1)} %`;
+  if (m === "peso") return `${pesoVer(v)} ${uPeso()}`;
+  return `${medVer(v)} ${uMed()}`;
+}
+function metasIntermedias() {
+  const ini = inicioMeta(), fin = deISO(S.d.fecha);
+  if (ini == null || !fin || S.d.meta == null) return [];
+  const total = diasEntre(HOY, fin), out = [];
+  for (let k = 28; k < total; k += 28) {
+    const v = ini + (S.d.meta - ini) * (k / total);
+    out.push({ fecha: sumaDias(HOY, k), v: S.d.medida === "grasa" ? Math.round(v * 10) / 10 : v });
+  }
+  return out;
+}
+function avisoRitmo() {
+  const ini = inicioMeta(), fin = deISO(S.d.fecha);
+  if (ini == null || !fin) return "";
+  const sem = diasEntre(HOY, fin) / 7, m = S.d.medida, cambio = Math.abs(S.d.meta - ini) / sem;
+  let pasa = false;
+  if (m === "grasa") pasa = cambio > 0.5;
+  else if (m === "peso") pasa = cambio / ini * 100 > 1;
+  else pasa = cambio > 1;
+  return pasa ? "Esa meta pide un ritmo más rápido del que el coach recomienda. Puedes darle más tiempo cambiando la fecha en el paso 2." : "";
+}
+
+// ------------------------------------------------------------ piezas
+function campo(id, lbl, valor, { unidad = "", ayuda = "", origen = "", tipo = "text", modo = "decimal", ph = "", detalle = "" } = {}) {
+  const e = S.err[id];
+  return `<div class="campo"><label class="lbl" for="f-${id}">${lbl}</label>
+    <div class="entrada tnum${e ? " error" : ""}"><input id="f-${id}" data-campo="${id}" type="${tipo}"${modo ? ` inputmode="${modo}"` : ""} value="${esc(valor)}" placeholder="${esc(ph)}"${e ? ` aria-invalid="true" aria-describedby="e-${id}"` : ""} autocomplete="off">${unidad ? `<span class="u" id="u-${id}">${unidad}</span>` : ""}</div>
+    ${detalle}${origen ? `<span class="origen tnum">${ic("scale", 16)}${origen}</span>` : ""}
+    ${e ? `<span class="error-linea" id="e-${id}">${ic("alert-circle", 16)}${e}</span>` : ayuda ? `<span class="ayuda">${ayuda}</span>` : ""}</div>`;
+}
+const errorDe = (id) => S.err[id] ? `<span class="error-linea" id="e-${id}">${ic("alert-circle", 16)}${S.err[id]}</span>` : "";
+const chip = (acc, grupo, valor, on, extra = "") => `<button type="button" class="chip" data-acc="${acc}" data-g="${grupo}" data-v="${esc(valor)}" aria-pressed="${on}"${extra}>${valor}</button>`;
+function seg(acc, grupo, items, sel, cls = "", etiqueta = "") {
+  return `<div class="segmento ${cls}" role="group"${etiqueta ? ` aria-label="${etiqueta}"` : ""}>${items.map(([v, t]) =>
+    `<button type="button" data-acc="${acc}" data-g="${grupo}" data-v="${v}" aria-pressed="${String(v) === String(sel)}">${t}</button>`).join("")}</div>`;
+}
+const grupoLbl = (id, t) => `<span class="lbl" id="l-${id}">${t}</span>`;
+
+// ------------------------------------------------------------ pasos
+function paso1() {
+  const d = S.d, a = edad();
+  const est = d.u.estatura === "ftin"
+    ? (() => { const tin = d.estatura ? d.estatura / CM_IN : null; const ft = tin ? Math.floor(tin / 12) : ""; const inch = tin ? Math.round(tin - ft * 12) : "";
+        return `<div class="campo"><span class="lbl" id="l-est">Estatura</span><div class="par">
+          <div class="entrada tnum${S.err.estatura ? " error" : ""}"><input id="f-estatura" data-campo="est-ft" aria-label="Estatura: pies" inputmode="numeric" value="${ft}"><span class="u">pies</span></div>
+          <div class="entrada tnum${S.err.estatura ? " error" : ""}"><input data-campo="est-in" aria-label="Estatura: pulgadas" inputmode="numeric" value="${inch}"><span class="u">pulg.</span></div></div>${errorDe("estatura")}</div>`; })()
+    : campo("estatura", "Estatura", d.estatura == null ? "" : d.u.estatura === "m" ? num(d.estatura / 100, 2) : num(d.estatura), { unidad: d.u.estatura === "m" ? "m" : "cm" });
+  const resumenU = `Peso y cargas en ${d.u.peso === d.u.cargas ? d.u.peso : `${d.u.peso} y ${d.u.cargas}`} · medidas en ${uMed()} · distancia en ${d.u.distancia === "mi" ? "millas" : "km"}`;
+  return `<span class="t-detalle sec pre">Te damos la bienvenida a <span data-brand-name>Coach Fitness AI</span></span>`
+    + campo("nombre", "Nombre", d.nombre, { modo: "text" })
+    + campo("nacimiento", "Fecha de nacimiento", d.nacimiento, { unidad: a != null ? `${a} años` : "", modo: "numeric", ph: "dd/mm/aaaa" })
+    + `<div class="campo">${grupoLbl("sexo", "Sexo")}${seg("sexo", "sexo", [["hombre", "Hombre"], ["mujer", "Mujer"]], d.sexo, "", "Sexo")}
+       ${S.err.sexo ? errorDe("sexo") : '<span class="ayuda">Lo usan las fórmulas de gasto y de grasa corporal.</span>'}</div>`
+    + est
+    + `<div class="lista"><button type="button" class="fila" data-acc="hoja" data-v="unidades"><span class="txt"><span>Unidades</span><span class="t-detalle sec">${resumenU}</span></span>${ic("chevron-right")}</button></div>`;
+}
+function paso2() {
+  const d = S.d, t = d.tipo ? TIPOS[d.tipo] : null;
+  const unidadMeta = d.medida === "grasa" ? "%" : d.medida === "peso" ? uPeso() : uMed();
+  const metaVal = d.meta == null ? "" : d.medida === "grasa" ? num(d.meta, 1) : d.medida === "peso" ? pesoVer(d.meta) : medVer(d.meta);
+  const fin = deISO(d.fecha), semanas = fin ? Math.round(diasEntre(HOY, fin) / 7) : null;
+  return `<div class="campo">${grupoLbl("tipo", "Qué buscas")}<div class="chips" role="group" aria-labelledby="l-tipo">${Object.keys(TIPOS).map((k) => chip("tipo", "tipo", k, d.tipo === k)).join("")}</div>
+      ${S.err.tipo ? errorDe("tipo") : t ? `<span class="ayuda">${t.desc}</span>` : ""}</div>`
+    + (d.tipo ? `<div class="campo">${grupoLbl("medida", "Qué vas a medir")}${seg("medida", "medida", Object.entries(MEDIDAS), d.medida, "auto", "Qué vas a medir")}
+      ${d.medida === "otra" ? `<div class="entrada"><select data-campo="otra" aria-label="Medida">${OTRAS.map((o) => `<option${o === d.otra ? " selected" : ""}>${o}</option>`).join("")}</select>${ic("chevron-right", 20)}</div>` : ""}</div>
+      <div class="par">${campo("meta", "Meta", metaVal, { unidad: unidadMeta })}${campo("fecha", "Fecha", d.fecha, { tipo: "date", modo: "" })}</div>
+      <span class="ayuda tnum semanas" id="semanas">${textoSemanas(semanas)}</span>
+      ${d.metasMedida.length ? `<div class="lista">${d.metasMedida.map((m, i) => `<div class="fila"><span class="txt"><span>${m.medida}</span><span class="t-detalle sec tnum">Meta ${m.medida === "Peso" ? `${pesoVer(m.valor)} ${uPeso()}` : `${medVer(m.valor)} ${uMed()}`}</span></span><button type="button" class="icono-btn" data-acc="meta-quitar" data-v="${i}" aria-label="Quitar la meta de ${m.medida.toLowerCase()}">${ic("x")}</button></div>`).join("")}</div>` : ""}
+      <button type="button" class="btn texto alinear" data-acc="hoja" data-v="metas">${ic("plus", 20)}Añadir metas por medida</button>` : "");
+}
+function textoSemanas(n) { return n != null && n > 0 ? `En ${n} semanas. Las metas intermedias se proponen al final, con tu punto de partida.` : ""; }
+function paso3() {
+  const d = S.d;
+  return `<div class="campo">${grupoLbl("experiencia", "En el gym")}<div class="chips" role="group" aria-labelledby="l-experiencia">${["Empiezo de cero", "Vuelvo tras una pausa", "Llevo tiempo entrenando"].map((k) => chip("uno", "experiencia", k, d.experiencia === k)).join("")}</div>${errorDe("experiencia")}</div>`
+    + `<div class="campo">${grupoLbl("dias", "Días de gym por semana")}${seg("dias", "dias", [1, 2, 3, 4, 5, 6, 7].map((n) => [n, n]), d.dias, "dias tnum", "Días de gym por semana")}${errorDe("dias")}</div>`
+    + `<div class="campo">${grupoLbl("fuera", "Fuera del gym")}<div class="lista" role="radiogroup" aria-labelledby="l-fuera">${FUERA.map(([v, t, s]) =>
+        `<button type="button" class="opcion-rutina" role="radio" data-acc="fuera" data-v="${v}" aria-checked="${d.fuera === v}"><span class="radio"></span><span class="txt"><span>${t}</span>${s ? `<span class="t-detalle">${s}</span>` : ""}</span></button>`).join("")}</div>${errorDe("fuera")}</div>`
+    + `<div class="par">${campo("duracion", "Cada sesión", d.duracion ?? "", { unidad: "min", modo: "numeric" })}${campo("hora", "Hora (opcional)", d.hora, { tipo: "time", modo: "" })}</div>`
+    + `<div class="campo">${grupoLbl("mtb", "MTB por semana")}${seg("mtb", "mtb", [["No", "No"], ["1 o 2", "1 o 2"], ["3 o más", "3 o más"]], d.mtb, "", "MTB por semana")}
+       <span class="ayuda">El día de un paseo, tu objetivo sube con el 50 % de las kcal de Strava.</span></div>`;
+}
+function paso4() {
+  const d = S.d;
+  return `<button type="button" class="todo-ninguna" data-acc="nada" aria-pressed="${d.nada}"><span class="marca-c">${d.nada ? ic("check", 16) : ""}</span><span class="txt"><span>Nada de esto</span><span class="t-detalle">Sin lesiones, condiciones ni alergias</span></span></button>`
+    + `<p class="nota">${ic("info-circle", 16)}<span>El coach no diagnostica ni receta medicamentos. Ante un dolor fuerte o algo nuevo, te dirá que veas a un médico.</span></p>`
+    + Object.entries(GRUPOS).map(([g, [t, items]]) => `<div class="campo">${grupoLbl(g, t)}<div class="chips" role="group" aria-labelledby="l-${g}">${items.map((k) => chip("salud", g, k, d.salud[g].includes(k))).join("")}</div>
+        ${d.salud[g].includes("Otra") ? `<div class="entrada"><input data-campo="otra-${g}" aria-label="${t}: cuál" placeholder="¿Cuál?" value="${esc(d.saludOtra[g])}"></div>` : ""}${errorDe(g)}</div>`).join("");
+}
+function filaConexion(id, icono, nombre, detalle, derecha, error = "") {
+  return `<div class="conexion" id="c-${id}">${ic(icono)}<span class="txt"><span>${nombre}</span>${error || `<span class="t-detalle">${detalle}</span>`}</span>${derecha}</div>`;
+}
+function paso5() {
+  const d = S.d, android = `<span class="solo-android">${ic("device-mobile", 16)}Solo en la app Android</span>`;
+  let renpho;
+  if (d.renpho === "ok") renpho = filaConexion("renpho", "scale", "Báscula Renpho", `Conectada · última medición ${d.renphoFecha}`, ic("check", "", "ok"));
+  else if (d.renpho === "falla") renpho = filaConexion("renpho", "scale", "Báscula Renpho", "", `<button type="button" class="btn texto" data-acc="hoja" data-v="renpho">Reintentar</button>`,
+    `<span class="error-linea">${ic("alert-circle", 16)}No se pudo conectar</span><span class="t-detalle">Revisa el correo y la contraseña de Renpho.</span>`);
+  else renpho = filaConexion("renpho", "scale", "Báscula Renpho", S.offline ? "Necesita conexión" : "Peso, % de grasa y masa muscular", `<button type="button" class="btn secundario" data-acc="hoja" data-v="renpho">Conectar</button>`);
+  const hc = filaConexion("hc", "heartbeat", "Health Connect", d.hc ? "Conectado · pasos, sueño y FC" : "Pasos, sueño y frecuencia cardiaca",
+    enWeb() ? android : d.hc ? ic("check", "", "ok") : `<button type="button" class="btn secundario" data-acc="hc">Conectar</button>`);
+  const reloj = filaConexion("reloj", "device-watch", "Reloj Galaxy Watch", d.reloj ? "Vinculado · Galaxy Watch4 Classic" : "El modo gym en la muñeca",
+    enWeb() ? android : d.reloj ? ic("check", "", "ok") : `<button type="button" class="btn secundario" data-acc="reloj">Vincular</button>`);
+  const nota = d.renpho === "falla" ? "Sin Renpho, escribes tu peso en el paso siguiente."
+    : S.offline && d.renpho !== "ok" ? "Conecta Renpho cuando vuelva la red, o sigue sin conectar y escribe tu peso en el paso siguiente."
+    : enWeb() ? "Health Connect y el reloj se conectan desde la app Android, en este paso o luego en Ajustes."
+    : "Puedes saltar cualquiera y conectarla luego en Ajustes.";
+  return `<div class="lista">${renpho}${hc}${reloj}</div><p class="nota">${ic("info-circle", 16)}<span>${nota}</span></p>`;
+}
+function pideCuello() {
+  return S.d.medida === "grasa" && S.d.grasa == null;
+}
+function paso6() {
+  const d = S.d, o = d.origen, desde = d.renphoFecha ? `De Renpho · ${d.renphoFecha} · puedes corregirlo` : "";
+  const m = marina();
+  let html = campo("peso", "Peso", pesoVer(d.peso), { unidad: uPeso(), origen: o.peso ? desde : "" })
+    + `<div class="par">${campo("grasa", "% de grasa (opcional)", d.grasa == null ? "" : num(d.grasa, 1), { unidad: "%" })}${campo("musculo", "Masa muscular (opcional)", pesoVer(d.musculo), { unidad: uPeso() })}</div>`
+    + campo("cintura", "Cintura, a la altura del ombligo", medVer(d.cintura), { unidad: uMed() });
+  const idOtra = S.d.medida === "otra" ? (d.otra === "Cuello" ? "cuello" : d.otra === "Cadera" ? "cadera" : "x-" + slug(d.otra)) : null;
+  if (idOtra && !(idOtra === "cuello" && pideCuello())) html += campo(idOtra, `${d.otra} (tu meta)`, medVer(inicioMeta()), { unidad: uMed(), ayuda: "Es la medida de tu objetivo: el punto de partida de tus metas intermedias." });
+  if (pideCuello()) {
+    html += campo("cuello", "Cuello, bajo la nuez", medVer(d.cuello), { unidad: uMed(), ayuda: "Tu meta es de % de grasa y no hay medición de Renpho: con el cuello lo calculamos por el método de la Marina." });
+    if (d.sexo === "mujer") html += campo("cadera", "Cadera, en la parte más ancha", medVer(d.cadera), { unidad: uMed() });
+    if (m != null) html += `<p class="nota tnum">${ic("info-circle", 16)}<span>Tu % de grasa por el método de la Marina: ${num(m, 1)} %.</span></p>`;
+  }
+  html += `<div class="campo">${grupoLbl("rec", "Medidas recomendadas")}${seg("rec", "rec", [["luego", "Lo mido luego"], ["ahora", "Medir ahora"]], d.recomendadas, "", "Medidas recomendadas")}`;
+  if (d.recomendadas === "ahora") {
+    const ya = (id) => id === idOtra || (id === "cuello" && pideCuello()) || (id === "cadera" && pideCuello() && d.sexo === "mujer");
+    html += `</div>` + (ya("cuello") ? "" : campo("cuello", "Cuello", medVer(d.cuello), { unidad: uMed() }))
+      + RECOMENDADAS.map((k) => { const id = k === "Cadera" ? "cadera" : "x-" + slug(k); if (ya(id)) return ""; return k === "Cadera" ? campo("cadera", "Cadera", medVer(d.cadera), { unidad: uMed() }) : campo(id, k, medVer(d.extra[slug(k)]), { unidad: uMed() }); }).join("");
+  } else html += `<span class="ayuda">Cuello, hombros, pecho y 5 más. El coach te las vuelve a pedir en 4 semanas.</span></div>`;
+  return html;
+}
+function paso7() {
+  const d = S.d, c = calcular(), metas = metasIntermedias(), ritmo = avisoRitmo();
+  const kcal = S.fijo ? 2350 : c.kcal, prot = S.fijo ? 172 : c.prot;
+  const tipoMeta = d.medida === "otra" ? d.otra.toLowerCase() : MEDIDAS[d.medida].toLowerCase();
+  const fin = deISO(d.fecha), ini = inicioMeta();
+  const cifras = `<div class="plan-cifras"><div class="par-c"><div><span class="t-detalle sec">Calorías al día</span><span class="cifra">${num(kcal)}</span></div>
+      <div><span class="t-detalle sec">Proteína</span><span class="cifra">${prot} <span class="unidad-c">g</span></span></div></div>
+      <div class="pie-c"><button type="button" class="btn texto" data-acc="hoja" data-v="calculo">Cómo se calculó</button></div></div>`;
+  const coach = S.fijo
+    ? `<div class="coach"><span class="quien">${ic("message", 16)}Coach</span><p class="tnum">La fórmula da ${num(c.kcal)} kcal. Tu plan fija 2,350: ${c.kcal === 2350 ? "coinciden" : `son ${num(Math.abs(c.kcal - 2350))} ${c.kcal > 2350 ? "menos" : "más"}, ${Math.abs(c.kcal - 2350) / c.kcal <= 0.1 ? "dentro del margen de la fórmula" : "fuera del margen de la fórmula; lo revisamos juntos"}`}. ${c.prot === 172 ? "La proteína es la misma, 172 g." : `La fórmula da ${c.prot} g de proteína.`} Se revisa 6 semanas después de tu primer entreno.</p></div>`
+    : `<div class="coach"><span class="quien">${ic("message", 16)}Coach</span><p>Las cambias cuando quieras en Comida › plan. Las reviso 6 semanas después de tu primer entreno, con tu media de 7 días.</p></div>`;
+  const lista = `<div class="metas tnum"><div><span class="ppal"><span>${d.tipo}</span><span class="t-detalle">${ini != null ? `de ${verMeta(ini)} a ` : ""}${verMeta(d.meta)} de ${tipoMeta === "% de grasa" ? "grasa" : tipoMeta} el ${fin ? fechaCorta(fin) : ""}</span></span>${ic("flag", "", "acento")}</div>
+      ${metas.length ? metas.map((m) => `<div><span>${fechaCorta(m.fecha)}</span><span class="cifra">${verMeta(m.v)}</span></div>`).join("") : `<div><span class="t-detalle sec">La fecha está a menos de 5 semanas: no hay metas intermedias.</span></div>`}</div>`;
+  return cifras + coach + (ritmo ? `<p class="nota alerta">${ic("alert-circle", 16)}<span>${ritmo}</span></p>` : "") + lista;
+}
+const PASOS = [paso1, paso2, paso3, paso4, paso5, paso6, paso7];
+
+// ------------------------------------------------------------ validación
+function validar(p) {
+  const d = S.d, e = {};
+  if (p === 1) {
+    if (!d.nombre.trim()) e.nombre = "Escribe tu nombre.";
+    if (!d.nacimiento.trim()) e.nacimiento = "Escribe tu fecha de nacimiento como dd/mm/aaaa.";
+    else { const a = edad(); if (a == null) e.nacimiento = "Esa fecha no existe. Revisa el día y el mes."; else if (a < 14 || a > 100) e.nacimiento = "Revisa el año: la edad debe estar entre 14 y 100 años."; }
+    if (!d.sexo) e.sexo = "Elige una opción.";
+    if (!d.estatura || d.estatura < 120 || d.estatura > 230) e.estatura = d.estatura ? "Revisa la estatura." : "Escribe tu estatura.";
+  }
+  if (p === 2) {
+    if (!d.tipo) e.tipo = "Elige qué buscas.";
+    else {
+      if (d.meta == null) e.meta = "Escribe la meta.";
+      const f = deISO(d.fecha);
+      if (!f) e.fecha = "Elige una fecha.";
+      else if (diasEntre(HOY, f) < 28) e.fecha = "Elige una fecha a 4 semanas o más.";
+    }
+  }
+  if (p === 3) {
+    if (!d.experiencia) e.experiencia = "Elige una opción.";
+    if (!d.dias) e.dias = "Elige cuántos días.";
+    if (!d.fuera) e.fuera = "Elige la que más se parece a tu día.";
+  }
+  if (p === 4) for (const g of Object.keys(GRUPOS)) if (!d.salud[g].length) e[g] = "Elige «Ninguna» o lo que aplique.";
+  if (p === 6) {
+    if (!d.peso) e.peso = "Falta tu peso.";
+    if (!d.cintura) e.cintura = "Falta la cintura. Mídela a la altura del ombligo.";
+    if (pideCuello() && !d.cuello) e.cuello = "Falta el cuello: sin él no hay punto de partida para tu meta de % de grasa.";
+    if (pideCuello() && d.sexo === "mujer" && !d.cadera) e.cadera = "Falta la cadera para el método de la Marina.";
+    if (pideCuello() && d.cuello && d.cintura && !e.cuello && marina() == null) e.cuello = "Revisa el cuello y la cintura: el cuello debe medir menos.";
+    if (d.medida === "otra" && inicioMeta() == null) { const id = d.otra === "Cuello" ? "cuello" : d.otra === "Cadera" ? "cadera" : "x-" + slug(d.otra); if (!e[id]) e[id] = `Falta tu ${d.otra.toLowerCase()}: es el punto de partida de tu meta.`; }
+  }
+  return e;
+}
+
+// ------------------------------------------------------------ hojas
+function hojaHtml() {
+  const d = S.d, h = S.hoja;
+  const cab = (t) => `<div class="cabeza"><span class="t-seccion" id="hoja-t">${t}</span><button type="button" class="icono-btn" data-acc="cerrar" aria-label="Cerrar">${ic("x")}</button></div>`;
+  if (h === "unidades") {
+    const fila = (g, t, items) => `<div class="campo">${grupoLbl("un-" + g, t)}${seg("unidad", g, items, d.u[g], "", t)}</div>`;
+    return cab("Unidades") + fila("peso", "Peso corporal", [["kg", "kg"], ["lb", "lb"]]) + fila("cargas", "Cargas del gym", [["kg", "kg"], ["lb", "lb"]])
+      + fila("estatura", "Estatura", [["m", "m"], ["cm", "cm"], ["ftin", "pies y pulg."]]) + fila("medidas", "Perímetros", [["cm", "cm"], ["in", "pulg."]])
+      + fila("distancia", "Distancia", [["km", "km"], ["mi", "millas"]])
+      + `<p class="nota">${ic("info-circle", 16)}<span>Se guardan al tocar. Cambiarlas no cambia tus datos, solo cómo se ven.</span></p>`;
+  }
+  if (h === "metas") {
+    return cab("Meta por medida") + `<div class="campo">${grupoLbl("mm", "Medida")}<div class="chips" role="group" aria-labelledby="l-mm">${["Peso", "Cintura", "Cadera", "Brazo contraído", "Pecho", "Muslo"].map((k) => chip("mm", "mm", k, S.mm === k)).join("")}</div>${errorDe("mm")}</div>`
+      + campo("mmv", "Meta", S.mmv ?? "", { unidad: S.mm === "Peso" ? uPeso() : uMed() })
+      + `<button type="button" class="btn primario ancho" data-acc="meta-anadir">Añadir meta</button>`;
+  }
+  if (h === "renpho") {
+    const c = S.cargando === "renpho";
+    return cab("Conectar Renpho") + campo("rcorreo", "Correo de tu cuenta Renpho", S.rcorreo ?? "nombre@correo.com", { tipo: "email", modo: "email" })
+      + campo("rclave", "Contraseña", "••••••••••", { tipo: "password", modo: "text" })
+      + (S.err.renpho ? errorDe("renpho") : `<p class="nota">${ic("lock", 16)}<span>Se guardan cifradas y solo sirven para traer tus mediciones.</span></p>`)
+      + `<button type="button" class="btn primario ancho" data-acc="renpho-enviar"${c ? ' aria-busy="true"' : ""}>${c ? `<svg class="i s20 girar" aria-hidden="true"><use href="#i-loader-2"/></svg>Conectando con Renpho…` : "Conectar"}</button>`;
+  }
+  if (h === "calculo") {
+    const c = calcular();
+    const filas = [
+      ["Gasto en reposo", `${c.metodo} · ${c.base}`, num(c.reposo)],
+      [`× ${c.nv.f} actividad ${c.nv.nombre}`, `${d.dias} ${d.dias === 1 ? "día" : "días"} de gym${{ sentado: "; sentado casi todo el día", caminatas: " y caminatas; sentado el resto", "de-pie": "; de pie buena parte del día", fisico: "; trabajo físico" }[d.fuera]}`, num(c.gasto)],
+      [c.ajuste ? `${c.ajuste < 0 ? "−" : "+"}${Math.abs(c.ajuste * 100)} % ${d.tipo.toLowerCase()}` : `Mantenimiento · ${d.tipo.toLowerCase()}`, "redondeado a la decena", num(c.kcal)],
+      ["Proteína", `${c.gkg} g por kg × ${num(d.peso, 1)} kg${uPeso() === "lb" ? ` (${pesoVer(d.peso)} lb)` : ""}`, `${c.prot} g`],
+    ];
+    if (S.fijo) filas.push(["Tu plan, fijo", "proteína 172 g · carbohidratos 270 g · grasas 65 g", "2,350"]);
+    return cab("Cómo se calculó") + `<div class="desglose tnum">${filas.map(([a, b, v]) => `<div><span class="txt"><span>${a}</span><span class="t-detalle">${b}</span></span><span class="cifra">${v}</span></div>`).join("")}</div>`
+      + `<p class="nota tnum">${ic("info-circle", 16)}<span>${c.metodo === "Katch-McArdle" ? "Con tu % de grasa se usa Katch-McArdle; sin él, Mifflin-St Jeor." : "Sin % de grasa se usa Mifflin-St Jeor. Con Renpho o el cuello, el cálculo usa Katch-McArdle."} Los días con paseo en MTB suman el 50 % de las kcal de Strava.</span></p>`
+      + (enWeb() ? `<div class="botones"><button type="button" class="btn secundario" data-acc="cerrar">Cerrar</button></div>` : "");
+  }
+  return "";
+}
+
+// ------------------------------------------------------------ render
+const $tel = $("#v-telefono"), $web = $("#v-web"), $cuerpo = $("#cuerpo"), $capa = $("#capa"), $barra = $("#barra"), $webApp = $("#web-app"), $url = $("#url");
+let foco = null;
+
+function barras(p, total = 7, hechos = p - 1) {
+  return Array.from({ length: total }, (_, i) => `<i class="${i < hechos ? "hecho" : i === hechos && p <= total ? "actual" : ""}"></i>`).join("");
+}
+function sinc() {
+  return S.offline ? `<span class="sinc bv">${ic("cloud-off", 16)}Sin conexión · lo que escribes se guarda en ${enWeb() ? "este navegador" : "el teléfono"}</span>` : "";
+}
+function textoBoton() {
+  if (S.cargando === "plan") return `<svg class="i s20 girar" aria-hidden="true"><use href="#i-loader-2"/></svg>Calculando tu plan…`;
+  if (S.paso === 5 && S.d.renpho !== "ok" && !S.d.hc && !S.d.reloj) return "Seguir sin conectar";
+  if (S.paso === 7) return "Terminar y ir a Hoy";
+  return "Siguiente";
+}
+function avisoHtml() {
+  const a = S.aviso;
+  return a ? `<div class="aviso entra"><span class="txt-av">${a.texto}</span>${a.accion ? `<button type="button" class="btn texto" data-acc="${a.accion[1]}">${a.accion[0]}</button>` : ""}</div>` : "";
+}
+function hoyHtml(web) {
+  const d = S.d, listo = S.pantalla === "listo", fin = deISO(d.fecha);
+  const nombre = d.nombre.trim() || "";
+  const saludo = nombre ? `Buenos días, ${esc(nombre)}` : "Buenos días";
+  let tarjeta;
+  if (listo) {
+    const m = metasIntermedias()[0];
+    tarjeta = `<button type="button" class="termina" data-acc="nada-proto"><span class="fila-t"><span class="txt"><span class="t-detalle">Tu objetivo · ${d.tipo.toLowerCase()}</span><span class="t-seccion tnum">${verMeta(d.meta)}${d.medida === "grasa" ? " de grasa" : ""} el ${fin ? fechaCorta(fin) : ""}</span>
+      <span class="t-detalle tnum">${m ? `Próxima meta: ${verMeta(m.v)} el ${fechaCorta(m.fecha)}` : "Sin metas intermedias"}</span></span>${ic("chevron-right")}</span></button>`;
+  } else {
+    tarjeta = `<button type="button" class="termina" data-acc="seguir"><span class="fila-t"><span class="txt"><span class="t-seccion">Termina tu bienvenida</span>
+      <span class="t-detalle tnum">Vas en el paso ${S.paso} de 7 · unos ${Math.max(1, Math.round((8 - S.paso) * 0.45))} ${(8 - S.paso) * 0.45 < 1.5 ? "minuto" : "minutos"}${web ? ". Sigue aquí o en el teléfono, donde la dejaste." : ""}</span></span>${ic("chevron-right")}</span>
+      <span class="bv-barras" role="img" aria-label="${S.paso - 1} de 7 pasos hechos">${barras(S.paso)}</span></button>`;
+  }
+  const vacio = `<div class="vacio-t">${ic("barbell", 32)}<span class="t-seccion">Sin sesión para hoy</span><p>Programa tu primera sesión y empieza a contar tu semana 1.</p><button type="button" class="btn secundario" data-acc="nada-proto">Programar sesión</button></div>`;
+  const plan = listo ? `<div class="plan-cifras"><span class="t-detalle sec">Comida de hoy</span><div class="par-c"><div><span class="t-detalle sec">Calorías</span><span class="cifra">0 <span class="unidad-c">de ${num(S.fijo ? 2350 : calcular().kcal)}</span></span></div><div><span class="t-detalle sec">Proteína</span><span class="cifra">0 <span class="unidad-c">de ${S.fijo ? 172 : calcular().prot} g</span></span></div></div></div>` : "";
+  if (!web) {
+    return `<div class="hoy-cab"><div class="txt"><span class="t-detalle sec">Sábado 17 de octubre</span><h1 class="t-pantalla" tabindex="-1" id="h-pant">${saludo}</h1></div>
+      <button type="button" class="cuenta" aria-label="Cuenta y ajustes" data-acc="nada-proto"><span>${esc((nombre[0] || "T").toUpperCase())}</span></button></div>${sinc()}${tarjeta}${vacio}${plan}
+      <div class="ranura-aviso" role="status">${avisoHtml()}</div>`;
+  }
+  const items = [["home", "Hoy", true], ["barbell", "Gym"], ["kitchen", "Comida"], ["heart", "Salud"], ["message", "Coach"]];
+  return `<div class="app-web corta"><aside class="lateral">${marca()}
+      ${items.map(([i, t, ab]) => `<a class="item${ab ? " abierto" : ""}" href="#" data-acc="nada-proto">${ic(i)}${t}</a>${ab ? '<a class="subitem" href="#" aria-current="page" data-acc="nada-proto">Panel del día</a>' : ""}`).join("")}
+      <div class="pie"><a class="item" href="#" data-acc="nada-proto">${ic("settings")}Ajustes</a><span class="sinc t-detalle">${ic(S.offline ? "cloud-off" : "cloud-check", 16)}${S.offline ? "Sin conexión" : "Sincronizado"}</span></div></aside>
+    <main class="principal"><div><span class="t-detalle sec">Sábado 17 de octubre</span><h1 class="t-pantalla" tabindex="-1" id="h-pant">${saludo}</h1></div>
+      <div class="rejilla"><div class="span-8">${tarjeta}${plan ? `<div style="margin-top:var(--e4)">${plan}</div>` : ""}</div><div class="span-4">${vacio}</div></div>
+      <div class="ranura-aviso web" role="status">${avisoHtml()}</div></main></div>`;
+}
+const marca = () => `<div class="marca"><span class="logo"><svg class="i s20" aria-hidden="true"><use href="#logo"/></svg></span><span data-brand-name>Coach Fitness AI</span></div>`;
+
+function bienvenidaMovil() {
+  const p = S.paso;
+  return `<div class="bv-cab">${p > 1 ? `<button type="button" class="atras" data-acc="atras" aria-label="Volver al paso ${p - 1}">${ic("arrow-left")}</button>` : '<span class="hueco"></span>'}
+      <span class="t-detalle sec tnum">Paso ${p} de 7</span><button type="button" class="btn texto" data-acc="salir">Salir</button></div>
+    <div class="bv-barras" role="img" aria-label="Paso ${p} de 7">${barras(p)}</div>${sinc()}
+    <div class="bv-scroll" id="scroll"><div class="bv-titulo"><div class="txt"><h1 class="t-pantalla" tabindex="-1" id="h-pant">${TITULOS[p - 1]}</h1><p>${SUBS[p - 1]}</p></div>${ilu(p)}</div>
+      ${PASOS[p - 1]()}</div>
+    <div class="ranura-aviso" role="status">${avisoHtml()}</div>
+    <div class="acciones-bv"><button type="button" class="btn primario ancho" data-acc="siguiente"${S.cargando === "plan" ? ' aria-busy="true"' : ""}>${textoBoton()}</button></div>`;
+}
+function bienvenidaWeb() {
+  const p = S.paso;
+  return `<div class="bv-web"><div class="bv-web-cab">${marca()}<div class="web-cab-der">${S.offline ? `<span class="sinc t-detalle">${ic("cloud-off", 16)}Sin conexión · se guarda en este navegador</span>` : ""}<button type="button" class="btn texto" data-acc="salir">Salir</button></div></div>
+    <div class="bv-web-cuerpo"><div class="bv-lado">${ilu(p, true)}<div class="prog"><span class="t-detalle sec tnum">Paso ${p} de 7</span><div class="bv-barras" role="img" aria-label="Paso ${p} de 7">${barras(p)}</div></div>
+      <h1 class="t-pantalla" tabindex="-1" id="h-pant">${TITULOS[p - 1]}</h1><p>${SUBS[p - 1]}</p></div>
+      <div class="bv-form">${PASOS[p - 1]()}<div class="ranura-aviso" role="status">${avisoHtml()}</div>
+        <div class="bv-acciones">${p > 1 ? '<button type="button" class="btn secundario" data-acc="atras">Atrás</button>' : ""}<button type="button" class="btn primario" data-acc="siguiente"${S.cargando === "plan" ? ' aria-busy="true"' : ""}>${textoBoton()}</button></div></div></div>
+    <div id="capa-web"></div></div>`;
+}
+
+function render() {
+  const web = enWeb();
+  $tel.hidden = web; $web.hidden = !web;
+  const enApp = S.pantalla !== "bienvenida";
+  if (web) {
+    $webApp.innerHTML = enApp ? hoyHtml(true) : bienvenidaWeb();
+    $url.textContent = enApp ? "coach.tail72ec86.ts.net/hoy" : `coach.tail72ec86.ts.net/bienvenida/${["tu", "tu-objetivo", "tu-actividad", "tu-salud", "conexiones", "punto-de-partida", "tu-plan"][S.paso - 1]}`;
+    if (enApp) $webApp.firstElementChild.insertAdjacentHTML("beforeend", '<div id="capa-web"></div>');
+  } else {
+    $cuerpo.innerHTML = enApp ? hoyHtml(false) : bienvenidaMovil();
+    $barra.hidden = !enApp;
+  }
+  firmaPintada = firma();
+  pintarHoja();
+  if (foco) { const f = (typeof foco === "string" ? document.querySelector(foco) : foco) || document.querySelector("#h-pant"); foco = null; if (f) f.focus({ preventScroll: false }); }
+  actualizarControles();
+}
+function pintarHoja() {
+  const capa = enWeb() ? $("#capa-web") : $capa;
+  if (!enWeb()) $capa.innerHTML = "";
+  if (!capa) return;
+  if (!S.hoja) { capa.innerHTML = ""; return; }
+  capa.innerHTML = enWeb()
+    ? `<div class="velo centro" data-acc="velo"><div class="dialogo" role="dialog" aria-modal="true" aria-labelledby="hoja-t">${hojaHtml()}</div></div>`
+    : `<div class="velo" data-acc="velo"><div class="hoja" role="dialog" aria-modal="true" aria-labelledby="hoja-t">${hojaHtml()}</div></div>`;
+}
+
+// ------------------------------------------------------------ avisos
+let tAviso = null;
+function aviso(texto, accion = null) {
+  S.aviso = { texto, accion };
+  clearTimeout(tAviso);
+  tAviso = setTimeout(() => { S.aviso = null; const r = document.querySelectorAll(".ranura-aviso"); r.forEach((x) => (x.innerHTML = "")); }, accion ? 8000 : 4000);
+}
+
+// ------------------------------------------------------------ acciones
+function irA(p) {
+  S.paso = p; S.err = {}; S.hoja = null;
+  foco = "#h-pant";
+  render();
+  const sc = $("#scroll"); if (sc) sc.scrollTop = 0;
+}
+function siguiente() {
+  if (S.cargando) return;
+  const e = validar(S.paso);
+  S.err = e;
+  if (Object.keys(e).length) {
+    render();
+    const k = Object.keys(e)[0];
+    const el = document.querySelector(`#f-${k}`) || document.querySelector(`[data-g="${k}"]`);
+    if (el) { el.focus(); el.scrollIntoView({ block: "center" }); }
+    return;
+  }
+  if (S.paso === 6) {
+    S.cargando = "plan"; render();
+    setTimeout(() => { S.cargando = null; irA(7); }, 700);
+    return;
+  }
+  if (S.paso === 7) { S.pantalla = "listo"; S.hoja = null; foco = "#h-pant"; aviso("Bienvenida terminada. Tu plan ya está en Comida."); render(); return; }
+  irA(S.paso + 1);
+}
+function conectarRenpho() {
+  if (S.cargando) return;
+  S.err.renpho = null;
+  S.cargando = "renpho"; pintarHoja();
+  setTimeout(() => {
+    S.cargando = null;
+    if (S.offline) { S.err.renpho = "Sin conexión. Conecta Renpho cuando vuelva la red, o sigue sin conectar."; pintarHoja(); return; }
+    if (S.renphoFalla) { S.d.renpho = "falla"; S.hoja = null; foco = "#c-renpho .btn"; render(); return; }
+    const d = S.d;
+    Object.assign(d, { renpho: "ok", renphoFecha: "17 oct", peso: 78.4, grasa: 20.4, musculo: 59.2 });
+    d.origen = { peso: true, grasa: true, musculo: true };
+    S.hoja = null; foco = "#c-hc .btn"; aviso("Renpho conectada. Tu medición del 17 oct llena el paso 6.");
+    render();
+  }, 1200);
+}
+
+document.addEventListener("click", (ev) => {
+  const b = ev.target.closest("[data-acc]");
+  if (!b) return;
+  const acc = b.dataset.acc, g = b.dataset.g, v = b.dataset.v, d = S.d;
+  const selB = `[data-acc="${acc}"]${g ? `[data-g="${g}"]` : ""}${v != null ? `[data-v="${v}"]` : ""}`;
+  if (b.tagName === "A") ev.preventDefault();
+  if (acc === "velo") { if (ev.target === b) { S.hoja = null; pintarHoja(); } return; }
+  switch (acc) {
+    case "siguiente": siguiente(); break;
+    case "atras": irA(S.paso - 1); break;
+    case "salir": S.pantalla = "hoy"; S.hoja = null; foco = "#h-pant"; aviso("Guardamos tu avance. Sigue cuando quieras."); render(); break;
+    case "seguir": S.pantalla = "bienvenida"; S.aviso = null; irA(S.paso); break;
+    case "sexo": d.sexo = v; delete S.err.sexo; render(); foco = null; break;
+    case "tipo": d.tipo = v; d.medida = TIPOS[v].medida; delete S.err.tipo; render(); break;
+    case "medida": d.medida = v; d.meta = null; render(); break;
+    case "uno": d[g] = v; delete S.err[g]; render(); break;
+    case "dias": d.dias = +v; delete S.err.dias; render(); break;
+    case "mtb": d.mtb = v; render(); break;
+    case "fuera": d.fuera = v; delete S.err.fuera; render(); break;
+    case "rec": d.recomendadas = v; render(); break;
+    case "nada":
+      d.nada = !d.nada;
+      for (const k of Object.keys(GRUPOS)) { d.salud[k] = d.nada ? ["Ninguna"] : []; delete S.err[k]; }
+      render(); break;
+    case "salud": {
+      let s = d.salud[g];
+      if (v === "Ninguna") s = s.includes("Ninguna") ? [] : ["Ninguna"];
+      else { s = s.filter((x) => x !== "Ninguna"); s = s.includes(v) ? s.filter((x) => x !== v) : [...s, v]; }
+      d.salud[g] = s; delete S.err[g];
+      d.nada = Object.values(d.salud).every((x) => x.length === 1 && x[0] === "Ninguna");
+      render(); break;
+    }
+    case "hc": d.hc = true; aviso("Health Connect conectado."); render(); break;
+    case "reloj": d.reloj = true; aviso("Reloj vinculado."); render(); break;
+    case "hoja": S.hoja = v; S.err = {}; if (v === "metas") { S.mm = "Peso"; S.mmv = ""; } S.volver = `[data-acc="hoja"][data-v="${v}"]`; render(); foco = null; enfocarHoja(); break;
+    case "cerrar": cerrarHoja(); break;
+    case "unidad": d.u[g] = v; pintarHoja(); refrescarFondo(); break;
+    case "mm": S.mm = v; pintarHoja(); break;
+    case "meta-anadir": {
+      const x = leer(S.mmv);
+      if (x == null) { S.err.mmv = "Escribe la meta."; pintarHoja(); $("#f-mmv").focus(); break; }
+      d.metasMedida = d.metasMedida.filter((m) => m.medida !== S.mm).concat({ medida: S.mm, valor: S.mm === "Peso" ? pesoLeer(x) : medLeer(x) });
+      S.hoja = null; aviso(`Meta de ${S.mm.toLowerCase()} añadida.`); render(); break;
+    }
+    case "meta-quitar": { const m = d.metasMedida[+v]; d.metasMedida.splice(+v, 1); aviso(`Meta de ${m.medida.toLowerCase()} quitada.`, ["Deshacer", "meta-deshacer"]); S.quitada = [+v, m]; render(); break; }
+    case "meta-deshacer": if (S.quitada) { d.metasMedida.splice(S.quitada[0], 0, S.quitada[1]); S.quitada = null; S.aviso = null; render(); } break;
+    case "renpho-enviar": conectarRenpho(); break;
+    default: break;
+  }
+  if (!["hoja", "cerrar", "siguiente", "atras", "salir", "seguir", "renpho-enviar"].includes(acc)) {
+    const a = document.activeElement;
+    if (!a || a === document.body || !document.contains(a)) { const f = document.querySelector(selB); if (f) f.focus(); }
+  }
+});
+function enfocarHoja() { const h = document.querySelector(".hoja, .dialogo"); if (h) (h.querySelector("input, button:not([data-acc=cerrar])") || h.querySelector("button")).focus(); }
+function cerrarHoja() { const v = S.volver ? document.querySelector(S.volver) : null; S.hoja = null; S.err = {}; render(); const f = (S.volver && document.querySelector(S.volver)) || $("#h-pant"); if (f) f.focus(); }
+function refrescarFondo() {
+  // vuelve a pintar el paso de fondo sin perder la hoja abierta
+  const hoja = S.hoja; const act = document.activeElement && document.activeElement.closest(".hoja, .dialogo") ? document.activeElement : null;
+  const sel = act ? (act.dataset.acc ? `[data-acc="${act.dataset.acc}"][data-g="${act.dataset.g}"][data-v="${act.dataset.v}"]` : null) : null;
+  render(); S.hoja = hoja;
+  if (sel) { const f = document.querySelector(`.hoja ${sel}, .dialogo ${sel}`); if (f) f.focus(); }
+}
+
+document.addEventListener("input", (ev) => {
+  const el = ev.target, k = el.dataset && el.dataset.campo;
+  if (!k) return;
+  const d = S.d, v = el.value;
+  const quitarError = (id) => { if (S.err[id]) { delete S.err[id]; const c = el.closest(".campo"); if (c) { c.querySelectorAll(".entrada.error").forEach((x) => x.classList.remove("error")); const e = c.querySelector(".error-linea"); if (e) e.remove(); el.removeAttribute("aria-invalid"); } } };
+  switch (k) {
+    case "nombre": d.nombre = v; break;
+    case "nacimiento": { d.nacimiento = v; const a = edad(), u = $("#u-nacimiento"); if (u) u.textContent = a != null ? `${a} años` : ""; else if (a != null) el.insertAdjacentHTML("afterend", `<span class="u" id="u-nacimiento">${a} años</span>`); break; }
+    case "estatura": { const x = leer(v); d.estatura = x == null ? null : d.u.estatura === "m" ? x * 100 : x; break; }
+    case "est-ft": case "est-in": {
+      const c = el.closest(".par"), ft = leer(c.querySelector('[data-campo="est-ft"]').value) || 0, inch = leer(c.querySelector('[data-campo="est-in"]').value) || 0;
+      d.estatura = ft || inch ? (ft * 12 + inch) * CM_IN : null; quitarError("estatura"); return;
+    }
+    case "meta": { const x = leer(v); d.meta = x == null ? null : d.medida === "grasa" ? x : d.medida === "peso" ? pesoLeer(x) : medLeer(x); break; }
+    case "fecha": { d.fecha = v; const f = deISO(v), x = $("#semanas"); if (x) x.textContent = textoSemanas(f ? Math.round(diasEntre(HOY, f) / 7) : null); break; }
+    case "otra": d.otra = v; d.meta = null; break;
+    case "duracion": d.duracion = leer(v); break;
+    case "hora": d.hora = v; break;
+    case "peso": d.peso = pesoLeer(v); d.origen.peso = false; break;
+    case "grasa": d.grasa = leer(v); d.origen.grasa = false; break;
+    case "musculo": d.musculo = pesoLeer(v); d.origen.musculo = false; break;
+    case "cintura": d.cintura = medLeer(v); break;
+    case "cuello": d.cuello = medLeer(v); break;
+    case "cadera": d.cadera = medLeer(v); break;
+    case "mmv": S.mmv = v; break;
+    case "rcorreo": S.rcorreo = v; break;
+    default:
+      if (k.startsWith("otra-")) d.saludOtra[k.slice(5)] = v;
+      else if (k.startsWith("x-")) d.extra[k.slice(2)] = medLeer(v);
+  }
+  quitarError(k);
+});
+// algunos campos cambian lo que se pide (cuello, nota de la Marina, semanas): se repinta al salir del campo,
+// salvo que el foco vaya a un botón de acción, que ya repinta con su clic
+const REPINTA = ["grasa", "cuello", "cintura", "cadera"];
+let firmaPintada = "";
+const firma = () => JSON.stringify([pideCuello(), marina() == null ? null : marina().toFixed(1)]);
+document.addEventListener("focusout", (ev) => {
+  const k = ev.target.dataset && ev.target.dataset.campo;
+  if (!k || !REPINTA.includes(k) || S.pantalla !== "bienvenida" || S.hoja || S.paso !== 6 || firma() === firmaPintada) return;
+  const dest = ev.relatedTarget;
+  if (dest && dest.closest("[data-acc], #ejemplo, #blanco, #otro-disp, .guion")) return;
+  const id = dest && dest.id;
+  render();
+  if (id) { const f = document.getElementById(id); if (f) f.focus(); }
+});
+
+document.addEventListener("keydown", (ev) => {
+  if (ev.key === "Escape" && S.hoja) { ev.preventDefault(); cerrarHoja(); return; }
+  if (ev.key === "Enter" && ev.target.tagName === "INPUT" && !S.hoja && S.pantalla === "bienvenida") { ev.preventDefault(); siguiente(); return; }
+  if (ev.key === "Tab" && S.hoja) {
+    const h = document.querySelector(".hoja, .dialogo"); if (!h) return;
+    const f = [...h.querySelectorAll("button, input, select")].filter((x) => !x.disabled);
+    const i = f.indexOf(document.activeElement);
+    if (ev.shiftKey && i <= 0) { ev.preventDefault(); f[f.length - 1].focus(); }
+    else if (!ev.shiftKey && i === f.length - 1) { ev.preventDefault(); f[0].focus(); }
+  }
+});
+
+// ------------------------------------------------------------ controles del prototipo
+const raiz = document.documentElement;
+function actualizarControles() {
+  document.querySelectorAll("#ctl-vista button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === S.vista)));
+  document.querySelectorAll("#ctl-red button").forEach((b) => b.setAttribute("aria-pressed", String((b.dataset.v === "off") === S.offline)));
+  document.querySelectorAll("#ctl-renpho button").forEach((b) => b.setAttribute("aria-pressed", String((b.dataset.v === "falla") === S.renphoFalla)));
+}
+document.querySelectorAll("#ctl-modo button").forEach((b) => b.addEventListener("click", () => {
+  if (b.dataset.modo) raiz.dataset.theme = b.dataset.modo; else delete raiz.dataset.theme;
+  document.querySelectorAll("#ctl-modo button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+}));
+document.querySelectorAll("#ctl-acento button").forEach((b) => b.addEventListener("click", () => {
+  if (b.dataset.a === "caribe") delete raiz.dataset.accent; else raiz.dataset.accent = b.dataset.a;
+  document.querySelectorAll("#ctl-acento button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+}));
+document.querySelectorAll("#ctl-vista button").forEach((b) => b.addEventListener("click", () => { S.vista = b.dataset.v; S.hoja = null; render(); }));
+document.querySelectorAll("#ctl-red button").forEach((b) => b.addEventListener("click", () => {
+  const antes = S.offline; S.offline = b.dataset.v === "off";
+  if (antes && !S.offline) aviso("Conexión de vuelta. Lo escrito ya está guardado en tu cuenta.");
+  render();
+}));
+document.querySelectorAll("#ctl-renpho button").forEach((b) => b.addEventListener("click", () => { S.renphoFalla = b.dataset.v === "falla"; actualizarControles(); }));
+$("#otro-disp").addEventListener("click", () => {
+  if (S.offline) { aviso("Sin conexión: lo escrito aquí llega al otro dispositivo cuando vuelva la red."); render(); return; }
+  const desde = enWeb() ? "la web" : "el teléfono";
+  S.vista = enWeb() ? "telefono" : "web"; S.hoja = null;
+  if (S.pantalla === "hoy") S.pantalla = "bienvenida";
+  aviso(`Seguimos donde ibas en ${desde}.`);
+  foco = "#h-pant"; render();
+});
+$("#ejemplo").addEventListener("click", () => { reiniciar(true); foco = "#h-pant"; render(); });
+$("#blanco").addEventListener("click", () => { reiniciar(false); foco = "#h-pant"; render(); });
+
+reiniciar(false);
+render();
+
+</script>
+</body>
+</html>

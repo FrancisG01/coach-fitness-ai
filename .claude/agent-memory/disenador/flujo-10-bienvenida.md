@@ -1,6 +1,6 @@
 ---
 name: flujo-10-bienvenida
-description: Flujo 10 (bienvenida SIS-08, D-32, D-33): guía aprobada con cambios; pieza 3 (ilustraciones y mockups) entregada el 18-oct-2026 y pendiente de aprobar
+description: Flujo 10 (bienvenida SIS-08, D-32, D-33): piezas 1 a 3 aprobadas; prototipo (pieza 4) entregado el 18-oct-2026 y pendiente de aprobar
 metadata:
   type: project
 ---
@@ -11,5 +11,9 @@ Aprobado (D-33): la guía y mis 11 decisiones (pantalla completa, Salir sin conf
 
 Cálculo: Katch-McArdle 1,718 × 1.55 −10 % = 2,400; Mifflin con 30 años 1,714 (daría 2,390).
 
-**Why:** lo que no está aprobado (pieza 3: ilustraciones y mockups) sigue pendiente de Francis.
+Pieza 3 aprobada con sus 7 decisiones. Ajustes pedidos y hechos: la revisión ("6 semanas después de tu primer entreno") va solo en la nota del coach; la tarjeta del plan muestra solo kcal, proteína y "Cómo se calculó"; los macros completos van en la hoja.
+
+Prototipo: `flujo-10-bienvenida-prototipo.html` (JS en `proto10.js` del scratchpad, embebido por `gen_flujo10.py`). Vista teléfono o web, sin conexión, Renpho que falla, ejemplo de Francis o en blanco, retomar en el otro dispositivo. Propuestas mías dentro: −15 % en perder grasa y +5 % en ganar músculo (extremos prudentes del rango de D-32), metas intermedias cada 28 días antes de la fecha final, aviso de ritmo si la meta pide más de 0.5 pp de grasa, 1 % de peso o 1 cm por semana, y la medida «otra» de la meta pasa a ser obligatoria en el paso 6.
+
+**Why:** lo que no está aprobado (prototipo) sigue pendiente de Francis.
 **How to apply:** las ilustraciones solo viven en la bienvenida (ADR 0024); reutiliza los SVG en la Fase 3. Ver [[flujo-1-gym]] y [[verificacion-mockups]].

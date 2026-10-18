@@ -1,4 +1,4 @@
 - [Verificación de mockups](verificacion-mockups.md) — detector Impeccable en modo URL, Playwright, A5 sobre elevado, láminas con charset
 - [Flujo 2 calendario](flujo-2-calendario.md) — 3 pasos, semana 1 por usuario, Salud › análisis, MTB con zonas FC
 - [Flujo 1 gym](flujo-1-gym.md) — 4 piezas aprobadas; ranura de avisos, Sigue destacada, búlgara ×4
-- [Flujo 10 bienvenida](flujo-10-bienvenida.md) — guía aprobada (D-33: 172 g, revisión cada 6 semanas); pieza 3 con SVG por aprobar
+- [Flujo 10 bienvenida](flujo-10-bienvenida.md) — piezas 1-3 aprobadas (D-33); prototipo con cálculo real por aprobar
