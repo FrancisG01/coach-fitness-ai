@@ -21,6 +21,7 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 - PRD v1.0 aprobado (`docs/prd.md`, decisiones en su sección 9): Max 5x; coach con tope de $80/mes y $8/día, al 80 % el chat pasa a Sonnet 5.5 y avisa; metas de enero 2027 aprobadas; 2,350 kcal objetivo único con revisión a las 6 semanas; fotos de progreso y mapa corporal fuera de la v1.0; requisitos S posponibles; 9 flujos en la Fase 0.5.
 - D-24 / ADR 0023: unidades preferidas (SIS-07, M, entra en la v1.0). Peso corporal y cargas del gym por separado en kg o lb (lb de fábrica); estatura m/cm/pies y pulgadas, perímetros cm/pulgadas, distancia km/millas (métrico de fábrica). Todo se guarda en kg, cm y m con `entered_unit`. Plan v1.4, PRD v1.1.
 - Mockups de las páginas 6 y 13 aprobados con 5 decisiones: barra marca Hoy dentro de Ajustes; Proteína en vez de Peso en Hoy; 2,350 kcal; ícono de selector en "Propio"; sin contorno de día en el calendario.
+- Mockups de Ajustes y Unidades aprobados: unidades se guardan al tocar (sin botón); Centro de ayuda dentro de Ajustes en móvil; en web, Ajustes despliega subsecciones en la barra lateral; cargas en lb con cifras reales de disco.
 - D-21 / ADR 0021: embeddings de la memoria del coach con modelo local en el servidor; el modelo se elige en la Fase 1 con benchmark.
 - Plan maestro v1.2: título "Coach Fitness AI".
 - Estimación (Francis a tiempo completo): ~11 semanas optimista / ~18.5 probable. Modo gym usable ~7-nov a ~22-nov-2026; v1.0 ~2-ene a ~25-feb-2027.
@@ -35,8 +36,8 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 1. ADRs 0001 a 0018 escritos (PR #7). Contradicciones del plan resueltas con Francis (plan v1.1, PR #8): Archivo única fuente, modo según el sistema, coach solo con créditos Max, staging por Tailscale, backlog v1.0 cerrado.
 2. PRD hecho y aprobado por Francis el 18-oct-2026 (`docs/prd.md`).
 3. PRODUCT.md y DESIGN.md aprobados por Francis el 18-oct-2026 (plataforma `adaptive`; estados, movimiento, diálogos, avisos, vacíos y carga definidos; tokens.json ampliado). Plan v1.3, ADR 0022 (íconos Tabler), D-23 (barra Hoy, Gym, Comida, Salud, Coach; logo provisional mancuerna en `packages/brand`).
-4. Fase 0.5 en curso. Páginas 6 y 13 rehechas en `docs/diseno/mockups/b2-paginas-6-y-13.html` (rama `docs/mockups-p6-p13`, sin PR todavía; artefacto https://claude.ai/artifact/US2zb54ohddswLsFBNdQyZ). Decisión de unidades en la rama `docs/unidades`.
-5. **Siguiente:** fusionar el PR de unidades; en la rama de mockups, agregar Ajustes (índice) y Ajustes → Unidades, y pasar las cifras de peso de los mockups a libras; luego abrir ese PR y seguir con los 9 flujos.
+4. Fase 0.5 en curso. Unidades fusionadas (PR #11). Páginas 6 y 13, Ajustes y Unidades en `docs/diseno/mockups/b2-paginas-6-y-13.html` (rama `docs/mockups-p6-p13`; artefacto https://claude.ai/artifact/US2zb54ohddswLsFBNdQyZ).
+5. **Siguiente:** fusionar el PR de mockups; luego los 9 flujos de la Fase 0.5 (PRD §3), cada uno con diagrama, guía paso a paso, mockups web y móvil y prototipo. Propuesta: empezar por el flujo 1, entrenar en el gym (riesgo principal), y el modelo conceptual de la BD.
 6. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
 
 ## Pendientes de Francis
