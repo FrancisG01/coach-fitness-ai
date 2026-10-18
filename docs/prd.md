@@ -2,14 +2,14 @@
 
 | Campo | Valor |
 | --- | --- |
-| Versión | 1.3 |
+| Versión | 1.4 |
 | Fecha | 18-oct-2026 |
 | Estado | Aprobado por Francis, 18-oct-2026 |
 | Dueño del producto | Francis Guzman |
 | Redacta | Agente `pm` |
-| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.6, [`adr/`](adr/), [`diseno/`](diseno/) |
+| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.7, [`adr/`](adr/), [`diseno/`](diseno/) |
 
-Este documento resume qué se construye en la v1.0, para quién y cómo sabremos que funcionó. No añade alcance: el backlog de la v1.0 está cerrado (D-16, [ADR 0016](adr/0016-wsl2-fase-s-y-backlog-cerrado.md)). El detalle de cada requisito vive en el plan maestro; aquí solo se resume y se enlaza. Junto con el diseño (`/impeccable init`), cierra la Fase 0.
+Este documento resume qué se construye en la v1.0, para quién y cómo sabremos que funcionó. No añade alcance: el backlog de la v1.0 está cerrado (D-16, [ADR 0016](adr/0016-wsl2-fase-s-y-backlog-cerrado.md)); las excepciones que decidió Francis (D-24, D-28) están en la sección 9. El detalle de cada requisito vive en el plan maestro; aquí solo se resume y se enlaza. Junto con el diseño (`/impeccable init`), cierra la Fase 0.
 
 Francis aprobó el documento el 18-oct-2026, incluidas las metas físicas, el costo del coach y los tiempos (secciones 5, 6 y 7). Sus respuestas están en la sección 9.
 
@@ -54,19 +54,20 @@ Del [plan, sección 3](plan-maestro.md#3-visión-objetivos-y-métricas-de-éxito
 
 ## 2. Alcance de la v1.0
 
-Prioridad MoSCoW del plan: **M** imprescindible, **S** debería entrar, **W** después de la v1.0. Total: 48 requisitos, 38 M, 4 S, 6 W. Lista completa en el [plan, sección 5](plan-maestro.md#requisitos-funcionales); requisitos no funcionales (RNF-01 a RNF-11) en la [sección 6](plan-maestro.md#6-requisitos-no-funcionales).
+Prioridad MoSCoW del plan: **M** imprescindible, **S** debería entrar, **W** después de la v1.0. Total: 57 requisitos, 47 M, 4 S, 6 W. Lista completa en el [plan, sección 5](plan-maestro.md#requisitos-funcionales); requisitos no funcionales (RNF-01 a RNF-11) en la [sección 6](plan-maestro.md#6-requisitos-no-funcionales).
 
 | Módulo | Qué incluye en la v1.0 | IDs (prioridad) | Fase |
 | --- | --- | --- | --- |
 | Gym | Biblioteca con implicación por músculo, rutinas, calendario con pesos, modo gym con temporizador y vibración, rampa automática, volumen semanal por músculo, historial con 1RM y RM múltiples, cronometría de sesión, autoguardado y recuperación | GYM-01 a 07, 09, 10 (M) | 2 |
 | Gym en el reloj | Sesión del día desde el reloj, ciclo serie/check/descanso/vibración, funciona sin el teléfono cerca, sync en tiempo real por Bluetooth | WAT-01, 02, 05, 06 (M); WAT-03 ajuste rápido de peso, WAT-04 FC en la sesión (S) | 7b |
-| Salud | Sync diario de Renpho, medidas con cinta y cualquier métrica, análisis de sangre con rangos y calendario de análisis, Samsung Health vía Health Connect | SAL-01, 02, 04 (M, fase 3); SAL-06 (M, fase 7) | 3 y 7 |
+| Salud | Sync diario de Renpho, medidas corporales completas (obligatorias, recomendadas, opcionales y automáticas) y cualquier métrica, medidas calculadas (IMC, índices y % de grasa por el método de la Marina), análisis de sangre con rangos y calendario de análisis, Samsung Health vía Health Connect | SAL-01, 02, 04, 07 (M, fase 3); SAL-06 (M, fase 7) | 3 y 7 |
 | Nutrición | Base de alimentos (USDA + INCAP + Open Food Facts + manual) por 100 g, registro en g/kg/lb/oz/ml/L o porción casera, totales por tipo de día, recetas con crudo/cocido, planes día/semana/mes del coach, frecuentes y recientes | NUT-01 a 05, 09 (M) | 4 |
 | Suplementos | Catálogo con dosis y horario, registro de toma sumado al día, inventario con alerta de stock bajo | SUP-01, 02 (M); SUP-03 (S) | 4 |
 | Cardio | Paseo MTB desde captura de Strava con tarjeta de confirmación; carga combinada gym + MTB | CAR-01, 02 (M) | 6 |
-| Coach | Chat con herramientas sobre todos los módulos, memoria de decisiones, consejos diarios y revisión semanal, propuestas que apruebas antes de guardar | COA-01 a 04 (M) | 5 |
+| Objetivos | Objetivo principal con meta medible y fecha, metas intermedias cada 4 semanas, metas por medida y por fuerza, hitos; tarjeta en Hoy y página propia | OBJ-01 a 04 (M) | 3 (tarjeta en Hoy: 6) |
+| Coach | Chat con herramientas sobre todos los módulos, memoria de decisiones, consejos diarios y revisión semanal, propuestas que apruebas antes de guardar, re-preguntas periódicas de lo que cambia | COA-01 a 05 (M) | 5 |
 | Dashboard | Panel del día; informe mensual en PDF | DSH-01, 02 (M) | 6 |
-| Sistema | Login seguro con 2FA y sesión persistente, modo claro/oscuro/sistema, ajustes de apariencia con acentos y color propio, marca configurable, Centro de ayuda, unidades preferidas (kg/lb, cm/m/pulgadas/pies, km/millas); exportar datos | SIS-01, 03 a 07 (M); SIS-02 (S) | 1 en adelante |
+| Sistema | Login seguro con 2FA y sesión persistente, modo claro/oscuro/sistema, ajustes de apariencia con acentos y color propio, marca configurable, Centro de ayuda, unidades preferidas (kg/lb, cm/m/pulgadas/pies, km/millas), bienvenida de primer uso y perfil editable con historial; exportar datos | SIS-01, 03 a 09 (M; SIS-08 y 09 en la fase 3); SIS-02 (S) | 1 en adelante |
 
 Reglas de producto que aplican a todo:
 
@@ -89,13 +90,29 @@ Reglas de producto que aplican a todo:
 | Fotos de progreso con comparador | SAL-03 (W) |
 | Check-in diario | SAL-05 (W) |
 | Lista de compras, comida por foto o texto libre, importación de Cronometer | NUT-06, 07, 08 (W) |
-| Mapa corporal, sustitución automática de ejercicios, hábitos y rachas | Backlog de la [sección 19](plan-maestro.md#19-backlog-de-mejoras) |
+| Mapa corporal, sustitución automática de ejercicios, hábitos y rachas | Backlog de la [sección 19](plan-maestro.md#19-backlog-de-mejoras). Los hitos de OBJ-04 sí entran (D-28) |
+
+### Criterios de aceptación de los requisitos de D-28
+
+Requisitos añadidos el 18-oct-2026 como excepción al backlog cerrado (sección 9, decisión 17). Detalle en el [plan, sección 5](plan-maestro.md#objetivos-obj).
+
+| ID | Requisito | Criterios de aceptación |
+| --- | --- | --- |
+| OBJ-01 | Objetivo principal | Se elige un tipo (perder grasa, ganar músculo, recomposición, fuerza, salud general, rendimiento MTB), una meta medible (peso, % de grasa, cintura u otra medida de SAL-02) y una fecha. Solo hay un objetivo principal activo; al crear otro, el anterior pasa al historial con sus fechas. Las metas de enero 2027 de la sección 5 están cargadas como el objetivo principal de Francis. Hoy muestra una tarjeta con el objetivo y la próxima meta intermedia; al tocarla se abre la página de Objetivos. La barra inferior sigue con cinco pestañas |
+| OBJ-02 | Metas intermedias | Al guardar el objetivo principal, la app propone una meta cada 4 semanas hasta la fecha, en línea recta desde la media de 7 días del día de inicio hasta la meta. El usuario puede editar, añadir y borrar metas. Cada meta vigente tiene un estado (adelante, en ritmo, atrasado) calculado con la media de 7 días y la tendencia de 4 semanas, y el coach lo usa en sus respuestas y revisiones |
+| OBJ-03 | Metas por medida y por fuerza | Se puede crear una meta para cualquier medida de SAL-02 y para un ejercicio (carga o repeticiones, en la unidad preferida de cargas de SIS-07). En el gráfico de esa medida o ejercicio la meta aparece como línea punteada de referencia; la línea no cuenta para el máximo de tres series de DESIGN.md |
+| OBJ-04 | Hitos | Cumplir una meta intermedia, por medida o de fuerza registra un hito con fecha, igual que un récord personal de GYM-07. Se avisa con un aviso discreto (sin diálogo) y la página de Objetivos lista todos los hitos. No hay rachas |
+| SIS-08 | Bienvenida | Se muestra en el primer uso con 7 pasos: tú, tu objetivo, tu actividad, tu salud, tu punto de partida, conexiones y tu plan; cada paso con su ilustración (ADR 0024). Se completa en ~3 minutos. Solo peso y cintura son obligatorios en el punto de partida; el resto acepta "lo mido luego". Salud acepta "ninguna" en un toque. Cada conexión (Renpho, Health Connect, reloj) se puede saltar. Si se sale a mitad, al volver retoma en el mismo paso con lo ya escrito. El último paso resume kcal, proteína y primeras metas intermedias. Todo lo respondido se edita después en su sección |
+| SIS-09 | Perfil editable | Ajustes muestra el perfil con todo lo de la bienvenida y además preferencias de comida, presupuesto, si cocina, suplementos actuales, sueño y estrés. Cada cambio guarda el valor anterior con su fecha y el historial se puede consultar |
+| SAL-02 | Medidas corporales completas | Se pueden registrar todas las medidas obligatorias, recomendadas y opcionales del plan; las bilaterales piden solo el lado derecho de fábrica y permiten activar el izquierdo; los perímetros se muestran en la unidad de SIS-07, los pliegues en mm, la presión en mmHg y la FC en ppm. Los campos de Renpho llegan solos (SAL-01). La estatura se pide una vez |
+| SAL-07 | Medidas calculadas | La app calcula IMC, cintura/estatura, cintura/cadera, hombros/cintura y % de grasa por el método de la Marina (cuello, cintura y estatura; cadera en mujeres) con la medición más reciente de cada dato. Si falta un dato, dice cuál falta en lugar de mostrar una cifra. El % de grasa de la Marina se ve junto al de la báscula, rotulado como segunda opinión |
+| COA-05 | Re-preguntas periódicas | El coach pregunta por la cinta y la actividad cada 4 semanas, y por salud y lesiones cada 3 meses o cuando el usuario las menciona. Cada respuesta confirmada actualiza SIS-09 o SAL-02 y queda en su historial con fecha. No reemplaza el check-in diario (SAL-05), que sigue en W |
 
 ---
 
 ## 3. Flujos clave
 
-La [sección 13](plan-maestro.md#13-calidad-y-pruebas) pide pruebas E2E en Playwright de "los 8 flujos clave"; son los flujos de la tabla de la Fase 0.5 ([sección 14](plan-maestro.md#fase-05-diseño-ux-antes-de-programar)) que se usan en la web. El noveno flujo de esa tabla (entrenar desde el reloj) también se diseña en la Fase 0.5, pero se prueba en el reloj real, no en Playwright.
+La [sección 13](plan-maestro.md#13-calidad-y-pruebas) pide pruebas E2E en Playwright de "los 9 flujos clave de la web"; son los flujos de la tabla de la Fase 0.5 ([sección 14](plan-maestro.md#fase-05-diseño-ux-antes-de-programar)) que se usan en la web. El flujo 9 (entrenar desde el reloj) también se diseña en la Fase 0.5, pero se prueba en el reloj real, no en Playwright.
 
 | # | Flujo | Pasos | Requisitos | Prueba |
 | --- | --- | --- | --- | --- |
@@ -104,12 +121,13 @@ La [sección 13](plan-maestro.md#13-calidad-y-pruebas) pide pruebas E2E en Playw
 | 3 | Registrar una comida | Buscar alimento → elegir unidad → confirmar → ver macros y micros del día | NUT-02, 03, 09 | Playwright |
 | 4 | Crear receta o plan | Ingredientes → porciones → plan día/semana/mes con suplementos | NUT-04, 05, SUP-01 | Playwright |
 | 5 | Registrar paseo MTB | Subir las capturas de Strava al chat (actividad y zonas de FC) → tarjeta de confirmación → guardar | CAR-01, 02 | Playwright |
-| 6 | Registrar medición | Renpho automático o manual → medidas con cinta | SAL-01, 02 | Playwright |
+| 6 | Registrar medición | Renpho automático o manual → medidas con cinta (lista completa de SAL-02: obligatorias, recomendadas y opcionales) → medidas calculadas | SAL-01, 02, 07 | Playwright |
 | 7 | Hablar con el coach | Pregunta → respuesta con tus datos → aprobar plan propuesto | COA-01, 04 | Playwright + evals |
-| 8 | Empezar el día | Dashboard: entreno, comidas, suplementos pendientes, alertas | DSH-01, COA-03 | Playwright |
+| 8 | Empezar el día | Dashboard: entreno, comidas, suplementos pendientes, alertas, tarjeta de objetivos → página de Objetivos (metas intermedias, metas por medida y por fuerza, hitos) | DSH-01, COA-03, OBJ-01 a 04 | Playwright |
 | 9 | Entrenar desde el reloj | Iniciar sesión del día → serie → check → descanso → vibración → espera → play → siguiente → resumen de tiempos | WAT-01, 02, 05, 06 | Compose for Wear OS + reloj real |
+| 10 | Bienvenida (primer uso) | Tú → tu objetivo → tu actividad → tu salud → tu punto de partida → conexiones → tu plan; salir y retomar | SIS-08, SIS-07, OBJ-01, 02 | Playwright |
 
-Cada flujo se entrega en la Fase 0.5 en cuatro piezas: diagrama, guía paso a paso en imágenes, mockups de alta fidelidad (web y móvil) y prototipo navegable. Orden: primero el flujo 2 (calendario) y después el flujo 1 (D-25).
+Cada flujo se entrega en la Fase 0.5 en cuatro piezas: diagrama, guía paso a paso en imágenes, mockups de alta fidelidad (web y móvil) y prototipo navegable. Orden: primero el flujo 2 (calendario), después el flujo 1 (D-25) y luego el flujo 10 (bienvenida, D-28).
 
 ---
 
@@ -254,7 +272,7 @@ Los embeddings para la memoria semántica (pgvector) no salen de Anthropic, que 
 
 ## 7. Estimación de tiempo por fase
 
-Recalculada el 18-oct-2026 con la disponibilidad que confirmó Francis: día completo, y si está motivado, el día entero dedicado al proyecto.
+Recalculada el 18-oct-2026 con la disponibilidad que confirmó Francis: día completo, y si está motivado, el día entero dedicado al proyecto. Ajustada el mismo día por D-28 (objetivos, bienvenida y medidas): +~1 semana, toda después de la Fase 2, para que el modo gym no se mueva.
 
 ### Supuestos
 
@@ -269,23 +287,23 @@ Recalculada el 18-oct-2026 con la disponibilidad que confirmó Francis: día com
 | Fase | Optimista (sem.) | Probable (sem.) | Qué la marca |
 | --- | --- | --- | --- |
 | 0. Lo que falta (`/impeccable init`) | 0.3 | 0.5 | Una ronda de revisión |
-| 0.5 Diseño UX (9 flujos × 4 piezas, modelo conceptual de BD) | 1 | 2 | Producción de mockups y prototipo |
+| 0.5 Diseño UX (10 flujos × 4 piezas, modelo conceptual de BD) | 1 | 2 | Producción de mockups y prototipo; el flujo 10 cabe en el rango |
 | 1. Núcleo | 1 | 1.5 | Modelo de datos, RLS, despliegue y backups (Fable) |
 | 2. Gym (PWA) | 1.5 | 2 | Desarrollo + la semana real de entreno |
-| 3. Salud | 0.5 | 1 | Librería no oficial de Renpho |
+| 3. Salud | 1 | 1.5 | Librería no oficial de Renpho; medidas completas, objetivos, bienvenida y perfil (D-28) |
 | 4. Nutrición y suplementos | 1.5 | 2 | Base de alimentos dominicanos + semana real de comidas |
-| 5. Coach IA | 1 | 2 | Prompt, herramientas y evals |
-| 6. Dashboard y cardio | 0.5 | 1 | Informe PDF y carga combinada |
+| 5. Coach IA | 1.25 | 2.25 | Prompt, herramientas y evals; re-preguntas y juicio de metas (D-28) |
+| 6. Dashboard y cardio | 0.75 | 1.25 | Informe PDF, carga combinada y tarjeta de objetivos (D-28) |
 | 7. App Android | 1.5 | 3 | Offline-first sin pérdida de datos, Health Connect (Fable) |
 | 7b. Galaxy Watch | 1.5 | 2.5 | App nativa, Data Layer, pruebas en el Watch4 (Fable) |
 | 8. Versión 1.0 | 0.5 | 1 | Hallazgos de la auditoría |
-| **Total** | **~11 semanas** | **~18.5 semanas** | |
+| **Total** | **~12 semanas** | **~19.5 semanas** | |
 
 | Hito | Optimista | Probable |
 | --- | --- | --- |
 | Modo gym usable en el teléfono (empieza la semana real) | ~7-nov-2026 | ~22-nov-2026 |
 | Fase 2 cerrada | ~14-nov-2026 | ~29-nov-2026 |
-| Versión 1.0 | ~2-ene-2027 | ~25-feb-2027 |
+| Versión 1.0 | ~9-ene-2027 | ~4-mar-2027 |
 
 **Riesgo principal (plan, sección 17):** que el desarrollo retrase tu vuelta al gym. Aun en el escenario optimista, las primeras 3 semanas de la ventana de las metas de enero pasan sin modo gym. Mitigación: empezar ya con la rutina Full Body A/B/C en papel ([Anexo A.6](plan-maestro.md#a6-plan-de-entrenamiento-full-body-abc)), apuntar pesos y reps, y cargarlos en el sistema cuando llegue la Fase 2. Dedicar el día completo al proyecto no debe comerse la hora del gym de las 8:00 AM.
 
@@ -331,3 +349,4 @@ Respuestas de Francis a las preguntas del borrador.
 | 14 | Calendario (añadida tras aprobar el PRD) | Vive en Gym. Muestra días pasados (sesión hecha o no hecha, con resumen), hoy y futuros (programar, mover, copiar), paseos MTB y citas de análisis de sangre de solo lectura que llevan a Salud. Una sesión no hecha ofrece "Mover a otro día"; existe "Copiar la semana anterior". El flujo 2 se diseña antes que el flujo 1. D-25 |
 | 15 | Revisión del flujo 2 | Programar en tres pasos: rutina, series y repeticiones, pesos. La semana 1 es la de la primera actividad registrada en la app; Francis arranca desde cero. Pestañas internas de Gym en móvil; subsección Análisis en Salud. D-26 |
 | 16 | Datos del paseo MTB | Distancia, desnivel positivo, tiempo en movimiento, velocidad media, calorías, FC promedio y zonas de FC Z1 a Z5 (% y rango en ppm) desde dos capturas de Strava; el objetivo calórico del día sube con el 50 % de las kcal del paseo. D-27 |
+| 17 | Objetivos, bienvenida y medidas (añadida tras aprobar el PRD) | Entran en la v1.0 con prioridad M como excepción al backlog cerrado: módulo Objetivos (OBJ-01 a 04) con tarjeta en Hoy y página propia, bienvenida de 7 pasos con ilustraciones (SIS-08, [ADR 0024](adr/0024-ilustraciones-en-la-bienvenida.md)), perfil editable con historial (SIS-09), medidas corporales completas (SAL-02), medidas calculadas (SAL-07) y re-preguntas del coach (COA-05). Las rachas siguen fuera. Flujo 10 en la Fase 0.5 (se diseñan 10 flujos, 9 en Playwright). +~1 semana: ~12 optimista y ~19.5 probable, v1.0 ~9-ene a ~4-mar-2027; el modo gym no se mueve. Criterios de aceptación en la sección 2. D-28 |

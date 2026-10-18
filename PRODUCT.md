@@ -48,8 +48,8 @@ Un coach personal de élite que conoce todos tus datos, sobre una plataforma que
 
 ## Capabilities and Constraints
 
-- **Módulos v1.0:** GYM, WAT (reloj), SAL (salud), NUT (nutrición), SUP (suplementos), CAR (cardio), COA (coach), DSH (panel) y SIS (sistema). Detalle e IDs en docs/prd.md §2.
-- **Fuera de la v1.0:** iOS, Google Play, apertura al público, APIs de Strava y Cronometer, escáner de código de barras, fotos de progreso, mapa corporal, RPE/RIR, comida por foto o texto libre, hábitos y rachas.
+- **Módulos v1.0:** GYM, WAT (reloj), SAL (salud), NUT (nutrición), SUP (suplementos), CAR (cardio), OBJ (objetivos), COA (coach), DSH (panel) y SIS (sistema, incluida la bienvenida de primer uso). Detalle e IDs en docs/prd.md §2.
+- **Fuera de la v1.0:** iOS, Google Play, apertura al público, APIs de Strava y Cronometer, escáner de código de barras, fotos de progreso, mapa corporal, RPE/RIR, comida por foto o texto libre, hábitos y rachas. Los hitos de objetivos (OBJ-04) sí entran.
 - **Coach:** nunca diagnostica, no interpreta síntomas graves (refiere a un médico), no prescribe fármacos, no inventa datos ni valida por comodidad, no recomienda déficits extremos. Tope de $80/mes y $8/día; al 80 % pasa a Sonnet 5.5 y avisa.
 - **Rendimiento:** pantallas en menos de 2 s en 4G; acciones del modo gym en menos de 200 ms.
 - **Datos:** offline-first sin duplicar ni perder series; datos de salud sensibles, sin puertos públicos; a Anthropic solo sale lo necesario.
