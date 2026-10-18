@@ -1,0 +1,760 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-18T00:00:00Z",
+  "title": "Design System: Coach Fitness AI",
+  "extensions": {
+    "colorMeta": {
+      "caribe-a1": {
+        "role": "primary",
+        "displayName": "Caribe, azul del mar abierto · A1",
+        "tonalRamp": [
+          "#154E78",
+          "#1F6FA8",
+          "#3B95D1",
+          "#7CC0EA",
+          "#CFE6F5"
+        ]
+      },
+      "caribe-a2": {
+        "role": "primary",
+        "displayName": "Caribe, azul del mar abierto · A2",
+        "tonalRamp": [
+          "#154E78",
+          "#1F6FA8",
+          "#3B95D1",
+          "#7CC0EA",
+          "#CFE6F5"
+        ]
+      },
+      "caribe-a3": {
+        "role": "primary",
+        "displayName": "Caribe, azul del mar abierto · A3",
+        "tonalRamp": [
+          "#154E78",
+          "#1F6FA8",
+          "#3B95D1",
+          "#7CC0EA",
+          "#CFE6F5"
+        ]
+      },
+      "caribe-a4": {
+        "role": "primary",
+        "displayName": "Caribe, azul del mar abierto · A4",
+        "tonalRamp": [
+          "#154E78",
+          "#1F6FA8",
+          "#3B95D1",
+          "#7CC0EA",
+          "#CFE6F5"
+        ]
+      },
+      "caribe-a5": {
+        "role": "primary",
+        "displayName": "Caribe, azul del mar abierto · A5",
+        "tonalRamp": [
+          "#154E78",
+          "#1F6FA8",
+          "#3B95D1",
+          "#7CC0EA",
+          "#CFE6F5"
+        ]
+      },
+      "mar-a1": {
+        "role": "tertiary",
+        "displayName": "Mar, turquesa de laguna · A1",
+        "tonalRamp": [
+          "#0F5850",
+          "#157A70",
+          "#22A99C",
+          "#6FD6CC",
+          "#C8EEEA"
+        ]
+      },
+      "mar-a2": {
+        "role": "tertiary",
+        "displayName": "Mar, turquesa de laguna · A2",
+        "tonalRamp": [
+          "#0F5850",
+          "#157A70",
+          "#22A99C",
+          "#6FD6CC",
+          "#C8EEEA"
+        ]
+      },
+      "mar-a3": {
+        "role": "tertiary",
+        "displayName": "Mar, turquesa de laguna · A3",
+        "tonalRamp": [
+          "#0F5850",
+          "#157A70",
+          "#22A99C",
+          "#6FD6CC",
+          "#C8EEEA"
+        ]
+      },
+      "mar-a4": {
+        "role": "tertiary",
+        "displayName": "Mar, turquesa de laguna · A4",
+        "tonalRamp": [
+          "#0F5850",
+          "#157A70",
+          "#22A99C",
+          "#6FD6CC",
+          "#C8EEEA"
+        ]
+      },
+      "mar-a5": {
+        "role": "tertiary",
+        "displayName": "Mar, turquesa de laguna · A5",
+        "tonalRamp": [
+          "#0F5850",
+          "#157A70",
+          "#22A99C",
+          "#6FD6CC",
+          "#C8EEEA"
+        ]
+      },
+      "palma-a1": {
+        "role": "tertiary",
+        "displayName": "Palma, verde de palma · A1",
+        "tonalRamp": [
+          "#155A36",
+          "#1E7D4A",
+          "#2FA866",
+          "#6FD19B",
+          "#CDEEDB"
+        ]
+      },
+      "palma-a2": {
+        "role": "tertiary",
+        "displayName": "Palma, verde de palma · A2",
+        "tonalRamp": [
+          "#155A36",
+          "#1E7D4A",
+          "#2FA866",
+          "#6FD19B",
+          "#CDEEDB"
+        ]
+      },
+      "palma-a3": {
+        "role": "tertiary",
+        "displayName": "Palma, verde de palma · A3",
+        "tonalRamp": [
+          "#155A36",
+          "#1E7D4A",
+          "#2FA866",
+          "#6FD19B",
+          "#CDEEDB"
+        ]
+      },
+      "palma-a4": {
+        "role": "tertiary",
+        "displayName": "Palma, verde de palma · A4",
+        "tonalRamp": [
+          "#155A36",
+          "#1E7D4A",
+          "#2FA866",
+          "#6FD19B",
+          "#CDEEDB"
+        ]
+      },
+      "palma-a5": {
+        "role": "tertiary",
+        "displayName": "Palma, verde de palma · A5",
+        "tonalRamp": [
+          "#155A36",
+          "#1E7D4A",
+          "#2FA866",
+          "#6FD19B",
+          "#CDEEDB"
+        ]
+      },
+      "mango-a1": {
+        "role": "tertiary",
+        "displayName": "Mango, ámbar de mango maduro · A1",
+        "tonalRamp": [
+          "#6E4307",
+          "#9A5C06",
+          "#E89A1E",
+          "#F7C062",
+          "#FCE7C2"
+        ]
+      },
+      "mango-a2": {
+        "role": "tertiary",
+        "displayName": "Mango, ámbar de mango maduro · A2",
+        "tonalRamp": [
+          "#6E4307",
+          "#9A5C06",
+          "#E89A1E",
+          "#F7C062",
+          "#FCE7C2"
+        ]
+      },
+      "mango-a3": {
+        "role": "tertiary",
+        "displayName": "Mango, ámbar de mango maduro · A3",
+        "tonalRamp": [
+          "#6E4307",
+          "#9A5C06",
+          "#E89A1E",
+          "#F7C062",
+          "#FCE7C2"
+        ]
+      },
+      "mango-a4": {
+        "role": "tertiary",
+        "displayName": "Mango, ámbar de mango maduro · A4",
+        "tonalRamp": [
+          "#6E4307",
+          "#9A5C06",
+          "#E89A1E",
+          "#F7C062",
+          "#FCE7C2"
+        ]
+      },
+      "mango-a5": {
+        "role": "tertiary",
+        "displayName": "Mango, ámbar de mango maduro · A5",
+        "tonalRamp": [
+          "#6E4307",
+          "#9A5C06",
+          "#E89A1E",
+          "#F7C062",
+          "#FCE7C2"
+        ]
+      },
+      "flamboyan-a1": {
+        "role": "tertiary",
+        "displayName": "Flamboyán, rojo naranja del flamboyán · A1",
+        "tonalRamp": [
+          "#7E2C14",
+          "#B6411F",
+          "#E8603C",
+          "#F79A7E",
+          "#FBD6CB"
+        ]
+      },
+      "flamboyan-a2": {
+        "role": "tertiary",
+        "displayName": "Flamboyán, rojo naranja del flamboyán · A2",
+        "tonalRamp": [
+          "#7E2C14",
+          "#B6411F",
+          "#E8603C",
+          "#F79A7E",
+          "#FBD6CB"
+        ]
+      },
+      "flamboyan-a3": {
+        "role": "tertiary",
+        "displayName": "Flamboyán, rojo naranja del flamboyán · A3",
+        "tonalRamp": [
+          "#7E2C14",
+          "#B6411F",
+          "#E8603C",
+          "#F79A7E",
+          "#FBD6CB"
+        ]
+      },
+      "flamboyan-a4": {
+        "role": "tertiary",
+        "displayName": "Flamboyán, rojo naranja del flamboyán · A4",
+        "tonalRamp": [
+          "#7E2C14",
+          "#B6411F",
+          "#E8603C",
+          "#F79A7E",
+          "#FBD6CB"
+        ]
+      },
+      "flamboyan-a5": {
+        "role": "tertiary",
+        "displayName": "Flamboyán, rojo naranja del flamboyán · A5",
+        "tonalRamp": [
+          "#7E2C14",
+          "#B6411F",
+          "#E8603C",
+          "#F79A7E",
+          "#FBD6CB"
+        ]
+      },
+      "uva-a1": {
+        "role": "tertiary",
+        "displayName": "Uva de playa, violeta de la uva de playa · A1",
+        "tonalRamp": [
+          "#45307F",
+          "#6446B8",
+          "#8466DB",
+          "#B4A2F2",
+          "#E3DBFA"
+        ]
+      },
+      "uva-a2": {
+        "role": "tertiary",
+        "displayName": "Uva de playa, violeta de la uva de playa · A2",
+        "tonalRamp": [
+          "#45307F",
+          "#6446B8",
+          "#8466DB",
+          "#B4A2F2",
+          "#E3DBFA"
+        ]
+      },
+      "uva-a3": {
+        "role": "tertiary",
+        "displayName": "Uva de playa, violeta de la uva de playa · A3",
+        "tonalRamp": [
+          "#45307F",
+          "#6446B8",
+          "#8466DB",
+          "#B4A2F2",
+          "#E3DBFA"
+        ]
+      },
+      "uva-a4": {
+        "role": "tertiary",
+        "displayName": "Uva de playa, violeta de la uva de playa · A4",
+        "tonalRamp": [
+          "#45307F",
+          "#6446B8",
+          "#8466DB",
+          "#B4A2F2",
+          "#E3DBFA"
+        ]
+      },
+      "uva-a5": {
+        "role": "tertiary",
+        "displayName": "Uva de playa, violeta de la uva de playa · A5",
+        "tonalRamp": [
+          "#45307F",
+          "#6446B8",
+          "#8466DB",
+          "#B4A2F2",
+          "#E3DBFA"
+        ]
+      },
+      "oscuro-fondo": {
+        "role": "neutral",
+        "displayName": "Caucho"
+      },
+      "oscuro-superficie": {
+        "role": "neutral",
+        "displayName": "Superficie caucho"
+      },
+      "oscuro-elevado": {
+        "role": "neutral",
+        "displayName": "Elevado caucho"
+      },
+      "oscuro-borde": {
+        "role": "neutral",
+        "displayName": "Borde caucho"
+      },
+      "oscuro-texto": {
+        "role": "neutral",
+        "displayName": "Texto tiza"
+      },
+      "oscuro-textoSecundario": {
+        "role": "neutral",
+        "displayName": "Texto secundario"
+      },
+      "oscuro-datoGris": {
+        "role": "neutral",
+        "displayName": "Gris de datos oscuro"
+      },
+      "claro-fondo": {
+        "role": "neutral",
+        "displayName": "Tiza"
+      },
+      "claro-superficie": {
+        "role": "neutral",
+        "displayName": "Superficie blanca"
+      },
+      "claro-elevado": {
+        "role": "neutral",
+        "displayName": "Elevado tiza"
+      },
+      "claro-borde": {
+        "role": "neutral",
+        "displayName": "Borde tiza"
+      },
+      "claro-texto": {
+        "role": "neutral",
+        "displayName": "Texto grafito"
+      },
+      "claro-textoSecundario": {
+        "role": "neutral",
+        "displayName": "Texto secundario claro"
+      },
+      "claro-datoGris": {
+        "role": "neutral",
+        "displayName": "Gris de datos claro"
+      },
+      "claro-textoSobreAccion": {
+        "role": "neutral",
+        "displayName": "Texto sobre acción (claro)"
+      },
+      "grafito-fondo": {
+        "role": "neutral",
+        "displayName": "Grafito"
+      },
+      "grafito-superficie": {
+        "role": "neutral",
+        "displayName": "Superficie grafito"
+      },
+      "grafito-elevado": {
+        "role": "neutral",
+        "displayName": "Elevado grafito"
+      },
+      "grafito-borde": {
+        "role": "neutral",
+        "displayName": "Borde grafito"
+      },
+      "pizarra-fondo": {
+        "role": "neutral",
+        "displayName": "Pizarra"
+      },
+      "pizarra-superficie": {
+        "role": "neutral",
+        "displayName": "Superficie pizarra"
+      },
+      "pizarra-elevado": {
+        "role": "neutral",
+        "displayName": "Elevado pizarra"
+      },
+      "pizarra-borde": {
+        "role": "neutral",
+        "displayName": "Borde pizarra"
+      },
+      "oscuro-error": {
+        "role": "error",
+        "displayName": "Error oscuro (fijo)"
+      },
+      "claro-error": {
+        "role": "error",
+        "displayName": "Error claro (fijo)"
+      },
+      "oscuro-capaHover": {
+        "role": "neutral",
+        "displayName": "Capa de hover, oscuro (texto al 6 %)"
+      },
+      "oscuro-capaPressed": {
+        "role": "neutral",
+        "displayName": "Capa de pressed, oscuro (texto al 10 %)"
+      },
+      "claro-capaHover": {
+        "role": "neutral",
+        "displayName": "Capa de hover, claro (texto al 6 %)"
+      },
+      "claro-capaPressed": {
+        "role": "neutral",
+        "displayName": "Capa de pressed, claro (texto al 10 %)"
+      },
+      "oscuro-velo": {
+        "role": "neutral",
+        "displayName": "Velo de diálogo, oscuro (caucho al 72 %)"
+      },
+      "claro-velo": {
+        "role": "neutral",
+        "displayName": "Velo de diálogo, claro (grafito al 40 %)"
+      },
+      "caribe-suave-oscuro": {
+        "role": "primary",
+        "displayName": "Fondo suave Caribe, oscuro (A3 al 20 % sobre superficie)"
+      },
+      "caribe-suave-claro": {
+        "role": "primary",
+        "displayName": "Fondo suave Caribe, claro (A3 al 13 % sobre blanco)"
+      }
+    },
+    "typographyMeta": {
+      "cifraHeroe": {
+        "displayName": "cifraHeroe",
+        "purpose": "Cifra héroe: temporizador de descanso, nuevo récord."
+      },
+      "cifraMetrica": {
+        "displayName": "cifraMetrica",
+        "purpose": "Cifra métrica: peso, calorías, totales de sesión."
+      },
+      "tituloPantalla": {
+        "displayName": "tituloPantalla",
+        "purpose": "Título de pantalla, uno por pantalla."
+      },
+      "tituloSeccion": {
+        "displayName": "tituloSeccion",
+        "purpose": "Encabezado de tarjeta o bloque."
+      },
+      "cuerpo": {
+        "displayName": "cuerpo",
+        "purpose": "Texto corrido, mensajes del coach, filas de lista."
+      },
+      "detalle": {
+        "displayName": "detalle",
+        "purpose": "Etiquetas, unidades, metadatos y estado de sincronización."
+      },
+      "boton": {
+        "displayName": "boton",
+        "purpose": "Texto de todos los botones."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "rapido",
+        "value": "120ms",
+        "purpose": "Respuesta: pressed, hover, foco, tachar serie, interruptores; salida de avisos. Curva estándar."
+      },
+      {
+        "name": "normal",
+        "value": "200ms",
+        "purpose": "Mover (barras, anillos, reordenar) con curva estándar; entrada de avisos y menús con curva de entrada; salida de diálogos."
+      },
+      {
+        "name": "lento",
+        "value": "320ms",
+        "purpose": "Entrada de diálogos, hojas y pantallas nuevas en móvil, con curva de entrada."
+      },
+      {
+        "name": "curva-estandar",
+        "value": "cubic-bezier(0.2, 0, 0, 1)",
+        "purpose": "Cambios de estado y movimientos dentro de la pantalla. Reanimated: Easing.bezier(0.2, 0, 0, 1). Compose: CubicBezierEasing(0.2f, 0f, 0f, 1f)."
+      },
+      {
+        "name": "curva-entrar",
+        "value": "cubic-bezier(0.05, 0.7, 0.1, 1)",
+        "purpose": "Lo que aparece: frena al llegar."
+      },
+      {
+        "name": "curva-salir",
+        "value": "cubic-bezier(0.3, 0, 0.8, 0.15)",
+        "purpose": "Lo que se va: acelera al irse; un paso de duración menos que al entrar."
+      },
+      {
+        "name": "pulso",
+        "value": "1600ms",
+        "purpose": "Pulso de opacidad de esqueletos y de la línea del coach mientras piensa. Se apaga con reducir movimiento."
+      },
+      {
+        "name": "retraso-carga",
+        "value": "300ms",
+        "purpose": "No mostrar esqueleto ni indicador si la respuesta llega antes."
+      },
+      {
+        "name": "reducido",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Sin desplazamientos ni escalas; solo fundidos en rapido. Sin pulso en esqueletos. La háptica se mantiene."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "rail",
+        "value": "700px"
+      },
+      {
+        "name": "barraLateral",
+        "value": "1100px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botón principal (oscuro, Caribe)",
+      "kind": "button",
+      "refersTo": "button-primary-dark",
+      "description": "Acción principal de la vista en oscuro. Hover y pressed suben a A1; pressed escala a 0.97; foco con anillo A2 separado 2 px; disabled en elevado al 40 %.",
+      "html": "<div class=\"ds-row\"><button class=\"ds-btn-primary\">Empezar sesión</button><button class=\"ds-btn-primary\" disabled>Guardar</button></div>",
+      "css": ".ds-row { display: flex; gap: 12px; } .ds-btn-primary { font-family: Archivo; background: #7CC0EA; color: #1B1E23; font-size: 15px; line-height: 20px; font-weight: 650; padding: 12px 16px; min-height: 48px; border: none; border-radius: 10px; cursor: pointer; transition: background-color 120ms cubic-bezier(0.2, 0, 0, 1), color 120ms cubic-bezier(0.2, 0, 0, 1), transform 120ms cubic-bezier(0.2, 0, 0, 1); } @media (hover: hover) and (pointer: fine) { .ds-btn-primary:hover { background: #CFE6F5; } } .ds-btn-primary:active { background: #CFE6F5; transform: scale(0.97); } .ds-btn-primary:focus-visible { outline: 2px solid #7CC0EA; outline-offset: 2px; } .ds-btn-primary:disabled { background: #2D3239; color: #F3F4F1; opacity: 0.4; cursor: not-allowed; transform: none; }"
+    },
+    {
+      "name": "Botón principal (claro, Caribe)",
+      "kind": "button",
+      "refersTo": "button-primary-light",
+      "description": "Acción principal en claro: A4 con texto blanco; hover y pressed en A5; foco con anillo A4.",
+      "html": "<div class=\"ds-light\"><button class=\"ds-btn-primary-light\">Guardar plan</button></div>",
+      "css": ".ds-light { background: #F3F4F1; padding: 16px; border-radius: 16px; } .ds-btn-primary-light { font-family: Archivo; background: #1F6FA8; color: #FFFFFF; font-size: 15px; line-height: 20px; font-weight: 650; padding: 12px 16px; min-height: 48px; border: none; border-radius: 10px; cursor: pointer; transition: background-color 120ms cubic-bezier(0.2, 0, 0, 1), color 120ms cubic-bezier(0.2, 0, 0, 1), transform 120ms cubic-bezier(0.2, 0, 0, 1); } @media (hover: hover) and (pointer: fine) { .ds-btn-primary-light:hover { background: #154E78; } } .ds-btn-primary-light:active { background: #154E78; transform: scale(0.97); } .ds-btn-primary-light:focus-visible { outline: 2px solid #1F6FA8; outline-offset: 2px; }"
+    },
+    {
+      "name": "Botón secundario y de texto (oscuro)",
+      "kind": "button",
+      "refersTo": "button-secondary-dark",
+      "description": "Secundario: contorno de 1 px en texto secundario; de texto: acento sin fondo. Hover y pressed con capa de estado (texto al 6 % y 10 %); el de texto sube a A1.",
+      "html": "<div class=\"ds-row\"><button class=\"ds-btn-secondary\">Cambiar rutina</button><button class=\"ds-btn-text\">Ver las 8 plantillas</button></div>",
+      "css": ".ds-row { display: flex; gap: 12px; } .ds-btn-secondary, .ds-btn-text { font-family: Archivo; font-size: 15px; line-height: 20px; font-weight: 650; padding: 12px 16px; min-height: 48px; border-radius: 10px; cursor: pointer; transition: background-color 120ms cubic-bezier(0.2, 0, 0, 1), color 120ms cubic-bezier(0.2, 0, 0, 1), transform 120ms cubic-bezier(0.2, 0, 0, 1); } .ds-btn-secondary { background: transparent; color: #F3F4F1; border: 1px solid #A3AAB3; } .ds-btn-text { background: transparent; color: #7CC0EA; border: none; } @media (hover: hover) and (pointer: fine) { .ds-btn-secondary:hover { background: color-mix(in srgb, #F3F4F1 6%, transparent); } .ds-btn-text:hover { background: color-mix(in srgb, #F3F4F1 6%, transparent); color: #CFE6F5; } } .ds-btn-secondary:active { background: color-mix(in srgb, #F3F4F1 10%, transparent); } .ds-btn-text:active { background: color-mix(in srgb, #F3F4F1 10%, transparent); color: #CFE6F5; } .ds-btn-secondary:focus-visible, .ds-btn-text:focus-visible { outline: 2px solid #7CC0EA; outline-offset: 2px; }"
+    },
+    {
+      "name": "Chip de rango (oscuro)",
+      "kind": "chip",
+      "refersTo": "chip-selected-dark",
+      "description": "Píldora para rangos de tiempo; seleccionado en acción, el resto sobre elevado. Hover y pressed sin seleccionar: capa y texto principal. Objetivo táctil de 48 px.",
+      "html": "<div class=\"ds-chips\" role=\"radiogroup\"><button class=\"ds-chip\" role=\"radio\" aria-checked=\"false\">1 mes</button><button class=\"ds-chip ds-chip-on\" role=\"radio\" aria-checked=\"true\">6 meses</button><button class=\"ds-chip\" role=\"radio\" aria-checked=\"false\">1 año</button></div>",
+      "css": ".ds-chips { display: flex; gap: 8px; } .ds-chip { font-family: Archivo; background: #2D3239; color: #A3AAB3; font-size: 13px; line-height: 18px; font-weight: 500; padding: 8px 12px; min-height: 36px; border: none; border-radius: 999px; cursor: pointer; transition: background-color 120ms cubic-bezier(0.2, 0, 0, 1), color 120ms cubic-bezier(0.2, 0, 0, 1), transform 120ms cubic-bezier(0.2, 0, 0, 1); } @media (hover: hover) and (pointer: fine) { .ds-chip:not(.ds-chip-on):hover { background: color-mix(in srgb, #F3F4F1 6%, #2D3239); color: #F3F4F1; } } .ds-chip:not(.ds-chip-on):active { background: color-mix(in srgb, #F3F4F1 10%, #2D3239); color: #F3F4F1; } .ds-chip:focus-visible { outline: 2px solid #7CC0EA; outline-offset: 2px; } .ds-chip-on { background: #7CC0EA; color: #1B1E23; }"
+    },
+    {
+      "name": "Tarjeta destacada con cifra (oscuro)",
+      "kind": "card",
+      "refersTo": "card-featured-dark",
+      "description": "Fondo suave del acento para lo más importante del momento, con cifra héroe condensada.",
+      "html": "<div class=\"ds-card-featured\"><p class=\"ds-detail\">Nuevo récord · press de banca</p><p class=\"ds-hero\">42.5 × 10</p><p class=\"ds-detail\">1RM estimado 56.7 kg · +2.8 kg</p></div>",
+      "css": ".ds-card-featured { font-family: Archivo; background: color-mix(in srgb, #3B95D1 20%, #23272D); color: #F3F4F1; border-radius: 16px; padding: 24px; text-align: center; } .ds-card-featured p { margin: 0; } .ds-detail { font-size: 13px; line-height: 18px; font-weight: 500; color: #A3AAB3; } .ds-hero { font-size: 56px; line-height: 52px; font-weight: 800; font-variation-settings: 'wdth' 62; font-feature-settings: 'tnum'; color: #7CC0EA; margin: 8px 0 !important; }"
+    },
+    {
+      "name": "Línea del coach pensando (oscuro)",
+      "kind": "custom",
+      "refersTo": "card-dark",
+      "description": "Tarjeta neutra con cabecera de ícono y etiqueta Coach en acento, sin franja lateral. Mientras piensa, el ícono pulsa (1600 ms) y una línea dice qué está consultando; con reducir movimiento queda fijo.",
+      "html": "<div class=\"ds-coach\"><p class=\"ds-coach-label\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c3.255 2.777 3.695 7.266 1.029 10.501c-2.666 3.235 -7.615 4.215 -11.574 2.293l-4.7 1\"/></svg>Coach</p><p class=\"ds-coach-text\">Ayer cenaste 38 g de proteína menos de lo planificado. Agrega un huevo extra en el desayuno.</p></div><div class=\"ds-coach ds-coach-thinking\" aria-busy=\"true\"><p class=\"ds-coach-label\"><span class=\"ds-coach-ic\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c3.255 2.777 3.695 7.266 1.029 10.501c-2.666 3.235 -7.615 4.215 -11.574 2.293l-4.7 1\"/></svg></span>Coach</p><p class=\"ds-coach-text ds-coach-step\">Revisando tus sesiones de la última semana…</p></div>",
+      "css": ".ds-coach { font-family: Archivo; background: #23272D; border-radius: 16px; padding: 16px; margin-bottom: 8px; } .ds-coach p { margin: 0; } .ds-coach-label { display: flex; align-items: center; gap: 4px; margin-bottom: 4px !important; font-size: 13px; line-height: 18px; font-weight: 500; color: #7CC0EA; } .ds-coach-ic { display: inline-flex; animation: ds-pulse 1600ms cubic-bezier(0.2, 0, 0, 1) infinite; } .ds-coach-text { font-size: 16px; line-height: 24px; color: #F3F4F1; } .ds-coach-step { color: #A3AAB3; } @keyframes ds-pulse { 50% { opacity: 0.35; } } @media (prefers-reduced-motion: reduce) { .ds-coach-ic { animation: none; } }"
+    },
+    {
+      "name": "Fila de serie y sincronización (modo gym, oscuro)",
+      "kind": "custom",
+      "refersTo": "row-dark",
+      "description": "Filas de 56 px; la actual con borde de acción de 2 px; la hecha con casilla llena y check. Arriba, el estado de sincronización en detalle con ícono, sin tono de error.",
+      "html": "<p class=\"ds-sync\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9.58 5.548c.24 -.11 .492 -.207 .752 -.286c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.913 0 3.464 1.56 3.464 3.486c0 .957 -.383 1.824 -1.003 2.454m-2.997 1.033h-11.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.13 -.582 .37 -1.128 .7 -1.62\"/><path d=\"M3 3l18 18\"/></svg>Sin conexión · 3 por subir</p><button class=\"ds-set\"><span class=\"ds-box ds-box-on\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12l5 5l10 -10\"/></svg></span><span class=\"ds-set-name\">Trabajo 1</span><span class=\"ds-set-load\">40 × 10</span></button><button class=\"ds-set ds-set-current\"><span class=\"ds-box\"></span><span class=\"ds-set-name\">Trabajo 2</span><span class=\"ds-set-load\">40 × 10</span></button>",
+      "css": ".ds-sync { font-family: Archivo; display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-size: 13px; line-height: 18px; font-weight: 500; color: #A3AAB3; } .ds-set { font-family: Archivo; display: flex; width: 100%; align-items: center; gap: 12px; min-height: 56px; padding: 8px 12px; margin-bottom: 8px; background: #23272D; border: 1px solid #3A4048; border-radius: 10px; color: #A3AAB3; text-align: left; cursor: pointer; transition: background-color 120ms cubic-bezier(0.2, 0, 0, 1), color 120ms cubic-bezier(0.2, 0, 0, 1), transform 120ms cubic-bezier(0.2, 0, 0, 1); } .ds-set:active { background: color-mix(in srgb, #F3F4F1 10%, #23272D); } .ds-set:focus-visible { outline: 2px solid #7CC0EA; outline-offset: 2px; } .ds-set-current { border: 2px solid #7CC0EA; color: #F3F4F1; } .ds-box { width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #A3AAB3; border-radius: 6px; } .ds-box-on { background: #7CC0EA; border-color: #7CC0EA; color: #1B1E23; } .ds-set-name { flex: 1; font-size: 16px; line-height: 24px; } .ds-set-load { font-size: 20px; font-weight: 800; font-variation-settings: 'wdth' 62; font-feature-settings: 'tnum'; color: #F3F4F1; }"
+    },
+    {
+      "name": "Campo de texto con error (oscuro)",
+      "kind": "input",
+      "refersTo": "input-dark",
+      "description": "Fondo elevado y radio de control, 48 px. Foco con anillo A2; error con borde de 2 px, ícono y mensaje.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-label\">Código HEX</span><input class=\"ds-input\" type=\"text\" placeholder=\"Buscar alimento\"></label><label class=\"ds-field\"><span class=\"ds-label\">Peso</span><input class=\"ds-input ds-input-error\" type=\"text\" value=\"4O\" aria-invalid=\"true\"><span class=\"ds-error\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0\"/><path d=\"M12 8v4\"/><path d=\"M12 16h.01\"/></svg>Escribe solo números, por ejemplo 40</span></label>",
+      "css": ".ds-field { font-family: Archivo; display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; } .ds-label { font-size: 13px; line-height: 18px; font-weight: 500; color: #A3AAB3; } .ds-input { font-family: Archivo; background: #2D3239; color: #F3F4F1; font-size: 16px; line-height: 24px; padding: 11px 16px; min-height: 48px; border: 1px solid transparent; border-radius: 10px; } @media (hover: hover) and (pointer: fine) { .ds-input:hover { border-color: #A3AAB3; } } .ds-input:focus-visible, .ds-input:focus { outline: 2px solid #7CC0EA; outline-offset: 2px; } .ds-input::placeholder { color: #A3AAB3; } .ds-input-error { border: 2px solid #FF6B6B; } .ds-error { display: flex; align-items: center; gap: 4px; font-size: 13px; line-height: 18px; font-weight: 500; color: #FF6B6B; }"
+    },
+    {
+      "name": "Navegación inferior (oscuro)",
+      "kind": "nav",
+      "refersTo": "nav-bar-dark",
+      "description": "Cinco pestañas fijas: Hoy, Gym, Comida, Salud, Coach. Activa en texto de acento con etiqueta en 650 y aria-current; Ajustes vive en el botón de cuenta de Hoy.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Secciones\"><a class=\"ds-nav-item\" href=\"#\" aria-current=\"page\"><span class=\"ds-nav-ic\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12l-2 0l9 -9l9 9l-2 0\"/><path d=\"M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7\"/><path d=\"M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6\"/></svg></span>Hoy</a><a class=\"ds-nav-item\" href=\"#\"><span class=\"ds-nav-ic\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M2 12h1\"/><path d=\"M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2\"/><path d=\"M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1\"/><path d=\"M9 12h6\"/><path d=\"M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1\"/><path d=\"M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2\"/><path d=\"M22 12h-1\"/></svg></span>Gym</a><a class=\"ds-nav-item\" href=\"#\"><span class=\"ds-nav-ic\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12m0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3\"/></svg></span>Comida</a><a class=\"ds-nav-item\" href=\"#\"><span class=\"ds-nav-ic\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572\"/></svg></span>Salud</a><a class=\"ds-nav-item\" href=\"#\"><span class=\"ds-nav-ic\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c3.255 2.777 3.695 7.266 1.029 10.501c-2.666 3.235 -7.615 4.215 -11.574 2.293l-4.7 1\"/></svg></span>Coach</a></nav>",
+      "css": ".ds-nav { font-family: Archivo; display: flex; background: #23272D; border-top: 1px solid #3A4048; min-height: 64px; } .ds-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 48px; font-size: 13px; line-height: 18px; font-weight: 500; color: #A3AAB3; text-decoration: none; border-radius: 10px; } .ds-nav-ic { display: inline-flex; padding: 2px 16px; border-radius: 999px; transition: background-color 120ms cubic-bezier(0.2, 0, 0, 1); } @media (hover: hover) and (pointer: fine) { .ds-nav-item:hover .ds-nav-ic { background: color-mix(in srgb, #F3F4F1 6%, transparent); } } .ds-nav-item:active .ds-nav-ic { background: color-mix(in srgb, #F3F4F1 10%, transparent); } .ds-nav-item:focus-visible { outline: 2px solid #7CC0EA; outline-offset: 2px; } .ds-nav-item[aria-current=page] { color: #7CC0EA; font-weight: 650; }"
+    },
+    {
+      "name": "Aviso con deshacer (oscuro)",
+      "kind": "custom",
+      "refersTo": "toast-dark",
+      "description": "Superficie invertida (tiza) con texto caucho y acción en A4. Dos líneas como máximo; 4 s sin acción, 8 s con acción.",
+      "html": "<div class=\"ds-toast\" role=\"status\"><span>Serie guardada</span><button class=\"ds-toast-action\">Deshacer</button></div>",
+      "css": ".ds-toast { font-family: Archivo; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #F3F4F1; color: #1B1E23; font-size: 16px; line-height: 24px; padding: 4px 4px 4px 16px; border-radius: 10px; max-width: 400px; } .ds-toast-action { font-family: Archivo; background: transparent; border: none; color: #1F6FA8; font-size: 15px; line-height: 20px; font-weight: 650; min-height: 48px; padding: 0 12px; border-radius: 10px; cursor: pointer; } .ds-toast-action:active { background: color-mix(in srgb, #1E2228 10%, transparent); color: #154E78; } .ds-toast-action:focus-visible { outline: 2px solid #1F6FA8; outline-offset: 2px; }"
+    },
+    {
+      "name": "Estado vacío (oscuro)",
+      "kind": "custom",
+      "refersTo": "card-dark",
+      "description": "Ícono de 32 px en texto secundario, título, una frase de para qué sirve y una acción. Sin ilustraciones.",
+      "html": "<div class=\"ds-empty\"><span class=\"ds-empty-ic\"><svg width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12m0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3\"/></svg></span><p class=\"ds-empty-title\">Todavía no registras comidas hoy</p><p class=\"ds-empty-text\">Registra el desayuno para ver tus macros del día.</p><button class=\"ds-empty-btn\">Registrar comida</button></div>",
+      "css": ".ds-empty { font-family: Archivo; background: #23272D; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; } .ds-empty p { margin: 0; } .ds-empty-ic { color: #A3AAB3; } .ds-empty-title { font-size: 20px; line-height: 26px; font-weight: 650; color: #F3F4F1; } .ds-empty-text { font-size: 16px; line-height: 24px; color: #A3AAB3; } .ds-empty-btn { font-family: Archivo; margin-top: 8px; background: transparent; color: #F3F4F1; border: 1px solid #A3AAB3; font-size: 15px; line-height: 20px; font-weight: 650; padding: 12px 16px; min-height: 48px; border-radius: 10px; cursor: pointer; } .ds-empty-btn:active { background: color-mix(in srgb, #F3F4F1 10%, transparent); } .ds-empty-btn:focus-visible { outline: 2px solid #7CC0EA; outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Caucho y acento",
+    "overview": "El piso de goma de un gimnasio y una sola señal de color. La base es neutra y mate: caucho (#1B1E23) en oscuro, tiza (#F3F4F1) en claro, con superficies, bordes y textos también neutros. Sobre ese fondo aparece un único acento, y solo donde hay acción o progreso: el botón principal, los anillos, la selección, la tarjeta destacada y la línea del coach. Así la mirada va directo a lo importante. La propuesta nace de corregir la B, donde el azul se repartía por fondos, tarjetas y datos.\n\nLos datos son los protagonistas: cifras grandes en Archivo condensado con cifras tabulares, gráficos limpios con dos tonos del acento y un gris, y anillos de progreso. La densidad es de herramienta de uso diario con mucho aire: el panel web ordena el día por importancia, sin franja de KPIs, y el móvil apila lo mismo en una columna según el uso. El sistema es plano, minimalista y con claro y oscuro igual de cuidados. El modo de fábrica sigue al sistema del dispositivo.\n\nEl movimiento es corto y con propósito: responde al toque en 120 ms, mueve en 200 ms y abre superficies grandes en 320 ms, siempre con curvas que frenan al llegar. Tachar una serie se siente en la mano (háptica) antes de verse. Con \"reducir movimiento\" activo quedan solo fundidos y la háptica.\n\nEl usuario puede cambiar el acento (seis de fábrica o uno propio), el fondo oscuro (caucho, grafito o pizarra) y el modo, o partir de una de ocho plantillas. El color de error y los textos son fijos para que la app siempre se lea bien. El nombre y el logo son provisionales y salen siempre de `packages/brand` (`brand.name` = \"Coach Fitness AI\", `brand.shortName` = \"Coach\"), nunca escritos a mano en una pantalla.",
+    "keyCharacteristics": [
+      "Base neutra caucho/tiza más un solo acento en cinco pasos (A1 a A5).",
+      "Acento de fábrica Caribe; modo de fábrica según el sistema; fondo de fábrica caucho.",
+      "Archivo como única familia; cifras en peso 800, ancho 62 y `tnum`.",
+      "Plano: la profundidad se construye con capas tonales (fondo, superficie, elevado), no con sombras; los estados son velos del color de texto.",
+      "Datos con máximo tres series: dos tonos del acento y un gris neutro.",
+      "Contraste AA en claro y oscuro con los seis acentos; foco visible con anillo de acento de 3:1 o más.",
+      "Íconos de trazo de Tabler (outline), trazo 1.75 en 24 px.",
+      "Uso con una mano en el gym y con guantes: objetivos táctiles de 48 px como mínimo y 56 px en el modo gym.",
+      "Cinco pestañas en móvil: Hoy, Gym, Comida, Salud y Coach."
+    ],
+    "rules": [
+      {
+        "name": "The One Accent Rule",
+        "body": "El acento solo en acción y progreso: botón principal, anillos, selección, foco, tarjeta destacada y línea del coach. Todo lo demás es neutro. Si un elemento no se toca ni mide avance, no lleva acento.",
+        "section": "colors"
+      },
+      {
+        "name": "The Step Up Rule",
+        "body": "En hover y pressed, todo lo que lleva acento sube un paso de contraste: A2 pasa a A1 en oscuro y A4 pasa a A5 en claro. Los controles neutros reciben la capa de estado, y un texto secundario sobre elevado pasa a texto principal. Así ningún estado baja de 4.5:1.",
+        "section": "colors"
+      },
+      {
+        "name": "The Three Series Rule",
+        "body": "Máximo tres series por gráfico: en oscuro A1, A3 y gris de datos; en claro A5, A3 y gris de datos. Nunca colores nuevos para distinguir datos.",
+        "section": "colors"
+      },
+      {
+        "name": "The Error Has a Voice Rule",
+        "body": "El error es siempre rojo fijo con ícono y texto. El color solo nunca comunica un error, y un acento propio que se parezca al rojo no borra el ícono.",
+        "section": "colors"
+      },
+      {
+        "name": "The Token Only Rule",
+        "body": "Todo componente usa variables (fondo, superficie, acento A1 a A5, datos, capas). Nunca un color suelto; el detector de Impeccable los bloquea.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Figures Rule",
+        "body": "Toda cifra que cambia o se compara (peso, reps, kg, kcal, tiempos) usa `tnum` para que no baile al actualizarse.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sentence Case Rule",
+        "body": "Etiquetas, botones y títulos en tipo oración, con tuteo y sin signos de exclamación. Nada de etiquetas en mayúsculas.",
+        "section": "typography"
+      },
+      {
+        "name": "The Plain Voice Rule",
+        "body": "Los textos de interfaz dicen qué pasó y qué puedes hacer, en ese orden y sin culpar: \"No se pudo guardar la comida. Revisa la conexión y vuelve a intentarlo\". Los botones usan el verbo de la acción (\"Guardar plan\", \"Borrar serie\"), nunca \"Aceptar\" u \"OK\". Los títulos de confirmación son preguntas (\"¿Borrar esta serie?\"). Lo que está en curso termina en puntos suspensivos (\"Subiendo 3 series…\").",
+        "section": "typography"
+      },
+      {
+        "name": "The One Hand Rule",
+        "body": "En el modo gym todo se hace con una mano: objetivos táctiles de 56 px, registrar una serie en 3 toques o menos (RNF-07, O1) y sin gestos finos. Las acciones del modo gym responden en menos de 200 ms; el pressed y la háptica, en el mismo fotograma del toque.",
+        "section": "layout"
+      },
+      {
+        "name": "The Five Tabs Rule",
+        "body": "La barra inferior tiene exactamente cinco pestañas (Hoy, Gym, Comida, Salud, Coach) y nunca cambia de orden. Lo demás vive dentro de una sección o detrás del botón de cuenta.",
+        "section": "layout"
+      },
+      {
+        "name": "The Tonal Layer Rule",
+        "body": "Para subir un nivel, cambia al siguiente neutro (fondo, superficie, elevado); no agregues sombra. Para separar algo que flota, usa el velo o la superficie invertida.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Visible Focus Rule",
+        "body": "Todo lo que se puede enfocar con teclado (web) o mando direccional (Android) muestra el anillo de foco solo con `:focus-visible`, nunca con el toque. El anillo no se quita ni se reemplaza por un cambio de color.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Provisional Logo Rule",
+        "body": "El logo se pinta siempre como pieza de marca (casilla más glifo) desde `packages/brand`, a 24 px como mínimo, sin degradados, sombras ni recolor con el acento, y con un margen libre igual a la mitad de su lado. Cuando aparece junto a la pestaña Gym, la casilla es lo que lo distingue del ícono de la pestaña. Cambiar el logo definitivo es cambiar un solo archivo.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "**Do** usar solo tokens de docs/diseno/tokens.json: nunca colores, tamaños o radios sueltos.",
+      "**Do** limitar el acento a acción y progreso: botón principal, anillos, selección, foco, tarjeta destacada y línea del coach.",
+      "**Do** usar A2 con texto caucho en oscuro y A4 con texto blanco en claro para el botón principal, y subir un paso (A1, A5) en hover y pressed.",
+      "**Do** escribir toda cifra en Archivo 800, ancho 62, con `tnum`.",
+      "**Do** mostrar el error con ícono y texto, en #FF6B6B (oscuro) o #C9333A (claro).",
+      "**Do** probar cada pantalla en claro y oscuro y con los seis acentos, con contraste AA y foco de 3:1.",
+      "**Do** tomar el nombre y el logo de `packages/brand`.",
+      "**Do** dar a los objetivos táctiles del modo gym al menos 44 px, grandes y separados: se usan con manos sudadas o con guantes, sin gestos finos.",
+      "**Do** usar 56 px en los controles de la sesión de gym y 48 px en el resto, con 8 px entre objetivos.",
+      "**Do** ofrecer \"Deshacer\" en un aviso en lugar de pedir confirmación cuando la acción se puede revertir.",
+      "**Do** usar esqueletos con la forma del contenido y esperar 300 ms antes de mostrar cualquier carga.",
+      "**Do** usar los íconos outline de Tabler con trazo 1.75 en los tamaños 16, 20, 24 y 32."
+    ],
+    "donts": [
+      "**Don't** usar degradados decorativos ni repartir el acento por fondos y tarjetas (el error de la propuesta B).",
+      "**Don't** poner más de tres series en un gráfico ni traer colores nuevos para los datos.",
+      "**Don't** armar rejillas de tarjetas idénticas ni una franja de KPIs; el día va en orden de importancia.",
+      "**Don't** usar etiquetas en mayúsculas, signos de exclamación ni emojis como íconos.",
+      "**Don't** usar una segunda familia tipográfica ni fuentes por defecto (Inter, la del sistema).",
+      "**Don't** usar sombras para jerarquía; usa las capas tonales.",
+      "**Don't** escribir \"Coach Fitness AI\" o \"Coach\" a mano en una pantalla.",
+      "**Don't** aplicar un color propio sin generar A1 a A5 en OKLCH y verificar contraste.",
+      "**Don't** depender del hover para mostrar algo: en táctil no existe.",
+      "**Don't** quitar el anillo de foco ni mostrarlo al tocar.",
+      "**Don't** usar brillos animados en los esqueletos, spinners a pantalla completa ni tres puntos saltando para el coach.",
+      "**Don't** mezclar familias de íconos ni usar íconos rellenos junto a los de trazo.",
+      "**Don't** agregar una sexta pestaña ni mover Ajustes a la barra inferior."
+    ]
+  }
+}

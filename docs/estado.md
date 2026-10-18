@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Última actualización: 18-oct-2026 (PRD aprobado)
+Última actualización: 18-oct-2026 (PRODUCT.md y DESIGN.md aprobados)
 
 ## Fase actual: 0 (fundaciones)
 
@@ -32,16 +32,17 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 
 1. ADRs 0001 a 0018 escritos (PR #7). Contradicciones del plan resueltas con Francis (plan v1.1, PR #8): Archivo única fuente, modo según el sistema, coach solo con créditos Max, staging por Tailscale, backlog v1.0 cerrado.
 2. PRD hecho y aprobado por Francis el 18-oct-2026 (`docs/prd.md`).
-3. **Siguiente:** `/impeccable init`: PRODUCT.md y DESIGN.md desde B2 y `docs/diseno/tokens.json`. Lo aprueba Francis.
-4. Después: Fase 0.5 (mockups).
-5. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
+3. PRODUCT.md y DESIGN.md aprobados por Francis el 18-oct-2026 (plataforma `adaptive`; estados, movimiento, diálogos, avisos, vacíos y carga definidos; tokens.json ampliado). Plan v1.3, ADR 0022 (íconos Tabler), D-23 (barra Hoy, Gym, Comida, Salud, Coach; logo provisional mancuerna en `packages/brand`).
+4. **Siguiente:** fusionar el PR de Impeccable; luego Fase 0.5 (mockups), empezando por rehacer las páginas 6 y 13 del PDF B2 (línea del coach sin franja, barra con Coach).
+5. Menor: ESLint de web debe ignorar `apps/web/coverage/` (falla en local tras correr tests).
+6. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
 
 ## Pendientes de Francis
 
 - Medidas con cinta de octubre: cintura, cadera, pecho, brazos y muslos (fijan las metas del Anexo A.3).
 - Empezar ya la rutina A/B/C en papel (riesgo principal del plan).
 - Plan Max: en la Fase 5, vincular los créditos de API a Claude Console y crear la clave del coach.
-- Nombre definitivo y logo (más adelante).
+- Nombre definitivo y logo (más adelante). Especificaciones del logo: glifo SVG 24×24 de un color (`currentColor`), legible a 24 px; ícono Android 108 dp con zona segura de 66 dp + versión monocroma; versión circular para el reloj; favicon 16/32; colores solo de tokens.json. Se reemplaza solo en `packages/brand`.
 
 ## Bloqueos
 
