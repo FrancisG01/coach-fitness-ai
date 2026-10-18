@@ -22,6 +22,7 @@ Oct 17, 2026 · @Almonte
 | 0.1 | 17-oct-2026 | Plan inicial: módulos, stack, arquitectura, agentes, fases |
 | 0.2 | 17-oct-2026 | Base de alimentos y unidades; MTB por captura; skills de diseño; Fase 0.5 de Diseño UX; diseño de base de datos; fuera protocolo capilar |
 | 1.0 | 17-oct-2026 | Reestructura profesional y ficha del atleta integrada (Anexo A) |
+| 1.1 | 18-oct-2026 | Coherencia con D-14 a D-20: una sola fuente (Archivo), modo según el sistema, coach solo con créditos Max, staging por Tailscale, backlog v1.0 cerrado, 10 agentes, `apps/watch/`, NativeWind |
 
 ## 1. Resumen ejecutivo
 
@@ -89,7 +90,7 @@ Es un producto personal para un solo usuario: tú. Todo lo que no ayude a ese ob
 
 ### Restricciones
 
-- Infraestructura dentro de la capa gratuita de Oracle (ARM), dedicada a este sistema (el servidor de Minecraft queda apagado).
+- Infraestructura dentro de la capa gratuita de Oracle (ARM), dedicada a este sistema (el servidor de Minecraft se retiró por completo, D-20).
 - Sin datos de Strava vía API, por sus términos.
 - El coach no da diagnósticos médicos ni prescribe fármacos.
 
@@ -284,11 +285,11 @@ Python en el backend (por los datos y la librería de Renpho) y TypeScript en we
 | Web | React + TypeScript + Vite, TanStack Router y Query | SPA rápida; no necesita SEO |
 | Estilos y UI | Tailwind CSS + Radix UI (sin estilos) + design system propio | Control total del look, sin plantillas reconocibles |
 | Gráficos y animación | Apache ECharts + Motion | Gráficos animados y transiciones fluidas |
-| Móvil (Android) | Expo (React Native) + TypeScript, Reanimated | Reusa lógica y cliente de la web; acceso a Health Connect |
+| Móvil (Android) | Expo (React Native) + TypeScript, NativeWind, Reanimated | Reusa lógica y cliente de la web; acceso a Health Connect |
 | Modo gym offline | SQLite local en la app + sincronización | El gym puede no tener señal; no pierdes series |
 | Reloj (Galaxy Watch) | Kotlin + Jetpack Compose for Wear OS, Horologist, Health Services; Data Layer API con un módulo nativo en la app Expo | Wear OS no ejecuta React Native ni WebView; la app del reloj tiene que ser nativa |
 | Cliente de API | Generado desde OpenAPI (paquete compartido) | Web y móvil siempre alineados con el backend |
-| Monorepo | pnpm + Turborepo | `backend/`, `apps/web`, `apps/mobile`, `packages/*` en un repo |
+| Monorepo | pnpm + Turborepo | `backend/`, `apps/web`, `apps/mobile`, `apps/watch`, `packages/*` en un repo |
 | Pruebas | pytest, Vitest, Playwright (web E2E), Maestro (móvil E2E) | Cobertura por capa |
 | Calidad | Ruff, mypy, ESLint, Prettier, pre-commit, detector de Impeccable | Errores atrapados antes del commit |
 | CI/CD | GitHub + GitHub Actions | Tests en cada push, deploy al servidor al fusionar |
@@ -411,7 +412,7 @@ Tailscale crea una red privada cifrada entre tus dispositivos y el servidor. El 
 | Pieza | Cómo queda |
 | --- | --- |
 | Servidor Oracle | Tailscale instalado; Caddy escucha solo en la IP de Tailscale |
-| Dirección | Nombre privado con MagicDNS (ej. `fitness.<tu-red>.ts.net`) con certificado HTTPS de Tailscale |
+| Dirección | Nombre privado con MagicDNS (`coach.tail72ec86.ts.net`, ADR 0020) con certificado HTTPS de Tailscale |
 | Tu PC y laptop | Tailscale instalado → abres la web en el navegador |
 | Tu Android | App de Tailscale activa → la app móvil apunta a la dirección privada |
 | Salidas del servidor | Sigue saliendo a internet para Renpho y la API de Anthropic; nada entra desde fuera |
@@ -469,7 +470,7 @@ Antes de escribir una línea del producto se prepara todo lo necesario: cuentas,
 | --- | --- | --- | --- |
 | GitHub | Repositorio, backlog, CI | Gratis | Tienes |
 | Claude (Pro o Max) | Claude Code para desarrollar | Tu suscripción actual | Tienes |
-| Claude Console | Clave de API para el coach de la app | Créditos de Max o pago por uso | Por crear |
+| Claude Console | Clave de API para el coach de la app | Créditos de API del plan Max | Por crear |
 | Tailscale | Red privada entre PC, teléfono y servidor | Gratis (plan personal) | Por crear |
 | Expo | Builds de la app Android | Gratis | Por crear |
 | Oracle Cloud | Servidor | Gratis (capa gratuita) | Tienes |
@@ -501,7 +502,7 @@ Antes de escribir una línea del producto se prepara todo lo necesario: cuentas,
 
 **4. Servidor Oracle** (lo hace Claude Code por SSH, con tu aprobación)
 
-- Apagar y retirar el servidor de Minecraft; respaldar lo que quieras guardar.
+- Retirar el servidor de Minecraft (hecho: retirado por completo, D-20).
 - Actualizar Ubuntu, crear usuario de despliegue, SSH solo con llave.
 - Instalar Docker + Docker Compose y Tailscale.
 - Cerrar en el firewall de Oracle todos los puertos públicos; acceso solo por Tailscale.
@@ -509,8 +510,8 @@ Antes de escribir una línea del producto se prepara todo lo necesario: cuentas,
 
 **5. Repositorio y equipo de agentes**
 
-- Monorepo (`backend/`, `apps/web`, `apps/mobile`, `packages/`, `docs/`).
-- `CLAUDE.md` con las reglas del proyecto y definición de los agentes en `.claude/agents/` (PM, Arquitecto, Backend, Frontend, Móvil, Diseñador, QA, Revisor).
+- Monorepo (`backend/`, `apps/web`, `apps/mobile`, `apps/watch`, `packages/`, `docs/`).
+- `CLAUDE.md` con las reglas del proyecto y definición de los agentes en `.claude/agents/` (PM, Arquitecto, Backend, Frontend, Móvil, Reloj, Diseñador, QA, Revisor, Documentador).
 - Skills instaladas: Impeccable y UX Heuristics; hooks de lint, tests y detector de diseño.
 - GitHub Actions con el CI; `main` protegida (solo por pull request con CI en verde).
 - `docs/licencias.md`, plantillas de issues y de pull request.
@@ -649,8 +650,8 @@ El look "hecho con IA" sale de usar plantillas por defecto (shadcn sin tocar, gr
 Referencia visual: Propuesta\_Identidad\_Visual\_B2\_Caucho\_y\_acento.pdf. De fábrica: acento Caribe y modo según el sistema. Nombre provisional: Coach Fitness AI ("Coach" en espacios cortos).
 
 - **Design system propio:** tokens de color, tipografía, espaciado, radios y movimiento en un paquete compartido entre web y móvil.
-- **Dirección visual:** flat, minimalista, modo oscuro primero (uso en el gym), un color de acento fuerte para acción y datos, mucho aire.
-- **Tipografía con carácter:** una display para números grandes (peso, kg levantados) y una de texto legible; nada de defaults.
+- **Dirección visual:** flat, minimalista, modo según el sistema, con claro y oscuro igual de cuidados (D-17), un color de acento fuerte para acción y datos, mucho aire.
+- **Tipografía con carácter:** Archivo como única fuente (D-17); los números grandes (peso, kg levantados) usan sus pesos y anchos display y cifras tabulares (`tnum`); nada de defaults.
 - **Datos como protagonistas:** gráficos limpios, anillos de progreso, mapa corporal de músculos coloreado por volumen semanal.
 - **Movimiento con propósito:** transiciones cortas, contadores animados, feedback háptico al tachar series en el móvil.
 - **Proceso:** primero moodboard y 3 direcciones visuales para que elijas; luego la Fase 0.5 de Diseño UX (flujos, mockups, guías paso a paso y prototipo); después código. Ninguna pantalla se programa sin su mockup aprobado.
@@ -662,7 +663,7 @@ Referencia visual: Propuesta\_Identidad\_Visual\_B2\_Caucho\_y\_acento.pdf. De f
 | --- | --- | --- |
 | [Impeccable](https://impeccable.style/) | Principal: `PRODUCT.md` y `DESIGN.md`, comandos (typeset, layout, colorize, animate, distill, critique, audit, polish), Live Mode, detector de diseño genérico de IA | En cada pantalla; el detector corre como hook y en el CI |
 | [UX Heuristics](https://skills.wondel.ai/skills/ux-heuristics/) | Auditoría de usabilidad (Nielsen + Krug) con severidad 0-4 y corrección propuesta | Al cerrar cada módulo; prioridad en modo gym, registro de comida y confirmación de capturas |
-| Taste Skill | Descartada: se solapa con Impeccable y sus reglas chocarían | Opcional solo como inspiración en la Fase 0 |
+| Taste Skill | Descartada: se solapa con Impeccable y sus reglas chocarían | No se usa (D-08) |
 
 - **Instalación:** `npx impeccable install` + `/impeccable init` + `/impeccable hooks on`; `npx skills add wondelai/skills/ux-heuristics`.
 - **Candado de diseño:** el PM no da por terminada una pantalla con hallazgos del detector ni con problemas de severidad 3-4.
@@ -693,8 +694,8 @@ Tres entornos y despliegues automáticos: lo que pasa el CI llega a staging; a p
 | Entorno | Dónde | Para qué | Se actualiza |
 | --- | --- | --- | --- |
 | Desarrollo | Tu PC con Docker | Programar y probar | En cada cambio |
-| Staging | Oracle, subdominio aparte, datos de prueba | Demo y validación antes de producción | Automático al fusionar en `main` |
-| Producción | Oracle, dominio principal, tus datos reales | Uso diario | Al publicar un release, con tu aprobación |
+| Staging | Oracle, otro nombre privado de Tailscale, datos de prueba | Demo y validación antes de producción | Automático al fusionar en `main` |
+| Producción | Oracle, `coach.tail72ec86.ts.net`, tus datos reales | Uso diario | Al publicar un release, con tu aprobación |
 
 - **Releases:** etiqueta SemVer → GitHub Actions construye imágenes Docker → despliega → corre migraciones → verifica salud.
 - **Rollback:** volver a la imagen anterior con un comando; las migraciones se escriben reversibles.
@@ -755,7 +756,7 @@ Casi todo es gratuito; el único costo variable relevante es la API de Anthropic
 
 ## 19. Backlog de mejoras
 
-Decidido el 17-oct-2026: entran en la v1.0 el modo gym con temporizador y vibración, 1RM y RM múltiples con récords, carga combinada gym + MTB, informe mensual en PDF y calendario de análisis de sangre. El resto espera (prioridad W en la sección 5). Cada idea nueva se evalúa contigo: entra a la v1.0 o espera.
+Decidido el 17-oct-2026: entran en la v1.0 el modo gym con temporizador y vibración, 1RM y RM múltiples con récords, carga combinada gym + MTB, informe mensual en PDF y calendario de análisis de sangre. El resto espera (prioridad W en la sección 5). El backlog de la v1.0 está cerrado (D-16): cada idea nueva va a esta lista para después de la v1.0, salvo que sea crítica, y eso lo decides tú.
 
 | Mejora | Qué aporta | Prioridad |
 | --- | --- | --- |
@@ -793,7 +794,7 @@ Decisiones ya tomadas; al arrancar el repo cada una se convierte en un ADR en `d
 | D-12 | 17-oct-2026 | Acceso privado por Tailscale + login con 2FA; arquitectura multiusuario lista para abrir al público en el futuro. Oracle dedicado al sistema | Máxima privacidad ahora sin cerrar la puerta a crecer |
 | D-13 | 17-oct-2026 | Samsung Health vía Health Connect en la app Android; Strava se mantiene por captura | Pasos, FC y sueño automáticos sin depender de APIs restringidas |
 | D-14 | 17-oct-2026 | Sin dominio en v1.0: dirección gratuita de Tailscale con HTTPS | Costo cero; dominio solo al abrir al público |
-| D-15 | 17-oct-2026 | Desarrollo con Claude Code y tu suscripción; coach de la app con API de Anthropic (créditos Max o pago por uso) | Los créditos de API del plan Max ya cubren el coach sin costo extra y sin gastar los límites de Claude Code del desarrollo; la API es la vía estable para un backend y la única válida si la app se abre al público |
+| D-15 | 17-oct-2026 | Desarrollo con Claude Code y tu suscripción; coach de la app con API de Anthropic (créditos de API del plan Max; si se agotan, el coach se detiene hasta el mes siguiente; pago por uso solo como opción futura) | Los créditos de API del plan Max ya cubren el coach sin costo extra y sin gastar los límites de Claude Code del desarrollo; la API es la vía estable para un backend y la única válida si la app se abre al público |
 | D-16 | 17-oct-2026 | Desarrollo en Windows con WSL2; Fase S de setup antes de la Fase 0; backlog v1.0 cerrado | Entorno idéntico al servidor y alcance controlado |
 | D-17 | 17-oct-2026 | Dirección visual B2 "Caucho y acento": base neutra caucho/tiza, un acento elegible (6 de fábrica + propio), 8 plantillas, modo claro y oscuro. Nombre y logo provisionales y configurables | Preferencia del dueño del producto; personalización como función |
 | D-18 | 17-oct-2026 | App para Galaxy Watch nativa (Kotlin + Compose for Wear OS), Wear OS 3+, conectada a la app Android por Data Layer; fase 7b. Cronometría de sesión (tiempo extra de descanso) en todo el sistema | Entrenar sin sacar el teléfono; Wear OS no admite React Native |
