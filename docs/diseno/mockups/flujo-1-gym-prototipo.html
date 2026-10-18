@@ -1,0 +1,1126 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototipo flujo 1</title>
+<meta name="description" content="Fase 0.5 · flujo 1, prototipo navegable del modo gym: rampa, tachar, descanso con temporizador real, tiempo extra, ajuste al vuelo, plancha por tiempo, resumen y guardar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
+<style>
+/*
+  Fase 0.5 · flujo 1 "Entrenar en el gym", prototipo (pieza 4). Mismos tokens y piezas
+  que flujo-1-gym.html; todos los valores salen de docs/diseno/tokens.json.
+*/
+:root {
+  /* neutros · claro (tiza) */
+  --fondo: #F3F4F1; --superficie: #FFFFFF; --elevado: #E9EBE7; --borde: #DADDD8;
+  --texto: #1E2228; --texto-2: #5B626B; --error: #C9333A; --dato-gris: #B5BBC2;
+  /* uso del acento · claro */
+  --accion: var(--a4); --accion-alta: var(--a5); --texto-accion: #FFFFFF; --texto-acento: var(--a4);
+  --suave: color-mix(in srgb, var(--a3) 13%, var(--superficie));
+  --capa-hover: color-mix(in srgb, var(--texto) 6%, transparent);
+  --capa-pressed: color-mix(in srgb, var(--texto) 10%, transparent);
+  /* superposiciones · claro: velo texto al 40 %, hoja en superficie, aviso invertido con acción A2 */
+  --velo: color-mix(in srgb, #1E2228 40%, transparent);
+  --hoja: var(--superficie);
+  --aviso-accion: var(--a2);
+  /* serie única de datos (Three Series Rule: A5 en claro, A1 en oscuro) */
+  --dato-1: var(--a5);
+  /* acentos A1–A5 (por defecto Caribe) */
+  --a1: #CFE6F5; --a2: #7CC0EA; --a3: #3B95D1; --a4: #1F6FA8; --a5: #154E78;
+  /* tipografía */
+  --familia: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  /* espaciado, radios, trazos */
+  --e1: 4px; --e2: 8px; --e3: 12px; --e4: 16px; --e5: 24px; --e6: 32px; --e7: 48px;
+  --r-casilla: 6px; --r-control: 10px; --r-tarjeta: 16px; --r-pildora: 999px;
+  --t-borde: 1px; --t-sel: 2px;
+  --tactil: 48px; --tactil-gym: 56px; --barra: 64px;
+  --rapido: 120ms; --normal: 200ms; --lento: 320ms;
+  --estandar: cubic-bezier(0.2, 0, 0, 1); --entrar: cubic-bezier(0.05, 0.7, 0.1, 1); --salir: cubic-bezier(0.3, 0, 0.8, 0.15);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+    --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+    --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2);
+    --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+    --velo: color-mix(in srgb, #1B1E23 72%, transparent);
+    --hoja: var(--elevado);
+    --aviso-accion: var(--a4);
+    --dato-1: var(--a1);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+  --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+  --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2);
+  --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+  --velo: color-mix(in srgb, #1B1E23 72%, transparent);
+  --hoja: var(--elevado);
+  --aviso-accion: var(--a4);
+  --dato-1: var(--a1);
+  color-scheme: dark;
+}
+:root[data-accent="mar"]       { --a1: #C8EEEA; --a2: #6FD6CC; --a3: #22A99C; --a4: #157A70; --a5: #0F5850; }
+:root[data-accent="palma"]     { --a1: #CDEEDB; --a2: #6FD19B; --a3: #2FA866; --a4: #1E7D4A; --a5: #155A36; }
+:root[data-accent="mango"]     { --a1: #FCE7C2; --a2: #F7C062; --a3: #E89A1E; --a4: #9A5C06; --a5: #6E4307; }
+:root[data-accent="flamboyan"] { --a1: #FBD6CB; --a2: #F79A7E; --a3: #E8603C; --a4: #B6411F; --a5: #7E2C14; }
+:root[data-accent="uva"]       { --a1: #E3DBFA; --a2: #B4A2F2; --a3: #8466DB; --a4: #6446B8; --a5: #45307F; }
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--fondo); color: var(--texto);
+  font-family: var(--familia); font-size: 16px; line-height: 24px;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+:focus-visible { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.i { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.i.s16 { width: 16px; height: 16px; stroke-width: 2; }
+.i.s20 { width: 20px; height: 20px; }
+.i.s32 { width: 32px; height: 32px; }
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* tipografía (escala de tokens.json) */
+.t-pantalla { font-size: 25px; line-height: 30px; font-weight: 700; font-stretch: 85%; margin: 0; text-wrap: balance; }
+.t-seccion { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.t-detalle { font-size: 13px; line-height: 18px; font-weight: 500; }
+.t-boton { font-size: 15px; line-height: 20px; font-weight: 650; }
+.cifra { font-weight: 800; font-stretch: 62%; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.c-metrica { font-size: 32px; line-height: 32px; }
+.c-heroe { font-size: 56px; line-height: 52px; }
+.sec { color: var(--texto-2); }
+.acento { color: var(--texto-acento); }
+p { margin: 0; }
+
+/* ---------- teléfono ---------- */
+.telefono { width: 376px; padding: var(--e2); border-radius: var(--r-tarjeta); background: var(--borde); flex: none; }
+.pantalla { height: 780px; border-radius: var(--r-control); overflow: hidden; background: var(--fondo); display: flex; flex-direction: column; position: relative; }
+.estado { height: 28px; padding-top: var(--e1); flex: none; display: flex; align-items: center; justify-content: space-between; padding-inline: var(--e5); font-size: 13px; font-weight: 600; }
+.cuerpo { flex: 1; min-height: 0; overflow: hidden; padding: 0 var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e3); }
+.cuerpo > * { flex-shrink: 0; }
+.barra { height: var(--barra); flex: none; background: var(--superficie); border-top: var(--t-borde) solid var(--borde); display: grid; grid-template-columns: repeat(5, 1fr); }
+.pestana { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--texto-2); font-size: 13px; line-height: 16px; font-weight: 500; text-decoration: none; }
+.pestana .ovalo { width: 56px; height: 28px; border-radius: var(--r-pildora); display: grid; place-items: center; transition: background var(--rapido) var(--estandar); }
+.pestana:active .ovalo { background: var(--capa-pressed); }
+.pestana[aria-current="page"] { color: var(--texto-acento); font-weight: 650; }
+
+/* piezas comunes */
+.tarjeta { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e2); }
+.tarjeta.destacada { background: var(--suave); }
+.btn { min-height: var(--tactil); border-radius: var(--r-control); padding-inline: var(--e4); display: inline-flex; align-items: center; justify-content: center; gap: var(--e2); font-size: 15px; line-height: 20px; font-weight: 650; text-align: center; transition: background var(--rapido) var(--estandar), transform var(--rapido) var(--estandar), color var(--rapido) var(--estandar); }
+.btn.primario { background: var(--accion); color: var(--texto-accion); }
+.btn.primario:active { background: var(--accion-alta); transform: scale(0.97); }
+.btn.secundario { border: var(--t-borde) solid var(--texto-2); color: var(--texto); }
+.btn.secundario:active { background: var(--capa-pressed); }
+.btn.texto { color: var(--texto-acento); padding-inline: var(--e3); }
+.btn.texto:active { background: var(--capa-pressed); color: var(--accion-alta); }
+@media (hover: hover) and (pointer: fine) {
+  .btn.primario:hover { background: var(--accion-alta); }
+  .btn.secundario:hover { background: var(--capa-hover); }
+  .btn.texto:hover { background: var(--capa-hover); color: var(--accion-alta); }
+}
+.ancho { width: 100%; }
+.par { display: grid; grid-template-columns: 1fr 1fr; gap: var(--e3); }
+.lista { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; overflow: hidden; }
+.lista > * + * { border-top: var(--t-borde) solid var(--borde); }
+.fila { min-height: var(--tactil); padding: var(--e2) var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); width: 100%; }
+.fila .txt { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+button.fila:active { background: var(--capa-pressed); }
+.cabeza { display: flex; align-items: center; justify-content: space-between; gap: var(--e2); }
+.atras { width: 48px; height: 48px; display: grid; place-items: center; margin-left: -12px; border-radius: var(--r-pildora); }
+.atras:active, .icono-btn:active { background: var(--capa-pressed); }
+.icono-btn { width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--r-pildora); flex: none; }
+.carga { font-size: 20px; line-height: 24px; }
+.segmento { display: flex; background: var(--elevado); border-radius: var(--r-control); padding: var(--e1); gap: var(--e1); }
+.segmento button { min-height: 40px; padding-inline: var(--e3); border-radius: var(--r-casilla); color: var(--texto-2); flex: 1; text-align: center; position: relative; }
+/* el área táctil del segmento llega a 48 px con el relleno del contenedor */
+.segmento button::after { content: ""; position: absolute; inset: calc(-1 * var(--e1)) 0; }
+.segmento button[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.pildora { display: inline-flex; align-items: center; gap: var(--e1); min-height: 24px; padding-inline: var(--e2); border-radius: var(--r-pildora); background: var(--elevado); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.nota { display: flex; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.sinc { display: inline-flex; align-items: center; gap: var(--e1); color: var(--texto-2); }
+.error-linea { display: flex; align-items: center; gap: var(--e2); color: var(--error); font-size: 13px; line-height: 18px; font-weight: 500; }
+
+/* pestañas internas de Gym (móvil) */
+.sub-tabs { display: flex; overflow-x: auto; margin-inline: calc(-1 * var(--e4)); padding-inline: var(--e2); border-bottom: var(--t-borde) solid var(--borde); scrollbar-width: none; flex: none; }
+.sub-tab { text-decoration: none; display: inline-flex; align-items: center; min-height: var(--tactil); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; line-height: 20px; font-weight: 500; white-space: nowrap; border-bottom: var(--t-sel) solid transparent; flex: none; }
+.sub-tab:active { background: var(--capa-pressed); }
+.sub-tab[aria-current="page"] { color: var(--texto-acento); font-weight: 650; border-bottom-color: var(--accion); }
+
+/* semana (móvil) */
+.semana-lista > * { min-height: var(--tactil-gym); }
+.fila-dia { display: flex; align-items: center; gap: var(--e3); padding: var(--e1) var(--e4) var(--e1) var(--e3); width: 100%; text-align: left; }
+.fila-dia:active { background: var(--capa-pressed); }
+.fila-dia .dnum { width: 40px; display: flex; flex-direction: column; align-items: center; flex: none; }
+.fila-dia .dnum .n { width: 32px; height: 32px; border-radius: var(--r-pildora); display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.fila-dia.hoy .dnum .n, .fila-dia.hoy .dnum .t-detalle { color: var(--texto-acento); font-weight: 650; }
+.fila-dia[aria-pressed="true"] .dnum .n { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.fila-dia .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.fila-dia .txt .t-detalle { color: var(--texto-2); }
+.fila-dia .fin { display: flex; align-items: center; gap: var(--e2); color: var(--texto-2); }
+
+/* detalle de día */
+.dia-cab { display: flex; flex-direction: column; gap: var(--e1); }
+.dia-cab .volver { display: flex; align-items: center; gap: var(--e1); }
+.estado-dia { display: inline-flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.cifras { display: flex; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e1); }
+.cifras > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--e1); padding-inline: var(--e4); }
+.cifras .cifra { white-space: nowrap; }
+.cifras > div + div { border-left: var(--t-borde) solid var(--borde); }
+.cifras .cifra { font-size: 32px; line-height: 32px; }
+.cifras .unidad-c { font-size: 15px; font-weight: 650; font-stretch: 85%; color: var(--texto-2); }
+.record { flex-direction: row; align-items: center; gap: var(--e3); }
+.record .i { color: var(--texto-acento); }
+.record .txt { display: flex; flex-direction: column; }
+.vacio { display: flex; flex-direction: column; align-items: flex-start; gap: var(--e2); padding-block: var(--e5); color: var(--texto); }
+.vacio > .i { color: var(--texto-2); }
+.acciones { display: flex; flex-direction: column; gap: var(--e2); margin-top: auto; }
+.empuje { margin-top: auto; }
+
+/* asignar pesos */
+.peso-fila { min-height: 64px; padding: var(--e2) var(--e2) var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e2); }
+.peso-fila .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.peso-fila .txt .t-detalle { color: var(--texto-2); }
+.stepper { display: flex; align-items: center; gap: var(--e1); flex: none; }
+.stepper button { width: var(--tactil); height: var(--tactil); border-radius: var(--r-control); background: var(--elevado); display: grid; place-items: center; transition: background var(--rapido) var(--estandar); }
+.stepper button:active { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); }
+.stepper .valor { min-width: var(--barra); text-align: center; display: flex; flex-direction: column; align-items: center; line-height: 1; }
+.stepper .valor .cifra { font-size: 25px; line-height: 24px; }
+.stepper .valor .t-detalle { color: var(--texto-2); }
+.sube { color: var(--texto-acento); }
+
+/* hoja inferior y aviso */
+.velo { position: absolute; inset: 0; background: var(--velo); display: flex; flex-direction: column; justify-content: flex-end; z-index: 2; }
+.hoja { background: var(--hoja); border-top-left-radius: var(--r-tarjeta); border-top-right-radius: var(--r-tarjeta); padding: var(--e5) var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e4); }
+.hoja .mes .celda[aria-disabled="true"] { cursor: default; }
+.opcion-hoy { min-height: var(--tactil-gym); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); border-radius: var(--r-control); background: var(--elevado); border: var(--t-sel) solid transparent; width: 100%; text-align: left; }
+.opcion-hoy[aria-pressed="true"] { border-color: var(--accion); }
+.opcion-hoy .txt { flex: 1; display: flex; flex-direction: column; }
+.aviso { position: absolute; left: var(--e4); right: var(--e4); bottom: calc(var(--barra) + var(--e2)); background: var(--texto); color: var(--fondo); border-radius: var(--r-control); padding: var(--e1) var(--e1) var(--e1) var(--e4); min-height: var(--tactil-gym); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); z-index: 3; }
+.aviso .btn.texto { color: var(--aviso-accion); }
+.aviso .btn.texto:active { background: color-mix(in srgb, var(--fondo) 10%, transparent); }
+
+/* esqueleto */
+.esq { background: var(--elevado); border-radius: var(--r-casilla); }
+.esq.bloque { height: var(--e7); }
+@media (prefers-reduced-motion: no-preference) { .esq.pulso { animation: pulso 1600ms var(--estandar) infinite; } }
+@keyframes pulso { 50% { opacity: 0.5; } }
+
+/* título del calendario con número de semana */
+.cal-titulo { flex: 1; display: flex; flex-direction: column; align-items: center; }
+
+/* ---------- lámina ---------- */
+body { padding-block: var(--e6) var(--e7); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.lamina { max-width: 1560px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--e7); }
+.cabecera { display: flex; flex-wrap: wrap; gap: var(--e5); justify-content: space-between; align-items: end; }
+.cabecera h1 { font-size: 32px; line-height: 32px; font-weight: 800; font-stretch: 75%; margin: 0 0 var(--e2); text-wrap: balance; }
+.cabecera p { margin: 0; max-width: 62ch; color: var(--texto-2); }
+.controles { display: flex; flex-wrap: wrap; gap: var(--e4); }
+.control { display: flex; flex-direction: column; gap: var(--e1); }
+.controles .segmento button { flex: none; }
+.puntos { display: flex; gap: var(--e2); align-items: center; min-height: 48px; }
+.punto { width: 32px; height: 32px; border-radius: var(--r-pildora); background: var(--c); }
+.punto[aria-pressed="true"] { outline: var(--t-sel) solid var(--texto); outline-offset: 2px; }
+.indice { display: flex; flex-wrap: wrap; gap: var(--e2); }
+.indice a { color: var(--texto-acento); font-weight: 650; font-size: 15px; min-height: 48px; display: inline-flex; align-items: center; padding-inline: var(--e3); border-radius: var(--r-control); text-decoration: none; }
+.indice a:active { background: var(--capa-pressed); }
+@media (hover: hover) and (pointer: fine) { .indice a:hover { background: var(--capa-hover); } }
+
+.pagina { display: flex; flex-direction: column; gap: var(--e5); scroll-margin-top: var(--e5); }
+.pagina > header { display: flex; flex-direction: column; gap: var(--e2); border-top: var(--t-borde) solid var(--borde); padding-top: var(--e5); }
+.pagina h2 { font-size: 25px; line-height: 30px; font-weight: 800; font-stretch: 75%; margin: 0; }
+.pagina h3.sub { font-size: 20px; line-height: 26px; font-weight: 650; margin: var(--e3) 0 0; }
+.cambios { margin: 0; padding-left: 1.2em; color: var(--texto-2); max-width: 86ch; display: grid; gap: var(--e1); }
+.cambios strong { color: var(--texto); font-weight: 650; }
+.fila-telefonos { display: flex; flex-wrap: wrap; gap: var(--e6) var(--e4); }
+figure { margin: 0; display: flex; flex-direction: column; gap: var(--e3); width: 376px; }
+figcaption { display: flex; flex-direction: column; gap: 2px; font-size: 13px; line-height: 18px; color: var(--texto-2); max-width: 360px; }
+figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
+@media (max-width: 420px) { figure { zoom: 0.88; } }
+
+/* diagrama */
+.diagrama-envoltura { overflow-x: auto; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); }
+.diagrama { display: block; min-width: 1240px; width: 100%; height: auto; font-family: var(--familia); }
+.diagrama .nodo rect { fill: var(--elevado); stroke: var(--borde); stroke-width: 1; }
+.diagrama .nodo.inicio rect { fill: var(--suave); stroke: var(--accion); stroke-width: 2; }
+.diagrama .nodo.aviso rect { fill: var(--texto); stroke: none; }
+.diagrama .nodo.aviso .t1, .diagrama .nodo.aviso .t2 { fill: var(--fondo); }
+.diagrama .nodo.salud rect { fill: var(--superficie); stroke: var(--texto-2); stroke-dasharray: 4 4; }
+.diagrama .t1 { fill: var(--texto); font-size: 15px; font-weight: 650; }
+.diagrama .t2 { fill: var(--texto-2); font-size: 13px; font-weight: 500; }
+.diagrama .rama { fill: var(--texto-2); font-size: 13px; font-weight: 500; }
+.diagrama .flecha { fill: none; stroke: var(--texto-2); stroke-width: 1.75; }
+.diagrama .punta { fill: var(--texto-2); }
+.diagrama .paso circle { fill: var(--texto); }
+.diagrama .paso text { fill: var(--fondo); font-size: 13px; font-weight: 650; }
+.diagrama .estados rect { fill: var(--fondo); stroke: var(--borde); }
+.diagrama .estados .t1 { font-size: 15px; }
+.diagrama .fuerte { fill: var(--texto); font-weight: 650; }
+
+/* guía */
+.guia { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--e6) var(--e5); }
+.paso-guia { display: flex; flex-direction: column; gap: var(--e3); }
+.paso-guia .mini { zoom: 0.64; align-self: flex-start; }
+.paso-guia h3 { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.paso-guia ol { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--e2); }
+.paso-guia li { display: grid; grid-template-columns: 24px 1fr; gap: var(--e2); font-size: 15px; line-height: 20px; }
+.paso-guia li .num-a { width: 24px; height: 24px; border-radius: var(--r-pildora); background: var(--texto); color: var(--fondo); display: grid; place-items: center; font-size: 13px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.paso-guia .etapa { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.con-anota { position: relative; }
+.mini .lista { overflow: visible; }
+.anota { position: absolute; top: -10px; right: -6px; width: 28px; height: 28px; border-radius: var(--r-pildora); background: var(--texto); color: var(--fondo); border: var(--t-sel) solid var(--fondo); display: grid; place-items: center; font-size: 15px; line-height: 20px; font-weight: 650; font-variant-numeric: tabular-nums; z-index: 4; pointer-events: none; }
+.pestana .anota { top: 2px; right: 4px; }
+.sub-tab .anota { top: 2px; right: -4px; }
+
+/* ---------- web ---------- */
+.web-envoltura { overflow-x: auto; border-radius: var(--r-tarjeta); }
+.navegador { min-width: 1180px; background: var(--borde); border-radius: var(--r-tarjeta); padding: var(--e1); }
+.navegador .barra-nav { height: 32px; display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e4); }
+.navegador .url { background: var(--fondo); border-radius: var(--r-pildora); padding: 2px var(--e4); font-size: 13px; color: var(--texto-2); }
+.app-web { display: grid; grid-template-columns: 248px 1fr; background: var(--fondo); border-radius: 0 0 var(--r-tarjeta) var(--r-tarjeta); min-height: 820px; }
+.lateral { background: var(--superficie); border-right: var(--t-borde) solid var(--borde); padding: var(--e4) var(--e3); display: flex; flex-direction: column; gap: var(--e1); border-radius: 0 0 0 var(--r-tarjeta); }
+.marca { display: flex; align-items: center; gap: var(--e3); padding: var(--e2) var(--e2) var(--e4); font-weight: 650; font-size: 15px; }
+.logo { width: 32px; height: 32px; border-radius: var(--r-control); background: var(--elevado); color: var(--texto); display: grid; place-items: center; }
+.item { min-height: 44px; border-radius: var(--r-control); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; }
+.item.abierto { color: var(--texto); font-weight: 650; }
+.subitem { min-height: 36px; display: flex; align-items: center; padding-left: 44px; border-radius: var(--r-control); color: var(--texto-2); font-size: 15px; }
+.subitem[aria-current="page"] { background: var(--elevado); color: var(--texto-acento); font-weight: 650; }
+.lateral .pie { margin-top: auto; border-top: var(--t-borde) solid var(--borde); padding-top: var(--e3); display: flex; flex-direction: column; gap: var(--e1); }
+.lateral .pie .sinc { padding: var(--e2) var(--e3); }
+.principal { padding: var(--e6); display: flex; flex-direction: column; gap: var(--e5); position: relative; }
+.rejilla { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--e4); align-items: start; }
+.span-12 { grid-column: span 12; } .span-8 { grid-column: span 8; } .span-4 { grid-column: span 4; }
+.tarjeta.web { padding: var(--e5); gap: var(--e4); }
+.web-cab { display: flex; justify-content: space-between; align-items: end; gap: var(--e4); }
+.web-ctl { display: flex; align-items: center; gap: var(--e3); }
+.web-ctl .segmento button { flex: none; min-width: 72px; }
+.cal-nav.web { margin-left: 0; gap: var(--e1); }
+.cal-nav.web .t-seccion { min-width: 180px; text-align: center; }
+
+.cifras-plano { display: flex; }
+.cifras-plano > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--e1); padding-inline: var(--e4); }
+.cifras-plano > div:first-child { padding-left: 0; }
+.cifras-plano > div + div { border-left: var(--t-borde) solid var(--borde); }
+.cifras-plano .cifra { font-size: 32px; line-height: 32px; white-space: nowrap; }
+.record-linea { display: flex; align-items: center; gap: var(--e2); color: var(--texto); }
+.record-linea .i { color: var(--texto-acento); }
+.wfilas > div, .wpesos > * { border-top: var(--t-borde) solid var(--borde); }
+.wfila { min-height: var(--tactil); padding-block: var(--e2); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); }
+.wpesos .peso-fila { padding-left: 0; padding-right: 0; }
+.wpesos .fila { padding-inline: 0; }
+.semana-pie { display: flex; align-items: center; justify-content: space-between; gap: var(--e4); }
+.icono-btn.acento { color: var(--texto-acento); }
+.opcion-rutina .pildora { align-self: flex-start; margin-top: var(--e1); }
+
+
+.radio { width: 24px; height: 24px; border-radius: var(--r-pildora); border: var(--t-sel) solid var(--texto-2); display: grid; place-items: center; flex: none; }
+.radio::after { content: ""; width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); background: transparent; }
+[aria-checked="true"] .radio { border-color: var(--accion); }
+[aria-checked="true"] .radio::after { background: var(--accion); }
+.opcion-rutina { min-height: 64px; padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); width: 100%; text-align: left; }
+.opcion-rutina:active { background: var(--capa-pressed); }
+.opcion-rutina .txt { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.opcion-rutina .txt .t-detalle { color: var(--texto-2); }
+
+/* hover de la lámina (sin rejilla de calendario) */
+@media (hover: hover) and (pointer: fine) { button.fila:hover, .sub-tab:hover, .icono-btn:hover, .atras:hover, .atajos button:hover, .casilla:hover, .carga-btn:hover, .opcion-rutina:hover { background: var(--capa-hover); } }
+.m { width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); flex: none; }
+.m.hecha { background: var(--accion); }
+.m.prog { border: var(--t-sel) solid var(--accion); }
+
+/* ---------- modo gym ---------- */
+.gym-cab { display: flex; align-items: center; gap: var(--e1); margin-left: -12px; }
+.gym-cab .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.gym-cab .reloj { font-size: 25px; line-height: 26px; }
+.gym-cab .btn.texto { min-height: var(--tactil-gym); }
+.sinc.linea { align-self: flex-start; font-size: 13px; line-height: 18px; font-weight: 500; margin-top: calc(-1 * var(--e2)); }
+.sinc.linea.falla { color: var(--error); align-self: stretch; display: flex; align-items: center; justify-content: space-between; gap: var(--e2); margin-top: calc(-1 * var(--e3)); }
+.sinc.linea.falla > span { display: inline-flex; align-items: center; gap: var(--e1); }
+.sinc.linea.falla .btn.texto { min-height: var(--tactil); margin-right: calc(-1 * var(--e3)); }
+.progreso-ej { display: flex; gap: var(--e1); }
+.progreso-ej i { flex: 1; height: var(--e1); border-radius: var(--r-pildora); background: var(--elevado); }
+.progreso-ej i.hecho { background: var(--accion); }
+.progreso-ej i.actual { background: var(--texto-2); }
+.ej-cab { display: flex; flex-direction: column; gap: 2px; }
+.ej-cab .t-detalle { color: var(--texto-2); }
+/* la lista de series va directa sobre el fondo: la fila actual con borde no queda dentro de otra tarjeta */
+.series { display: flex; flex-direction: column; margin-inline: calc(-1 * var(--e1)); }
+.series > .serie + .serie { box-shadow: none; }
+.series .grupo { display: flex; align-items: center; gap: var(--e1); padding: var(--e2) var(--e2) var(--e1); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.serie { min-height: var(--tactil-gym); display: flex; align-items: center; gap: var(--e2); padding-inline: 0 var(--e1); border-radius: var(--r-control); position: relative; }
+/* serie actual: trazo de acción de 2 px (contorno hacia dentro, no cambia el tamaño de la fila) */
+.serie[aria-current="step"] { outline: var(--t-sel) solid var(--accion); outline-offset: calc(-1 * var(--t-sel)); }
+.serie .nom { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.serie .nom .t-detalle { color: var(--texto-2); }
+.serie.saltada .nom > span:first-child, .serie.saltada .carga-btn .in { text-decoration: line-through; color: var(--texto-2); }
+.casilla { width: var(--tactil-gym); height: var(--tactil-gym); border-radius: var(--r-control); display: grid; place-items: center; flex: none; transition: background var(--rapido) var(--estandar); }
+.casilla::before { content: ""; grid-area: 1 / 1; width: 28px; height: 28px; border-radius: var(--r-pildora); border: var(--t-sel) solid var(--texto-2); transition: background var(--rapido) var(--estandar), border-color var(--rapido) var(--estandar); }
+.casilla .i { grid-area: 1 / 1; width: 20px; height: 20px; stroke-width: 2.5; color: transparent; }
+.serie.rampa .casilla::before { border-style: dashed; }
+.serie.hecha .casilla::before { background: var(--accion); border: var(--t-sel) solid var(--accion); }
+.serie.hecha .casilla .i { color: var(--texto-accion); }
+.casilla:active, .carga-btn:active { background: var(--capa-pressed); }
+.carga-btn { min-height: var(--tactil-gym); padding-inline: var(--e2); border-radius: var(--r-control); display: grid; place-items: center end; font-size: 25px; line-height: 26px; flex: none; }
+.carga-btn .in { display: flex; align-items: baseline; gap: var(--e1); }
+.serie.rampa .carga-btn { font-size: 20px; line-height: 24px; color: var(--texto-2); }
+.carga-btn .x { font-weight: 500; font-stretch: 100%; font-size: 15px; color: var(--texto-2); }
+.accion-gym { margin-top: auto; display: flex; flex-direction: column; gap: var(--e1); }
+.btn.gym { min-height: var(--tactil-gym); }
+.descanso { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e5) var(--e4) var(--e4); display: flex; flex-direction: column; align-items: center; gap: var(--e2); text-align: center; }
+/* cifra de descanso: token propio del modo gym (tokens.json · cifraDescanso 96/88, D-30) */
+.c-descanso { font-size: 96px; line-height: 88px; }
+.descanso .lbl { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.barra-prog { align-self: stretch; height: var(--e2); border-radius: var(--r-pildora); background: var(--elevado); overflow: hidden; margin-top: var(--e1); }
+.barra-prog i { display: block; height: 100%; width: calc(var(--v) * 1%); background: var(--accion); border-radius: var(--r-pildora); transition: width var(--normal) var(--estandar); }
+.atajos { align-self: stretch; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--e2); margin-top: var(--e2); }
+.atajos button { min-height: var(--tactil-gym); border-radius: var(--r-control); background: var(--elevado); display: grid; place-items: center; font-size: 15px; line-height: 20px; font-weight: 650; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; position: relative; transition: background var(--rapido) var(--estandar); }
+.atajos button:active { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); }
+.listo .i.s32 { color: var(--texto-2); }
+.sigue { display: flex; align-items: center; gap: var(--e3); background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e1) var(--e1) var(--e1) var(--e4); min-height: 64px; position: relative; }
+.sigue .txt { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.sigue .txt .t-detalle { color: var(--texto-2); }
+.aviso.gym { bottom: var(--e4); }
+.stepper.gym button { width: var(--tactil-gym); height: var(--tactil-gym); }
+.hoja .segmento button { min-height: var(--tactil); }
+.hoja .segmento button::after { display: none; }
+.lista-mini { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; }
+.lista-mini > * + * { border-top: var(--t-borde) solid var(--borde); }
+.lista-mini .fila { min-height: var(--tactil); }
+.lista-mini .fila .t-detalle { color: var(--texto-2); }
+.franja { display: flex; align-items: center; gap: var(--e3); min-height: var(--tactil-gym); padding: var(--e1) var(--e1) var(--e1) var(--e4); background: var(--superficie); border-top: var(--t-borde) solid var(--borde); flex: none; width: 100%; text-align: left; }
+.franja .txt { flex: 1; display: flex; flex-direction: column; }
+.franja .txt .t-detalle { color: var(--texto-2); }
+
+/* resumen */
+.tiempos { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e1); }
+.tiempos .total { display: flex; align-items: baseline; gap: var(--e2); }
+.unidad-c { font-size: 15px; line-height: 20px; font-weight: 650; font-stretch: 85%; color: var(--texto-2); }
+.desglose { display: flex; flex-direction: column; margin-top: var(--e2); }
+.desglose > div { display: flex; justify-content: space-between; align-items: baseline; min-height: 32px; padding-block: var(--e1); border-top: var(--t-borde) solid var(--borde); }
+.desglose .cifra { font-size: 20px; line-height: 24px; }
+.desglose .sec { font-size: 15px; line-height: 20px; }
+.logros { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e4); display: flex; flex-direction: column; gap: var(--e2); }
+.logro { display: flex; align-items: center; gap: var(--e3); }
+.logro .i { color: var(--texto-acento); }
+.logro .txt { display: flex; flex-direction: column; }
+.logro .txt .t-detalle { color: var(--texto-2); }
+.hito { display: flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.hito > span { flex: 1; }
+.hito .btn.texto { min-height: var(--tactil); }
+.tarjeta.aviso-tarjeta { flex-direction: row; gap: var(--e3); align-items: flex-start; }
+.aviso-tarjeta > .i { color: var(--texto-2); margin-top: 2px; }
+.aviso-tarjeta.falla > .i { color: var(--error); }
+.aviso-tarjeta .txt { display: flex; flex-direction: column; gap: var(--e1); flex: 1; }
+.aviso-tarjeta .t-detalle { color: var(--texto-2); }
+.aviso-tarjeta .btn { align-self: flex-start; margin-top: var(--e1); }
+
+/* tabla de la rampa */
+.tabla-envoltura { overflow-x: auto; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e2) var(--e4); }
+.tabla { width: 100%; min-width: 720px; border-collapse: collapse; font-size: 15px; line-height: 20px; }
+.tabla th { text-align: left; font-size: 13px; line-height: 18px; font-weight: 500; color: var(--texto-2); padding: var(--e2) var(--e3) var(--e2) 0; }
+.tabla td { padding: var(--e3) var(--e3) var(--e3) 0; border-top: var(--t-borde) solid var(--borde); vertical-align: top; }
+.tabla td .cifra { font-size: 20px; line-height: 24px; }
+.tabla td.sec { color: var(--texto-2); }
+.casos { display: grid; gap: var(--e2); color: var(--texto-2); max-width: 86ch; margin: 0; padding-left: 1.2em; }
+.casos b { color: var(--texto); font-weight: 650; }
+.diagrama .nodo.pregunta rect { fill: var(--superficie); stroke: var(--texto-2); stroke-dasharray: 4 4; }
+.diagrama .titulo-alt { fill: var(--texto); font-size: 15px; font-weight: 650; }
+
+/* anotaciones de la guía */
+.anota.izq { right: auto; left: -6px; }
+.anota.lejos { right: -30px; }
+.serie .anota { top: -8px; right: auto; left: -8px; }
+.sub-tab .anota { right: -10px; }
+.pildora .anota { right: auto; left: -14px; top: -12px; }
+.atajos .anota, .accion-gym .anota { top: -10px; right: -6px; }
+
+/* web: tabla por ejercicio y en curso */
+.wtabla { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 20px; }
+.wtabla th { text-align: left; font-size: 13px; line-height: 18px; font-weight: 500; color: var(--texto-2); padding: 0 var(--e3) var(--e2) 0; }
+.wtabla th.num, .wtabla td.num { text-align: right; }
+.wtabla td { padding: var(--e3) var(--e3) var(--e3) 0; border-top: var(--t-borde) solid var(--borde); vertical-align: top; }
+.wtabla td .t-detalle { color: var(--texto-2); display: block; }
+.wtabla .cifra { font-size: 20px; line-height: 24px; }
+.wtabla tr[aria-current="step"] td:first-child { color: var(--texto-acento); font-weight: 650; }
+.estado-ej { display: inline-flex; align-items: center; gap: var(--e1); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.en-telefono { display: inline-flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 15px; }
+.wtiempos { display: flex; flex-direction: column; }
+.wtiempos > div { display: flex; justify-content: space-between; align-items: baseline; min-height: 40px; padding-block: var(--e2); border-top: var(--t-borde) solid var(--borde); }
+.wtiempos .cifra { font-size: 25px; line-height: 26px; }
+.wvacio { display: flex; flex-direction: column; align-items: flex-start; gap: var(--e2); max-width: 520px; padding-block: var(--e6); }
+.wvacio > .i { color: var(--texto-2); }
+.wvacio p { color: var(--texto-2); max-width: 60ch; }
+.wvacio.falla > .i { color: var(--error); }
+.app-web.corta { min-height: 520px; }
+.esq { background: var(--elevado); border-radius: var(--r-casilla); }
+.esq.linea { height: var(--e4); }
+.esq.bloque { height: var(--e7); }
+.esq.alto { height: calc(4 * var(--e7)); }
+@media (prefers-reduced-motion: no-preference) { .esq.pulso { animation: pulso 1600ms var(--estandar) infinite; } }
+@keyframes pulso { 50% { opacity: 0.5; } }
+.pwa-barra { height: 28px; display: flex; align-items: center; justify-content: space-between; padding-inline: var(--e5); font-size: 13px; font-weight: 600; flex: none; }
+
+/* ---------- prototipo ---------- */
+.proto { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: var(--e6); padding: var(--e6) var(--e4) var(--e7); }
+.guion { max-width: 400px; display: flex; flex-direction: column; gap: var(--e4); }
+.guion .titulo { font-size: 32px; line-height: 32px; font-weight: 800; font-stretch: 75%; margin: 0; }
+.guion h2 { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.guion ol { margin: 0; padding-left: 1.4em; display: grid; gap: var(--e2); color: var(--texto-2); }
+.guion ol b { color: var(--texto); font-weight: 650; }
+.guion .controles { display: flex; flex-wrap: wrap; gap: var(--e4); }
+.guion .control { display: flex; flex-direction: column; gap: var(--e1); }
+.guion .segmento button { flex: none; }
+#ctl-acento { flex-wrap: wrap; }
+#cuerpo { overflow-y: auto; scrollbar-width: thin; }
+.pestana { font: inherit; font-size: 13px; line-height: 16px; }
+.panel .fila { padding-inline: 0; text-align: left; min-height: 56px; }
+.panel .fila .marcas { width: var(--e4); }
+.panel .fila > .i { color: var(--texto-2); }
+.panel-pie { padding-top: var(--e1); }
+.panel-pie .t-detalle { flex: 1; }
+.aviso[hidden] { display: none; }
+.nota:empty { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .hoja { animation: sube var(--lento) var(--entrar); }
+  .velo { animation: funde var(--normal) var(--entrar); }
+  .aviso.entra { animation: sube-poco var(--normal) var(--entrar); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hoja, .velo, .aviso.entra { animation: funde var(--rapido) var(--estandar); }
+}
+@keyframes aparece { from { transform: scale(0.4); opacity: 0; } }
+@keyframes sube { from { transform: translateY(var(--e5)); opacity: 0; } }
+@keyframes sube-poco { from { transform: translateY(var(--e2)); opacity: 0; } }
+@keyframes funde { from { opacity: 0; } }
+@media (max-width: 440px) {
+  .proto { padding: 0; gap: var(--e6); }
+  .telefono { width: 100%; padding: 0; border-radius: 0; background: none; }
+  .pantalla { height: 100dvh; border-radius: 0; }
+  .guion { padding: 0 var(--e4) var(--e7); }
+}
+
+
+
+#barra[hidden] { display: none; }
+#franja-hueco:empty { display: none; }
+.lista-proto { flex-shrink: 0; }
+.vibra { display: grid; place-items: center; color: var(--texto-2); }
+@media (prefers-reduced-motion: no-preference) {
+  .pulso-vibra { animation: vibra 120ms var(--estandar) 4; }
+}
+@keyframes vibra { 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
+.casilla[aria-disabled="true"], .carga-btn[aria-disabled="true"] { cursor: default; }
+.casilla[aria-disabled="true"]:active, .carga-btn[aria-disabled="true"]:active { background: none; }
+.guion .control .segmento { flex-wrap: wrap; }
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- Tabler Icons 3.49.0, outline (MIT, © Paweł Kuna) -->
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/></symbol>
+  <symbol id="i-barbell" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+  <symbol id="i-kitchen" viewBox="0 0 24 24"><path d="M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12m0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c3.255 2.777 3.695 7.266 1.029 10.501c-2.666 3.235 -7.615 4.215 -11.574 2.293l-4.7 1"/></symbol>
+  <symbol id="i-cloud-check" viewBox="0 0 24 24"><path d="M11 18.004h-4.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.393 -1.762 1.794 -3.2 3.675 -3.773c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.388 0 2.585 .82 3.138 2.007"/><path d="M15 19l2 2l4 -4"/></symbol>
+  <symbol id="i-cloud-off" viewBox="0 0 24 24"><path d="M9.58 5.548c.24 -.11 .492 -.207 .752 -.286c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.913 0 3.464 1.56 3.464 3.486c0 .957 -.383 1.824 -1.003 2.454m-2.997 1.033h-11.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.13 -.582 .37 -1.128 .7 -1.62"/><path d="M3 3l18 18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M5 12l14 0"/><path d="M5 12l6 6"/><path d="M5 12l6 -6"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065"/><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 6l-6 6l6 6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></symbol>
+  <symbol id="i-bike" viewBox="0 0 24 24"><path d="M2 18a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M16 18a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M12 19v-4l-3 -3l5 -4l2 3h3"/><path d="M13.007 5a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></symbol>
+  <symbol id="i-test-pipe-2" viewBox="0 0 24 24"><path d="M15 3v15a3 3 0 0 1 -6 0v-15"/><path d="M9 12h6"/><path d="M8 3h8"/></symbol>
+  <symbol id="i-calendar-plus" viewBox="0 0 24 24"><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v5"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/><path d="M16 19h6"/><path d="M19 16v6"/></symbol>
+  <symbol id="i-calendar-repeat" viewBox="0 0 24 24"><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v3"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h12"/><path d="M20 14l2 2h-3"/><path d="M20 18l2 -2"/><path d="M19 16a3 3 0 1 0 2 5.236"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><path d="M7 9.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667l0 -8.666"/><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1"/></symbol>
+  <symbol id="i-arrow-forward-up" viewBox="0 0 24 24"><path d="M15 14l4 -4l-4 -4"/><path d="M19 10h-11a4 4 0 1 0 0 8h1"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21l8 0"/><path d="M12 17l0 4"/><path d="M7 4l10 0"/><path d="M17 4v8a5 5 0 0 1 -10 0v-8"/><path d="M3 9a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M17 9a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 7v5l3 3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5l0 14"/><path d="M5 12l14 0"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12l14 0"/></symbol>
+  <symbol id="i-alert-circle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/></symbol>
+  <symbol id="i-info-circle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 9h.01"/><path d="M11 12h1v4h1"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <symbol id="i-player-play" viewBox="0 0 24 24"><path d="M7 4v16l13 -8l-13 -8"/></symbol>
+  <symbol id="i-player-skip-forward" viewBox="0 0 24 24"><path d="M4 5v14l12 -7l-12 -7"/><path d="M20 5l0 14"/></symbol>
+  <symbol id="i-vibrar" viewBox="0 0 24 24"><path d="M3 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2l0 -14"/><path d="M8 4l2 0"/><path d="M9 17l0 .01"/><path d="M21 6l-2 3l2 3l-2 3l2 3"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1 -7 0a5 5 0 0 0 -7 0v-9"/><path d="M5 21v-7"/></symbol>
+  <symbol id="i-stairs-up" viewBox="0 0 24 24"><path d="M22 6h-5v5h-5v5h-5v5h-5"/><path d="M6 10v-7"/><path d="M3 6l3 -3l3 3"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6l6 -6"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"/><path d="M13.5 6.5l4 4"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M12 8l0 4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></symbol>
+  <symbol id="i-device-mobile" viewBox="0 0 24 24"><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14"/><path d="M11 4h2"/><path d="M12 17v.01"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><path d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/><path d="M21 21l-6 -6"/></symbol>
+  <!-- logo provisional: glifo de packages/brand (barbell) -->
+  <symbol id="logo" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+</svg>
+<div class="proto">
+  <div class="telefono"><div class="pantalla" id="pantalla">
+    <div class="estado tnum" aria-hidden="true"><span id="hora">7:58</span></div>
+    <main class="cuerpo" id="cuerpo" aria-live="off"></main>
+    <div id="franja-hueco"></div>
+    <nav class="barra" id="barra" aria-label="Secciones"><button type="button" class="pestana" data-acc="nada"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</button><button type="button" class="pestana" data-acc="nada" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</button><button type="button" class="pestana" data-acc="nada"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</button><button type="button" class="pestana" data-acc="nada"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</button><button type="button" class="pestana" data-acc="nada"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</button></nav>
+    <div id="capa"></div>
+    <div class="aviso" id="aviso" role="status" hidden></div>
+  </div></div>
+  <aside class="guion" aria-label="Guion de prueba">
+    <p class="titulo">Prototipo · flujo 1</p>
+    <p class="sec">Lunes 19 de octubre de 2026, Día A. Los temporizadores son reales; con ×10 pasan diez veces más rápido. Todo vive en memoria.</p>
+    <h2>Qué puedes probar</h2>
+    <ol>
+      <li><b>Empezar:</b> toca Empezar sesión. La sentadilla trae su rampa calculada (45 × 6, la barra sola).</li>
+      <li><b>Tachar y descansar:</b> Serie hecha. Corre el descanso con −15 s, Saltar y +15 s; al llegar a cero vibra (si tu navegador lo permite) y cuenta el tiempo extra.</li>
+      <li><b>Deshacer:</b> el aviso «Serie guardada» trae Deshacer durante 8 s.</li>
+      <li><b>Ajustar al vuelo:</b> toca la cifra de una serie pendiente, sube a 95 lb y aplica a las que faltan.</li>
+      <li><b>Rampa:</b> en la banca, Saltar rampa; en el press militar verás una sola serie de tanteo (15 × 3).</li>
+      <li><b>Serie por tiempo:</b> la plancha cuenta 40 s y se tacha sola; Terminé antes guarda los segundos reales.</li>
+      <li><b>Minimizar:</b> la flecha abajo deja una franja con el descanso corriendo; Volver regresa.</li>
+      <li><b>Finalizar:</b> desde la cabecera cuando quieras. El resumen calcula tiempos, volumen (con las dos mancuernas), récords e hito; Seguir entrenando vuelve, Guardar cierra.</li>
+    </ol>
+    <div><button type="button" class="btn secundario" id="de-nuevo">Empezar de nuevo</button></div>
+    <div class="controles">
+      <div class="control"><span class="t-detalle sec" id="lbl-vel">Velocidad de los temporizadores</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-vel" id="ctl-vel">
+          <button type="button" data-v="1" aria-pressed="true">×1</button>
+          <button type="button" data-v="10" aria-pressed="false">×10</button></div></div>
+      <div class="control"><span class="t-detalle sec" id="lbl-modo">Modo</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-modo" id="ctl-modo">
+          <button type="button" data-modo="" aria-pressed="true">Sistema</button>
+          <button type="button" data-modo="light" aria-pressed="false">Claro</button>
+          <button type="button" data-modo="dark" aria-pressed="false">Oscuro</button></div></div>
+      <div class="control"><span class="t-detalle sec" id="lbl-acento">Acento</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-acento" id="ctl-acento">
+          <button type="button" data-a="caribe" aria-pressed="true">Caribe</button>
+          <button type="button" data-a="mar" aria-pressed="false">Mar</button>
+          <button type="button" data-a="palma" aria-pressed="false">Palma</button>
+          <button type="button" data-a="mango" aria-pressed="false">Mango</button>
+          <button type="button" data-a="flamboyan" aria-pressed="false">Flamboyán</button>
+          <button type="button" data-a="uva" aria-pressed="false">Uva</button></div></div>
+    </div>
+  </aside>
+</div>
+<script>
+// Prototipo navegable del flujo 1 (modo gym). Estado solo en memoria; recarga para empezar de cero.
+"use strict";
+
+// ------------------------------------------------------------ datos del Día A (lunes 19 de octubre)
+const EJ_BASE = [
+  { n: "Sentadilla con barra", peso: 90, reps: 10, s: 3, desc: 90, equipo: "barra", prev: [85, 10] },
+  { n: "Press de banca plano", peso: 90, reps: 8, s: 3, desc: 90, equipo: "barra", prev: [85, 10] },
+  { n: "Press militar mancuernas", peso: 20, reps: 10, s: 3, desc: 90, equipo: "mancuernas", caliente: "hombro y tríceps ya calientes", prev: [20, 10] },
+  { n: "Extensión tríceps polea", peso: 35, reps: 12, s: 3, desc: 60, equipo: "polea", aislamiento: true, prev: [30, 12] },
+  { n: "Elevación lateral", peso: 10, reps: 12, s: 3, desc: 60, equipo: "mancuernas", aislamiento: true, prev: [10, 12] },
+  { n: "Plancha", seg: 40, s: 3, desc: 45, equipo: "tiempo", aislamiento: true },
+  { n: "Crunch", reps: 15, s: 3, desc: 45, equipo: "corporal", aislamiento: true },
+];
+const RAMPA_DESC = 60;
+const PASO = 5;
+const META = { ej: 0, peso: 95, reps: 10, texto: "sentadilla 95 lb × 10" };
+
+// Redondeo al paso de disco más cercano; si cae justo en medio, hacia abajo (D-30).
+const redondear = (x) => { const q = x / PASO, f = Math.floor(q); return PASO * (q - f > 0.5 ? f + 1 : f); };
+
+// Regla de la rampa (D-29) según las reps objetivo y el peso de trabajo.
+function rampaDe(e) {
+  if (e.aislamiento || e.peso == null) return [];
+  const minimo = e.equipo === "barra" ? 45 : 5;
+  let pasos;
+  if (e.caliente) pasos = [[70, 3]];
+  else if (e.reps <= 5) pasos = [[40, 5], [60, 3], [75, 2], [85, 1]];
+  else if (e.reps <= 12) pasos = e.peso < 100 ? [[50, 6]] : e.peso <= 185 ? [[50, 5], [75, 3]] : [[45, 5], [65, 3], [85, 1]];
+  else pasos = [[50, 8]];
+  const out = [];
+  for (const [pct, reps] of pasos) {
+    const w = Math.max(minimo, redondear(e.peso * pct / 100));
+    if (w >= e.peso || out.some((o) => o.peso === w)) continue;
+    out.push({ pct, peso: w, reps });
+  }
+  return out;
+}
+
+function nuevaSesion() {
+  return EJ_BASE.map((b) => {
+    const e = { ...b, series: [] };
+    rampaDe(b).forEach((r, k) => e.series.push({
+      tipo: "rampa", nombre: b.caliente ? `Tanteo · ${r.pct} %` : `Rampa ${k + 1} · ${r.pct} %`,
+      peso: r.peso, reps: r.reps, estado: "pend" }));
+    for (let k = 0; k < b.s; k++) e.series.push({ tipo: "trabajo", nombre: b.equipo === "tiempo" || b.equipo === "corporal" ? `Serie ${k + 1}` : `Trabajo ${k + 1}`,
+      peso: b.peso ?? null, reps: b.reps ?? null, seg: b.seg ?? null, estado: "pend" });
+    return e;
+  });
+}
+
+// ------------------------------------------------------------ estado
+let V = 0;            // reloj virtual en ms (avanza con la velocidad de la lámina)
+let vel = 1;
+let S;
+function reiniciar() {
+  S = { vista: "inicio", fase: null, ej: nuevaSesion(), i: 0, j: 0, sig: null, tInicio: null, tPlay: 0,
+    descFin: 0, descDur: 0, descDesde: 0, listoDesde: 0, tSeries: 0, tDesc: 0, tExtra: 0, ajustes: [],
+    hoja: null, aviso: null, deshacer: null, guardada: null };
+  V = 0;
+}
+reiniciar();
+
+// ------------------------------------------------------------ utilidades
+const $ = (s) => document.querySelector(s);
+const $cuerpo = $("#cuerpo"), $capa = $("#capa"), $aviso = $("#aviso"), $barra = $("#barra"), $hora = $("#hora");
+const ico = (n, t = "") => `<svg class="i ${t}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const mmss = (ms) => { const s = Math.max(0, Math.round(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
+const mmssArriba = (ms) => { const s = Math.max(0, Math.ceil(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
+const miles = (n) => n.toLocaleString("en-US");
+const vibrar = (p) => { try { if (navigator.vibrate) navigator.vibrate(p); } catch (_) { /* sin vibración */ } };
+const actual = () => S.ej[S.i].series[S.j];
+const ejAct = () => S.ej[S.i];
+const factor = (e) => (e.equipo === "mancuernas" ? 2 : 1);
+const horaReal = () => { const m = S.tInicio == null ? 7 * 60 + 58 : 8 * 60 + 4 + Math.floor(((S.guardada ?? V) - S.tInicio) / 60000); return `${Math.floor(m / 60)}:${String(m % 60).padStart(2, "0")}`; };
+const total = () => (S.tInicio == null ? 0 : (S.guardada ?? V) - S.tInicio);
+
+function siguientePendiente(i, j) {
+  for (let a = i; a < S.ej.length; a++) {
+    const ss = S.ej[a].series;
+    for (let b = a === i ? j + 1 : 0; b < ss.length; b++) if (ss[b].estado === "pend") return { i: a, j: b };
+  }
+  return null;
+}
+function primeraPendiente() {
+  for (let a = 0; a < S.ej.length; a++) for (let b = 0; b < S.ej[a].series.length; b++) if (S.ej[a].series[b].estado === "pend") return { i: a, j: b };
+  return null;
+}
+const hechasTrabajo = () => S.ej.reduce((t, e) => t + e.series.filter((x) => x.tipo === "trabajo" && x.estado === "hecha").length, 0);
+const hechasRampa = () => S.ej.reduce((t, e) => t + e.series.filter((x) => x.tipo === "rampa" && x.estado === "hecha").length, 0);
+const pendTrabajo = () => S.ej.reduce((t, e) => t + e.series.filter((x) => x.tipo === "trabajo" && x.estado === "pend").length, 0);
+const volumen = () => S.ej.reduce((t, e) => t + e.series.filter((x) => x.tipo === "trabajo" && x.estado === "hecha" && x.peso)
+  .reduce((u, x) => u + x.peso * (x.realReps ?? x.reps) * factor(e), 0), 0);
+const e1rm = (p, r) => p * (1 + r / 30);
+
+// ------------------------------------------------------------ piezas
+function cargaIn(x) {
+  if (x.seg != null) return `<span class="in">${x.seg}<span class="x">s</span></span>`;
+  if (x.peso == null) return `<span class="in">${x.reps}<span class="x">reps</span></span>`;
+  return `<span class="in">${x.peso}<span class="x">×</span>${x.reps}</span>`;
+}
+function cargaTexto(x) {
+  if (x.seg != null) return `${x.seg} segundos`;
+  if (x.peso == null) return `${x.reps} repeticiones`;
+  return `${x.peso} lb por ${x.reps}`;
+}
+
+function filaSerie(i, j) {
+  const x = S.ej[i].series[j];
+  const esAct = S.fase === "serie" && S.i === i && S.j === j;
+  const esSig = (S.fase === "descanso" || S.fase === "listo" || S.fase === "espera") && S.sig && S.sig.i === i && S.sig.j === j;
+  const cls = ["serie"]; if (x.tipo === "rampa") cls.push("rampa"); if (x.estado !== "pend") cls.push(x.estado);
+  let det = "";
+  if (x.estado === "hecha") det = x.seg != null ? `hecha · ${x.realSeg} s` : `hecha · ${mmss(x.dur)}`;
+  else if (x.estado === "saltada") det = "saltada";
+  else if (esAct) det = x.seg != null ? "en curso" : `en curso · <span data-t="serie">${mmss(V - S.tPlay)}</span>`;
+  else if (esSig) det = "sigue";
+  else if (x.tipo === "rampa" && x.peso === 45 && ejAct().equipo === "barra") det = "solo la barra";
+  const puedeTachar = esAct;
+  const editable = x.estado === "pend";
+  return `<div class="${cls.join(" ")}"${esAct ? ' aria-current="step"' : ""}>
+    <button type="button" class="casilla" data-acc="${puedeTachar ? "tachar" : ""}" ${puedeTachar ? "" : 'aria-disabled="true"'} aria-label="${x.estado === "hecha" ? "Hecha" : "Tachar"} ${x.nombre.toLowerCase()}">${ico("check")}</button>
+    <div class="nom"><span>${x.nombre}</span>${det ? `<span class="t-detalle tnum">${det}</span>` : ""}</div>
+    <button type="button" class="carga-btn cifra" ${editable ? `data-acc="ajustar" data-i="${i}" data-j="${j}"` : 'aria-disabled="true"'} aria-label="${editable ? "Cambiar " : ""}${cargaTexto(x)}">${cargaIn(x)}</button></div>`;
+}
+
+function listaSeries(i) {
+  const e = S.ej[i];
+  let h = '<div class="series">';
+  const r = e.series.map((x, j) => [x, j]).filter(([x]) => x.tipo === "rampa");
+  if (r.length) {
+    h += `<span class="grupo">${ico("stairs-up", "s16")}${e.caliente ? `Tanteo · ${e.caliente}` : "Rampa · no suma volumen"}</span>`;
+    h += r.map(([, j]) => filaSerie(i, j)).join("");
+    h += '<span class="grupo">Series de trabajo</span>';
+  } else if (e.equipo !== "tiempo") h += '<span class="grupo">Series de trabajo</span>';
+  h += e.series.map((x, j) => [x, j]).filter(([x]) => x.tipo === "trabajo").map(([, j]) => filaSerie(i, j)).join("");
+  return h + "</div>";
+}
+
+function detalleEj(e) {
+  const d = `descanso ${e.desc} s`;
+  if (e.equipo === "tiempo") return `${e.s} × ${e.seg} s · ${d}`;
+  if (e.equipo === "corporal") return `${e.s} × ${e.reps} · sin peso · ${d}`;
+  const rampa = e.aislamiento ? " · sin rampa" : "";
+  return `${e.s} × ${e.reps} · ${e.peso} lb${e.equipo === "mancuernas" ? " por mancuerna" : ""}${rampa} · ${d}`;
+}
+
+function cabGym() {
+  return `<div class="gym-cab"><button type="button" class="icono-btn" data-acc="minimizar" aria-label="Minimizar la sesión">${ico("chevron-down")}</button>
+    <div class="txt"><span class="t-detalle sec">Día A · Push + Legs</span><span class="cifra reloj" data-t="total" role="timer" aria-label="Tiempo total">${mmss(total())}</span></div>
+    <button type="button" class="btn texto" data-acc="finalizar">Finalizar</button></div>
+    <span class="sinc linea">${ico("cloud-check", "s16")}Guardado en el teléfono</span>`;
+}
+
+function progreso() {
+  const n = S.ej.length;
+  const hecho = (e) => e.series.every((x) => x.estado !== "pend");
+  const iAct = S.fase === "serie" ? S.i : (S.sig ? S.sig.i : n);
+  return `<div class="progreso-ej" role="img" aria-label="Ejercicio ${Math.min(iAct + 1, n)} de ${n}">${S.ej.map((e, k) => `<i class="${hecho(e) ? "hecho" : k === iAct ? "actual" : ""}"></i>`).join("")}</div>`;
+}
+
+function ejCab(i, extra) {
+  const e = S.ej[i];
+  return `<div class="ej-cab"><span class="t-detalle tnum">Ejercicio ${i + 1} de ${S.ej.length}${extra ? ` · ${extra}` : ""}</span><h3 class="t-pantalla">${e.n}</h3>${extra ? "" : `<span class="t-detalle tnum">${detalleEj(e)}</span>`}</div>`;
+}
+
+function filaSigue() {
+  if (!S.sig) return "";
+  const x = S.ej[S.sig.i].series[S.sig.j];
+  const otro = S.sig.i !== S.i;
+  return `<div class="sigue"><div class="txt"><span class="t-detalle">${otro ? "Sigue otro ejercicio" : "Sigue"}</span><span>${otro ? `${S.ej[S.sig.i].n} · ` : ""}${x.nombre}</span></div>
+    <button type="button" class="carga-btn cifra" data-acc="ajustar" data-i="${S.sig.i}" data-j="${S.sig.j}" aria-label="Cambiar ${cargaTexto(x)}">${cargaIn(x)}</button></div>`;
+}
+
+// ------------------------------------------------------------ vistas
+function vistaInicio() {
+  const enCurso = S.tInicio != null;
+  const filas = S.ej.map((e) => {
+    const r = e.series.some((x) => x.tipo === "rampa") ? `<span class="pildora">${ico("stairs-up", "s16")}${e.caliente ? "Tanteo" : "Rampa"}</span>` : "";
+    const det = e.equipo === "tiempo" ? `${e.s} × ${e.seg} s` : e.equipo === "corporal" ? `${e.s} × ${e.reps} · sin peso` : `${e.s} × ${e.reps} · ${e.peso} lb${e.equipo === "mancuernas" ? " por mancuerna" : ""}`;
+    return `<div class="fila"><div class="txt"><span>${e.n}</span><span class="t-detalle sec tnum">${det}</span></div>${r}</div>`;
+  }).join("");
+  const estado = enCurso ? `<span class="m prog"></span>En curso desde las 8:04&nbsp;a.&nbsp;m.` : `<span class="m prog"></span>Programada · 8:00&nbsp;a.&nbsp;m. · unos 55 min`;
+  return `${subTabs()}<div class="dia-cab"><span class="t-detalle sec">Lunes 19 de octubre · semana 3</span><h2 class="t-pantalla">Día A · Push + Legs</h2>
+    <span class="estado-dia tnum">${estado}</span></div><div class="lista lista-proto">${filas}</div>
+    ${enCurso ? "" : `<div class="acciones"><button type="button" class="btn primario gym ancho" data-acc="empezar">${ico("player-play", "s20")}Empezar sesión</button></div>`}`;
+}
+
+function subTabs() {
+  return `<nav class="sub-tabs" aria-label="Gym">${["Sesión", "Calendario", "Rutinas", "Historial", "Cardio y MTB"].map((t) =>
+    `<button type="button" class="sub-tab" data-acc="nada"${t === "Sesión" ? ' aria-current="page"' : ""}>${t}</button>`).join("")}</nav>`;
+}
+
+function franja() {
+  if (S.tInicio == null || S.vista !== "inicio") return "";
+  let sub = "";
+  if (S.fase === "descanso") sub = `Descanso <span data-t="desc">${mmssArriba(S.descFin - V)}</span> · ${ejAct().n.toLowerCase()}`;
+  else if (S.fase === "listo") sub = `Listo cuando quieras · extra <span data-t="extra">+${mmss(V - S.listoDesde)}</span>`;
+  else if (S.fase === "serie") sub = `${actual().nombre} · ${ejAct().n.toLowerCase()}`;
+  else sub = "Todo tachado";
+  return `<button type="button" class="franja" data-acc="volver"><span class="txt"><span class="t-detalle tnum">Sesión en curso · <span data-t="total">${mmss(total())}</span></span><span class="tnum">${sub}</span></span><span class="btn texto">Volver</span></button>`;
+}
+
+function vistaGym() {
+  const f = S.fase;
+  let h = cabGym() + progreso();
+  if (f === "serie") {
+    const x = actual(), e = ejAct();
+    h += ejCab(S.i);
+    if (x.seg != null) {
+      const resta = x.seg * 1000 - (V - S.tPlay);
+      h += `<div class="descanso"><span class="lbl">${x.nombre} de ${e.series.length} · sostén</span>
+        <span class="cifra c-descanso" data-t="tiempo" role="timer" aria-label="Cuenta regresiva de la serie">${mmssArriba(resta)}</span>
+        <span class="lbl tnum">de ${mmss(x.seg * 1000)}</span><div class="barra-prog" aria-hidden="true"><i data-t="tiempo-barra" style="--v:${Math.min(100, (V - S.tPlay) / (x.seg * 10))}"></i></div></div>`;
+      h += listaSeries(S.i);
+      h += `<div class="accion-gym"><button type="button" class="btn secundario gym ancho" data-acc="tachar" data-foco>${ico("check", "s20")}Terminé antes</button></div>`;
+    } else {
+      h += listaSeries(S.i);
+      const hayRampa = x.tipo === "rampa";
+      h += `<div class="accion-gym"><button type="button" class="btn primario gym ancho" data-acc="tachar" data-foco>${ico("check", "s20")}Serie hecha</button>
+        ${hayRampa ? `<button type="button" class="btn texto gym" data-acc="saltar-rampa">${ico("player-skip-forward", "s20")}Saltar ${e.caliente ? "tanteo" : "rampa"}</button>` : ""}</div>`;
+    }
+  } else if (f === "descanso" || f === "listo" || f === "espera") {
+    const e = ejAct();
+    const hechas = e.series.filter((x) => x.tipo === "trabajo" && x.estado === "hecha").length;
+    const tr = e.series.filter((x) => x.tipo === "trabajo").length;
+    h += ejCab(S.i, `${hechas} de ${tr} hechas`);
+    if (f === "descanso") {
+      h += `<div class="descanso"><span class="lbl">Descanso</span>
+        <span class="cifra c-descanso" data-t="desc" role="timer" aria-label="Descanso restante">${mmssArriba(S.descFin - V)}</span>
+        <span class="lbl tnum" data-t="desc-de">de ${mmss(S.descDur * 1000)}</span><div class="barra-prog" aria-hidden="true"><i data-t="desc-barra" style="--v:0"></i></div>
+        <div class="atajos"><button type="button" data-acc="menos15" aria-label="Quitar 15 segundos">−15 s</button><button type="button" data-acc="saltar-desc" data-foco>Saltar</button><button type="button" data-acc="mas15" aria-label="Sumar 15 segundos">+15 s</button></div></div>`;
+      h += filaSigue();
+    } else {
+      const x = S.ej[S.sig.i].series[S.sig.j];
+      const verbo = x.seg != null ? `Empezar ${x.seg} s` : `Empezar ${x.nombre.toLowerCase()}`;
+      if (f === "listo") h += `<div class="descanso listo"><span class="vibra">${ico("vibrar", "s32")}</span><span class="t-seccion">Listo cuando quieras</span>
+        <span class="lbl">Tiempo extra</span><span class="cifra c-heroe" data-t="extra" role="timer" aria-label="Tiempo extra">+${mmss(V - S.listoDesde)}</span></div>`;
+      h += filaSigue();
+      h += `<div class="accion-gym"><button type="button" class="btn primario gym ancho" data-acc="play" data-foco>${ico("player-play", "s20")}${verbo}</button></div>`;
+    }
+  } else if (f === "fin") {
+    h += ejCab(S.ej.length - 1) + listaSeries(S.ej.length - 1);
+    h += `<p class="nota tnum">${ico("check", "s16")}<span>Hiciste las ${hechasTrabajo()} series de trabajo y ${hechasRampa()} de rampa.</span></p>
+      <div class="accion-gym"><button type="button" class="btn primario gym ancho" data-acc="finalizar" data-foco>${ico("check", "s20")}Finalizar sesión</button></div>`;
+  }
+  return h;
+}
+
+function logros() {
+  const out = [];
+  S.ej.forEach((e) => {
+    if (!e.prev) return;
+    const hechas = e.series.filter((x) => x.tipo === "trabajo" && x.estado === "hecha");
+    if (!hechas.length) return;
+    const mejor = hechas.reduce((m, x) => (e1rm(x.peso, x.reps) > e1rm(m.peso, m.reps) ? x : m));
+    if (mejor.peso > e.prev[0] && mejor.reps >= e.prev[1]) out.push(["Récord personal", `${e.n} · ${mejor.peso} lb × ${mejor.reps}`]);
+    else if (e1rm(mejor.peso, mejor.reps) > e1rm(...e.prev) + 0.5) out.push(["1RM estimado", `${e.n.replace(" plano", "")} · ${Math.round(e1rm(mejor.peso, mejor.reps))} lb`]);
+  });
+  return out.slice(0, 2);
+}
+
+function vistaResumen() {
+  const meta = S.ej[META.ej].series.some((x) => x.tipo === "trabajo" && x.estado === "hecha" && x.peso >= META.peso && x.reps >= META.reps);
+  const l = logros();
+  const pend = pendTrabajo();
+  return `<div class="dia-cab"><span class="t-detalle sec tnum">Lunes 19 de octubre · desde las 8:04&nbsp;a.&nbsp;m.</span><h2 class="t-pantalla">Resumen de la sesión</h2></div>
+    <div class="tiempos"><span class="t-detalle sec">Tiempo total</span><div class="total"><span class="cifra c-heroe" data-t="total-min">${Math.floor(total() / 60000)}</span><span class="unidad-c" data-t="total-seg">min ${String(Math.floor(total() / 1000) % 60).padStart(2, "0")} s</span></div>
+    <div class="desglose tnum"><div><span class="sec">En series</span><span class="cifra">${mmss(S.tSeries)}</span></div>
+    <div><span class="sec">Descanso programado</span><span class="cifra">${mmss(S.tDesc)}</span></div>
+    <div><span class="sec">Tiempo extra</span><span class="cifra">${mmss(S.tExtra)}</span></div></div></div>
+    <div class="cifras"><div><span class="t-detalle sec">Volumen</span><span class="cifra">${miles(volumen())} <span class="unidad-c">lb</span></span></div>
+    <div><span class="t-detalle sec">Series</span><span class="cifra">${hechasTrabajo()} <span class="unidad-c">+ ${hechasRampa()} rampa</span></span></div></div>
+    ${pend ? `<p class="nota tnum">${ico("info-circle", "s16")}<span>Quedaron ${pend} series sin hacer.</span></p>` : ""}
+    ${S.ajustes.length ? `<p class="nota">${ico("pencil", "s16")}<span>${S.ajustes.join(" ")} Solo en esta sesión.</span></p>` : ""}
+    ${l.length ? `<div class="logros">${l.map(([a, b]) => `<div class="logro">${ico("trophy")}<div class="txt"><span class="t-detalle">${a}</span><span class="tnum">${b}</span></div></div>`).join("")}</div>` : ""}
+    ${meta ? `<div class="hito">${ico("flag", "s16")}<span class="tnum">Cumpliste tu meta de fuerza: ${META.texto}.</span><button type="button" class="btn texto" data-acc="nada">Ver</button></div>` : ""}
+    <div class="acciones"><button type="button" class="btn primario gym ancho" data-acc="guardar" data-foco>Guardar</button><button type="button" class="btn texto" data-acc="seguir">Seguir entrenando</button></div>`;
+}
+
+function vistaGuardada() {
+  const min = Math.round(total() / 60000);
+  const l = logros();
+  return `${subTabs()}<div class="dia-cab"><span class="t-detalle sec">Lunes 19 de octubre · semana 3</span><h2 class="t-pantalla">Día A · Push + Legs</h2>
+    <span class="estado-dia tnum"><span class="m hecha"></span>Hecha · ${min} min</span></div>
+    <div class="cifras"><div><span class="t-detalle sec">Duración</span><span class="cifra">${min} <span class="unidad-c">min</span></span></div>
+    <div><span class="t-detalle sec">Volumen</span><span class="cifra">${miles(volumen())} <span class="unidad-c">lb</span></span></div>
+    <div><span class="t-detalle sec">Series</span><span class="cifra">${hechasTrabajo()}</span></div></div>
+    ${l.length ? `<div class="tarjeta record">${ico("trophy")}<div class="txt"><span class="t-detalle sec">${l[0][0]}</span><span class="tnum">${l[0][1]}</span></div></div>` : ""}
+    <div class="lista-mini"><div class="fila"><div class="txt"><span class="t-detalle">Próxima</span><span>Miércoles 21 · Día B · Pull + Legs</span></div><span class="m prog"></span></div></div>
+    <p class="nota">${ico("info-circle", "s16")}<span>En el calendario, el lunes 19 pasa a punto lleno y queda de solo lectura.</span></p>`;
+}
+
+function hojaAjuste() {
+  const hj = S.hoja, x = S.ej[hj.i].series[hj.j], e = S.ej[hj.i];
+  const filas = [];
+  if (hj.seg != null) filas.push(["Segundos", "seg", hj.seg, "s", `rutina: ${e.seg} s`, 5]);
+  else {
+    if (hj.peso != null) filas.push(["Peso", "peso", hj.peso, "lb", `rutina: ${x.tipo === "rampa" ? `${x.peso} lb (rampa)` : `${e.peso} lb`}`, PASO]);
+    filas.push(["Repeticiones", "reps", hj.reps, "reps", `rutina: ${x.tipo === "rampa" ? x.reps : e.reps}`, 1]);
+  }
+  const base = { peso: x.peso, reps: x.reps, seg: x.seg };
+  const ctl = filas.map(([lbl, k, v, u, d]) => `<div class="peso-fila"><div class="txt"><span>${lbl}</span><span class="t-detalle tnum">${d}</span></div>
+    <div class="stepper gym"><button type="button" data-acc="hj-menos" data-k="${k}" aria-label="Bajar ${lbl.toLowerCase()}">${ico("minus")}</button>
+    <span class="valor"><span class="cifra${v !== base[k] ? " sube" : ""}" aria-live="polite">${v}</span><span class="t-detalle">${u}</span></span>
+    <button type="button" data-acc="hj-mas" data-k="${k}" aria-label="Subir ${lbl.toLowerCase()}">${ico("plus")}</button></div></div>`).join("");
+  const seg = x.tipo === "trabajo" ? `<div class="segmento" role="group" aria-label="Aplicar a"><button type="button" data-acc="hj-aplica" data-v="una" aria-pressed="${hj.aplica === "una"}">Solo esta serie</button><button type="button" data-acc="hj-aplica" data-v="faltan" aria-pressed="${hj.aplica === "faltan"}">Las que faltan</button></div>` : "";
+  return `<div class="velo" data-acc="cerrar-hoja"><div class="hoja" role="dialog" aria-modal="true" aria-labelledby="hj-t">
+    <div class="cabeza"><span class="t-seccion" id="hj-t">${x.nombre} · ${e.n.split(" ")[0].toLowerCase()}</span><button type="button" class="icono-btn" data-acc="cerrar-hoja" aria-label="Cerrar">${ico("x")}</button></div>
+    <div class="lista-mini">${ctl}</div>${seg}
+    <p class="nota">${ico("info-circle", "s16")}<span>Solo cambia esta sesión. La rutina no cambia.</span></p>
+    <button type="button" class="btn primario gym ancho" data-acc="hj-aplicar">Aplicar cambio</button></div></div>`;
+}
+
+// ------------------------------------------------------------ render
+let focoSig = null;
+function render() {
+  const enGym = S.vista === "gym";
+  $barra.hidden = enGym || S.vista === "resumen";
+  const v = { inicio: vistaInicio, gym: vistaGym, resumen: vistaResumen, guardada: vistaGuardada }[S.vista];
+  $cuerpo.innerHTML = v();
+  const fr = $("#franja-hueco");
+  fr.innerHTML = franja();
+  $capa.innerHTML = S.hoja ? hojaAjuste() : "";
+  pintarAviso();
+  tickVisual();
+  if (S.hoja) { const b = $capa.querySelector(".hoja button[data-acc='hj-aplicar']"); b && b.focus({ preventScroll: true }); }
+  else if (focoSig) { const b = document.querySelector(focoSig) || $cuerpo.querySelector("[data-foco]"); b && b.focus({ preventScroll: true }); }
+  focoSig = null;
+}
+
+function pintarAviso() {
+  if (!S.aviso) { $aviso.hidden = true; $aviso.innerHTML = ""; return; }
+  $aviso.hidden = false;
+  $aviso.className = `aviso${S.vista === "gym" ? " gym" : ""} entra`;
+  $aviso.innerHTML = `<span>${S.aviso.texto}</span>${S.aviso.accion ? `<button type="button" class="btn texto" data-acc="${S.aviso.accion[1]}">${S.aviso.accion[0]}</button>` : ""}`;
+}
+function avisar(texto, accion, ms) { S.aviso = { texto, accion, hasta: V + ms * vel }; S.avisoReal = performance.now() + ms; }
+
+function tickVisual() {
+  document.querySelectorAll("[data-t]").forEach((el) => {
+    const t = el.dataset.t;
+    if (t === "total") el.textContent = mmss(total());
+    else if (t === "serie") el.textContent = mmss(V - S.tPlay);
+    else if (t === "desc") el.textContent = mmssArriba(S.descFin - V);
+    else if (t === "desc-barra") el.style.setProperty("--v", Math.min(100, 100 * (V - S.descDesde) / (S.descDur * 1000)));
+    else if (t === "desc-de") el.textContent = `de ${mmss(S.descDur * 1000)}`;
+    else if (t === "extra") el.textContent = `+${mmss(V - S.listoDesde)}`;
+    else if (t === "tiempo") { const x = actual(); el.textContent = mmssArriba(x.seg * 1000 - (V - S.tPlay)); }
+    else if (t === "tiempo-barra") { const x = actual(); el.style.setProperty("--v", Math.min(100, (V - S.tPlay) / (x.seg * 10))); }
+    else if (t === "total-min") el.textContent = Math.floor(total() / 60000);
+    else if (t === "total-seg") el.textContent = `min ${String(Math.floor(total() / 1000) % 60).padStart(2, "0")} s`;
+  });
+  $hora.textContent = horaReal();
+}
+
+// ------------------------------------------------------------ reloj
+let ultimo = performance.now();
+function tick() {
+  const ahora = performance.now();
+  const dt = ahora - ultimo; ultimo = ahora;
+  V += dt * vel;
+  if (S.fase === "descanso" && V >= S.descFin) finDescanso(true);
+  else if (S.fase === "serie" && actual().seg != null && V - S.tPlay >= actual().seg * 1000) tachar(true);
+  if (S.aviso && ahora >= S.avisoReal) { S.aviso = null; pintarAviso(); }
+  tickVisual();
+}
+setInterval(tick, 100);
+
+// ------------------------------------------------------------ acciones
+function empezarSerie(pos) {
+  S.i = pos.i; S.j = pos.j; S.sig = null; S.fase = "serie"; S.tPlay = V;
+}
+
+function tachar(auto) {
+  if (S.fase !== "serie") return;
+  const x = actual(), e = ejAct();
+  S.deshacer = JSON.stringify({ S: { ...S, aviso: null, deshacer: null } });
+  const dur = V - S.tPlay;
+  x.estado = "hecha"; x.dur = dur;
+  if (x.seg != null) x.realSeg = Math.min(x.seg, Math.round(dur / 1000));
+  S.tSeries += x.seg != null ? Math.min(dur, x.seg * 1000) : dur;
+  vibrar(auto ? [200, 80, 200] : 30);
+  const sig = siguientePendiente(S.i, S.j);
+  if (!sig) { S.fase = "fin"; S.sig = null; }
+  else {
+    S.sig = sig;
+    S.descDur = x.tipo === "rampa" ? RAMPA_DESC : e.desc;
+    S.descDesde = V; S.descFin = V + S.descDur * 1000; S.fase = "descanso";
+  }
+  avisar(auto ? `${e.n} de ${x.realSeg} s guardada` : "Serie guardada", ["Deshacer", "deshacer"], 8000);
+  focoSig = "[data-foco]";
+  render();
+}
+
+function finDescanso(natural) {
+  if (S.fase !== "descanso") return;
+  S.tDesc += Math.min(V - S.descDesde, S.descDur * 1000);
+  S.fase = "listo"; S.listoDesde = V;
+  if (natural) vibrar(600);
+  focoSig = "[data-foco]";
+  render();
+  if (natural) document.querySelector(".vibra")?.classList.add("pulso-vibra");
+}
+
+const acciones = {
+  nada() {},
+  empezar() { S.tInicio = V; S.vista = "gym"; empezarSerie(primeraPendiente()); focoSig = "[data-foco]"; render(); },
+  tachar() { tachar(false); },
+  deshacer() {
+    if (!S.deshacer) return;
+    const prev = JSON.parse(S.deshacer).S;
+    const vista = S.vista;
+    S = { ...prev, vista, aviso: null, deshacer: null };
+    vibrar(15);
+    avisar("Serie desmarcada", null, 3000);
+    focoSig = "[data-foco]"; render();
+  },
+  "saltar-rampa"() {
+    const e = ejAct();
+    e.series.forEach((x) => { if (x.tipo === "rampa" && x.estado === "pend") x.estado = "saltada"; });
+    const sig = siguientePendiente(S.i, -1) || primeraPendiente();
+    S.sig = sig; S.fase = "espera";
+    avisar(`${e.caliente ? "Tanteo saltado" : "Rampa saltada"}`, null, 3000);
+    focoSig = "[data-foco]"; render();
+  },
+  menos15() { S.descFin -= 15000; S.descDur = Math.max(0, S.descDur - 15); if (V >= S.descFin) finDescanso(false); else render(); },
+  mas15() { S.descFin += 15000; S.descDur += 15; render(); },
+  "saltar-desc"() { finDescanso(false); },
+  play() {
+    if (S.fase === "listo") S.tExtra += V - S.listoDesde;
+    const pos = S.sig; empezarSerie(pos); focoSig = "[data-foco]"; render();
+  },
+  finalizar() { S.vista = "resumen"; S.hoja = null; S.aviso = null; focoSig = "[data-foco]"; render(); $cuerpo.scrollTop = 0; },
+  seguir() { S.vista = "gym"; focoSig = "[data-foco]"; render(); },
+  guardar() {
+    S.guardada = V; S.vista = "guardada"; S.fase = null;
+    avisar("Sesión guardada", null, 4000); render(); $cuerpo.scrollTop = 0;
+  },
+  minimizar() { S.vista = "inicio"; S.aviso = null; render(); },
+  volver() { S.vista = "gym"; focoSig = "[data-foco]"; render(); },
+  ajustar(b) {
+    const i = +b.dataset.i, j = +b.dataset.j, x = S.ej[i].series[j];
+    S.hoja = { i, j, peso: x.peso, reps: x.reps, seg: x.seg, aplica: "faltan", origen: b.getAttribute("aria-label") };
+    render();
+  },
+  "hj-menos"(b) { const k = b.dataset.k; const paso = k === "peso" ? PASO : k === "seg" ? 5 : 1; const min = k === "peso" ? 5 : 1; S.hoja[k] = Math.max(min, S.hoja[k] - paso); render(); },
+  "hj-mas"(b) { const k = b.dataset.k; const paso = k === "peso" ? PASO : k === "seg" ? 5 : 1; S.hoja[k] += paso; render(); },
+  "hj-aplica"(b) { S.hoja.aplica = b.dataset.v; render(); },
+  "hj-aplicar"() {
+    const hj = S.hoja, e = S.ej[hj.i], x = e.series[hj.j];
+    const destino = x.tipo === "trabajo" && hj.aplica === "faltan" ? e.series.filter((y, k) => k >= hj.j && y.tipo === "trabajo" && y.estado === "pend") : [x];
+    destino.forEach((y) => { if (hj.peso != null) y.peso = hj.peso; if (hj.reps != null) y.reps = hj.reps; if (hj.seg != null) y.seg = hj.seg; });
+    const quePaso = hj.seg != null ? `${hj.seg} s` : hj.peso != null ? `${hj.peso} lb × ${hj.reps}` : `${hj.reps} reps`;
+    if (x.tipo === "trabajo") S.ajustes.push(`${e.n.split(" ")[0]}: ${quePaso} en ${destino.length === 1 ? x.nombre.toLowerCase() : `las ${destino.length} que faltaban`}.`);
+    S.hoja = null;
+    avisar("Cambio aplicado a esta sesión", null, 3000);
+    focoSig = "[data-foco]"; render();
+  },
+  "cerrar-hoja"(b, ev) { if (ev && ev.target !== b) return; S.hoja = null; focoSig = "[data-foco]"; render(); },
+};
+
+document.addEventListener("click", (ev) => {
+  const b = ev.target.closest("[data-acc]");
+  if (!b || !b.dataset.acc) return;
+  if (b.getAttribute("aria-disabled") === "true") return;
+  const f = acciones[b.dataset.acc];
+  if (f) { ev.preventDefault(); f(b, ev); }
+});
+document.addEventListener("keydown", (ev) => {
+  if (!S.hoja) return;
+  if (ev.key === "Escape") { ev.preventDefault(); S.hoja = null; render(); return; }
+  if (ev.key === "Tab") {
+    const f = [...$capa.querySelectorAll("button")];
+    const i = f.indexOf(document.activeElement);
+    if (ev.shiftKey && i <= 0) { ev.preventDefault(); f[f.length - 1].focus(); }
+    else if (!ev.shiftKey && i === f.length - 1) { ev.preventDefault(); f[0].focus(); }
+  }
+});
+
+render();
+
+// ------------------------------------------------------------ controles de la lámina
+(() => {
+  const raiz = document.documentElement;
+  document.querySelectorAll("#ctl-modo button").forEach((b) => b.addEventListener("click", () => {
+    if (b.dataset.modo) raiz.dataset.theme = b.dataset.modo; else delete raiz.dataset.theme;
+    document.querySelectorAll("#ctl-modo button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  }));
+  document.querySelectorAll("#ctl-acento button").forEach((b) => b.addEventListener("click", () => {
+    if (b.dataset.a === "caribe") delete raiz.dataset.accent; else raiz.dataset.accent = b.dataset.a;
+    document.querySelectorAll("#ctl-acento button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  }));
+  document.querySelectorAll("#ctl-vel button").forEach((b) => b.addEventListener("click", () => {
+    vel = Number(b.dataset.v);
+    document.querySelectorAll("#ctl-vel button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  }));
+  document.getElementById("de-nuevo").addEventListener("click", () => { reiniciar(); render(); });
+})();
+
+// Atajo para pruebas automáticas de la lámina (no es parte de la interfaz): salta al ejercicio i.
+window.protoPrueba = {
+  irA(i) {
+    if (S.tInicio == null) { S.tInicio = V; }
+    S.vista = "gym";
+    for (let a = 0; a < i; a++) S.ej[a].series.forEach((x) => { if (x.estado === "pend") { x.estado = "hecha"; x.dur = 35000; if (x.seg != null) x.realSeg = x.seg; S.tSeries += 35000; } });
+    const pos = primeraPendiente();
+    if (pos) empezarSerie(pos); else { S.fase = "fin"; S.sig = null; }
+    render();
+  },
+};
+
+</script>
+</body>
+</html>

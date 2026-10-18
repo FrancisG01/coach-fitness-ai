@@ -80,6 +80,13 @@ typography:
     fontWeight: 800
     fontVariation: "'wdth' 62"
     fontFeature: "'tnum'"
+  cifraDescanso:
+    fontFamily: "Archivo"
+    fontSize: "96px"
+    lineHeight: "88px"
+    fontWeight: 800
+    fontVariation: "'wdth' 62"
+    fontFeature: "'tnum'"
   cifraMetrica:
     fontFamily: "Archivo"
     fontSize: "32px"
@@ -329,6 +336,8 @@ components:
     rounded: "{rounded.casilla}"
   metric-hero:
     typography: "{typography.cifraHeroe}"
+  metric-rest:
+    typography: "{typography.cifraDescanso}"
   metric:
     typography: "{typography.cifraMetrica}"
 ---
@@ -430,7 +439,8 @@ Noche de gym (oscuro, caucho, Caribe), Laguna (oscuro, pizarra, Mar), Monte (osc
 **Character:** Una sola familia que cambia de voz con sus ejes. Condensada y pesada para las cifras, que se leen de un vistazo entre series; abierta y tranquila para el texto. Licencia SIL Open Font License. La pila de respaldo está pendiente de la Fase 0.5.
 
 ### Hierarchy
-- **Cifra héroe** (800, 56px, 52px de interlínea, ancho 62, `tnum`): el número que manda en la pantalla, como el temporizador de descanso o un nuevo récord.
+- **Cifra de descanso** (800, 96px, 88px de interlínea, ancho 62, `tnum`): solo en el modo gym, para la cuenta regresiva del descanso y de las series por tiempo, que se leen desde el banco a un brazo de distancia (D-30). Fuera del modo gym no se usa.
+- **Cifra héroe** (800, 56px, 52px de interlínea, ancho 62, `tnum`): el número que manda en la pantalla, como el tiempo total del resumen o un nuevo récord.
 - **Cifra métrica** (800, 32px, 32px, ancho 62, `tnum`): peso, calorías, totales de sesión, valores de composición corporal.
 - **Título de pantalla** (700, 25px, 30px, ancho 85): uno por pantalla ("Press de banca plano", "Buenos días, Francis").
 - **Título de sección** (650, 20px, 26px): encabezado de tarjeta o bloque, título de diálogo y de estado vacío.
@@ -557,7 +567,7 @@ No existen componentes en código todavía. Lo que sigue describe cómo aparecen
 - **Escritorio:** barra lateral con logo y nombre desde `packages/brand`, las cinco secciones con sus subsecciones, Ajustes y el estado de sincronización al pie. El activo va sobre fondo elevado con texto de acento.
 
 ### Fila de serie (modo gym)
-La pieza central de GYM-04. Cada serie es una fila de 56 px con casilla, nombre ("Rampa 1 · 50 %", "Trabajo 2") y la carga en cifras condensadas ("40 × 10"). La serie actual lleva borde de acción de 2 px; las hechas llevan la casilla llena de acción con `check`. Tocar la fila o la casilla tacha la serie: háptica de impacto medio en el mismo fotograma, casilla llena en 120 ms y aviso "Serie guardada" con "Deshacer". Debajo, el temporizador de descanso en cifra héroe con barra de progreso y los atajos "−15 s", "Saltar" y "+15 s", de 56 px.
+La pieza central de GYM-04. Cada serie es una fila de 56 px con casilla, nombre ("Rampa 1 · 50 %", "Trabajo 2") y la carga en cifras condensadas ("40 × 10"). La serie actual lleva borde de acción de 2 px; las hechas llevan la casilla llena de acción con `check`. Tocar la fila o la casilla tacha la serie: háptica de impacto medio en el mismo fotograma, casilla llena en 120 ms y aviso "Serie guardada" con "Deshacer". Debajo, el temporizador de descanso en cifra de descanso (96 px) con barra de progreso y los atajos "−15 s", "Saltar" y "+15 s", de 56 px.
 
 ### Estado de sincronización (modo gym)
 Una línea en detalle con ícono de 16 px en la cabecera de la sesión, nunca un diálogo:
