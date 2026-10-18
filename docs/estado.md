@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Última actualización: 18-oct-2026 (D-28 fusionada, PR #17; objetivo de ejemplo)
+Última actualización: 18-oct-2026 (flujo 1 aprobado, D-29 a D-31)
 
 ## Fase actual: 0 (fundaciones)
 
@@ -26,6 +26,9 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 - D-26 (plan v1.6, PRD v1.3): programar en 3 pasos (rutina → series y reps de la rutina, editables → pesos); sesión programada editable, día hecho de solo lectura. Semana 1 = semana de la primera actividad registrada de cada usuario; Francis arranca desde cero (no se carga el historial del Anexo A). Pestañas internas de Gym en móvil; Salud suma "Análisis". Contraste A4 sobre elevado (4.49:1) se queda por ahora.
 - D-27: paseo MTB con distancia, desnivel +, tiempo en movimiento, velocidad media, kcal, FC promedio y zonas Z1-Z5 (% y ppm) desde dos capturas de Strava; el objetivo calórico del día sube con el 50 % de las kcal del paseo.
 - D-28 / ADR 0024 (plan v1.7, PRD v1.4; excepción al backlog cerrado, todo M): módulo Objetivos OBJ-01 a 04 (objetivo principal con meta y fecha, metas intermedias cada 4 semanas, metas por medida y fuerza con línea punteada que no cuenta como serie, hitos; tarjeta en Hoy y página propia, sin sexta pestaña); bienvenida de 7 pasos con ilustraciones solo ahí (SIS-08); perfil con historial (SIS-09); SAL-02 con medidas completas; SAL-07 calculadas (Marina); COA-05 re-preguntas. Rachas siguen fuera. Se construye en las fases 3, 5 y 6.
+- D-29 (plan v1.8, PRD v1.5): rampa según reps objetivo y peso de trabajo (1-5 reps: 4 series + potenciación opcional; 6-12: 1-3 series según peso; 13+: 1 o ninguna), una serie de tanteo si el músculo ya está caliente, sin rampa en aislamiento, 60 s entre rampas. Descanso +15/−15/saltar con vibración y tiempo extra; ajustes al vuelo solo en la sesión; resumen al cerrar con tiempos, volumen, récords, hitos y "Guardar". Ciclos de entrenamiento (fuerza/hipertrofia) al backlog; la nutrición sigue al objetivo, no al ciclo.
+- D-30 (plan v1.9, PRD v1.6): guía del flujo 1 aprobada (https://claude.ai/artifact/Pp72v5qCzadtjWrMJdoYNB). Modo gym también en la web como PWA en el teléfono (escritorio solo lectura); sesión sin programar desde rutina o vacía; rampa redondea hacia abajo; volumen con las dos mancuernas (cambia el 7,055 lb del flujo 2); series por tiempo (plancha); token propio para la cifra del descanso.
+- D-31 (plan v1.10, PRD v1.7): flujo 1 aprobado. "Empezar otra sesión" el mismo día; ×4 en por pierna con mancuernas; avisos nunca tapan acciones; hoja de ajuste dice a qué series aplica; tarjeta "Sigue" más visible; subitem activo web con A5 en claro.
 - Francis quiere que Claude tome iniciativas y las liste para confirmar ("Decisiones que tomé y necesito que confirmes").
 - D-21 / ADR 0021: embeddings de la memoria del coach con modelo local en el servidor; el modelo se elige en la Fase 1 con benchmark.
 - Plan maestro v1.2: título "Coach Fitness AI".
@@ -45,8 +48,10 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 5. Paso 4A hecho (rama `docs/calendario`): D-25 en plan v1.5, GYM-03 reescrito, flujo 2 ampliado en plan y PRD v1.2, agrupación de DESIGN.md corregida.
 6. Paso 4B hecho y aprobado (PR #15): flujo 2 en `docs/diseno/mockups/flujo-2-calendario.html` (https://claude.ai/artifact/289fc21Nzt8UpHPNpznbk3) y `flujo-2-calendario-prototipo.html` (https://claude.ai/artifact/CWy7xv7P44k4nZgzMEP6a8). Francis confirmó: primera actividad = cualquier sesión (aunque sea programada) o paseo; series 1-10 y reps 1-30; editar sesión no cambia la rutina; mover o copiar lleva series, reps y pesos de la sesión; volumen con lo del día; zonas de FC solo con % visible; 50 % de kcal MTB.
 7. Paso 5A hecho (PR #17): D-28 en plan v1.7 y PRD v1.4 (criterios de aceptación en su §2), ADR 0024, DESIGN.md y PRODUCT.md.
-8. **Siguiente: flujo 1 (entrenar en el gym)** en 4 piezas, reutilizando lo del flujo 2 (tres pasos, steppers, pestañas de Gym). Luego el flujo 10 (bienvenida, con sus 7 ilustraciones). Después, el modelo conceptual de la BD (califica para Fable 5.1: avisar antes).
-9. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
+8. Flujo 1 (entrenar en el gym) **aprobado** (D-29 a D-31, PR de `docs/flujo-1-gym`): `flujo-1-gym.html` (https://claude.ai/artifact/Pp72v5qCzadtjWrMJdoYNB) y `flujo-1-gym-prototipo.html` (https://claude.ai/artifact/HmQQCjVWTSwXmfdyonyod6). Tokens nuevos `cifraDescanso` y `textoAcentoSobreElevado`; regla de avisos "Never Cover" en DESIGN.md; artefactos del flujo 2 y B2 republicados.
+9. **Siguiente: flujo 10 (bienvenida, 7 pasos con sus ilustraciones).** Después, el modelo conceptual de la BD (califica para Fable 5.1: avisar antes).
+10. Pendiente menor del flujo 2: renombrar "Sentadilla búlgara" a "Sentadilla búlgara mancuernas · por mancuerna" en la lámina (preguntar a Francis).
+11. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
 
 ## Pendientes de Francis
 

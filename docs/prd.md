@@ -2,12 +2,12 @@
 
 | Campo | Valor |
 | --- | --- |
-| Versión | 1.4 |
+| Versión | 1.7 |
 | Fecha | 18-oct-2026 |
 | Estado | Aprobado por Francis, 18-oct-2026 |
 | Dueño del producto | Francis Guzman |
 | Redacta | Agente `pm` |
-| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.7, [`adr/`](adr/), [`diseno/`](diseno/) |
+| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.10, [`adr/`](adr/), [`diseno/`](diseno/) |
 
 Este documento resume qué se construye en la v1.0, para quién y cómo sabremos que funcionó. No añade alcance: el backlog de la v1.0 está cerrado (D-16, [ADR 0016](adr/0016-wsl2-fase-s-y-backlog-cerrado.md)); las excepciones que decidió Francis (D-24, D-28) están en la sección 9. El detalle de cada requisito vive en el plan maestro; aquí solo se resume y se enlaza. Junto con el diseño (`/impeccable init`), cierra la Fase 0.
 
@@ -350,3 +350,6 @@ Respuestas de Francis a las preguntas del borrador.
 | 15 | Revisión del flujo 2 | Programar en tres pasos: rutina, series y repeticiones, pesos. La semana 1 es la de la primera actividad registrada en la app; Francis arranca desde cero. Pestañas internas de Gym en móvil; subsección Análisis en Salud. D-26 |
 | 16 | Datos del paseo MTB | Distancia, desnivel positivo, tiempo en movimiento, velocidad media, calorías, FC promedio y zonas de FC Z1 a Z5 (% y rango en ppm) desde dos capturas de Strava; el objetivo calórico del día sube con el 50 % de las kcal del paseo. D-27 |
 | 17 | Objetivos, bienvenida y medidas (añadida tras aprobar el PRD) | Entran en la v1.0 con prioridad M como excepción al backlog cerrado: módulo Objetivos (OBJ-01 a 04) con tarjeta en Hoy y página propia, bienvenida de 7 pasos con ilustraciones (SIS-08, [ADR 0024](adr/0024-ilustraciones-en-la-bienvenida.md)), perfil editable con historial (SIS-09), medidas corporales completas (SAL-02), medidas calculadas (SAL-07) y re-preguntas del coach (COA-05). Las rachas siguen fuera. Flujo 10 en la Fase 0.5 (se diseñan 10 flujos, 9 en Playwright). +~1 semana: ~12 optimista y ~19.5 probable, v1.0 ~9-ene a ~4-mar-2027; el modo gym no se mueve. Criterios de aceptación en la sección 2. D-28 |
+| 18 | Revisión del flujo 1 | La rampa depende de las reps objetivo y el peso de trabajo de cada ejercicio, con una sola serie de tanteo si el músculo ya está caliente y sin rampa en aislamiento; potenciación opcional. Descanso con +15 s, −15 s y saltar; ajustes al vuelo solo en la sesión; resumen al cerrar con tiempos, volumen, récords e hitos. Ciclos de entrenamiento fuera de la v1.0 ([plan, §5](plan-maestro.md#modo-gym-y-series-rampa-gym-04-gym-05)). D-29 |
+| 19 | Guía del flujo 1 | Modo gym en la app Android y en la web como PWA en el teléfono (escritorio: solo lectura); sesión sin programar desde una rutina o vacía; rampa redondeada hacia abajo; volumen con las dos mancuernas; series por tiempo; cifra del descanso más grande. D-30 |
+| 20 | Flujo 1 aprobado | "Empezar otra sesión" el mismo día; volumen ×4 en ejercicios por pierna con mancuernas; avisos que no tapan acciones; contraste del subitem activo web corregido. D-31 |
