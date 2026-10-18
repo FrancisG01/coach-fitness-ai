@@ -1,4 +1,4 @@
-# Fitness Coach System — Plan Maestro de Desarrollo
+# Coach Fitness AI — Plan Maestro de Desarrollo
 
 Oct 17, 2026 · @Almonte
 
@@ -8,8 +8,8 @@ Oct 17, 2026 · @Almonte
 
 | Campo | Valor |
 | --- | --- |
-| Proyecto | Fitness Coach System |
-| Versión | 1.0 (borrador) |
+| Proyecto | Coach Fitness AI (nombre provisional) |
+| Versión | 1.2 |
 | Estado | En definición — Fase 0 |
 | Dueño del producto | Francis Guzman |
 | Responsable técnico | Claude (agente Project Manager) |
@@ -23,6 +23,7 @@ Oct 17, 2026 · @Almonte
 | 0.2 | 17-oct-2026 | Base de alimentos y unidades; MTB por captura; skills de diseño; Fase 0.5 de Diseño UX; diseño de base de datos; fuera protocolo capilar |
 | 1.0 | 17-oct-2026 | Reestructura profesional y ficha del atleta integrada (Anexo A) |
 | 1.1 | 18-oct-2026 | Coherencia con D-14 a D-20: una sola fuente (Archivo), modo según el sistema, coach solo con créditos Max, staging por Tailscale, backlog v1.0 cerrado, 10 agentes, `apps/watch/`, NativeWind |
+| 1.2 | 18-oct-2026 | PRD aprobado (`docs/prd.md`): título "Coach Fitness AI"; fotos de progreso y mapa corporal fuera de la v1.0; embeddings locales en el servidor (D-21); estimación de tiempos en el PRD |
 
 ## 1. Resumen ejecutivo
 
@@ -101,7 +102,7 @@ Siete módulos sobre una sola base de datos; el coach lee todos.
 | Módulo | Qué incluye |
 | --- | --- |
 | **Dashboard** | Resumen del día: entreno programado, macros vs objetivo, suplementos pendientes, peso y tendencia, volumen muscular semanal, alertas del coach |
-| **Salud y composición** | Mediciones Renpho (todos los campos), medidas con cinta, fotos de progreso, análisis de sangre con rangos, entrada manual de cualquier dato, gráficos de tendencia |
+| **Salud y composición** | Mediciones Renpho (todos los campos), medidas con cinta, análisis de sangre con rangos, entrada manual de cualquier dato, gráficos de tendencia |
 | **Entrenamiento (Gym)** | Biblioteca de ejercicios con implicación por músculo, rutinas personalizadas, calendario de sesiones futuras con pesos por ejercicio, modo gym (tachar series, cambiar peso/reps, temporizador de descanso), series rampa automáticas, historial y récords, volumen por músculo individual |
 | **Cardio / MTB** | Paseos registrados desde captura de pantalla de Strava en el chat del coach (distancia, tiempo, desnivel, velocidad, FC, calorías y lo que muestre la captura), con confirmación antes de guardar; carga cardiovascular, efecto sobre recuperación y calorías |
 | **Nutrición** | Registro de comidas, base de alimentos dominicanos con nutrientes completos, recetas y platos, planes día/semana/mes, objetivos por tipo de día, micronutrientes, importación opcional de Cronometer |
@@ -652,7 +653,7 @@ Referencia visual: Propuesta\_Identidad\_Visual\_B2\_Caucho\_y\_acento.pdf. De f
 - **Design system propio:** tokens de color, tipografía, espaciado, radios y movimiento en un paquete compartido entre web y móvil.
 - **Dirección visual:** flat, minimalista, modo según el sistema, con claro y oscuro igual de cuidados (D-17), un color de acento fuerte para acción y datos, mucho aire.
 - **Tipografía con carácter:** Archivo como única fuente (D-17); los números grandes (peso, kg levantados) usan sus pesos y anchos display y cifras tabulares (`tnum`); nada de defaults.
-- **Datos como protagonistas:** gráficos limpios, anillos de progreso, mapa corporal de músculos coloreado por volumen semanal.
+- **Datos como protagonistas:** gráficos limpios y anillos de progreso. El mapa corporal de músculos coloreado por volumen semanal queda fuera de la v1.0 (backlog, sección 19); en la v1.0 el volumen por músculo (GYM-06) se muestra en tablas y gráficos.
 - **Movimiento con propósito:** transiciones cortas, contadores animados, feedback háptico al tachar series en el móvil.
 - **Proceso:** primero moodboard y 3 direcciones visuales para que elijas; luego la Fase 0.5 de Diseño UX (flujos, mockups, guías paso a paso y prototipo); después código. Ninguna pantalla se programa sin su mockup aprobado.
 - **Skill de diseño:** Impeccable y UX Heuristics (detalle abajo). La dirección visual la defines tú como diseñador; las skills la convierten en reglas que los agentes no pueden romper.
@@ -680,7 +681,7 @@ Cada flujo clave se entrega en cuatro piezas: diagrama del flujo, guía paso a p
 | Registrar una comida | Buscar alimento → elegir unidad (g, lb, oz, ml…) → confirmar → ver macros y micros del día |
 | Crear receta o plan | Ingredientes → porciones → plan día/semana/mes con suplementos |
 | Registrar paseo MTB | Subir captura al chat → tarjeta de confirmación → guardar |
-| Registrar medición | Renpho automático o manual → medidas con cinta → fotos |
+| Registrar medición | Renpho automático o manual → medidas con cinta |
 | Hablar con el coach | Pregunta → respuesta con tus datos → aprobar plan propuesto |
 | Empezar el día | Dashboard: entreno, comidas, suplementos pendientes, alertas |
 | Entrenar desde el reloj | Iniciar sesión del día → serie → check → descanso → vibración → espera → play → siguiente → resumen de tiempos |
@@ -715,7 +716,7 @@ El Gym va primero porque es lo que necesitas ya para volver a entrenar; el coach
 | 0.5 Diseño UX | Modelo conceptual de la base de datos (diagrama ER), diagramas de flujo de las tareas clave, wireframes, mockups de alta fidelidad (web y móvil), guías paso a paso en imágenes y prototipo navegable | Recorres cada flujo en el prototipo y lo apruebas antes de escribir código |
 | 1. Núcleo | Autenticación, modelo lógico y físico de la base de datos con diagrama DBML y diccionario de datos, perfil, API base, despliegue en Oracle con HTTPS y respaldos | API en producción con tests pasando y backup verificado |
 | 2. Gym | Biblioteca de ejercicios con músculos, rutinas A/B/C, calendario, modo gym, series rampa, historial, volumen por músculo | Entrenas una semana real registrando todo en el sistema |
-| 3. Salud | Sync Renpho, medidas, fotos, análisis de sangre, gráficos de tendencia | Tus datos de abril y de hoy cargados y graficados |
+| 3. Salud | Sync Renpho, medidas, análisis de sangre, gráficos de tendencia (fotos de progreso, SAL-03, fuera de la v1.0) | Tus datos de abril y de hoy cargados y graficados |
 | 4. Nutrición y suplementos | Base de alimentos dominicanos, registro, recetas, planes día/semana/mes, módulo de suplementación | Una semana de comidas registrada y comparada contra el plan |
 | 5. Coach IA | Chat con herramientas, memoria, revisiones semanales, generación de planes y rutinas | El coach responde con tus datos reales sin inventar |
 | 6. Dashboard y cardio | Panel del día, importación de paseos MTB, carga total | Dashboard útil como pantalla de inicio diaria |
@@ -723,7 +724,7 @@ El Gym va primero porque es lo que necesitas ya para volver a entrenar; el coach
 | 7b. Galaxy Watch | App Wear OS: sesión del día, ciclo de serie y descanso con vibración, tiempos de sesión, sincronización con el teléfono | Una sesión completa entrenando solo con el reloj, con los tiempos correctos en el sistema |
 | 8. Versión 1.0 | Rendimiento, seguridad, monitoreo, pulido visual | Auditoría del revisor sin hallazgos críticos |
 
-Cada fase cierra con demo, tests verdes, documentación técnica al día y las guías del Centro de ayuda de lo que se construyó. Las estimaciones de tiempo las hace el PM al terminar la Fase 0, cuando el alcance de cada pantalla esté definido.
+Cada fase cierra con demo, tests verdes, documentación técnica al día y las guías del Centro de ayuda de lo que se construyó. La estimación de tiempos por fase está en el PRD (`docs/prd.md`, sección 7).
 
 ## 17. Riesgos
 
@@ -800,6 +801,7 @@ Decisiones ya tomadas; al arrancar el repo cada una se convierte en un ADR en `d
 | D-18 | 17-oct-2026 | App para Galaxy Watch nativa (Kotlin + Compose for Wear OS), Wear OS 3+, conectada a la app Android por Data Layer; fase 7b. Cronometría de sesión (tiempo extra de descanso) en todo el sistema | Entrenar sin sacar el teléfono; Wear OS no admite React Native |
 | D-19 | 17-oct-2026 | Gestión automática del contexto: hook SessionStart que inyecta docs/estado.md (inicio, /clear, compactación, reanudar), estado.md actualizado en cada tarea y delegación a agentes (ADR 0019) | Que ninguna conversación ni compactación pierda el estado del proyecto |
 | D-20 | 18-oct-2026 | Servidor Oracle `coach`: Minecraft retirado, SSH solo con llave y solo por Tailscale, usuarios `ubuntu` (admin) y `deploy` (Docker), ningún puerto público (firewall del sistema + lista de seguridad de la VCN), Caddy en Docker escuchando solo en la IP de Tailscale con certificado de Tailscale (ADR 0020) | Servidor dedicado y sin exposición a internet, como pide D-12 |
+| D-21 | 18-oct-2026 | Embeddings de la memoria del coach con un modelo local en el servidor Oracle; el modelo concreto se elige en la Fase 1 con benchmark (ADR 0021) | Anthropic no ofrece embeddings; un servicio externo vería datos de salud y costaría dinero |
 
 ## 21. Pendientes: lo que necesito de ti
 
@@ -817,6 +819,8 @@ Con esto cierro la Fase 0 y arrancamos a programar.
 - [x] Plan de Claude → Max: el coach usa los créditos mensuales de API incluidos (activar en la Fase 5).
 - [x] Dirección B2 → acento de fábrica Caribe, modo según el sistema, nombre provisional "Coach Fitness AI".
 - [x] Fase S (Setup) → cerrada el 18-oct-2026.
+- [x] PRD → aprobado el 18-oct-2026 (`docs/prd.md`).
+- [ ] Medidas con cinta de octubre (cintura, cadera, pecho, brazos, muslos).
 
 ## Anexo A — Ficha del atleta
 

@@ -4,14 +4,14 @@
 | --- | --- |
 | Versión | 1.0 (borrador) |
 | Fecha | 18-oct-2026 |
-| Estado | Pendiente de aprobación |
+| Estado | Aprobado por Francis, 18-oct-2026 |
 | Dueño del producto | Francis Guzman |
 | Redacta | Agente `pm` |
-| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.1, [`adr/`](adr/), [`diseno/`](diseno/) |
+| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.2, [`adr/`](adr/), [`diseno/`](diseno/) |
 
-Este documento resume qué se construye en la v1.0, para quién y cómo sabremos que funcionó. No añade alcance: el backlog de la v1.0 está cerrado (D-16, [ADR 0016](adr/0016-wsl2-fase-s-y-backlog-cerrado.md)). El detalle de cada requisito vive en el plan maestro; aquí solo se resume y se enlaza. Tu aprobación cierra, junto con el diseño, la Fase 0.
+Este documento resume qué se construye en la v1.0, para quién y cómo sabremos que funcionó. No añade alcance: el backlog de la v1.0 está cerrado (D-16, [ADR 0016](adr/0016-wsl2-fase-s-y-backlog-cerrado.md)). El detalle de cada requisito vive en el plan maestro; aquí solo se resume y se enlaza. Junto con el diseño (`/impeccable init`), cierra la Fase 0.
 
-Las secciones 5, 6 y 7 (metas físicas, costo del coach y tiempos) son **propuestas** que tienes que validar.
+Francis aprobó el documento el 18-oct-2026, incluidas las metas físicas, el costo del coach y los tiempos (secciones 5, 6 y 7). Sus respuestas están en la sección 9.
 
 ---
 
@@ -48,7 +48,7 @@ Del [plan, sección 3](plan-maestro.md#3-visión-objetivos-y-métricas-de-éxito
 | O3 | Coach con datos reales | 100 % de respuestas basadas en tus datos o declarando que faltan |
 | O4 | Progreso visible | Tendencias de peso, grasa, fuerza y volumen por músculo siempre a la vista |
 | O5 | Confiable | Cero pérdida de datos; disponibilidad ≥ 99 % |
-| O6 | Progreso físico | Cumplir las metas a 3 meses de la sección 5 (propuestas) |
+| O6 | Progreso físico | Cumplir las metas a 3 meses de la sección 5 |
 
 ---
 
@@ -104,7 +104,7 @@ La [sección 13](plan-maestro.md#13-calidad-y-pruebas) pide pruebas E2E en Playw
 | 3 | Registrar una comida | Buscar alimento → elegir unidad → confirmar → ver macros y micros del día | NUT-02, 03, 09 | Playwright |
 | 4 | Crear receta o plan | Ingredientes → porciones → plan día/semana/mes con suplementos | NUT-04, 05, SUP-01 | Playwright |
 | 5 | Registrar paseo MTB | Subir captura al chat → tarjeta de confirmación → guardar | CAR-01 | Playwright |
-| 6 | Registrar medición | Renpho automático o manual → medidas con cinta → fotos | SAL-01, 02 | Playwright |
+| 6 | Registrar medición | Renpho automático o manual → medidas con cinta | SAL-01, 02 | Playwright |
 | 7 | Hablar con el coach | Pregunta → respuesta con tus datos → aprobar plan propuesto | COA-01, 04 | Playwright + evals |
 | 8 | Empezar el día | Dashboard: entreno, comidas, suplementos pendientes, alertas | DSH-01, COA-03 | Playwright |
 | 9 | Entrenar desde el reloj | Iniciar sesión del día → serie → check → descanso → vibración → espera → play → siguiente → resumen de tiempos | WAT-01, 02, 05, 06 | Compose for Wear OS + reloj real |
@@ -134,7 +134,7 @@ Las métricas de producto son O1 a O6 (sección 1). Cada fase cierra con demo, t
 
 ---
 
-## 5. Metas físicas recalculadas (propuesta)
+## 5. Metas físicas recalculadas (aprobadas)
 
 Nuevo punto de partida: medición Renpho del 17-oct-2026 ([Anexo A.2b](plan-maestro.md#a2b-medición-del-17-oct-2026-nuevo-punto-de-partida)). Horizonte: 13 semanas, hasta mediados de enero de 2027. Son metas de seguimiento, no un diagnóstico; el coach no diagnostica ni prescribe.
 
@@ -165,12 +165,12 @@ Por qué conservadores: (1) el gym se retoma desde la semana 1 de exploración, 
 | Masa ósea | 3.2 kg | 3.2 kg | 3.2 kg | mantener | No cambia en 3 meses |
 | TMB | 1,721 kcal | 1,726 kcal | ≥ 1,725 kcal | mantener | Renpho la calcula casi solo con la masa sin grasa; "1,780+" pedía +2.5 kg magros |
 | Edad metabólica | 30 | 31 | 29-30 | −1 a −2 | Sigue a la grasa y la TMB |
-| Cintura (ombligo) | 91 cm | sin medir | 87-89 cm | −2 a −4 cm vs abril | ~1 cm por kg de grasa perdida; hace falta medir en octubre |
-| Cintura/altura | 0.529 | sin medir | ≤ 0.51 | — | Referencia < 0.50, se alcanza en la etapa Principiante |
+| Cintura (ombligo) | 91 cm | pendiente | 87-89 cm | −2 a −4 cm vs abril | ~1 cm por kg de grasa perdida; Francis enviará las medidas con cinta |
+| Cintura/altura | 0.529 | pendiente | ≤ 0.51 | — | Referencia < 0.50, se alcanza en la etapa Principiante |
 
-Las metas a 12 y 24 meses del Anexo A.2 se mantienen como referencia y se revisan con la medición de enero.
+Las metas a 12 y 24 meses del Anexo A.2 se mantienen como referencia y se revisan con la medición de enero. Las medidas con cinta de octubre (cintura, cadera, pecho, brazos y muslos) están pendientes de Francis; con ellas se fijan las metas de cinta del Anexo A.3.
 
-### Objetivo calórico unificado (propuesta)
+### Objetivo calórico unificado (aprobado)
 
 El Anexo A tiene dos cifras que no cuadran: el plan de comidas suma ~2,255 kcal (P 187 / C 250 / G 54) y el objetivo declarado es 2,300-2,400 kcal.
 
@@ -179,8 +179,8 @@ El Anexo A tiene dos cifras que no cuadran: el plan de comidas suma ~2,255 kcal 
 | TMB (17-oct) | 1,726 kcal |
 | Gasto estimado con 3 días de gym + 2 de caminata, trabajo sentado (×1.45-1.55) | 2,500-2,675 kcal |
 | Déficit para ~0.25 kg de grasa por semana | ~275 kcal/día |
-| **Objetivo propuesto** | **2,350 kcal/día** (punto medio del rango declarado) |
-| Macros propuestos | Proteína 187 g (~2.4 g/kg), grasas 65 g (~0.83 g/kg, la propuesta del propio Anexo A.7), carbohidratos 255 g → 2,353 kcal |
+| **Objetivo** | **2,350 kcal/día, único para todos los días** (punto medio del rango declarado) |
+| Macros | Proteína 187 g (~2.4 g/kg), grasas 65 g (~0.83 g/kg, la propuesta del propio Anexo A.7), carbohidratos 255 g → 2,353 kcal |
 | Días con MTB | Se suman kcal según el gasto del paseo registrado (CAR-02); el coach decide cuánto con tus datos |
 | Suelo de alerta | Menos de 1,800 kcal en un día (Anexo A.10, sin cambio) |
 
@@ -233,9 +233,9 @@ Sin caché, el mensaje de chat costaría ~$0.17: el prompt caching recorta casi 
 | ¿Alcanza con Max 5x ($100)? | Sí, sobra 78 % | Sí, sobra 43 % | No: se agotaría hacia el día 17 |
 | ¿Alcanza con Max 20x ($200)? | Sí | Sí | Sí, justo |
 
-Los embeddings para la memoria semántica (pgvector) no salen de Anthropic, que no ofrece ese servicio; ver preguntas.
+Los embeddings para la memoria semántica (pgvector) no salen de Anthropic, que no ofrece ese servicio: se generan con un modelo local en el servidor, sin costo de API (D-21, [ADR 0021](adr/0021-embeddings-locales-en-el-servidor.md)).
 
-### Recomendación
+### Decisión
 
 | Tarea | Modelo | Motivo |
 | --- | --- | --- |
@@ -244,42 +244,50 @@ Los embeddings para la memoria semántica (pgvector) no salen de Anthropic, que 
 | Clasificación simple o resúmenes cortos | Haiku 5.5 | Casi gratis |
 | Coach en producción | Nunca Fable 5.1 | 2.5× el precio de Opus sin ganancia clara aquí |
 
-- **Tope mensual en la app:** $80 si tienes Max 5x ($160 con Max 20x), con avisos al 50 % y al 80 %, y un tope diario de $8 para cortar bucles. Así nunca te quedas sin coach a mitad de mes.
-- **Al llegar al 80 %:** propuesta de pasar el chat a Sonnet 5.5 hasta fin de mes (decisión tuya, ver preguntas).
+- **Plan:** Max 5x, con $100 de créditos de API al mes.
+- **Tope en la app:** $80 al mes y $8 al día (este último corta bucles). Así nunca te quedas sin coach a mitad de mes.
+- **Al llegar al 80 % del tope ($64):** el chat pasa a Sonnet 5.5 hasta fin de mes y la app te avisa. En el escenario alto esto ocurriría a mitad de mes.
 - **Evals:** en cada pull request, solo los casos críticos; la batería completa cuando cambian el prompt o las herramientas.
 - Registro de tokens por conversación y panel de costos (RNF-11).
 
 ---
 
-## 7. Estimación de tiempo por fase (propuesta)
+## 7. Estimación de tiempo por fase
+
+Recalculada el 18-oct-2026 con la disponibilidad que confirmó Francis: día completo, y si está motivado, el día entero dedicado al proyecto.
 
 ### Supuestos
 
-- Claude Code programa rápido; el cuello de botella es tu revisión: aprobar mockups, probar demos y cumplir criterios que exigen vida real (una semana entrenando, una semana de comidas, una sesión con el reloj).
-- Tu disponibilidad: 8-12 horas por semana para revisar y probar, con respuestas en 1-2 días.
-- Una fase a la vez, con solape menor (diseño de la siguiente mientras se prueba la actual).
-- Fable 5.1 solo en lo crítico (BD de la Fase 1, sincronización de las fases 7 y 7b, RLS); su límite semanal puede frenar esas fases.
-- No incluye pausas largas ni cambios de alcance.
+- Tu revisión deja de ser el cuello de botella: apruebas mockups y pruebas demos el mismo día.
+- Los cuellos de botella pasan a ser dos:
+  - el desarrollo y las pruebas automáticas;
+  - las pruebas reales que no se pueden acelerar: una semana entrenando (Fase 2), una semana de comidas (Fase 4), uso sin señal (Fase 7) y una sesión completa con el reloj (Fase 7b).
+- La semana real de comidas de la Fase 4 corre en paralelo con el desarrollo de la Fase 5.
+- Límites del plan Max 5x: el uso diario de Claude Code y el tope semanal de Fable 5.1 (50 %) pueden frenar las fases críticas (BD de la Fase 1, sincronización de las fases 7 y 7b).
+- No incluye pausas largas ni cambios de alcance. Los requisitos S se pueden posponer si una fase se alarga.
 
-| Fase | Optimista | Probable | Qué la alarga |
+| Fase | Optimista (sem.) | Probable (sem.) | Qué la marca |
 | --- | --- | --- | --- |
-| 0. Lo que falta (PRD, `/impeccable init`) | 0.5 | 1 | Rondas de revisión |
-| 0.5 Diseño UX (9 flujos × 4 piezas, modelo conceptual de BD) | 2 | 4 | Iteraciones de mockups |
-| 1. Núcleo | 1.5 | 3 | Modelo de datos completo, RLS, despliegue y backups |
-| 2. Gym (PWA) | 2 | 4 | Incluye la semana real de entreno |
-| 3. Salud | 1.5 | 2.5 | Librería no oficial de Renpho |
-| 4. Nutrición y suplementos | 2.5 | 4 | Cargar la base de alimentos dominicanos; semana real de comidas |
-| 5. Coach IA | 2 | 4 | Prompt, herramientas y evals |
-| 6. Dashboard y cardio | 1 | 2 | Informe PDF y carga combinada |
-| 7. App Android | 3 | 5 | Offline-first sin pérdida de datos, Health Connect |
-| 7b. Galaxy Watch | 2.5 | 4 | App nativa en Kotlin, Data Layer, pruebas en el Watch4 |
-| 8. Versión 1.0 | 1 | 2 | Hallazgos de la auditoría |
-| **Total** | **~19.5 semanas** | **~35.5 semanas** | |
+| 0. Lo que falta (`/impeccable init`) | 0.3 | 0.5 | Una ronda de revisión |
+| 0.5 Diseño UX (9 flujos × 4 piezas, modelo conceptual de BD) | 1 | 2 | Producción de mockups y prototipo |
+| 1. Núcleo | 1 | 1.5 | Modelo de datos, RLS, despliegue y backups (Fable) |
+| 2. Gym (PWA) | 1.5 | 2 | Desarrollo + la semana real de entreno |
+| 3. Salud | 0.5 | 1 | Librería no oficial de Renpho |
+| 4. Nutrición y suplementos | 1.5 | 2 | Base de alimentos dominicanos + semana real de comidas |
+| 5. Coach IA | 1 | 2 | Prompt, herramientas y evals |
+| 6. Dashboard y cardio | 0.5 | 1 | Informe PDF y carga combinada |
+| 7. App Android | 1.5 | 3 | Offline-first sin pérdida de datos, Health Connect (Fable) |
+| 7b. Galaxy Watch | 1.5 | 2.5 | App nativa, Data Layer, pruebas en el Watch4 (Fable) |
+| 8. Versión 1.0 | 0.5 | 1 | Hallazgos de la auditoría |
+| **Total** | **~11 semanas** | **~18.5 semanas** | |
 
-- **v1.0 completa:** entre principios de marzo (optimista) y finales de junio de 2027 (probable).
-- **Modo gym usable en el teléfono (fin de la Fase 2):** entre finales de noviembre de 2026 y mediados de enero de 2027.
+| Hito | Optimista | Probable |
+| --- | --- | --- |
+| Modo gym usable en el teléfono (empieza la semana real) | ~7-nov-2026 | ~22-nov-2026 |
+| Fase 2 cerrada | ~14-nov-2026 | ~29-nov-2026 |
+| Versión 1.0 | ~2-ene-2027 | ~25-feb-2027 |
 
-**Riesgo principal (plan, sección 17):** que el desarrollo retrase tu vuelta al gym. Con estas fechas, casi toda la ventana de las metas de enero pasa antes de que exista el modo gym. Mitigación: empezar ya con la rutina Full Body A/B/C en papel ([Anexo A.6](plan-maestro.md#a6-plan-de-entrenamiento-full-body-abc)), apuntar pesos y reps, y cargarlos en el sistema cuando llegue la Fase 2. El gym no espera al software.
+**Riesgo principal (plan, sección 17):** que el desarrollo retrase tu vuelta al gym. Aun en el escenario optimista, las primeras 3 semanas de la ventana de las metas de enero pasan sin modo gym. Mitigación: empezar ya con la rutina Full Body A/B/C en papel ([Anexo A.6](plan-maestro.md#a6-plan-de-entrenamiento-full-body-abc)), apuntar pesos y reps, y cargarlos en el sistema cuando llegue la Fase 2. Dedicar el día completo al proyecto no debe comerse la hora del gym de las 8:00 AM.
 
 ---
 
@@ -301,17 +309,21 @@ Resumen del [plan, sección 17](plan-maestro.md#17-riesgos).
 
 ---
 
-## 9. Preguntas para Francis
+## 9. Decisiones tomadas el 18-oct-2026
 
-1. **Plan Max:** ¿tienes Max 5x ($100 de créditos de API) o Max 20x ($200)? Define el tope del coach.
-2. **Metas de enero:** ¿validas la tabla de la sección 5? En especial, cambiar el IMC meta de "< 25" a 25.5-26.0 y la TMB de "1,780+" a "≥ 1,725".
-3. **Calorías:** ¿apruebas 2,350 kcal con P 187 / C 255 / G 65? ¿Quieres un objetivo distinto para días de gym y de descanso (NUT-03 lo permite) o uno solo más el ajuste por MTB?
-4. **Medidas con cinta:** no hay medición de octubre (las del Anexo A.3 son de abril). ¿Puedes medirte antes de empezar para tener punto de partida?
-5. **Tope del coach:** ¿te parece $80 al mes (o $160 con Max 20x) con tope diario de $8? Al llegar al 80 %, ¿prefieres que el chat pase a Sonnet 5.5 o que siga en Opus 5.5 hasta agotarse?
-6. **Embeddings de la memoria:** Anthropic no ofrece embeddings. Opciones: un modelo local en el servidor (gratis, tus datos no salen) o un servicio externo (de pago, otro proveedor ve tus conversaciones). Es privacidad y costo; la parte técnica irá en un ADR.
-7. **Fotos de progreso:** SAL-03 (fotos con comparador) está en W, pero la Fase 3 y el flujo "Registrar medición" mencionan fotos. ¿Entran fotos simples sin comparador o quedan todas fuera?
-8. **Mapa corporal de músculos:** la sección 14 lo describe como parte del diseño, pero el backlog lo deja fuera de la v1.0. ¿Lo confirmas fuera (el volumen por músculo de GYM-06 se ve en tablas y gráficos)?
-9. **Requisitos S** (WAT-03, WAT-04, SUP-03, SIS-02): ¿son compromiso de la v1.0 o se pueden posponer si las fechas se alargan?
-10. **Flujos de la Fase 0.5:** ¿confirmas que se diseñan los 9 flujos (los 8 de la web más el del reloj)?
-11. **Disponibilidad:** ¿cuántas horas por semana puedes dedicar a revisar y probar? Con eso ajusto la estimación de la sección 7.
-12. **Nombre en el plan:** el plan maestro se titula "Fitness Coach System" y el nombre provisional es "Coach Fitness AI". ¿Unifico el título del plan?
+Respuestas de Francis a las preguntas del borrador.
+
+| # | Tema | Decisión |
+| --- | --- | --- |
+| 1 | Plan Max | Max 5x: $100 de créditos de API al mes |
+| 2 | Metas de enero | Aprobadas tal como están en la sección 5, incluidos el IMC 25.5-26.0 y la TMB ≥ 1,725 |
+| 3 | Calorías | 2,350 kcal como objetivo único (P 187 / C 255 / G 65), revisión a las 6 semanas |
+| 4 | Medidas con cinta | Pendientes de Francis: cintura, cadera, pecho, brazos y muslos |
+| 5 | Tope del coach | $80 al mes y $8 al día; al 80 % el chat pasa a Sonnet 5.5 y avisa |
+| 6 | Embeddings de la memoria | Modelo local en el servidor Oracle; el modelo concreto se elige en la Fase 1 (D-21, [ADR 0021](adr/0021-embeddings-locales-en-el-servidor.md)) |
+| 7 | Fotos de progreso | Fuera de la v1.0 (SAL-03 sigue en W); corregida la Fase 3 del plan |
+| 8 | Mapa corporal de músculos | Fuera de la v1.0; aclarada la sección 14 del plan. El volumen por músculo (GYM-06) se ve en tablas y gráficos |
+| 9 | Requisitos S | WAT-03, WAT-04, SUP-03 y SIS-02 se pueden posponer si la fase se alarga |
+| 10 | Flujos de la Fase 0.5 | Se diseñan los 9, incluido el del reloj |
+| 11 | Disponibilidad | Día completo; estimación recalculada en la sección 7 |
+| 12 | Nombre del plan | El plan maestro pasa a titularse "Coach Fitness AI" |
