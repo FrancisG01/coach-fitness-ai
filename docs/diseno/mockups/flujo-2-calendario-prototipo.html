@@ -1,0 +1,1009 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototipo calendario Gym</title>
+<meta name="description" content="Prototipo navegable del flujo 2: calendario de Gym con programar, mover, copiar, copiar la semana anterior, paseo MTB y cita de análisis.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
+<style>
+/*
+  Fase 0.5 · flujo 2 "Programar entrenamientos" (calendario, GYM-03, D-25).
+  Todos los valores salen de docs/diseno/tokens.json; mismo bloque de tokens
+  que b2-paginas-6-y-13.html (aprobado el 18-oct-2026).
+*/
+:root {
+  /* neutros · claro (tiza) */
+  --fondo: #F3F4F1; --superficie: #FFFFFF; --elevado: #E9EBE7; --borde: #DADDD8;
+  --texto: #1E2228; --texto-2: #5B626B; --error: #C9333A; --dato-gris: #B5BBC2;
+  /* uso del acento · claro */
+  --accion: var(--a4); --accion-alta: var(--a5); --texto-accion: #FFFFFF; --texto-acento: var(--a4);
+  --suave: color-mix(in srgb, var(--a3) 13%, var(--superficie));
+  --capa-hover: color-mix(in srgb, var(--texto) 6%, transparent);
+  --capa-pressed: color-mix(in srgb, var(--texto) 10%, transparent);
+  /* superposiciones · claro: velo texto al 40 %, hoja en superficie, aviso invertido con acción A2 */
+  --velo: color-mix(in srgb, #1E2228 40%, transparent);
+  --hoja: var(--superficie);
+  --aviso-accion: var(--a2);
+  /* serie única de datos (Three Series Rule: A5 en claro, A1 en oscuro) */
+  --dato-1: var(--a5);
+  /* acentos A1–A5 (por defecto Caribe) */
+  --a1: #CFE6F5; --a2: #7CC0EA; --a3: #3B95D1; --a4: #1F6FA8; --a5: #154E78;
+  /* tipografía */
+  --familia: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  /* espaciado, radios, trazos */
+  --e1: 4px; --e2: 8px; --e3: 12px; --e4: 16px; --e5: 24px; --e6: 32px; --e7: 48px;
+  --r-casilla: 6px; --r-control: 10px; --r-tarjeta: 16px; --r-pildora: 999px;
+  --t-borde: 1px; --t-sel: 2px;
+  --tactil: 48px; --tactil-gym: 56px; --barra: 64px;
+  --rapido: 120ms; --normal: 200ms; --lento: 320ms;
+  --estandar: cubic-bezier(0.2, 0, 0, 1); --entrar: cubic-bezier(0.05, 0.7, 0.1, 1); --salir: cubic-bezier(0.3, 0, 0.8, 0.15);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+    --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+    --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2);
+    --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+    --velo: color-mix(in srgb, #1B1E23 72%, transparent);
+    --hoja: var(--elevado);
+    --aviso-accion: var(--a4);
+    --dato-1: var(--a1);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+  --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+  --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2);
+  --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+  --velo: color-mix(in srgb, #1B1E23 72%, transparent);
+  --hoja: var(--elevado);
+  --aviso-accion: var(--a4);
+  --dato-1: var(--a1);
+  color-scheme: dark;
+}
+:root[data-accent="mar"]       { --a1: #C8EEEA; --a2: #6FD6CC; --a3: #22A99C; --a4: #157A70; --a5: #0F5850; }
+:root[data-accent="palma"]     { --a1: #CDEEDB; --a2: #6FD19B; --a3: #2FA866; --a4: #1E7D4A; --a5: #155A36; }
+:root[data-accent="mango"]     { --a1: #FCE7C2; --a2: #F7C062; --a3: #E89A1E; --a4: #9A5C06; --a5: #6E4307; }
+:root[data-accent="flamboyan"] { --a1: #FBD6CB; --a2: #F79A7E; --a3: #E8603C; --a4: #B6411F; --a5: #7E2C14; }
+:root[data-accent="uva"]       { --a1: #E3DBFA; --a2: #B4A2F2; --a3: #8466DB; --a4: #6446B8; --a5: #45307F; }
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--fondo); color: var(--texto);
+  font-family: var(--familia); font-size: 16px; line-height: 24px;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+:focus-visible { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.i { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.i.s16 { width: 16px; height: 16px; stroke-width: 2; }
+.i.s20 { width: 20px; height: 20px; }
+.i.s32 { width: 32px; height: 32px; }
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* tipografía (escala de tokens.json) */
+.t-pantalla { font-size: 25px; line-height: 30px; font-weight: 700; font-stretch: 85%; margin: 0; text-wrap: balance; }
+.t-seccion { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.t-detalle { font-size: 13px; line-height: 18px; font-weight: 500; }
+.t-boton { font-size: 15px; line-height: 20px; font-weight: 650; }
+.cifra { font-weight: 800; font-stretch: 62%; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.c-metrica { font-size: 32px; line-height: 32px; }
+.c-heroe { font-size: 56px; line-height: 52px; }
+.sec { color: var(--texto-2); }
+.acento { color: var(--texto-acento); }
+p { margin: 0; }
+
+/* ---------- teléfono ---------- */
+.telefono { width: 376px; padding: var(--e2); border-radius: var(--r-tarjeta); background: var(--borde); flex: none; }
+.pantalla { height: 780px; border-radius: var(--r-control); overflow: hidden; background: var(--fondo); display: flex; flex-direction: column; position: relative; }
+.estado { height: 28px; padding-top: var(--e1); flex: none; display: flex; align-items: center; justify-content: space-between; padding-inline: var(--e5); font-size: 13px; font-weight: 600; }
+.cuerpo { flex: 1; min-height: 0; overflow: hidden; padding: 0 var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e3); }
+.cuerpo > * { flex-shrink: 0; }
+.barra { height: var(--barra); flex: none; background: var(--superficie); border-top: var(--t-borde) solid var(--borde); display: grid; grid-template-columns: repeat(5, 1fr); }
+.pestana { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--texto-2); font-size: 13px; line-height: 16px; font-weight: 500; text-decoration: none; }
+.pestana .ovalo { width: 56px; height: 28px; border-radius: var(--r-pildora); display: grid; place-items: center; transition: background var(--rapido) var(--estandar); }
+.pestana:active .ovalo { background: var(--capa-pressed); }
+.pestana[aria-current="page"] { color: var(--texto-acento); font-weight: 650; }
+
+/* piezas comunes */
+.tarjeta { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e2); }
+.tarjeta.destacada { background: var(--suave); }
+.btn { min-height: var(--tactil); border-radius: var(--r-control); padding-inline: var(--e4); display: inline-flex; align-items: center; justify-content: center; gap: var(--e2); font-size: 15px; line-height: 20px; font-weight: 650; text-align: center; transition: background var(--rapido) var(--estandar), transform var(--rapido) var(--estandar), color var(--rapido) var(--estandar); }
+.btn.primario { background: var(--accion); color: var(--texto-accion); }
+.btn.primario:active { background: var(--accion-alta); transform: scale(0.97); }
+.btn.secundario { border: var(--t-borde) solid var(--texto-2); color: var(--texto); }
+.btn.secundario:active { background: var(--capa-pressed); }
+.btn.texto { color: var(--texto-acento); padding-inline: var(--e3); }
+.btn.texto:active { background: var(--capa-pressed); color: var(--accion-alta); }
+@media (hover: hover) and (pointer: fine) {
+  .btn.primario:hover { background: var(--accion-alta); }
+  .btn.secundario:hover { background: var(--capa-hover); }
+  .btn.texto:hover { background: var(--capa-hover); color: var(--accion-alta); }
+}
+.ancho { width: 100%; }
+.par { display: grid; grid-template-columns: 1fr 1fr; gap: var(--e3); }
+.lista { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; overflow: hidden; }
+.lista > * + * { border-top: var(--t-borde) solid var(--borde); }
+.fila { min-height: var(--tactil); padding: var(--e2) var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); width: 100%; }
+.fila .txt { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+button.fila:active { background: var(--capa-pressed); }
+.cabeza { display: flex; align-items: center; justify-content: space-between; gap: var(--e2); }
+.atras { width: 48px; height: 48px; display: grid; place-items: center; margin-left: -12px; border-radius: var(--r-pildora); }
+.atras:active, .icono-btn:active { background: var(--capa-pressed); }
+.icono-btn { width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--r-pildora); flex: none; }
+.carga { font-size: 20px; line-height: 24px; }
+.segmento { display: flex; background: var(--elevado); border-radius: var(--r-control); padding: var(--e1); gap: var(--e1); }
+.segmento button { min-height: 40px; padding-inline: var(--e3); border-radius: var(--r-casilla); color: var(--texto-2); flex: 1; text-align: center; position: relative; }
+/* el área táctil del segmento llega a 48 px con el relleno del contenedor */
+.segmento button::after { content: ""; position: absolute; inset: calc(-1 * var(--e1)) 0; }
+.segmento button[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.pildora { display: inline-flex; align-items: center; gap: var(--e1); min-height: 24px; padding-inline: var(--e2); border-radius: var(--r-pildora); background: var(--elevado); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.nota { display: flex; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.sinc { display: inline-flex; align-items: center; gap: var(--e1); color: var(--texto-2); }
+.error-linea { display: flex; align-items: center; gap: var(--e2); color: var(--error); font-size: 13px; line-height: 18px; font-weight: 500; }
+
+/* pestañas internas de Gym (móvil) */
+.sub-tabs { display: flex; overflow-x: auto; margin-inline: calc(-1 * var(--e4)); padding-inline: var(--e2); border-bottom: var(--t-borde) solid var(--borde); scrollbar-width: none; flex: none; }
+.sub-tab { text-decoration: none; display: inline-flex; align-items: center; min-height: var(--tactil); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; line-height: 20px; font-weight: 500; white-space: nowrap; border-bottom: var(--t-sel) solid transparent; flex: none; }
+.sub-tab:active { background: var(--capa-pressed); }
+.sub-tab[aria-current="page"] { color: var(--texto-acento); font-weight: 650; border-bottom-color: var(--accion); }
+
+/* cabecera del calendario */
+.cal-nav { display: flex; align-items: center; gap: var(--e1); margin-left: -12px; }
+.cal-nav .t-pantalla { flex: 1; text-align: center; }
+.cal-vista { display: flex; align-items: center; gap: var(--e2); }
+.cal-vista .segmento { flex: 1; }
+
+/* rejilla del mes */
+.mes { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: var(--e1); text-align: center; }
+.mes .sem { font-size: 13px; line-height: 18px; font-weight: 500; color: var(--texto-2); padding-bottom: var(--e1); }
+.celda { min-height: var(--tactil); display: flex; flex-direction: column; align-items: center; gap: 0; border-radius: var(--r-control); text-align: center; transition: background var(--rapido) var(--estandar); }
+.celda:active { background: var(--capa-pressed); }
+.celda .n { width: 32px; height: 32px; border-radius: var(--r-pildora); display: grid; place-items: center; font-size: 16px; line-height: 24px; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+/* hoy: como la navegación con aria-current, texto de acento y peso 650, sin contorno ni relleno */
+.celda.hoy .n { color: var(--texto-acento); font-weight: 650; }
+.celda[aria-pressed="true"] .n { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.marcas { height: var(--e4); display: flex; align-items: center; justify-content: center; gap: var(--e1); color: var(--texto-2); }
+.m { width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); flex: none; }
+.m.hecha { background: var(--accion); }
+.m.prog { border: var(--t-sel) solid var(--accion); }
+.leyenda { display: flex; flex-wrap: wrap; gap: var(--e1) var(--e3); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.leyenda span { display: inline-flex; align-items: center; gap: var(--e1); }
+@media (hover: hover) and (pointer: fine) { .celda:hover, button.fila:hover, .sub-tab:hover, .icono-btn:hover, .atras:hover { background: var(--capa-hover); } }
+
+/* semana (móvil) */
+.semana-lista > * { min-height: var(--tactil-gym); }
+.fila-dia { display: flex; align-items: center; gap: var(--e3); padding: var(--e1) var(--e4) var(--e1) var(--e3); width: 100%; text-align: left; }
+.fila-dia:active { background: var(--capa-pressed); }
+.fila-dia .dnum { width: 40px; display: flex; flex-direction: column; align-items: center; flex: none; }
+.fila-dia .dnum .n { width: 32px; height: 32px; border-radius: var(--r-pildora); display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.fila-dia.hoy .dnum .n, .fila-dia.hoy .dnum .t-detalle { color: var(--texto-acento); font-weight: 650; }
+.fila-dia[aria-pressed="true"] .dnum .n { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.fila-dia .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.fila-dia .txt .t-detalle { color: var(--texto-2); }
+.fila-dia .fin { display: flex; align-items: center; gap: var(--e2); color: var(--texto-2); }
+
+/* detalle de día */
+.dia-cab { display: flex; flex-direction: column; gap: var(--e1); }
+.dia-cab .volver { display: flex; align-items: center; gap: var(--e1); }
+.estado-dia { display: inline-flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.cifras { display: flex; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e1); }
+.cifras > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--e1); padding-inline: var(--e4); }
+.cifras .cifra { white-space: nowrap; }
+.cifras > div + div { border-left: var(--t-borde) solid var(--borde); }
+.cifras .cifra { font-size: 32px; line-height: 32px; }
+.cifras .unidad-c { font-size: 15px; font-weight: 650; font-stretch: 85%; color: var(--texto-2); }
+.record { flex-direction: row; align-items: center; gap: var(--e3); }
+.record .i { color: var(--texto-acento); }
+.record .txt { display: flex; flex-direction: column; }
+.vacio { display: flex; flex-direction: column; align-items: flex-start; gap: var(--e2); padding-block: var(--e5); color: var(--texto); }
+.vacio > .i { color: var(--texto-2); }
+.acciones { display: flex; flex-direction: column; gap: var(--e2); margin-top: auto; }
+.empuje { margin-top: auto; }
+
+/* elegir rutina */
+.radio { width: 24px; height: 24px; border-radius: var(--r-pildora); border: var(--t-sel) solid var(--texto-2); display: grid; place-items: center; flex: none; }
+.radio::after { content: ""; width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); background: transparent; }
+[aria-checked="true"] .radio { border-color: var(--accion); }
+[aria-checked="true"] .radio::after { background: var(--accion); }
+.opcion-rutina { min-height: 72px; padding: var(--e3) var(--e4); display: flex; align-items: center; gap: var(--e3); width: 100%; text-align: left; }
+.opcion-rutina:active { background: var(--capa-pressed); }
+.opcion-rutina .txt { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+/* asignar pesos */
+.peso-fila { min-height: 64px; padding: var(--e2) var(--e2) var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e2); }
+.peso-fila .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.peso-fila .txt .t-detalle { color: var(--texto-2); }
+.stepper { display: flex; align-items: center; gap: var(--e1); flex: none; }
+.stepper button { width: var(--tactil); height: var(--tactil); border-radius: var(--r-control); background: var(--elevado); display: grid; place-items: center; transition: background var(--rapido) var(--estandar); }
+.stepper button:active { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); }
+.stepper .valor { min-width: var(--barra); text-align: center; display: flex; flex-direction: column; align-items: center; line-height: 1; }
+.stepper .valor .cifra { font-size: 25px; line-height: 24px; }
+.stepper .valor .t-detalle { color: var(--texto-2); }
+.sube { color: var(--texto-acento); }
+
+/* hoja inferior y aviso */
+.velo { position: absolute; inset: 0; background: var(--velo); display: flex; flex-direction: column; justify-content: flex-end; z-index: 2; }
+.hoja { background: var(--hoja); border-top-left-radius: var(--r-tarjeta); border-top-right-radius: var(--r-tarjeta); padding: var(--e5) var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e4); }
+.hoja .mes .celda[aria-disabled="true"] { cursor: default; }
+.opcion-hoy { min-height: var(--tactil-gym); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); border-radius: var(--r-control); background: var(--elevado); border: var(--t-sel) solid transparent; width: 100%; text-align: left; }
+.opcion-hoy[aria-pressed="true"] { border-color: var(--accion); }
+.opcion-hoy .txt { flex: 1; display: flex; flex-direction: column; }
+.aviso { position: absolute; left: var(--e4); right: var(--e4); bottom: calc(var(--barra) + var(--e2)); background: var(--texto); color: var(--fondo); border-radius: var(--r-control); padding: var(--e1) var(--e1) var(--e1) var(--e4); min-height: var(--tactil-gym); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); z-index: 3; }
+.aviso .btn.texto { color: var(--aviso-accion); }
+.aviso .btn.texto:active { background: color-mix(in srgb, var(--fondo) 10%, transparent); }
+
+/* esqueleto */
+.esq { background: var(--elevado); border-radius: var(--r-casilla); }
+.esq.bloque { height: var(--e7); }
+@media (prefers-reduced-motion: no-preference) { .esq.pulso { animation: pulso 1600ms var(--estandar) infinite; } }
+@keyframes pulso { 50% { opacity: 0.5; } }
+
+/* título del calendario con número de semana */
+.cal-titulo { flex: 1; display: flex; flex-direction: column; align-items: center; }
+
+/* series y repeticiones */
+.sr-fila { padding: var(--e2); display: flex; flex-direction: column; gap: var(--e1); }
+.sr-nom { display: flex; justify-content: space-between; align-items: baseline; gap: var(--e2); padding-inline: var(--e2); }
+.sr-ctl { display: flex; align-items: center; justify-content: space-between; gap: var(--e1); }
+.sr-ctl .valor { min-width: var(--e7); }
+
+/* paseo MTB */
+.mtb-cifras { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--e3) 0; padding-top: var(--e2); border-top: var(--t-borde) solid var(--borde); }
+.mtb-cifras > div { display: flex; flex-direction: column; }
+.mtb-cifras .cifra { font-size: 25px; line-height: 30px; white-space: nowrap; }
+.zonas { display: flex; flex-direction: column; gap: var(--e2); }
+.zona { display: grid; grid-template-columns: calc(2 * var(--e7) + var(--e6)) 1fr var(--e7); align-items: center; gap: var(--e3); min-height: var(--e5); }
+.zona b { font-weight: 650; font-size: 15px; }
+.z-nom { display: flex; align-items: baseline; gap: var(--e2); }
+.z-val { line-height: 20px; }
+.z-val { text-align: right; }
+.z-pista { height: var(--e2); border-radius: var(--r-pildora); background: var(--elevado); overflow: hidden; }
+.z-pista i { display: block; height: 100%; width: calc(var(--v) * 1%); border-radius: var(--r-pildora); background: var(--dato-1); }
+
+
+/* ---------- prototipo ---------- */
+.proto { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: var(--e6); padding: var(--e6) var(--e4) var(--e7); }
+.guion { max-width: 400px; display: flex; flex-direction: column; gap: var(--e4); }
+.guion .titulo { font-size: 32px; line-height: 32px; font-weight: 800; font-stretch: 75%; margin: 0; }
+.guion h2 { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.guion ol { margin: 0; padding-left: 1.4em; display: grid; gap: var(--e2); color: var(--texto-2); }
+.guion ol b { color: var(--texto); font-weight: 650; }
+.guion .controles { display: flex; flex-wrap: wrap; gap: var(--e4); }
+.guion .control { display: flex; flex-direction: column; gap: var(--e1); }
+.guion .segmento button { flex: none; }
+#ctl-acento { flex-wrap: wrap; }
+#cuerpo { overflow-y: auto; scrollbar-width: thin; }
+.pestana { font: inherit; font-size: 13px; line-height: 16px; }
+.panel .fila { padding-inline: 0; text-align: left; min-height: 56px; }
+.panel .fila .marcas { width: var(--e4); }
+.panel .fila > .i { color: var(--texto-2); }
+.panel-pie { padding-top: var(--e1); }
+.panel-pie .t-detalle { flex: 1; }
+.aviso[hidden] { display: none; }
+.nota:empty { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .m.prog.nueva { animation: aparece var(--normal) var(--entrar); }
+  .hoja { animation: sube var(--lento) var(--entrar); }
+  .velo { animation: funde var(--normal) var(--entrar); }
+  .aviso.entra { animation: sube-poco var(--normal) var(--entrar); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .m.prog.nueva, .hoja, .velo, .aviso.entra { animation: funde var(--rapido) var(--estandar); }
+}
+@keyframes aparece { from { transform: scale(0.4); opacity: 0; } }
+@keyframes sube { from { transform: translateY(var(--e5)); opacity: 0; } }
+@keyframes sube-poco { from { transform: translateY(var(--e2)); opacity: 0; } }
+@keyframes funde { from { opacity: 0; } }
+@media (max-width: 440px) {
+  .proto { padding: 0; gap: var(--e6); }
+  .telefono { width: 100%; padding: 0; border-radius: 0; background: none; }
+  .pantalla { height: 100dvh; border-radius: 0; }
+  .guion { padding: 0 var(--e4) var(--e7); }
+}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- Tabler Icons 3.49.0, outline (MIT, © Paweł Kuna) -->
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/></symbol>
+  <symbol id="i-barbell" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+  <symbol id="i-kitchen" viewBox="0 0 24 24"><path d="M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12m0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c3.255 2.777 3.695 7.266 1.029 10.501c-2.666 3.235 -7.615 4.215 -11.574 2.293l-4.7 1"/></symbol>
+  <symbol id="i-cloud-check" viewBox="0 0 24 24"><path d="M11 18.004h-4.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.393 -1.762 1.794 -3.2 3.675 -3.773c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.388 0 2.585 .82 3.138 2.007"/><path d="M15 19l2 2l4 -4"/></symbol>
+  <symbol id="i-cloud-off" viewBox="0 0 24 24"><path d="M9.58 5.548c.24 -.11 .492 -.207 .752 -.286c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.913 0 3.464 1.56 3.464 3.486c0 .957 -.383 1.824 -1.003 2.454m-2.997 1.033h-11.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.13 -.582 .37 -1.128 .7 -1.62"/><path d="M3 3l18 18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M5 12l14 0"/><path d="M5 12l6 6"/><path d="M5 12l6 -6"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065"/><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 6l-6 6l6 6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></symbol>
+  <symbol id="i-bike" viewBox="0 0 24 24"><path d="M2 18a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M16 18a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M12 19v-4l-3 -3l5 -4l2 3h3"/><path d="M13.007 5a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></symbol>
+  <symbol id="i-test-pipe-2" viewBox="0 0 24 24"><path d="M15 3v15a3 3 0 0 1 -6 0v-15"/><path d="M9 12h6"/><path d="M8 3h8"/></symbol>
+  <symbol id="i-calendar-plus" viewBox="0 0 24 24"><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v5"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/><path d="M16 19h6"/><path d="M19 16v6"/></symbol>
+  <symbol id="i-calendar-repeat" viewBox="0 0 24 24"><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v3"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h12"/><path d="M20 14l2 2h-3"/><path d="M20 18l2 -2"/><path d="M19 16a3 3 0 1 0 2 5.236"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><path d="M7 9.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667l0 -8.666"/><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1"/></symbol>
+  <symbol id="i-arrow-forward-up" viewBox="0 0 24 24"><path d="M15 14l4 -4l-4 -4"/><path d="M19 10h-11a4 4 0 1 0 0 8h1"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21l8 0"/><path d="M12 17l0 4"/><path d="M7 4l10 0"/><path d="M17 4v8a5 5 0 0 1 -10 0v-8"/><path d="M3 9a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M17 9a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 7v5l3 3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5l0 14"/><path d="M5 12l14 0"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12l14 0"/></symbol>
+  <symbol id="i-alert-circle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/></symbol>
+  <symbol id="i-info-circle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 9h.01"/><path d="M11 12h1v4h1"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <!-- logo provisional: glifo de packages/brand (barbell) -->
+  <symbol id="logo" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+</svg>
+<div class="proto">
+  <div class="telefono"><div class="pantalla" id="pantalla">
+    <div class="estado tnum" aria-hidden="true"><span>7:12</span></div>
+    <main class="cuerpo" id="cuerpo"></main>
+    <nav class="barra" aria-label="Secciones"><button type="button" class="pestana" data-acc="tab" data-v="hoy"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</button><button type="button" class="pestana" data-acc="tab" data-v="gym"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</button><button type="button" class="pestana" data-acc="tab" data-v="comida"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</button><button type="button" class="pestana" data-acc="tab" data-v="salud"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</button><button type="button" class="pestana" data-acc="tab" data-v="coach"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</button></nav>
+    <div id="capa"></div>
+    <div class="aviso" id="aviso" role="status" hidden></div>
+  </div></div>
+  <aside class="guion" aria-label="Guion de prueba">
+    <p class="titulo">Prototipo · flujo 2</p>
+    <p class="sec">Hoy es domingo 18 de octubre de 2026. Todo vive en memoria: recarga la página para empezar de cero.</p>
+    <h2>Qué puedes probar</h2>
+    <ol>
+      <li><b>Programar en 3 pasos:</b> toca el viernes 23 y Programar. Paso 1, deja Día C. Paso 2, sube a 4 las series del hip thrust. Paso 3, sube el press inclinado y el hip thrust y toca Guardar sesión. El 23 pasa a contorno.</li>
+      <li><b>Editar sesión:</b> abre el lunes 19 (programada), Editar sesión, cambia repeticiones, Revisar pesos y guarda.</li>
+      <li><b>Mover:</b> toca el miércoles 14 (✕), Ver día, Mover a otro día, elige Hoy o un día libre y confirma.</li>
+      <li><b>Copiar la semana anterior:</b> cambia a Semana, avanza a la semana 4 (26 de octubre) y toca Copiar la semana anterior.</li>
+      <li><b>Copiar una sesión:</b> abre el lunes 19, Copiar y elige otro día.</li>
+      <li><b>Día hecho:</b> lunes 12 o viernes 16, de solo lectura, con su récord personal.</li>
+      <li><b>MTB:</b> sábado 17, paseo de 18.4 km con zonas de frecuencia cardiaca.</li>
+      <li><b>Análisis:</b> jueves 29, Ver cita y Abrir en Salud (Salud › análisis).</li>
+      <li>Cada cambio se deshace desde el aviso durante 8 s.</li>
+    </ol>
+    <p class="sec">Los datos son de un usuario de ejemplo cuya primera actividad fue el lunes 5 de octubre (semana 1).</p>
+    <div><button type="button" class="btn secundario" id="nuevo">Empezar como usuario nuevo</button></div>
+    <div class="controles">
+      <div class="control"><span class="t-detalle sec" id="lbl-modo">Modo</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-modo" id="ctl-modo">
+          <button type="button" data-modo="" aria-pressed="true">Sistema</button>
+          <button type="button" data-modo="light" aria-pressed="false">Claro</button>
+          <button type="button" data-modo="dark" aria-pressed="false">Oscuro</button></div></div>
+      <div class="control"><span class="t-detalle sec" id="lbl-acento">Acento</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-acento" id="ctl-acento">
+          <button type="button" data-a="caribe" aria-pressed="true">Caribe</button>
+          <button type="button" data-a="mar" aria-pressed="false">Mar</button>
+          <button type="button" data-a="palma" aria-pressed="false">Palma</button>
+          <button type="button" data-a="mango" aria-pressed="false">Mango</button>
+          <button type="button" data-a="flamboyan" aria-pressed="false">Flamboyán</button>
+          <button type="button" data-a="uva" aria-pressed="false">Uva</button></div></div>
+    </div>
+  </aside>
+</div>
+<script>
+// Prototipo navegable del flujo 2 (calendario de Gym). Estado solo en memoria.
+"use strict";
+
+// ------------------------------------------------------------ fechas
+const HOY = "2026-10-18";
+const DIAS = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
+const DIAS_C = ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"];
+const INI = ["L", "M", "M", "J", "V", "S", "D"];
+const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+const MESES_C = ["ene.", "feb.", "mar.", "abr.", "may.", "jun.", "jul.", "ago.", "sept.", "oct.", "nov.", "dic."];
+
+const aFecha = (k) => { const [y, m, d] = k.split("-").map(Number); return new Date(y, m - 1, d); };
+const aClave = (f) => `${f.getFullYear()}-${String(f.getMonth() + 1).padStart(2, "0")}-${String(f.getDate()).padStart(2, "0")}`;
+const sumar = (k, n) => { const f = aFecha(k); f.setDate(f.getDate() + n); return aClave(f); };
+const dow = (k) => (aFecha(k).getDay() + 6) % 7; // 0 = lunes
+const lunesDe = (k) => sumar(k, -dow(k));
+const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+const largo = (k) => { const f = aFecha(k); return `${DIAS[dow(k)]} ${f.getDate()} de ${MESES[f.getMonth()]}`; };
+const corto = (k) => `${DIAS[dow(k)]} ${aFecha(k).getDate()}`;
+const conHoy = (k) => (k === HOY ? "hoy" : `el ${corto(k)}`);
+const miles = (n) => n.toLocaleString("en-US");
+
+// ------------------------------------------------------------ datos de ejemplo: rutinas A/B/C, cargas en lb
+const RUTINAS = {
+  A: { nombre: "Día A", foco: "Push + Legs", extra: "Core: plancha y crunch", ej: [
+    { n: "Sentadilla con barra", s: 3, r: 10 }, { n: "Press de banca plano", s: 3, r: 8 },
+    { n: "Press militar mancuernas", s: 3, r: 10 }, { n: "Extensión tríceps polea", s: 3, r: 12 },
+    { n: "Elevación lateral", s: 3, r: 12 }] },
+  B: { nombre: "Día B", foco: "Pull + Legs", extra: "Core: plancha lateral y elevación de piernas", ej: [
+    { n: "Peso muerto convencional", s: 3, r: 8 }, { n: "Remo con barra", s: 3, r: 10 },
+    { n: "Jalón al pecho", s: 3, r: 10 }, { n: "Curl bíceps mancuernas", s: 3, r: 12 },
+    { n: "Curl femoral tumbado", s: 3, r: 12 }, { n: "Hiperextensiones", s: 3, r: 12 }] },
+  C: { nombre: "Día C", foco: "Full Body + Cardio", extra: "Caminata inclinada 15 min", ej: [
+    { n: "Sentadilla búlgara", s: 3, r: 10, lado: true }, { n: "Press inclinado mancuernas", s: 3, r: 10 },
+    { n: "Face pull", s: 3, r: 15 }, { n: "Hip thrust", s: 3, r: 12 }, { n: "Pantorrillas", s: 3, r: 15 }] },
+};
+const SEMANA_TIPO = { 0: "A", 2: "B", 4: "C" };
+
+let sesiones = {
+  "2026-10-05": { r: "A", estado: "hecha", pesos: [75, 75, 15, 30, 10], hora: "8:02 a 9:05 a. m.", dur: 63 },
+  "2026-10-07": { r: "B", estado: "hecha", pesos: [115, 65, 70, 15, 45, 0], hora: "8:03 a 9:17 a. m.", dur: 74 },
+  "2026-10-09": { r: "C", estado: "no", pesos: [15, 25, 25, 85, 80] },
+  "2026-10-12": { r: "A", estado: "hecha", pesos: [85, 85, 20, 30, 10], reps: { 1: [10, 10, 9] }, hora: "8:04 a 9:12 a. m.", dur: 68, record: "Press de banca · 85 lb × 10" },
+  "2026-10-14": { r: "B", estado: "no", pesos: [125, 70, 75, 15, 50, 0] },
+  "2026-10-16": { r: "C", estado: "hecha", pesos: [20, 30, 30, 95, 90], hora: "8:05 a 9:17 a. m.", dur: 72, record: "Hip thrust · 95 lb × 12" },
+  "2026-10-19": { r: "A", estado: "prog", pesos: [90, 90, 20, 35, 10] },
+  "2026-10-21": { r: "B", estado: "prog", pesos: [125, 70, 75, 20, 50, 0] },
+};
+// Usuario de ejemplo: su primera actividad fue el lunes 5 de octubre (semana 1).
+let PASEOS = {
+  "2026-10-08": { km: 12.7, tiempo: "38 min", vel: 20.1, desnivel: 150, kcal: 410, fc: 151, zonas: [0, 12, 40, 44, 4] },
+  "2026-10-10": { km: 24.1, tiempo: "1 h 12 min", vel: 20.1, desnivel: 310, kcal: 830, fc: 154, zonas: [0, 18, 42, 36, 4] },
+  "2026-10-17": { km: 18.4, tiempo: "52 min", vel: 21.3, desnivel: 240, kcal: 640, fc: 158, zonas: [0, 26, 45, 27, 2] },
+};
+// Zonas de FC de Strava, de Z5 a Z1.
+const ZONAS = [["Z5", ">185 ppm"], ["Z4", "167–184 ppm"], ["Z3", "149–166 ppm"], ["Z2", "113–148 ppm"], ["Z1", "0–112 ppm"]];
+let CITAS = { "2026-10-29": { hora: "7:30 a. m.", prep: "En ayunas" } };
+
+// ------------------------------------------------------------ estado de la interfaz
+const ui = {
+  tab: "gym", vista: "mes", mes: "2026-10-01", semana: lunesDe(HOY), sel: HOY,
+  pantalla: "cal", dia: null, borrador: null, hoja: null, aviso: null, nueva: null, foco: null,
+};
+
+const planBase = (r) => RUTINAS[r].ej.map((e) => ({ s: e.s, r: e.r }));
+const planDe = (k) => sesiones[k].plan || planBase(sesiones[k].r);
+const repsDe = (k, i) => {
+  const s = sesiones[k], p = planDe(k)[i];
+  return (s.reps && s.reps[i]) || Array(p.s).fill(p.r);
+};
+const primera = () => { const ks = [...Object.keys(sesiones), ...Object.keys(PASEOS)].sort(); return ks[0] || null; };
+const semanaN = (k) => { const p = primera(); if (!p) return null; return Math.round((aFecha(lunesDe(k)) - aFecha(lunesDe(p))) / 6048e5) + 1; };
+const conSemana = (k) => { const n = semanaN(k); return n && n > 0 ? ` · semana ${n}` : ""; };
+const volumen = (k) => sesiones[k].pesos.reduce((t, p, i) => t + p * repsDe(k, i).reduce((a, b) => a + b, 0) * (RUTINAS[sesiones[k].r].ej[i].lado ? 2 : 1), 0);
+const series = (k) => planDe(k).reduce((t, p) => t + p.s, 0);
+const carga = (k, i) => {
+  const p = sesiones[k].pesos[i], reps = repsDe(k, i);
+  const iguales = reps.every((x) => x === reps[0]);
+  const rr = iguales ? `${reps.length} × ${reps[0]}` : reps.join(", ");
+  return `${rr} · ${p ? `${p} lb` : "sin peso"}`;
+};
+const marcasDe = (k) => {
+  const m = [];
+  if (sesiones[k]) m.push(sesiones[k].estado);
+  if (PASEOS[k]) m.push("mtb");
+  if (CITAS[k]) m.push("lab");
+  return m;
+};
+const libre = (k) => !sesiones[k] || (sesiones[k].estado === "no" && sesiones[k].movidaA);
+
+// ------------------------------------------------------------ piezas
+const ico = (n, t = "") => `<svg class="i ${t}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const marca = (k, nueva) => ({
+  hecha: '<span class="m hecha"></span>',
+  prog: `<span class="m prog${nueva ? " nueva" : ""}"></span>`,
+  no: ico("x", "s16"), mtb: ico("bike", "s16"), lab: ico("test-pipe-2", "s16"),
+}[k] || "");
+const DESC = { hecha: "sesión hecha", prog: "sesión programada", no: "sesión no hecha", mtb: "paseo MTB", lab: "cita de análisis de sangre" };
+const etiqueta = (k) => {
+  const p = [largo(k)];
+  if (k === HOY) p.push("hoy");
+  for (const m of marcasDe(k)) {
+    let t = DESC[m];
+    if (sesiones[k] && ["hecha", "prog", "no"].includes(m)) t += `, ${RUTINAS[sesiones[k].r].nombre}`;
+    if (m === "mtb") t += `, ${PASEOS[k].km} km`;
+    p.push(t);
+  }
+  return p.join(", ");
+};
+const leyenda = () => `<div class="leyenda"><span>${marca("hecha")}Hecha</span><span>${marca("prog")}Programada</span><span>${marca("no")}No hecha</span><span>${marca("mtb")}MTB</span><span>${marca("lab")}Análisis</span></div>`;
+
+function cabCal() {
+  const esMes = ui.vista === "mes";
+  let titulo;
+  if (esMes) { const f = aFecha(ui.mes); titulo = `${cap(MESES[f.getMonth()])} ${f.getFullYear()}`; }
+  else {
+    const a = aFecha(ui.semana), b = aFecha(sumar(ui.semana, 6));
+    titulo = a.getMonth() === b.getMonth() ? `${a.getDate()}–${b.getDate()} de ${MESES[a.getMonth()]}` : `${a.getDate()} ${MESES_C[a.getMonth()]}–${b.getDate()} ${MESES_C[b.getMonth()]}`;
+  }
+  const ant = esMes ? "Mes anterior" : "Semana anterior", sig = esMes ? "Mes siguiente" : "Semana siguiente";
+  const subs = ["Sesión", "Calendario", "Rutinas", "Historial", "Cardio y MTB"].map((t) =>
+    `<button type="button" class="sub-tab" data-acc="sub" data-v="${t}"${t === "Calendario" ? ' aria-current="page"' : ""}>${t}</button>`).join("");
+  return `<nav class="sub-tabs" aria-label="Gym">${subs}</nav>
+    <div class="cal-nav"><button type="button" class="icono-btn" data-acc="ant" aria-label="${ant}">${ico("chevron-left")}</button>
+    <div class="cal-titulo"><h1 class="t-pantalla" tabindex="-1" aria-live="polite">${titulo}</h1>${!esMes && semanaN(ui.semana) > 0 ? `<span class="t-detalle sec">Semana ${semanaN(ui.semana)}</span>` : ""}</div>
+    <button type="button" class="icono-btn" data-acc="sig" aria-label="${sig}">${ico("chevron-right")}</button></div>
+    <div class="cal-vista"><div class="segmento" role="group" aria-label="Vista">
+      <button type="button" data-acc="vista" data-v="mes" aria-pressed="${esMes}">Mes</button>
+      <button type="button" data-acc="vista" data-v="semana" aria-pressed="${!esMes}">Semana</button></div>
+      <button type="button" class="btn texto" data-acc="hoy">Hoy</button></div>`;
+}
+
+function rejillaMes() {
+  const f = aFecha(ui.mes), y = f.getFullYear(), m = f.getMonth();
+  const dias = new Date(y, m + 1, 0).getDate();
+  const inicio = dow(ui.mes);
+  let h = `<div class="mes tnum" role="group" aria-label="Días de ${MESES[m]}">` + INI.map((x) => `<span class="sem" aria-hidden="true">${x}</span>`).join("");
+  h += "<span></span>".repeat(inicio);
+  for (let d = 1; d <= dias; d++) {
+    const k = aClave(new Date(y, m, d));
+    const cls = "celda" + (k === HOY ? " hoy" : "");
+    h += `<button type="button" class="${cls}" data-acc="dia" data-k="${k}" aria-pressed="${k === ui.sel}"${k === HOY ? ' aria-current="date"' : ""} aria-label="${etiqueta(k)}">
+      <span class="n">${d}</span><span class="marcas">${marcasDe(k).map((x) => marca(x, ui.nueva === k)).join("")}</span></button>`;
+  }
+  return h + "</div>";
+}
+
+function panelDia(k) {
+  const f = aFecha(k);
+  const cab = `${cap(DIAS[dow(k)])} ${f.getDate()}${k === HOY ? " · hoy" : ""}`;
+  const filas = [];
+  const s = sesiones[k];
+  if (s) {
+    const R = RUTINAS[s.r];
+    const txt = { hecha: `Hecha · ${s.dur} min · ${miles(volumen(k))} lb`, prog: "Programada · 8:00 a. m.", no: s.movidaA ? `No hecha · movida al ${corto(s.movidaA)}` : "No hecha" }[s.estado];
+    const acc = { hecha: "Ver resumen", prog: "Ver sesión", no: "Ver día" }[s.estado];
+    filas.push({ t: `${R.nombre} · ${R.foco}`, d: txt, m: s.estado, acc, a: "abrir-dia" });
+  }
+  if (PASEOS[k]) filas.push({ t: "Paseo MTB", d: `${PASEOS[k].km} km · ${PASEOS[k].tiempo}`, m: "mtb", acc: "Ver paseo", a: "abrir-mtb" });
+  if (CITAS[k]) filas.push({ t: "Análisis de sangre", d: `${CITAS[k].hora} · solo lectura`, m: "lab", acc: "Ver cita", a: "abrir-cita" });
+  const futuro = k >= HOY;
+  let cuerpo = filas.map((x) => `<button type="button" class="fila panel-fila" data-acc="${x.a}" data-k="${k}">
+      <span class="marcas">${marca(x.m)}</span><span class="txt"><span>${x.t}</span><span class="t-detalle sec">${x.d}</span></span>
+      <span class="oculto">${x.acc}</span>${ico("chevron-right", "s20")}</button>`).join("");
+  let pie = "";
+  if (libre(k) && futuro) {
+    const sug = SEMANA_TIPO[dow(k)];
+    const titulo = filas.length ? "" : `<span class="t-seccion">${k === HOY ? "Descanso" : "Sin sesión"}</span>`;
+    pie = `${titulo}<div class="cabeza panel-pie"><span class="t-detalle sec">${sug ? `Tu semana tipo pone ${RUTINAS[sug].nombre} los ${DIAS[dow(k)]}.` : "Día libre en tu semana tipo."}</span>
+      <button type="button" class="btn ${sug ? "primario" : "secundario"}" data-acc="programar" data-k="${k}">${ico("plus", "s20")}Programar</button></div>`;
+  }
+  if (!filas.length && !pie) cuerpo = `<span class="t-detalle sec">${k < HOY ? "Sin sesión ni paseo este día." : "Sin sesión."}</span>`;
+  return `<section class="tarjeta panel" aria-label="${cap(largo(k))}"><span class="t-detalle sec">${cab}</span>${cuerpo}${pie}</section>`;
+}
+
+function filaSemana(k) {
+  const s = sesiones[k];
+  let t = `<span class="sec">Sin sesión</span>`, d = "";
+  if (s) {
+    const R = RUTINAS[s.r];
+    t = `<span>${R.nombre} · ${R.foco}</span>`;
+    d = { hecha: `Hecha · ${s.dur} min`, prog: "Programada · 8:00 a. m.", no: s.movidaA ? `No hecha · movida al ${corto(s.movidaA)}` : "No hecha" }[s.estado];
+  } else if (PASEOS[k]) { t = "<span>Paseo MTB</span>"; d = `${PASEOS[k].km} km · ${PASEOS[k].tiempo}`; }
+  else if (CITAS[k]) { t = "<span>Análisis de sangre</span>"; d = `${CITAS[k].hora} · solo lectura`; }
+  else if (k >= HOY && SEMANA_TIPO[dow(k)]) d = `Tu semana tipo: ${RUTINAS[SEMANA_TIPO[dow(k)]].nombre}`;
+  if (s && PASEOS[k]) d += ` · MTB ${PASEOS[k].km} km`;
+  const f = aFecha(k);
+  return `<button type="button" class="fila-dia${k === HOY ? " hoy" : ""}" data-acc="abrir-dia" data-k="${k}" aria-pressed="${k === ui.sel}"${k === HOY ? ' aria-current="date"' : ""} aria-label="${etiqueta(k)}">
+    <span class="dnum"><span class="t-detalle sec">${DIAS_C[dow(k)]}</span><span class="n">${f.getDate()}</span></span>
+    <span class="txt">${t}${d ? `<span class="t-detalle">${d}</span>` : ""}</span>
+    <span class="fin">${marcasDe(k).map((x) => marca(x, ui.nueva === k)).join("")}${ico("chevron-right", "s20")}</span></button>`;
+}
+
+function vistaCal() {
+  let h = cabCal();
+  if (!primera()) {
+    h += ui.vista === "mes" ? rejillaMes() : "";
+    return h + `<div class="vacio">${ico("calendar-plus", "s32")}<h2 class="t-seccion">Tu semana 1 empieza con tu primera actividad</h2>
+      <p class="sec">Programa una sesión o registra un paseo. Desde esa semana contamos tu progreso.</p>
+      <button type="button" class="btn primario" data-acc="programar" data-k="${ui.sel < HOY ? HOY : ui.sel}">${ico("plus", "s20")}Programar sesión</button></div>`;
+  }
+  if (ui.vista === "mes") {
+    h += rejillaMes() + leyenda();
+    const f = aFecha(ui.sel), mf = aFecha(ui.mes);
+    if (f.getMonth() === mf.getMonth() && f.getFullYear() === mf.getFullYear()) h += panelDia(ui.sel);
+  } else {
+    const dias = [...Array(7)].map((_, i) => sumar(ui.semana, i));
+    h += `<div class="lista semana-lista">${dias.map(filaSemana).join("")}</div>`;
+    const fin = dias[6];
+    if (fin >= HOY) {
+      const vacia = dias.every((k) => !sesiones[k]);
+      h += `<button type="button" class="btn ${vacia ? "primario" : "secundario"} ancho" data-acc="copiar-semana">${ico("copy", "s20")}Copiar la semana anterior</button>`;
+      if (vacia) h += `<p class="t-detalle sec">Copia las sesiones de la semana del ${aFecha(sumar(ui.semana, -7)).getDate()} con sus pesos. Solo llena días libres.</p>`;
+    }
+  }
+  return h;
+}
+
+function cabDia(origen, titulo, estado, volver = "volver") {
+  return `<div class="dia-cab"><div class="volver"><button type="button" class="atras" data-acc="${volver}" aria-label="Volver">${ico("arrow-left")}</button>
+    <span class="t-detalle sec">${origen}</span></div><h1 class="t-pantalla" tabindex="-1">${titulo}</h1>${estado ? `<span class="estado-dia">${estado}</span>` : ""}</div>`;
+}
+
+function vistaDia() {
+  const k = ui.dia, s = sesiones[k];
+  if (!s) {
+    const sug = SEMANA_TIPO[dow(k)];
+    let h = cabDia("Calendario", cap(largo(k)), k < HOY ? "Sin sesión" : "Sin sesión");
+    if (k < HOY) return h + `<div class="vacio">${ico("calendar-plus", "s32")}<h2 class="t-seccion">No entrenaste este día</h2><p class="sec">Los días pasados sin sesión no se pueden programar. Elige hoy o un día futuro.</p></div>`;
+    h += `<div class="vacio">${ico("calendar-plus", "s32")}<h2 class="t-seccion">Sin sesión ${k === HOY ? "hoy" : `este ${DIAS[dow(k)]}`}</h2>
+      <p class="sec">Programa una rutina con el peso de cada ejercicio.${sug ? ` Tu semana tipo pone ${RUTINAS[sug].nombre} los ${DIAS[dow(k)]}.` : ""}</p></div>`;
+    return h + `<div class="acciones"><button type="button" class="btn primario ancho" data-acc="programar" data-k="${k}">${ico("plus", "s20")}Programar sesión</button></div>`;
+  }
+  const R = RUTINAS[s.r];
+  const filas = R.ej.map((e, i) => `<div class="fila"><span>${e.n}</span><span class="cifra carga${s.estado === "no" ? " sec" : ""}">${carga(k, i)}</span></div>`).join("");
+  if (s.estado === "hecha") {
+    return cabDia("Calendario", cap(largo(k)), `${marca("hecha")}Hecha · ${s.hora}${conSemana(k)}`) +
+      `<h2 class="t-seccion">${R.nombre} · ${R.foco}</h2>
+      <div class="cifras"><div><span class="t-detalle sec">Duración</span><span class="cifra">${s.dur} <span class="unidad-c">min</span></span></div>
+      <div><span class="t-detalle sec">Volumen</span><span class="cifra">${miles(volumen(k))} <span class="unidad-c">lb</span></span></div>
+      <div><span class="t-detalle sec">Series</span><span class="cifra">${series(k)}</span></div></div>` +
+      (s.record ? `<div class="tarjeta destacada record">${ico("trophy")}<span class="txt"><span class="t-detalle sec">Récord personal</span><span class="tnum">${s.record}</span></span></div>` : "") +
+      `<div class="lista">${filas}</div>
+      <button type="button" class="btn secundario ancho" data-acc="hoja" data-modo="copiar" data-k="${k}">${ico("copy", "s20")}Copiar a otro día</button>`;
+  }
+  if (s.estado === "no") {
+    const movida = s.movidaA;
+    return cabDia("Calendario", cap(largo(k)), `${marca("no")}No hecha · estaba a las 8:00&nbsp;a.&nbsp;m.`) +
+      `<h2 class="t-seccion">${R.nombre} · ${R.foco}</h2>
+      <p class="t-detalle sec">${movida ? `La moviste al ${largo(movida)}. Este día queda como no hecha en tu historial.` : "No hay series registradas este día. Puedes moverla a un día libre con la misma rutina y los mismos pesos."}</p>
+      <div class="lista">${filas}</div>
+      <div class="acciones">${movida ? `<button type="button" class="btn secundario ancho" data-acc="ir-dia" data-k="${movida}">Ver el ${corto(movida)}</button>`
+        : `<button type="button" class="btn primario ancho" data-acc="hoja" data-modo="mover" data-k="${k}">${ico("arrow-forward-up", "s20")}Mover a otro día</button>`}</div>`;
+  }
+  return cabDia("Calendario", cap(largo(k)), `${marca("prog")}Programada · 8:00&nbsp;a.&nbsp;m.${conSemana(k)}`) +
+    `<h2 class="t-seccion">${R.nombre} · ${R.foco}</h2><div class="lista">${filas}</div>
+    <p class="t-detalle sec">La rampa se calcula sola desde el peso de trabajo. ${R.extra}.</p>
+    <div class="acciones"><button type="button" class="btn primario ancho" data-acc="editar" data-k="${k}">Editar sesión</button>
+    <div class="par"><button type="button" class="btn secundario" data-acc="hoja" data-modo="mover" data-k="${k}">${ico("arrow-forward-up", "s20")}Mover</button>
+    <button type="button" class="btn secundario" data-acc="hoja" data-modo="copiar" data-k="${k}">${ico("copy", "s20")}Copiar</button></div>
+    <button type="button" class="btn texto" data-acc="quitar" data-k="${k}">${ico("trash", "s20")}Quitar sesión</button></div>`;
+}
+
+function ultima(r, antesDe) {
+  const ks = Object.keys(sesiones).filter((k) => sesiones[k].r === r && sesiones[k].estado === "hecha" && k < antesDe).sort();
+  return ks.length ? ks[ks.length - 1] : null;
+}
+
+function vistaRutina() {
+  const b = ui.borrador, k = b.fecha, sug = SEMANA_TIPO[dow(k)];
+  const ops = Object.keys(RUTINAS).map((r) => {
+    const R = RUTINAS[r], u = ultima(r, k);
+    const det = `${R.ej.length} ejercicios y ${r === "C" ? "caminata" : "core"} · ${u ? `última vez el ${corto(u)}` : "sin registros"}`;
+    return `<button type="button" class="opcion-rutina" role="radio" aria-checked="${b.r === r}" data-acc="rutina" data-v="${r}">
+      <span class="radio"></span><span class="txt"><span>${R.nombre} · ${R.foco}</span><span class="t-detalle sec">${det}</span>
+      ${r === sug ? '<span class="pildora">Sugerida</span>' : ""}</span></button>`;
+  }).join("");
+  return cabDia(`${cap(corto(k))} · paso 1 de 3`, "Elige la rutina", "", "volver") +
+    `<div class="lista" role="radiogroup" aria-label="Rutina">${ops}</div>
+    <p class="nota">${ico("info-circle", "s16")}<span>Las rutinas se editan en Gym › rutinas. Aquí eliges cuál va este día.</span></p>
+    <div class="acciones"><button type="button" class="btn primario ancho" data-acc="a-series">Series y repeticiones</button></div>`;
+}
+
+function vistaSeries() {
+  const b = ui.borrador, R = RUTINAS[b.r], base = planBase(b.r);
+  const paso = b.editando ? "editar sesión · 1 de 2" : "paso 2 de 3";
+  const filas = R.ej.map((e, i) => {
+    const p = b.plan[i], cambio = p.s !== base[i].s || p.r !== base[i].r;
+    const nom = e.n.toLowerCase();
+    const st = (que, v, acc, sing) => `<div class="stepper" role="group" aria-label="${que} de ${nom}">
+      <button type="button" data-acc="${acc}-menos" data-i="${i}" aria-label="Quitar una ${sing} a ${nom}">${ico("minus", "s20")}</button>
+      <span class="valor" aria-live="polite"><span class="cifra">${v}</span><span class="t-detalle">${que.toLowerCase()}</span></span>
+      <button type="button" data-acc="${acc}-mas" data-i="${i}" aria-label="Sumar una ${sing} a ${nom}">${ico("plus", "s20")}</button></div>`;
+    return `<div class="sr-fila"><div class="sr-nom"><span>${e.n}${e.lado ? " (c/pierna)" : ""}</span>${cambio ? `<span class="t-detalle sube">Rutina: ${base[i].s} × ${base[i].r}</span>` : ""}</div>
+      <div class="sr-ctl">${st("Series", p.s, "ser", "serie")}<span class="sec" aria-hidden="true">×</span>${st("Reps", p.r, "rep", "repetición")}</div></div>`;
+  }).join("");
+  const nota = b.editando ? "Vienen de lo que guardaste para este día." : `Vienen de ${R.nombre}. Lo que cambies vale solo para este día.`;
+  return cabDia(`${cap(corto(b.fecha))} · ${paso}`, b.editando ? `${R.nombre} · series y repeticiones` : "Series y repeticiones", "", b.editando ? "volver" : "a-rutina") +
+    `<p class="t-detalle sec">${nota}</p><div class="lista">${filas}</div>
+    <div class="acciones"><button type="button" class="btn primario ancho" data-acc="a-pesos">${b.editando ? "Revisar pesos" : "Asignar pesos"}</button></div>`;
+}
+
+function vistaPesos() {
+  const b = ui.borrador, R = RUTINAS[b.r];
+  const filas = R.ej.map((e, i) => {
+    const dif = b.ref ? b.pesos[i] - b.ref.pesos[i] : 0;
+    const marcaDif = b.ref && dif ? `<span class="t-detalle sube">${dif > 0 ? "+" : "−"}${Math.abs(dif)} desde el ${DIAS_C[dow(b.ref.k)]} ${aFecha(b.ref.k).getDate()}</span>` : "";
+    const v = b.pesos[i];
+    const p = b.plan[i];
+    return `<div class="peso-fila"><span class="txt"><span>${e.n.replace(" mancuernas", "")}</span><span class="t-detalle">${p.s} × ${p.r}${e.lado ? " c/pierna" : ""}</span>${marcaDif}</span>
+      <div class="stepper" role="group" aria-label="Peso de ${e.n.toLowerCase()}">
+      <button type="button" data-acc="menos" data-i="${i}" aria-label="Bajar 5 lb a ${e.n.toLowerCase()}">${ico("minus", "s20")}</button>
+      <span class="valor" aria-live="polite"><span class="cifra">${v || "0"}</span><span class="t-detalle">lb</span></span>
+      <button type="button" data-acc="mas" data-i="${i}" aria-label="Subir 5 lb a ${e.n.toLowerCase()}">${ico("plus", "s20")}</button></div></div>`;
+  }).join("");
+  const desde = b.ref ? `Empiezan con lo del ${corto(b.ref.k)} y cada toque mueve 5 lb.` : "Cada toque mueve 5 lb.";
+  return cabDia(`${cap(corto(b.fecha))} · ${b.editando ? "editar sesión · 2 de 2" : "paso 3 de 3"}`, `${R.nombre} · ${R.foco}`, "", "a-series") +
+    `<p class="t-detalle sec">Cargas en lb; en mancuernas, el peso de cada una. ${desde}</p>
+    <div class="lista">${filas}<div class="fila"><span>${R.extra}</span></div></div>
+    <div class="acciones"><button type="button" class="btn primario ancho" data-acc="guardar">Guardar sesión</button></div>`;
+}
+
+function vistaMtb() {
+  const k = ui.dia, p = PASEOS[k];
+  const dato = (n, v, u) => `<div><span class="t-detalle sec">${n}</span><span class="cifra">${v} <span class="unidad-c">${u}</span></span></div>`;
+  const zonas = ZONAS.map(([z, rango], i) => `<div class="zona" role="row"><span class="z-nom" role="rowheader"><b>${z}</b><span class="t-detalle sec">${rango}</span></span>
+    <span class="z-pista" aria-hidden="true"><i style="--v:${p.zonas[i]}"></i></span><span class="z-val tnum" role="cell"><b>${p.zonas[i]} %</b></span></div>`).join("");
+  return cabDia("Calendario", cap(largo(k)), `${ico("bike", "s16")}Paseo MTB${conSemana(k)} · dos capturas de Strava`) +
+    `<div class="tarjeta"><span class="t-detalle sec">Distancia</span><span class="cifra c-heroe">${p.km} <span class="t-seccion sec">km</span></span>
+    <div class="mtb-cifras">${dato("Desnivel", p.desnivel, "m")}${dato("Tiempo", p.tiempo.replace(" min", ""), p.tiempo.includes("h") ? "" : "min")}${dato("Velocidad", p.vel, "km/h")}${dato("Calorías", p.kcal, "kcal")}${dato("FC promedio", p.fc, "ppm")}</div></div>
+    <div class="tarjeta"><div class="zonas" role="table" aria-label="Tiempo en cada zona de frecuencia cardiaca"><span class="t-detalle sec">Zonas de frecuencia cardiaca · % del tiempo</span>${zonas}</div></div>
+    <div class="acciones"><button type="button" class="btn secundario ancho" data-acc="fuera" data-v="Cardio y MTB">Ver en cardio y MTB</button></div>`;
+}
+
+function vistaCita() {
+  const k = ui.dia, c = CITAS[k];
+  return cabDia("Calendario", cap(largo(k)), `${ico("test-pipe-2", "s16")}Cita de análisis de sangre`) +
+    `<div class="lista"><div class="fila"><span>Hora</span><span class="cifra carga">${c.hora.replace(" a. m.", "&nbsp;a.&nbsp;m.")}</span></div>
+    <div class="fila"><span>Preparación</span><span>${c.prep}</span></div></div>
+    <p class="nota">${ico("info-circle", "s16")}<span>Las citas se crean y se cambian en Salud. Aquí solo se muestran para que planifiques alrededor.</span></p>
+    <div class="acciones"><button type="button" class="btn primario ancho" data-acc="salud">Abrir en Salud</button></div>`;
+}
+
+function vistaSalud() {
+  const subs = ["Composición", "Mediciones", "Análisis", "Informes"].map((t) =>
+    `<button type="button" class="sub-tab" data-acc="sub" data-v="${t}"${t === "Análisis" ? ' aria-current="page"' : ""}>${t}</button>`).join("");
+  const c = Object.keys(CITAS)[0];
+  if (!c) return `<nav class="sub-tabs" aria-label="Salud">${subs}</nav><h1 class="t-pantalla" tabindex="-1">Análisis de sangre</h1>`;
+  return `<nav class="sub-tabs" aria-label="Salud">${subs}</nav><h1 class="t-pantalla" tabindex="-1">Análisis de sangre</h1>` +
+    `<div class="tarjeta destacada"><span class="t-detalle sec">Próxima cita</span><span class="t-seccion">Jueves 29 de octubre, 7:30&nbsp;a.&nbsp;m.</span><span class="t-detalle sec">En ayunas</span></div>
+    <div class="vacio">${ico("test-pipe-2", "s32")}<h2 class="t-seccion">Todavía no tienes resultados</h2>
+    <p class="sec">Cuando cargues tus primeros análisis verás cada valor con su rango de referencia y su tendencia.</p>
+    <button type="button" class="btn secundario" data-acc="fuera" data-v="Cargar resultados">Cargar resultados</button></div>`;
+}
+
+// ------------------------------------------------------------ hoja (mover o copiar)
+function vistaHoja() {
+  const h = ui.hoja, s = sesiones[h.origen], R = RUTINAS[s.r];
+  const verbo = h.modo === "mover" ? "Mover" : "Copiar";
+  const texto = h.modo === "mover"
+    ? (s.estado === "no" ? `Elige un día libre. Se mantienen la rutina y los pesos; el ${corto(h.origen)} queda como no hecha.` : "Elige un día libre. Se mantienen la rutina y los pesos.")
+    : `La copia lleva la misma rutina y los mismos pesos. El ${corto(h.origen)} se queda como está.`;
+  const hoyLibre = libre(HOY) && h.origen !== HOY;
+  const inicio = lunesDe(sumar(HOY, 1));
+  let celdas = INI.map((x) => `<span class="sem" aria-hidden="true">${x}</span>`).join("");
+  for (let i = 0; i < 14; i++) {
+    const k = sumar(inicio, i);
+    if (k <= HOY) { celdas += "<span></span>"; continue; }
+    const ocupado = !libre(k);
+    celdas += `<button type="button" class="celda" data-acc="destino" data-k="${k}" aria-pressed="${h.destino === k}" aria-label="${largo(k)}${ocupado ? `, ya tiene ${RUTINAS[sesiones[k].r].nombre}` : ", libre"}${CITAS[k] ? ", análisis de sangre" : ""}">
+      <span class="n">${aFecha(k).getDate()}</span><span class="marcas">${marcasDe(k).map((x) => marca(x)).join("")}</span></button>`;
+  }
+  const destinoTxt = h.destino ? (h.destino === HOY ? `${verbo} a hoy` : `${verbo} al ${corto(h.destino)}`) : `Elige un día`;
+  return `<div class="velo" data-acc="cerrar-hoja"><div class="hoja" role="dialog" aria-modal="true" aria-labelledby="hoja-t" data-hoja>
+    <div><h2 class="t-seccion" id="hoja-t">${verbo} ${R.nombre}</h2><p class="t-detalle sec">${texto}</p></div>
+    ${hoyLibre ? `<button type="button" class="opcion-hoy" data-acc="destino" data-k="${HOY}" aria-pressed="${h.destino === HOY}"><span class="txt"><span>Hoy, domingo ${aFecha(HOY).getDate()}</span><span class="t-detalle sec">Libre</span></span></button>` : ""}
+    <div class="mes tnum" role="group" aria-label="Próximas dos semanas">${celdas}</div>
+    <p class="nota" role="status">${h.msg ? `${ico("info-circle", "s16")}<span>${h.msg}</span>` : ""}</p>
+    <div class="acciones"><button type="button" class="btn primario ancho" data-acc="confirmar-hoja">${destinoTxt}</button>
+    <button type="button" class="btn secundario ancho" data-acc="cerrar-hoja">Cancelar</button></div></div></div>`;
+}
+
+// ------------------------------------------------------------ render
+const $p = document.getElementById("pantalla");
+const $c = document.getElementById("cuerpo");
+const $capa = document.getElementById("capa");
+const $aviso = document.getElementById("aviso");
+
+function render() {
+  const vistas = { cal: vistaCal, dia: vistaDia, rutina: vistaRutina, series: vistaSeries, pesos: vistaPesos, mtb: vistaMtb, cita: vistaCita, salud: vistaSalud };
+  $c.innerHTML = vistas[ui.pantalla]();
+  document.querySelectorAll(".barra .pestana").forEach((b) => {
+    if (b.dataset.v === ui.tab) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+  });
+  $capa.innerHTML = ui.hoja ? vistaHoja() : "";
+  if (ui.foco) {
+    const el = $c.querySelector(ui.foco) || $capa.querySelector(ui.foco);
+    (el || $c.querySelector("h1"))?.focus();
+    ui.foco = null;
+  }
+}
+
+function ir(pantalla, extra = {}) {
+  Object.assign(ui, { pantalla }, extra);
+  ui.foco = "h1";
+  $c.scrollTop = 0;
+  render();
+}
+
+let temporizador = null, pausa = false;
+function avisar(texto, deshacer) {
+  ui.aviso = { texto, deshacer };
+  $aviso.innerHTML = `<span>${texto}</span>${deshacer ? '<button type="button" class="btn texto" data-acc="deshacer">Deshacer</button>' : ""}`;
+  $aviso.hidden = false;
+  $aviso.classList.remove("entra"); void $aviso.offsetWidth; $aviso.classList.add("entra");
+  clearTimeout(temporizador);
+  const cerrar = () => { if (pausa) { temporizador = setTimeout(cerrar, 1000); return; } $aviso.hidden = true; ui.aviso = null; };
+  temporizador = setTimeout(cerrar, deshacer ? 8000 : 4000);
+}
+$aviso.addEventListener("mouseenter", () => (pausa = true));
+$aviso.addEventListener("mouseleave", () => (pausa = false));
+$aviso.addEventListener("focusin", () => (pausa = true));
+$aviso.addEventListener("focusout", () => (pausa = false));
+
+const foto = () => JSON.parse(JSON.stringify(sesiones));
+const volverAlCal = (sel) => {
+  ui.sel = sel;
+  const f = aFecha(sel);
+  ui.mes = aClave(new Date(f.getFullYear(), f.getMonth(), 1));
+  ui.semana = lunesDe(sel);
+  ir("cal", { dia: null, borrador: null });
+};
+
+let origenFoco = null;
+function abrirHoja(modo, k) {
+  origenFoco = document.activeElement;
+  ui.hoja = { modo, origen: k, destino: null, msg: "" };
+  render();
+  $capa.querySelector("[data-hoja] button")?.focus();
+}
+function cerrarHoja() {
+  ui.hoja = null;
+  render();
+  origenFoco?.focus?.();
+}
+
+// ------------------------------------------------------------ acciones
+const acciones = {
+  sub: (b) => { if (!["Calendario", "Análisis"].includes(b.dataset.v)) avisar(`${b.dataset.v} se diseña en otro flujo.`); },
+  tab: (b) => {
+    const v = b.dataset.v;
+    if (v === "gym") { ui.tab = "gym"; ui.hoja = null; ir("cal"); }
+    else if (v === "salud") { ui.tab = "salud"; ui.hoja = null; ir("salud"); }
+    else avisar(`${b.textContent.trim()} queda fuera de este prototipo.`);
+  },
+  ant: () => { mover(-1); }, sig: () => { mover(1); },
+  vista: (b) => { ui.vista = b.dataset.v; ui.semana = lunesDe(ui.sel); const f = aFecha(ui.sel); ui.mes = aClave(new Date(f.getFullYear(), f.getMonth(), 1)); ui.foco = `[data-acc="vista"][data-v="${ui.vista}"]`; render(); },
+  hoy: () => { ui.sel = HOY; ui.mes = "2026-10-01"; ui.semana = lunesDe(HOY); ui.foco = '[data-acc="hoy"]'; render(); },
+  dia: (b) => { ui.sel = b.dataset.k; ui.foco = `[data-acc="dia"][data-k="${b.dataset.k}"]`; render(); },
+  "abrir-dia": (b) => { ui.sel = b.dataset.k; ir("dia", { dia: b.dataset.k }); },
+  "ir-dia": (b) => { ui.sel = b.dataset.k; ir("dia", { dia: b.dataset.k }); },
+  "abrir-mtb": (b) => ir("mtb", { dia: b.dataset.k }),
+  "abrir-cita": (b) => ir("cita", { dia: b.dataset.k }),
+  volver: () => {
+    if (ui.pantalla === "series" && ui.borrador?.editando) return ir("dia", { dia: ui.borrador.fecha, borrador: null });
+    if (ui.pantalla === "rutina" && ui.borrador?.desdeDia) return ir("dia", { dia: ui.borrador.fecha, borrador: null });
+    ir("cal", { dia: null, borrador: null });
+  },
+  "a-rutina": () => { ui.borrador.pesos = null; ir("rutina"); },
+  "a-gym": () => { ui.tab = "gym"; ir("cal"); },
+  programar: (b) => {
+    const k = b.dataset.k;
+    ir("rutina", { borrador: { fecha: k, r: SEMANA_TIPO[dow(k)] || "A", plan: null, pesos: null, desdeDia: ui.pantalla === "dia" } });
+  },
+  rutina: (b) => { ui.borrador.r = b.dataset.v; ui.borrador.plan = null; ui.foco = `[data-acc="rutina"][data-v="${b.dataset.v}"]`; render(); },
+  "a-series": () => {
+    const b = ui.borrador;
+    if (!b.plan) b.plan = planBase(b.r);
+    ir("series");
+  },
+  "a-pesos": () => {
+    const b = ui.borrador;
+    if (!b.pesos) {
+      const u = ultima(b.r, b.fecha);
+      const base = u ? sesiones[u].pesos.slice() : RUTINAS[b.r].ej.map(() => 0);
+      b.pesos = base; b.ref = u ? { k: u, pesos: base.slice() } : null;
+    }
+    ir("pesos");
+  },
+  "ser-menos": (b) => paso(b, "s", -1, 1, 10), "ser-mas": (b) => paso(b, "s", 1, 1, 10),
+  "rep-menos": (b) => paso(b, "r", -1, 1, 30), "rep-mas": (b) => paso(b, "r", 1, 1, 30),
+  menos: (b) => { const i = +b.dataset.i; ui.borrador.pesos[i] = Math.max(0, ui.borrador.pesos[i] - 5); ui.foco = `[data-acc="menos"][data-i="${i}"]`; render(); },
+  mas: (b) => { const i = +b.dataset.i; ui.borrador.pesos[i] += 5; ui.foco = `[data-acc="mas"][data-i="${i}"]`; render(); },
+  editar: (b) => {
+    const k = b.dataset.k, s = sesiones[k];
+    ui.borrador = { fecha: k, r: s.r, plan: planDe(k).map((p) => ({ ...p })), pesos: s.pesos.slice(), ref: { k, pesos: s.pesos.slice() }, editando: true };
+    ir("series");
+  },
+  guardar: () => {
+    const b = ui.borrador, antes = foto(), R = RUTINAS[b.r];
+    sesiones[b.fecha] = { r: b.r, estado: "prog", plan: b.plan.map((p) => ({ ...p })), pesos: b.pesos.slice() };
+    ui.nueva = b.fecha;
+    volverAlCal(b.fecha);
+    avisar(b.editando ? `Sesión del ${corto(b.fecha)} guardada` : `${R.nombre} programado ${conHoy(b.fecha)}`, antes);
+    setTimeout(() => (ui.nueva = null), 400);
+  },
+  quitar: (b) => {
+    const k = b.dataset.k, antes = foto(), R = RUTINAS[sesiones[k].r];
+    delete sesiones[k];
+    Object.values(sesiones).forEach((s) => { if (s.movidaA === k) delete s.movidaA; });
+    volverAlCal(k);
+    avisar(`${R.nombre} quitado del ${corto(k)}`, antes);
+  },
+  hoja: (b) => abrirHoja(b.dataset.modo, b.dataset.k),
+  "cerrar-hoja": (b, e) => { if (b.classList.contains("velo") && e.target !== b) return; cerrarHoja(); },
+  destino: (b) => {
+    const k = b.dataset.k;
+    if (!libre(k)) { ui.hoja.msg = `El ${corto(k)} ya tiene ${RUTINAS[sesiones[k].r].nombre}. Elige un día libre.`; ui.hoja.destino = null; }
+    else { ui.hoja.destino = k; ui.hoja.msg = ""; }
+    render();
+    $capa.querySelector(`[data-acc="destino"][data-k="${k}"]`)?.focus();
+  },
+  "confirmar-hoja": () => {
+    const h = ui.hoja;
+    if (!h.destino) { ui.hoja.msg = "Toca un día libre para continuar."; render(); $capa.querySelector('[data-acc="confirmar-hoja"]')?.focus(); return; }
+    const antes = foto(), s = sesiones[h.origen], R = RUTINAS[s.r];
+    sesiones[h.destino] = { r: s.r, estado: "prog", plan: planDe(h.origen).map((p) => ({ ...p })), pesos: s.pesos.slice() };
+    if (h.modo === "mover") { if (s.estado === "no") s.movidaA = h.destino; else delete sesiones[h.origen]; }
+    ui.hoja = null; ui.nueva = h.destino;
+    volverAlCal(h.destino);
+    avisar(`${R.nombre} ${h.modo === "mover" ? "movido" : "copiado"} ${conHoy(h.destino)}`, antes);
+    setTimeout(() => (ui.nueva = null), 400);
+  },
+  "copiar-semana": () => {
+    const antes = foto();
+    let copiadas = 0, ocupadas = 0;
+    for (let i = 0; i < 7; i++) {
+      const de = sumar(ui.semana, i - 7), a = sumar(ui.semana, i), s = sesiones[de];
+      if (!s || (s.estado === "no" && s.movidaA)) continue;
+      if (a < HOY) continue;
+      if (!libre(a)) { ocupadas++; continue; }
+      sesiones[a] = { r: s.r, estado: "prog", plan: planDe(de).map((p) => ({ ...p })), pesos: s.pesos.slice() };
+      copiadas++;
+    }
+    ui.foco = '[data-acc="copiar-semana"]';
+    render();
+    if (!copiadas && !ocupadas) return avisar("La semana anterior no tiene sesiones para copiar.");
+    if (!copiadas) return avisar(`No se copió nada: ${ocupadas === 1 ? "ese día ya tiene" : "esos días ya tienen"} sesión.`);
+    const extra = ocupadas ? `; ${ocupadas} ${ocupadas === 1 ? "día ya tenía" : "días ya tenían"} sesión` : "";
+    avisar(`${copiadas} ${copiadas === 1 ? "sesión copiada" : "sesiones copiadas"}${extra}`, antes);
+  },
+  salud: () => { ui.tab = "salud"; ir("salud"); },
+  fuera: (b) => avisar(`${b.dataset.v} queda fuera de este prototipo.`),
+  deshacer: () => {
+    if (!ui.aviso?.deshacer) return;
+    sesiones = ui.aviso.deshacer;
+    $aviso.hidden = true; ui.aviso = null;
+    if (ui.pantalla !== "cal") ui.pantalla = "cal";
+    ui.foco = "h1";
+    render();
+    avisar("Cambio deshecho");
+  },
+};
+
+function paso(b, campo, d, min, max) {
+  const i = +b.dataset.i, p = ui.borrador.plan[i];
+  p[campo] = Math.min(max, Math.max(min, p[campo] + d));
+  ui.foco = `[data-acc="${b.dataset.acc}"][data-i="${i}"]`;
+  render();
+}
+
+// Guion: empezar como usuario nuevo (sin actividad).
+document.getElementById("nuevo")?.addEventListener("click", () => {
+  sesiones = {}; PASEOS = {}; CITAS = {};
+  Object.assign(ui, { tab: "gym", vista: "mes", mes: "2026-10-01", semana: lunesDe(HOY), sel: HOY, pantalla: "cal", dia: null, borrador: null, hoja: null });
+  render();
+  avisar("Calendario vacío: ahora eres un usuario nuevo.");
+});
+
+function mover(n) {
+  if (ui.vista === "mes") { const f = aFecha(ui.mes); ui.mes = aClave(new Date(f.getFullYear(), f.getMonth() + n, 1)); }
+  else ui.semana = sumar(ui.semana, 7 * n);
+  ui.foco = n < 0 ? '[data-acc="ant"]' : '[data-acc="sig"]';
+  render();
+}
+
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-acc]");
+  if (!b) return;
+  const f = acciones[b.dataset.acc];
+  if (f) { e.preventDefault(); f(b, e); }
+});
+document.addEventListener("keydown", (e) => {
+  if (!ui.hoja) return;
+  if (e.key === "Escape") { e.preventDefault(); cerrarHoja(); return; }
+  if (e.key === "Tab") {
+    const f = [...$capa.querySelectorAll("button")];
+    if (!f.length) return;
+    const i = f.indexOf(document.activeElement);
+    if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+    else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+  }
+});
+
+render();
+
+// Controles de la lámina: modo y acento.
+(() => {
+  const raiz = document.documentElement;
+  document.querySelectorAll("#ctl-modo button").forEach((b) => b.addEventListener("click", () => {
+    if (b.dataset.modo) raiz.dataset.theme = b.dataset.modo; else delete raiz.dataset.theme;
+    document.querySelectorAll("#ctl-modo button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  }));
+  document.querySelectorAll("#ctl-acento button").forEach((b) => b.addEventListener("click", () => {
+    if (b.dataset.a === "caribe") delete raiz.dataset.accent; else raiz.dataset.accent = b.dataset.a;
+    document.querySelectorAll("#ctl-acento button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  }));
+})();
+</script>
+</body>
+</html>

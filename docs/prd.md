@@ -2,12 +2,12 @@
 
 | Campo | Valor |
 | --- | --- |
-| Versión | 1.2 |
+| Versión | 1.3 |
 | Fecha | 18-oct-2026 |
 | Estado | Aprobado por Francis, 18-oct-2026 |
 | Dueño del producto | Francis Guzman |
 | Redacta | Agente `pm` |
-| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.5, [`adr/`](adr/), [`diseno/`](diseno/) |
+| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.6, [`adr/`](adr/), [`diseno/`](diseno/) |
 
 Este documento resume qué se construye en la v1.0, para quién y cómo sabremos que funcionó. No añade alcance: el backlog de la v1.0 está cerrado (D-16, [ADR 0016](adr/0016-wsl2-fase-s-y-backlog-cerrado.md)). El detalle de cada requisito vive en el plan maestro; aquí solo se resume y se enlaza. Junto con el diseño (`/impeccable init`), cierra la Fase 0.
 
@@ -100,10 +100,10 @@ La [sección 13](plan-maestro.md#13-calidad-y-pruebas) pide pruebas E2E en Playw
 | # | Flujo | Pasos | Requisitos | Prueba |
 | --- | --- | --- | --- | --- |
 | 1 | Entrenar en el gym | Abrir sesión programada → rampa → tachar series → ajustar peso → descanso → cerrar sesión | GYM-04, 05, 09, 10 | Playwright + Maestro |
-| 2 | Programar entrenamientos | Calendario en Gym (mes y semana) → ver día pasado con su resumen → elegir día futuro → elegir rutina → asignar pesos por ejercicio → guardar; mover o copiar una sesión, copiar la semana anterior | GYM-02, 03 | Playwright |
+| 2 | Programar entrenamientos | Calendario en Gym (mes y semana) → ver día pasado con su resumen → elegir hoy o un día futuro → elegir rutina → confirmar o editar series y repeticiones → confirmar o editar pesos → guardar; editar una sesión programada; mover o copiar una sesión, copiar la semana anterior | GYM-02, 03 | Playwright |
 | 3 | Registrar una comida | Buscar alimento → elegir unidad → confirmar → ver macros y micros del día | NUT-02, 03, 09 | Playwright |
 | 4 | Crear receta o plan | Ingredientes → porciones → plan día/semana/mes con suplementos | NUT-04, 05, SUP-01 | Playwright |
-| 5 | Registrar paseo MTB | Subir captura al chat → tarjeta de confirmación → guardar | CAR-01 | Playwright |
+| 5 | Registrar paseo MTB | Subir las capturas de Strava al chat (actividad y zonas de FC) → tarjeta de confirmación → guardar | CAR-01, 02 | Playwright |
 | 6 | Registrar medición | Renpho automático o manual → medidas con cinta | SAL-01, 02 | Playwright |
 | 7 | Hablar con el coach | Pregunta → respuesta con tus datos → aprobar plan propuesto | COA-01, 04 | Playwright + evals |
 | 8 | Empezar el día | Dashboard: entreno, comidas, suplementos pendientes, alertas | DSH-01, COA-03 | Playwright |
@@ -317,7 +317,7 @@ Respuestas de Francis a las preguntas del borrador.
 | --- | --- | --- |
 | 1 | Plan Max | Max 5x: $100 de créditos de API al mes |
 | 2 | Metas de enero | Aprobadas tal como están en la sección 5, incluidos el IMC 25.5-26.0 y la TMB ≥ 1,725 |
-| 3 | Calorías | 2,350 kcal como objetivo único (P 187 / C 255 / G 65), revisión a las 6 semanas |
+| 3 | Calorías | 2,350 kcal como objetivo único (P 187 / C 255 / G 65), revisión a las 6 semanas. El día de un paseo MTB sube con el 50 % de sus kcal (D-27) |
 | 4 | Medidas con cinta | Pendientes de Francis: cintura, cadera, pecho, brazos y muslos |
 | 5 | Tope del coach | $80 al mes y $8 al día; al 80 % el chat pasa a Sonnet 5.5 y avisa |
 | 6 | Embeddings de la memoria | Modelo local en el servidor Oracle; el modelo concreto se elige en la Fase 1 (D-21, [ADR 0021](adr/0021-embeddings-locales-en-el-servidor.md)) |
@@ -329,3 +329,5 @@ Respuestas de Francis a las preguntas del borrador.
 | 12 | Nombre del plan | El plan maestro pasa a titularse "Coach Fitness AI" |
 | 13 | Unidades (añadida tras aprobar el PRD) | SIS-07 entra en la v1.0 con prioridad M: peso corporal y cargas del gym por separado en kg o lb (lb de fábrica); estatura en m, cm o pies y pulgadas; perímetros en cm o pulgadas; distancia en km o millas (métrico de fábrica). D-24, [ADR 0023](adr/0023-unidades-preferidas.md) |
 | 14 | Calendario (añadida tras aprobar el PRD) | Vive en Gym. Muestra días pasados (sesión hecha o no hecha, con resumen), hoy y futuros (programar, mover, copiar), paseos MTB y citas de análisis de sangre de solo lectura que llevan a Salud. Una sesión no hecha ofrece "Mover a otro día"; existe "Copiar la semana anterior". El flujo 2 se diseña antes que el flujo 1. D-25 |
+| 15 | Revisión del flujo 2 | Programar en tres pasos: rutina, series y repeticiones, pesos. La semana 1 es la de la primera actividad registrada en la app; Francis arranca desde cero. Pestañas internas de Gym en móvil; subsección Análisis en Salud. D-26 |
+| 16 | Datos del paseo MTB | Distancia, desnivel positivo, tiempo en movimiento, velocidad media, calorías, FC promedio y zonas de FC Z1 a Z5 (% y rango en ppm) desde dos capturas de Strava; el objetivo calórico del día sube con el 50 % de las kcal del paseo. D-27 |

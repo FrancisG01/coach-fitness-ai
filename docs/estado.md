@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Última actualización: 18-oct-2026 (paso 4A: calendario registrado como D-25)
+Última actualización: 18-oct-2026 (paso 4B: flujo 2 del calendario, en revisión de Francis)
 
 ## Fase actual: 0 (fundaciones)
 
@@ -23,6 +23,8 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 - Mockups de las páginas 6 y 13 aprobados con 5 decisiones: barra marca Hoy dentro de Ajustes; Proteína en vez de Peso en Hoy; 2,350 kcal; ícono de selector en "Propio"; sin contorno de día en el calendario.
 - Mockups de Ajustes y Unidades aprobados: unidades se guardan al tocar (sin botón); Centro de ayuda dentro de Ajustes en móvil; en web, Ajustes despliega subsecciones en la barra lateral; cargas en lb con cifras reales de disco.
 - D-25 (plan v1.5, PRD v1.2): calendario en **Gym** (no en Hoy) con pasado (hecha o no hecha, con resumen), hoy y futuro (programar, mover, copiar), paseos MTB y citas de análisis (solo lectura, llevan a Salud). Marcas aprobadas: punto lleno de acento = hecha, contorno = programada, gris con ✕ = no hecha, `bike` = MTB, ícono propio = análisis. "Mover a otro día" en sesiones no hechas; "Copiar la semana anterior". Se diseña primero el flujo 2 y después el flujo 1.
+- D-26 (plan v1.6, PRD v1.3): programar en 3 pasos (rutina → series y reps de la rutina, editables → pesos); sesión programada editable, día hecho de solo lectura. Semana 1 = semana de la primera actividad registrada de cada usuario; Francis arranca desde cero (no se carga el historial del Anexo A). Pestañas internas de Gym en móvil; Salud suma "Análisis". Contraste A4 sobre elevado (4.49:1) se queda por ahora.
+- D-27: paseo MTB con distancia, desnivel +, tiempo en movimiento, velocidad media, kcal, FC promedio y zonas Z1-Z5 (% y ppm) desde dos capturas de Strava; el objetivo calórico del día sube con el 50 % de las kcal del paseo (porcentaje por confirmar).
 - Francis quiere que Claude tome iniciativas y las liste para confirmar ("Decisiones que tomé y necesito que confirmes").
 - D-21 / ADR 0021: embeddings de la memoria del coach con modelo local en el servidor; el modelo se elige en la Fase 1 con benchmark.
 - Plan maestro v1.2: título "Coach Fitness AI".
@@ -40,7 +42,7 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 3. PRODUCT.md y DESIGN.md aprobados por Francis el 18-oct-2026 (plataforma `adaptive`; estados, movimiento, diálogos, avisos, vacíos y carga definidos; tokens.json ampliado). Plan v1.3, ADR 0022 (íconos Tabler), D-23 (barra Hoy, Gym, Comida, Salud, Coach; logo provisional mancuerna en `packages/brand`).
 4. Fase 0.5 en curso. Unidades (PR #11) y mockups de páginas 6 y 13, Ajustes y Unidades (PR #12) fusionados: `docs/diseno/mockups/b2-paginas-6-y-13.html`, artefacto https://claude.ai/artifact/US2zb54ohddswLsFBNdQyZ.
 5. Paso 4A hecho (rama `docs/calendario`): D-25 en plan v1.5, GYM-03 reescrito, flujo 2 ampliado en plan y PRD v1.2, agrupación de DESIGN.md corregida.
-6. **Siguiente: paso 4B, flujo 2 (calendario) en 4 piezas:** diagrama, guía paso a paso, mockups móvil y web (mes y semana, día pasado con resumen, día futuro: elegir rutina y pesos, mover y copiar) y prototipo navegable. Cifras reales: rutinas A/B/C, lb, paseo de 18.4 km.
+6. **Paso 4B en revisión** (rama `docs/flujo-2-calendario`): `docs/diseno/mockups/flujo-2-calendario.html` (lámina, https://claude.ai/artifact/289fc21Nzt8UpHPNpznbk3) y `flujo-2-calendario-prototipo.html` (https://claude.ai/artifact/CWy7xv7P44k4nZgzMEP6a8). Falta que Francis apruebe y confirme las decisiones del disenador (qué cuenta como primera actividad, límites de steppers, editar sin cambiar rutina, 50 % de kcal MTB).
    - Después: flujo 1 (entrenar en el gym) y modelo conceptual de la BD (este último califica para Fable 5.1: avisar antes).
 7. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
 
