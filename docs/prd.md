@@ -2,12 +2,12 @@
 
 | Campo | Valor |
 | --- | --- |
-| Versión | 1.8 |
+| Versión | 1.9 |
 | Fecha | 18-oct-2026 |
 | Estado | Aprobado por Francis, 18-oct-2026 |
 | Dueño del producto | Francis Guzman |
 | Redacta | Agente `pm` |
-| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.11, [`adr/`](adr/), [`diseno/`](diseno/) |
+| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.12, [`adr/`](adr/), [`diseno/`](diseno/) |
 
 Este documento resume qué se construye en la v1.0, para quién y cómo sabremos que funcionó. No añade alcance: el backlog de la v1.0 está cerrado (D-16, [ADR 0016](adr/0016-wsl2-fase-s-y-backlog-cerrado.md)); las excepciones que decidió Francis (D-24, D-28) están en la sección 9. El detalle de cada requisito vive en el plan maestro; aquí solo se resume y se enlaza. Junto con el diseño (`/impeccable init`), cierra la Fase 0.
 
@@ -198,11 +198,11 @@ El Anexo A tiene dos cifras que no cuadran: el plan de comidas suma ~2,255 kcal 
 | Gasto estimado con 3 días de gym + 2 de caminata, trabajo sentado (×1.45-1.55) | 2,500-2,675 kcal |
 | Déficit para ~0.25 kg de grasa por semana | ~275 kcal/día |
 | **Objetivo** | **2,350 kcal/día, único para todos los días** (punto medio del rango declarado) |
-| Macros | Proteína 187 g (~2.4 g/kg), grasas 65 g (~0.83 g/kg, la propuesta del propio Anexo A.7), carbohidratos 255 g → 2,353 kcal |
+| Macros | Proteína 172 g (2.2 g/kg, D-33; antes 187), grasas 65 g (~0.83 g/kg, la propuesta del propio Anexo A.7), carbohidratos 270 g → 2,353 kcal |
 | Días con MTB | Se suman kcal según el gasto del paseo registrado (CAR-02); el coach decide cuánto con tus datos |
 | Suelo de alerta | Menos de 1,800 kcal en un día (Anexo A.10, sin cambio) |
 
-Para llegar a 2,350 el plan de comidas solo necesita ~100 kcal más (por ejemplo, +10 g de grasa con aceite de oliva o aguacate y algo de carbohidrato); se ajusta en la Fase 4. Punto de control a las 6 semanas (fin de noviembre): si bajas más de 0.5 % por semana, subir 100-150 kcal; si la media de 7 días no se mueve en 3 semanas, bajar 100-150 kcal.
+Para llegar a 2,350 el plan de comidas solo necesita ~100 kcal más (por ejemplo, +10 g de grasa con aceite de oliva o aguacate y algo de carbohidrato); se ajusta en la Fase 4. Punto de control cada 6 semanas desde tu primera actividad registrada (D-33): si bajas más de 0.5 % por semana, subir 100-150 kcal; si la media de 7 días no se mueve en 3 semanas, bajar 100-150 kcal.
 
 ---
 
@@ -335,7 +335,7 @@ Respuestas de Francis a las preguntas del borrador.
 | --- | --- | --- |
 | 1 | Plan Max | Max 5x: $100 de créditos de API al mes |
 | 2 | Metas de enero | Aprobadas tal como están en la sección 5, incluidos el IMC 25.5-26.0 y la TMB ≥ 1,725 |
-| 3 | Calorías | 2,350 kcal como objetivo único (P 187 / C 255 / G 65), revisión a las 6 semanas. El día de un paseo MTB sube con el 50 % de sus kcal (D-27) |
+| 3 | Calorías | 2,350 kcal como objetivo único (P 172 / C 270 / G 65 desde D-33), revisión cada 6 semanas desde la primera actividad. El día de un paseo MTB sube con el 50 % de sus kcal (D-27) |
 | 4 | Medidas con cinta | Pendientes de Francis: cintura, cadera, pecho, brazos y muslos |
 | 5 | Tope del coach | $80 al mes y $8 al día; al 80 % el chat pasa a Sonnet 5.5 y avisa |
 | 6 | Embeddings de la memoria | Modelo local en el servidor Oracle; el modelo concreto se elige en la Fase 1 (D-21, [ADR 0021](adr/0021-embeddings-locales-en-el-servidor.md)) |
@@ -354,3 +354,4 @@ Respuestas de Francis a las preguntas del borrador.
 | 19 | Guía del flujo 1 | Modo gym en la app Android y en la web como PWA en el teléfono (escritorio: solo lectura); sesión sin programar desde una rutina o vacía; rampa redondeada hacia abajo; volumen con las dos mancuernas; series por tiempo; cifra del descanso más grande. D-30 |
 | 20 | Flujo 1 aprobado | "Empezar otra sesión" el mismo día; volumen ×4 en ejercicios por pierna con mancuernas; avisos que no tapan acciones; contraste del subitem activo web corregido. D-31 |
 | 21 | Revisión del flujo 10 | Conexiones antes del punto de partida; kcal con Katch-McArdle o Mifflin-St Jeor ajustadas al objetivo y proteína 1.8 a 2.2 g/kg (los objetivos de Francis no cambian); bienvenida en móvil y web con retomar en el otro dispositivo. D-32 |
+| 22 | Guía del flujo 10 | Proteína de Francis 172 g (2.2 g/kg) y carbohidratos 270 g, 2,350 kcal sin cambio; revisión cada 6 semanas desde la primera actividad de cada usuario; experiencia en 3 opciones. D-33 |

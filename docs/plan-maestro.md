@@ -33,6 +33,7 @@ Oct 17, 2026 · @Almonte
 | 1.9 | 18-oct-2026 | Guía del flujo 1 aprobada (D-30): modo gym también en la web como PWA, sesión sin programar, redondeo de la rampa, mancuernas, series por tiempo y cifra del descanso |
 | 1.10 | 18-oct-2026 | Flujo 1 aprobado (D-31): otra sesión el mismo día, volumen ×4 en ejercicios por pierna con mancuernas, serie por tiempo, sesión minimizada, avisos que no tapan acciones, contraste del subitem activo web corregido |
 | 1.11 | 18-oct-2026 | Revisión del flujo 10 (D-32): conexiones antes del punto de partida, cálculo de kcal y proteína en la bienvenida, bienvenida en móvil y web con retomar en el otro dispositivo |
+| 1.12 | 18-oct-2026 | Guía del flujo 10 (D-33): proteína de Francis dentro del rango (172 g), revisión del plan cada 6 semanas desde la primera actividad de cada usuario, experiencia en 3 opciones |
 
 ## 1. Resumen ejecutivo
 
@@ -175,7 +176,9 @@ Módulo nuevo de la v1.0 (D-28). Ordena todo lo demás hacia una meta con fecha 
 
 La primera vez que entras, la app te pregunta lo que el coach necesita saber de ti en 7 pasos (unos 3 minutos). Cada paso lleva una ilustración vectorial (ADR 0024). Puedes salir y retomar donde ibas, también en otro dispositivo (móvil o web), y todo se edita después en su sección.
 
-**Cálculo de tu plan (paso 7, D-32):** gasto en reposo con Katch-McArdle si ya se conoce el % de grasa (Renpho o Marina) y, si no, con Mifflin-St Jeor; multiplicado por el nivel de actividad del paso 3. Ajuste según el objetivo: −15 a −20 % para perder grasa, −10 % en recomposición, +5 a +10 % para ganar músculo y mantenimiento en fuerza, salud general y rendimiento MTB. Proteína de 1.8 a 2.2 g por kg. Para Francis no cambia nada: sigue el objetivo fijo de 2,350 kcal y 187 g de proteína hasta la revisión de las 6 semanas.
+**Cálculo de tu plan (paso 7, D-32):** gasto en reposo con Katch-McArdle si ya se conoce el % de grasa (Renpho o Marina) y, si no, con Mifflin-St Jeor; multiplicado por el nivel de actividad del paso 3. Ajuste según el objetivo: −15 a −20 % para perder grasa, −10 % en recomposición, +5 a +10 % para ganar músculo y mantenimiento en fuerza, salud general y rendimiento MTB. Proteína de 1.8 a 2.2 g por kg. Para Francis el objetivo de 2,350 kcal se mantiene y la proteína baja a 172 g (2.2 g/kg, D-33). El plan se revisa cada 6 semanas contadas desde la primera actividad registrada de cada usuario (la misma que marca la semana 1, D-26), no en una fecha fija.
+
+Experiencia en el gym (paso 3, D-33): empiezo de cero, vuelvo tras una pausa o llevo tiempo entrenando.
 
 | Paso | Qué pregunta |
 | --- | --- |
@@ -939,6 +942,7 @@ Decisiones ya tomadas; al arrancar el repo cada una se convierte en un ADR en `d
 | D-30 | 18-oct-2026 | Guía del flujo 1 aprobada: el modo gym existe en la app Android y en la web como PWA en el teléfono (escritorio: solo lectura); pantalla completa con flecha para minimizar; tachar con casilla o botón "Serie hecha"; Finalizar sin confirmación; ajuste al vuelo de fábrica en "Las que faltan"; sesión sin programar desde una rutina (la siguiente de la rotación) o vacía; redondeo de la rampa hacia abajo; mancuerna mínima 5 lb y volumen con las dos mancuernas; series por tiempo (plancha); cifra del descanso con token propio del modo gym | La Fase 2 entrega el modo gym como PWA antes que la app Android; calentar de menos es más seguro que pasarse; contar las dos mancuernas da la carga real y se compara con la barra; la plancha está en la rutina A/B/C; en el gym el teléfono se mira desde el banco |
 | D-31 | 18-oct-2026 | Flujo 1 aprobado con sus 4 piezas: "Empezar otra sesión" con la sesión del día hecha; volumen ×4 en ejercicios por pierna con mancuernas; serie por tiempo que se tacha sola con "Terminé antes"; franja de sesión minimizada; los avisos nunca tapan acciones del modo gym; la hoja de ajuste dice a qué series se aplica; esqueleto solo tras 300 ms; el subitem activo de la barra lateral web usa A5 en claro (antes 4.49:1, ahora cumple AA) | Revisión de Francis con el prototipo; criterio de coach: la carga real cuenta todo lo que mueves; el contraste por debajo de 4.5:1 se repetiría en cada pantalla web |
 | D-32 | 18-oct-2026 | Revisión del flujo 10 (bienvenida): conexiones pasan al paso 5 y el punto de partida al 6, con lo de Renpho ya lleno; kcal con Katch-McArdle si hay % de grasa y si no Mifflin-St Jeor, por nivel de actividad, ajustadas al objetivo (−15 a −20 % perder grasa, −10 % recomposición, +5 a +10 % ganar músculo, mantenimiento en el resto); proteína 1.8 a 2.2 g/kg; los objetivos de Francis no cambian (2,350 kcal, 187 g); bienvenida en móvil y web, y se retoma en cualquiera de los dos; en el flujo 2, "Sentadilla búlgara mancuernas" y "por mancuerna" en el paso de pesos | Revisión de Francis; criterio de coach: Katch-McArdle es más precisa cuando se conoce la masa magra, y no escribir dos veces lo que mide la báscula |
+| D-33 | 18-oct-2026 | Guía del flujo 10: la proteína de Francis entra en el rango de D-32 (187 → 172 g, 2.2 g/kg) y los 60 kcal que salen pasan a carbohidratos (255 → 270 g), con 2,350 kcal sin cambio; la revisión del plan es cada 6 semanas contadas desde la primera actividad registrada de cada usuario (D-26), no una fecha fija; experiencia en 3 opciones (empiezo de cero, vuelvo tras una pausa, llevo tiempo entrenando); fecha de nacimiento de Francis 27-jul-1996; se aceptan las decisiones de diseño de la guía | Revisión de Francis; criterio de coach: 2.2 g/kg ya cubre el máximo útil en déficit y los carbohidratos extra rinden en el gym y en el MTB |
 
 ## 21. Pendientes: lo que necesito de ti
 
@@ -1049,7 +1053,7 @@ Renpho clasifica el tipo de cuerpo como "sobrepeso" y sugiere un peso óptimo de
 | Recomposición (Novato) | 2,300-2,400 |
 | Volumen limpio (Principiante) | 2,800-3,000 |
 
-El MTB añade gasto que estas cifras no incluyen: el día de un paseo, el objetivo sube con el 50 % de las kcal que reporta Strava (D-27), y el coach revisa ese porcentaje en la revisión de las 6 semanas.
+El MTB añade gasto que estas cifras no incluyen: el día de un paseo, el objetivo sube con el 50 % de las kcal que reporta Strava (D-27), y el coach revisa ese porcentaje en cada revisión de 6 semanas.
 
 ### A.6 Plan de entrenamiento: Full Body A/B/C
 

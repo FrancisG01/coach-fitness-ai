@@ -18,7 +18,7 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 
 ### Decisiones vigentes
 
-- PRD v1.0 aprobado (`docs/prd.md`, decisiones en su sección 9): Max 5x; coach con tope de $80/mes y $8/día, al 80 % el chat pasa a Sonnet 5.5 y avisa; metas de enero 2027 aprobadas; 2,350 kcal objetivo único con revisión a las 6 semanas; fotos de progreso y mapa corporal fuera de la v1.0; requisitos S posponibles; 10 flujos en la Fase 0.5 (D-28), 9 en Playwright.
+- PRD v1.0 aprobado (`docs/prd.md`, decisiones en su sección 9): Max 5x; coach con tope de $80/mes y $8/día, al 80 % el chat pasa a Sonnet 5.5 y avisa; metas de enero 2027 aprobadas; 2,350 kcal objetivo único (P 172 / C 270 / G 65, D-33) con revisión cada 6 semanas desde la primera actividad; fotos de progreso y mapa corporal fuera de la v1.0; requisitos S posponibles; 10 flujos en la Fase 0.5 (D-28), 9 en Playwright.
 - D-24 / ADR 0023: unidades preferidas (SIS-07, M, entra en la v1.0). Peso corporal y cargas del gym por separado en kg o lb (lb de fábrica); estatura m/cm/pies y pulgadas, perímetros cm/pulgadas, distancia km/millas (métrico de fábrica). Todo se guarda en kg, cm y m con `entered_unit`. Plan v1.4, PRD v1.1.
 - Mockups de las páginas 6 y 13 aprobados con 5 decisiones: barra marca Hoy dentro de Ajustes; Proteína en vez de Peso en Hoy; 2,350 kcal; ícono de selector en "Propio"; sin contorno de día en el calendario.
 - Mockups de Ajustes y Unidades aprobados: unidades se guardan al tocar (sin botón); Centro de ayuda dentro de Ajustes en móvil; en web, Ajustes despliega subsecciones en la barra lateral; cargas en lb con cifras reales de disco.
