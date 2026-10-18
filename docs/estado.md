@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Última actualización: 18-oct-2026 (D-28 objetivos, bienvenida y medidas)
+Última actualización: 18-oct-2026 (D-28 fusionada, PR #17; objetivo de ejemplo)
 
 ## Fase actual: 0 (fundaciones)
 
@@ -44,13 +44,14 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 4. Fase 0.5 en curso. Unidades (PR #11) y mockups de páginas 6 y 13, Ajustes y Unidades (PR #12) fusionados: `docs/diseno/mockups/b2-paginas-6-y-13.html`, artefacto https://claude.ai/artifact/US2zb54ohddswLsFBNdQyZ.
 5. Paso 4A hecho (rama `docs/calendario`): D-25 en plan v1.5, GYM-03 reescrito, flujo 2 ampliado en plan y PRD v1.2, agrupación de DESIGN.md corregida.
 6. Paso 4B hecho y aprobado (PR #15): flujo 2 en `docs/diseno/mockups/flujo-2-calendario.html` (https://claude.ai/artifact/289fc21Nzt8UpHPNpznbk3) y `flujo-2-calendario-prototipo.html` (https://claude.ai/artifact/CWy7xv7P44k4nZgzMEP6a8). Francis confirmó: primera actividad = cualquier sesión (aunque sea programada) o paseo; series 1-10 y reps 1-30; editar sesión no cambia la rutina; mover o copiar lleva series, reps y pesos de la sesión; volumen con lo del día; zonas de FC solo con % visible; 50 % de kcal MTB.
-7. Paso 5A hecho (rama `docs/objetivos-bienvenida`, PR pendiente): D-28 en plan v1.7 y PRD v1.4 (criterios de aceptación en su §2), ADR 0024, DESIGN.md y PRODUCT.md.
+7. Paso 5A hecho (PR #17): D-28 en plan v1.7 y PRD v1.4 (criterios de aceptación en su §2), ADR 0024, DESIGN.md y PRODUCT.md.
 8. **Siguiente: flujo 1 (entrenar en el gym)** en 4 piezas, reutilizando lo del flujo 2 (tres pasos, steppers, pestañas de Gym). Luego el flujo 10 (bienvenida, con sus 7 ilustraciones). Después, el modelo conceptual de la BD (califica para Fable 5.1: avisar antes).
 9. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
 
 ## Pendientes de Francis
 
 - Medidas con cinta de octubre: cintura y las recomendadas de SAL-02 (cuello, hombros, pecho, cadera, brazo relajado y contraído, muslo, pantorrilla); fijan las metas del Anexo A.3 y el % de grasa de la Marina.
+- Objetivo principal (OBJ-01): sin decidir. Mientras tanto los mockups usan un ejemplo: recomposición, grasa de 20.4 % a 17.5 % para el 15-ene-2027; metas intermedias 19.5 % (14-nov), 18.6 % (12-dic), 17.7 % (9-ene); peso 76 kg y cintura 88 cm como metas por medida (OBJ-03).
 - Empezar ya la rutina A/B/C en papel (riesgo principal del plan).
 - Plan Max: en la Fase 5, vincular los créditos de API a Claude Console y crear la clave del coach.
 - Nombre definitivo y logo (más adelante). Especificaciones del logo: glifo SVG 24×24 de un color (`currentColor`), legible a 24 px; ícono Android 108 dp con zona segura de 66 dp + versión monocroma; versión circular para el reloj; favicon 16/32; colores solo de tokens.json. Se reemplaza solo en `packages/brand`.
