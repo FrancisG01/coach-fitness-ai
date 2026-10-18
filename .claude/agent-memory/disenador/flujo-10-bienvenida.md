@@ -1,17 +1,15 @@
 ---
 name: flujo-10-bienvenida
-description: Flujo 10 (bienvenida SIS-08, D-32): piezas 1 y 2 entregadas el 18-oct-2026, decisiones propuestas pendientes de Francis y el cálculo del paso 7
+description: Flujo 10 (bienvenida SIS-08, D-32, D-33): guía aprobada con cambios; pieza 3 (ilustraciones y mockups) entregada el 18-oct-2026 y pendiente de aprobar
 metadata:
   type: project
 ---
 
-Archivo: `docs/diseno/mockups/flujo-10-bienvenida.html` (diagrama, cálculo del paso 7, tabla de ilustraciones, guía de 11 pasos). Se genera con `gen_flujo10.py` + `base.css` (extraído de flujo-1-gym.html) en el scratchpad de la sesión; el HTML es la fuente.
+Archivo: `docs/diseno/mockups/flujo-10-bienvenida.html` (diagrama, cálculo, guía de 11 pasos, lámina de ilustraciones, mockups móvil y web). SVG versionados en `docs/diseno/ilustraciones/bienvenida/01-tu.svg` a `07-tu-plan.svg` (viewBox 112, trazo 2.5, currentColor + `--ilus-secundario` + `--ilus-acento`). Se generan con `gen_flujo10.py` + `pieza3.py` + `ilus.py` + `base.css` en el scratchpad; el HTML y los SVG son la fuente.
 
-Anatomía propuesta (pendiente de aprobar): pantalla completa sin barra inferior; arriba atrás, "Paso n de 7" y "Salir"; barra de 7 tramos; título con ilustración 112 × 112 a la derecha (web 200 × 200 a la izquierda); abajo ranura de avisos y un botón. "Nada de esto" marca «Ninguna» en los tres grupos de salud.
+Aprobado (D-33): la guía y mis 11 decisiones (pantalla completa, Salir sin confirmar y tarjeta en Hoy, tabla de nivel de actividad, proteína 2.2/2.0/1.8 por objetivo, cuello obligatorio con meta de % de grasa sin Renpho, metas intermedias desde el paso 6, etc.). Francis: nacido 27-jul-1996 (30 años), 2,350 kcal con 172 g de proteína, 270 g de carbohidratos y 65 g de grasas; la revisión del plan es cada 6 semanas desde la primera actividad registrada, nunca una fecha fija. Texto elegido: «Se revisa 6 semanas después de tu primer entreno».
 
-Cálculo para Francis: Katch-McArdle 1,718 (Mifflin daría 1,719) × 1.55 = 2,663, −10 % = 2,400 kcal; proteína 2.2 × 78.4 = 172 g. Su plan fijo 2,350 / 187 g (2.4 g/kg, por encima del rango 1.8-2.2) se muestra en grande con la fórmula al lado en la línea del coach y en la hoja "Cómo se calculó".
+Cálculo: Katch-McArdle 1,718 × 1.55 −10 % = 2,400; Mifflin con 30 años 1,714 (daría 2,390).
 
-Propuestas que Francis debe confirmar: tabla de nivel de actividad (sesiones = días de gym + 2 si "con caminatas"; MTB fuera por D-27), proteína por objetivo (2.2 / 2.0 / 1.8), cuello obligatorio si la meta es de % de grasa sin Renpho, metas intermedias desde la medición del paso 6, al abrir la app se retoma la bienvenida y Hoy muestra "Termina tu bienvenida".
-
-**Why:** sigue el patrón aprobado del flujo 1 ([[flujo-1-gym]]); lo no listado como aprobado sigue pendiente.
-**How to apply:** en la pieza 3 (mockups) dibujar las 7 ilustraciones según la tabla de conceptos, en claro/oscuro y dos acentos. Ver [[verificacion-mockups]].
+**Why:** lo que no está aprobado (pieza 3: ilustraciones y mockups) sigue pendiente de Francis.
+**How to apply:** las ilustraciones solo viven en la bienvenida (ADR 0024); reutiliza los SVG en la Fase 3. Ver [[flujo-1-gym]] y [[verificacion-mockups]].
