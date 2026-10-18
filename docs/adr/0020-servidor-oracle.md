@@ -19,7 +19,7 @@ La instancia de Oracle Cloud (Ashburn, ARM, 2 núcleos, 11 GB de RAM, 193 GB de 
 
    SSH no admite root ni contraseñas, y solo deja entrar a esos dos usuarios (`/etc/ssh/sshd_config.d/10-coach.conf`).
 4. **Ningún puerto abierto a internet, con dos barreras:**
-   - el firewall del sistema (iptables, guardado en `/etc/iptables/rules.v4`, copia en `infra/oracle/iptables-rules.v4`) rechaza todo lo que entra por la interfaz pública, salvo ICMP y las respuestas a conexiones ya abiertas. Por `tailscale0` entra lo que permite la cadena `ts-input`, que crea `tailscaled` al arrancar (hoy, SSH y HTTPS). SSH tiene además su propia regla, limitada a `tailscale0`, que no depende de esa cadena;
+   - el firewall del sistema (iptables, guardado en `/etc/iptables/rules.v4`, copia en `infra/oracle/iptables-rules.v4`) rechaza todo lo que entra por la interfaz pública, salvo ICMP y las respuestas a conexiones ya abiertas. Por `tailscale0`, la cadena `ts-input`, que crea `tailscaled` al arrancar, deja pasar cualquier puerto. Lo que limita la exposición dentro del tailnet es qué servicios escuchan; hoy solo lo hacen SSH y Caddy (80 y 443). SSH tiene además su propia regla, limitada a `tailscale0`, que no depende de esa cadena;
    - la lista de seguridad de la VCN conserva solo dos reglas de ICMP: tipo 3 y 4 desde cualquier origen, y tipo 3 desde `10.0.0.0/16`.
 
    Tailscale no necesita puertos de entrada. La instancia no tiene IPv6 público y `rules.v6` está vacío: si algún día se activa IPv6 en la VCN, hay que replicar ahí las reglas de IPv4.
