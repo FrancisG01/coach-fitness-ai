@@ -26,7 +26,7 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 
 ## Siguiente (Fase 0, un paso a la vez)
 
-1. ADRs 0001 a 0018 a partir de D-01 a D-18 (agente `arquitecto`).
+1. ADRs 0001 a 0018 escritos (PR #7). Pendiente: Francis resuelve las contradicciones del plan que encontró el arquitecto (tipografía, modo por defecto, pago del coach, staging con dominio, backlog cerrado y detalles menores).
 2. PRD (agente `pm`): incluye recálculo de metas del Anexo A con la medición del 17-oct, estimación del costo de la API del coach y estimaciones de tiempo por fase. Lo aprueba Francis.
 3. `/impeccable init`: PRODUCT.md y DESIGN.md desde B2 y `docs/diseno/tokens.json`. Lo aprueba Francis.
 4. Después: Fase 0.5 (mockups).
