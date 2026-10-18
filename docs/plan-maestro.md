@@ -798,6 +798,7 @@ Decisiones ya tomadas; al arrancar el repo cada una se convierte en un ADR en `d
 | D-17 | 17-oct-2026 | Dirección visual B2 "Caucho y acento": base neutra caucho/tiza, un acento elegible (6 de fábrica + propio), 8 plantillas, modo claro y oscuro. Nombre y logo provisionales y configurables | Preferencia del dueño del producto; personalización como función |
 | D-18 | 17-oct-2026 | App para Galaxy Watch nativa (Kotlin + Compose for Wear OS), Wear OS 3+, conectada a la app Android por Data Layer; fase 7b. Cronometría de sesión (tiempo extra de descanso) en todo el sistema | Entrenar sin sacar el teléfono; Wear OS no admite React Native |
 | D-19 | 17-oct-2026 | Gestión automática del contexto: hook SessionStart que inyecta docs/estado.md (inicio, /clear, compactación, reanudar), estado.md actualizado en cada tarea y delegación a agentes (ADR 0019) | Que ninguna conversación ni compactación pierda el estado del proyecto |
+| D-20 | 18-oct-2026 | Servidor Oracle `coach`: Minecraft retirado, SSH solo con llave y solo por Tailscale, usuarios `ubuntu` (admin) y `deploy` (Docker), ningún puerto público (firewall del sistema + lista de seguridad de la VCN), Caddy en Docker escuchando solo en la IP de Tailscale con certificado de Tailscale (ADR 0020) | Servidor dedicado y sin exposición a internet, como pide D-12 |
 
 ## 21. Pendientes: lo que necesito de ti
 

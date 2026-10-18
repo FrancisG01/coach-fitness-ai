@@ -10,3 +10,4 @@ Formato de cada ADR: contexto, decisión, alternativas consideradas, consecuenci
 | ADR | Decisión |
 | --- | --- |
 | [0019](0019-gestion-automatica-del-contexto.md) | Gestión automática del contexto |
+| [0020](0020-servidor-oracle.md) | Servidor Oracle: preparación, acceso y publicación por Tailscale |

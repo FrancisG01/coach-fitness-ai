@@ -1,0 +1,25 @@
+# Servidor Oracle (`coach`): servicios de producción.
+# Se despliega con infra/oracle/desplegar.sh; ver infra/oracle/README.md y ADR 0020.
+name: coach
+
+services:
+  caddy:
+    image: caddy:2.10.2-alpine
+    restart: unless-stopped
+    # Red del host para escuchar solo en la IP de Tailscale (ver Caddyfile):
+    # con puertos publicados, Docker se saltaría el firewall del sistema.
+    network_mode: host
+    environment:
+      COACH_HOST: coach.tail72ec86.ts.net
+      COACH_BIND_IP: 100.105.148.38
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./web:/srv/web:ro
+      # Caddy pide a Tailscale el certificado HTTPS de *.ts.net por este socket.
+      - /var/run/tailscale/tailscaled.sock:/var/run/tailscale/tailscaled.sock
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:
