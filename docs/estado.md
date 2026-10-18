@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Última actualización: 18-oct-2026 (unidades preferidas, D-24; mockups de las páginas 6 y 13)
+Última actualización: 18-oct-2026 (decisiones del calendario; paso 4 pendiente de aprobar)
 
 ## Fase actual: 0 (fundaciones)
 
@@ -22,6 +22,8 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 - D-24 / ADR 0023: unidades preferidas (SIS-07, M, entra en la v1.0). Peso corporal y cargas del gym por separado en kg o lb (lb de fábrica); estatura m/cm/pies y pulgadas, perímetros cm/pulgadas, distancia km/millas (métrico de fábrica). Todo se guarda en kg, cm y m con `entered_unit`. Plan v1.4, PRD v1.1.
 - Mockups de las páginas 6 y 13 aprobados con 5 decisiones: barra marca Hoy dentro de Ajustes; Proteína en vez de Peso en Hoy; 2,350 kcal; ícono de selector en "Propio"; sin contorno de día en el calendario.
 - Mockups de Ajustes y Unidades aprobados: unidades se guardan al tocar (sin botón); Centro de ayuda dentro de Ajustes en móvil; en web, Ajustes despliega subsecciones en la barra lateral; cargas en lb con cifras reales de disco.
+- Calendario (respuestas de Francis, 18-oct-2026; todavía sin registrar en el plan, será D-25): muestra pasado (sesión hecha o no hecha, con resumen), hoy y futuro (programar, mover, copiar); vive en **Gym** (se corrige la agrupación de DESIGN.md, que lo ponía en Hoy); muestra también paseos MTB y citas de análisis de sangre; se diseña **primero el flujo 2 (calendario)** y después el flujo 1.
+- Francis quiere que Claude tome iniciativas y las liste para confirmar ("Decisiones que tomé y necesito que confirmes").
 - D-21 / ADR 0021: embeddings de la memoria del coach con modelo local en el servidor; el modelo se elige en la Fase 1 con benchmark.
 - Plan maestro v1.2: título "Coach Fitness AI".
 - Estimación (Francis a tiempo completo): ~11 semanas optimista / ~18.5 probable. Modo gym usable ~7-nov a ~22-nov-2026; v1.0 ~2-ene a ~25-feb-2027.
@@ -36,8 +38,12 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 1. ADRs 0001 a 0018 escritos (PR #7). Contradicciones del plan resueltas con Francis (plan v1.1, PR #8): Archivo única fuente, modo según el sistema, coach solo con créditos Max, staging por Tailscale, backlog v1.0 cerrado.
 2. PRD hecho y aprobado por Francis el 18-oct-2026 (`docs/prd.md`).
 3. PRODUCT.md y DESIGN.md aprobados por Francis el 18-oct-2026 (plataforma `adaptive`; estados, movimiento, diálogos, avisos, vacíos y carga definidos; tokens.json ampliado). Plan v1.3, ADR 0022 (íconos Tabler), D-23 (barra Hoy, Gym, Comida, Salud, Coach; logo provisional mancuerna en `packages/brand`).
-4. Fase 0.5 en curso. Unidades fusionadas (PR #11). Páginas 6 y 13, Ajustes y Unidades en `docs/diseno/mockups/b2-paginas-6-y-13.html` (rama `docs/mockups-p6-p13`; artefacto https://claude.ai/artifact/US2zb54ohddswLsFBNdQyZ).
-5. **Siguiente:** fusionar el PR de mockups; luego los 9 flujos de la Fase 0.5 (PRD §3), cada uno con diagrama, guía paso a paso, mockups web y móvil y prototipo. Propuesta: empezar por el flujo 1, entrenar en el gym (riesgo principal), y el modelo conceptual de la BD.
+4. Fase 0.5 en curso. Unidades (PR #11) y mockups de páginas 6 y 13, Ajustes y Unidades (PR #12) fusionados: `docs/diseno/mockups/b2-paginas-6-y-13.html`, artefacto https://claude.ai/artifact/US2zb54ohddswLsFBNdQyZ.
+5. **Siguiente: paso 4, el calendario** (propuesto a Francis; esperar su "sí" antes de empezar):
+   - **A.** Rama `docs/calendario`: D-25 en el plan (v1.5); GYM-03 reescrito ("Calendario de entrenamientos con días pasados —sesión hecha o no hecha, con su resumen—, hoy y futuros —programar, mover y copiar sesiones con rutina y peso por ejercicio—; muestra también paseos MTB y citas de análisis de sangre"); DESIGN.md: barra lateral Hoy (panel del día), Gym (sesión, calendario, rutinas, historial, cardio y MTB); flujo 2 del PRD; estado.md.
+   - **B.** Flujo 2 con sus 4 piezas: diagrama, guía paso a paso, mockups móvil y web (mes y semana, día pasado con resumen, día futuro: elegir rutina y pesos, mover y copiar), prototipo navegable.
+   - Iniciativas propuestas, por confirmar: punto lleno de acento = hecha, contorno = programada, gris con ✕ = no hecha, ícono de bici = MTB, ícono propio = análisis; sesión no hecha ofrece "Mover a otro día"; "Copiar la semana anterior"; análisis de solo lectura que lleva a Salud; cifras reales (rutinas A/B/C, lb, paseo de 18.4 km).
+   - Después: flujo 1 (entrenar en el gym) y modelo conceptual de la BD (este último califica para Fable 5.1: avisar antes).
 6. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
 
 ## Pendientes de Francis
