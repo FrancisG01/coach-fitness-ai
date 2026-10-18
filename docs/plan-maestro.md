@@ -9,7 +9,7 @@ Oct 17, 2026 · @Almonte
 | Campo | Valor |
 | --- | --- |
 | Proyecto | Coach Fitness AI (nombre provisional) |
-| Versión | 1.3 |
+| Versión | 1.4 |
 | Estado | En definición — Fase 0 |
 | Dueño del producto | Francis Guzman |
 | Responsable técnico | Claude (agente Project Manager) |
@@ -25,6 +25,7 @@ Oct 17, 2026 · @Almonte
 | 1.1 | 18-oct-2026 | Coherencia con D-14 a D-20: una sola fuente (Archivo), modo según el sistema, coach solo con créditos Max, staging por Tailscale, backlog v1.0 cerrado, 10 agentes, `apps/watch/`, NativeWind |
 | 1.2 | 18-oct-2026 | PRD aprobado (`docs/prd.md`): título "Coach Fitness AI"; fotos de progreso y mapa corporal fuera de la v1.0; embeddings locales en el servidor (D-21); estimación de tiempos en el PRD |
 | 1.3 | 18-oct-2026 | PRODUCT.md y DESIGN.md (Impeccable); MTB solo por captura de Strava en §1; íconos Tabler (D-22); barra inferior Hoy, Gym, Comida, Salud, Coach (D-23); logo provisional: mancuerna en `packages/brand` |
+| 1.4 | 18-oct-2026 | Unidades preferidas por usuario (SIS-07, D-24, ADR 0023): peso corporal y cargas del gym en lb de fábrica; estatura, perímetros y distancia en métrico de fábrica; RNF-10 actualizado |
 
 ## 1. Resumen ejecutivo
 
@@ -88,7 +89,7 @@ Es un producto personal para un solo usuario: tú. Todo lo que no ayude a ese ob
 - Tienes acceso al servidor Oracle y a una cuenta de GitHub.
 - El desarrollo usa tu suscripción de Claude (Claude Code); el coach de la app usa la API de Anthropic (ver sección 18).
 - La librería no oficial de Renpho sigue funcionando; si no, se usa importación CSV.
-- Usas el sistema en español y con unidades métricas por defecto.
+- Usas el sistema en español; el peso corporal y las cargas del gym en libras y lo demás en sistema métrico, cambiable en Ajustes → Unidades (SIS-07).
 
 ### Restricciones
 
@@ -131,6 +132,23 @@ Todo nutriente se guarda por 100 g; tú registras en la unidad que quieras y el 
 - **Porciones caseras** como opción extra: taza, cucharada, unidad, cucharón, con su equivalencia en gramos por alimento.
 - **Fuentes de la base inicial:** USDA FoodData Central (micros completos, dominio público), tabla INCAP como apoyo para alimentos locales, Open Food Facts para productos con código de barras, y registros manuales tuyos. Cada alimento guarda su fuente.
 - **Crudo vs cocido** con factores de rendimiento, y recetas calculadas desde sus ingredientes.
+
+### Unidades preferidas (SIS-07)
+
+Cada usuario guarda en Ajustes → Unidades cómo quiere ver y escribir sus datos. La preferencia vive en su cuenta y se aplica en la web, el móvil, el reloj y las respuestas del coach. Cambiarla no modifica ningún dato: solo cambia cómo se muestra.
+
+| Magnitud | Opciones | De fábrica |
+| --- | --- | --- |
+| Peso corporal | kg · lb | lb |
+| Cargas del gym | kg · lb | lb |
+| Estatura | m · cm · pies y pulgadas (5′ 9″) | cm |
+| Perímetros (cintura, cadera, pecho, brazos, muslos) | cm · pulgadas | cm |
+| Distancia (MTB y cardio) | km · millas | km |
+
+- **Comida:** la unidad se elige en cada registro (NUT-02); los nutrientes siempre en g, mg o µg.
+- **Por dentro:** todo se guarda en kg, cm y m, junto con la unidad en que se escribió; la conversión ocurre solo al mostrar (ADR 0023).
+- **Gym en libras:** los incrementos, la rampa (GYM-05) y la sugerencia de progresión se redondean a pasos de disco en la unidad elegida (por ejemplo, 5 lb en vez de 2.5 kg).
+- **Derivadas:** la velocidad y el desnivel siguen a la distancia (km/h y m, o mph y pies).
 
 ### Centro de ayuda (guía de uso)
 
@@ -202,6 +220,7 @@ Cada requisito tiene un identificador que se usa en tareas, tests y pull request
 | SIS-04 | Ajustes de apariencia: acentos predefinidos, plantillas sugeridas, color propio con selector y campo HEX, escala generada y verificación de contraste; guardar plantillas propias | M |
 | SIS-05 | Marca configurable: nombre, logo e ícono de la app definidos en un solo lugar (archivo de marca) y cambiables sin tocar código de pantallas | M |
 | SIS-06 | Centro de ayuda en la web con guías de uso de web, Android y reloj, capturas automáticas, ayuda en contexto y página de novedades | M |
+| SIS-07 | Unidades preferidas en Ajustes: peso corporal y cargas del gym (kg o lb), estatura (m, cm o pies y pulgadas), perímetros (cm o pulgadas) y distancia (km o millas); guardadas en la cuenta y aplicadas en web, móvil, reloj y coach | M |
 
 ## 6. Requisitos no funcionales
 
@@ -218,7 +237,7 @@ Definen cómo debe comportarse el sistema, no qué hace. Cada uno tiene una form
 | RNF-07 | Usabilidad | Uso con una mano en el gym; objetivos táctiles ≥ 44 px | UX Heuristics sin hallazgos de severidad 3-4 |
 | RNF-08 | Accesibilidad | Contraste AA, textos escalables, modo oscuro | Auditoría de Impeccable y Lighthouse |
 | RNF-09 | Mantenibilidad | Código tipado, documentado, cobertura de tests ≥ 80% en backend | CI |
-| RNF-10 | Idioma y unidades | Interfaz en español; unidades métricas por defecto con conversión | Revisión de diseño |
+| RNF-10 | Idioma y unidades | Interfaz en español; unidades preferidas por usuario (SIS-07), con peso corporal y cargas en lb y el resto en métrico de fábrica; datos guardados en kg, cm y m | Revisión de diseño y pruebas unitarias de conversión |
 | RNF-11 | Costo | Infraestructura gratuita; gasto de IA con tope mensual configurable | Panel de costos |
 
 ## 7. Integraciones
@@ -805,6 +824,7 @@ Decisiones ya tomadas; al arrancar el repo cada una se convierte en un ADR en `d
 | D-21 | 18-oct-2026 | Embeddings de la memoria del coach con un modelo local en el servidor Oracle; el modelo concreto se elige en la Fase 1 con benchmark (ADR 0021) | Anthropic no ofrece embeddings; un servicio externo vería datos de salud y costaría dinero |
 | D-22 | 18-oct-2026 | Íconos de trazo Tabler Icons en web, Android y reloj; trazo 1.75, tamaños 16/20/24/32 (ADR 0022) | Única candidata con paquetes oficiales para React y React Native y con báscula de baño; MIT |
 | D-23 | 18-oct-2026 | Navegación inferior: Hoy, Gym, Comida, Salud, Coach; Ajustes en el botón de cuenta de Hoy; logo provisional = mancuerna de Tabler en casilla, desde `packages/brand` | Preferencia del dueño del producto; las cinco secciones de uso diario a un toque |
+| D-24 | 18-oct-2026 | Unidades preferidas por usuario (SIS-07, M, entra en la v1.0 por decisión del dueño): peso corporal y cargas del gym por separado en kg o lb (lb de fábrica), estatura en m, cm o pies y pulgadas, perímetros en cm o pulgadas, distancia en km o millas (métrico de fábrica). Todo se guarda en kg, cm y m con la unidad escrita (ADR 0023) | El dueño entrena con discos en libras; diseñarlo desde la Fase 1 es barato y añadirlo después obliga a migrar datos y pantallas |
 
 ## 21. Pendientes: lo que necesito de ti
 

@@ -53,7 +53,7 @@ Un coach personal de élite que conoce todos tus datos, sobre una plataforma que
 - **Coach:** nunca diagnostica, no interpreta síntomas graves (refiere a un médico), no prescribe fármacos, no inventa datos ni valida por comodidad, no recomienda déficits extremos. Tope de $80/mes y $8/día; al 80 % pasa a Sonnet 5.5 y avisa.
 - **Rendimiento:** pantallas en menos de 2 s en 4G; acciones del modo gym en menos de 200 ms.
 - **Datos:** offline-first sin duplicar ni perder series; datos de salud sensibles, sin puertos públicos; a Anthropic solo sale lo necesario.
-- **Idioma:** español neutro con tuteo y unidades métricas. Los alimentos y porciones dominicanos conservan su nombre local (habichuelas, mangú, plátano).
+- **Idioma y unidades:** español neutro con tuteo. Unidades a elección de cada usuario en Ajustes (SIS-07): peso corporal y cargas del gym en libras de fábrica; estatura, perímetros y distancia en métrico de fábrica. Los alimentos y porciones dominicanos conservan su nombre local (habichuelas, mangú, plátano).
 - **Textos de interfaz:** tipo oración, sin mayúsculas en etiquetas, sin signos de exclamación.
 - **Abierto:** perfil del público futuro y si el tono del coach cambia para él.
 

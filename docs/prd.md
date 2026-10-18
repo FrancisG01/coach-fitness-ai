@@ -2,12 +2,12 @@
 
 | Campo | Valor |
 | --- | --- |
-| Versión | 1.0 (borrador) |
+| Versión | 1.1 |
 | Fecha | 18-oct-2026 |
 | Estado | Aprobado por Francis, 18-oct-2026 |
 | Dueño del producto | Francis Guzman |
 | Redacta | Agente `pm` |
-| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.2, [`adr/`](adr/), [`diseno/`](diseno/) |
+| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.4, [`adr/`](adr/), [`diseno/`](diseno/) |
 
 Este documento resume qué se construye en la v1.0, para quién y cómo sabremos que funcionó. No añade alcance: el backlog de la v1.0 está cerrado (D-16, [ADR 0016](adr/0016-wsl2-fase-s-y-backlog-cerrado.md)). El detalle de cada requisito vive en el plan maestro; aquí solo se resume y se enlaza. Junto con el diseño (`/impeccable init`), cierra la Fase 0.
 
@@ -66,13 +66,13 @@ Prioridad MoSCoW del plan: **M** imprescindible, **S** debería entrar, **W** de
 | Cardio | Paseo MTB desde captura de Strava con tarjeta de confirmación; carga combinada gym + MTB | CAR-01, 02 (M) | 6 |
 | Coach | Chat con herramientas sobre todos los módulos, memoria de decisiones, consejos diarios y revisión semanal, propuestas que apruebas antes de guardar | COA-01 a 04 (M) | 5 |
 | Dashboard | Panel del día; informe mensual en PDF | DSH-01, 02 (M) | 6 |
-| Sistema | Login seguro con 2FA y sesión persistente, modo claro/oscuro/sistema, ajustes de apariencia con acentos y color propio, marca configurable, Centro de ayuda; exportar datos | SIS-01, 03 a 06 (M); SIS-02 (S) | 1 en adelante |
+| Sistema | Login seguro con 2FA y sesión persistente, modo claro/oscuro/sistema, ajustes de apariencia con acentos y color propio, marca configurable, Centro de ayuda, unidades preferidas (kg/lb, cm/m/pulgadas/pies, km/millas); exportar datos | SIS-01, 03 a 07 (M); SIS-02 (S) | 1 en adelante |
 
 Reglas de producto que aplican a todo:
 
 - El coach no diagnostica, no interpreta síntomas graves (te refiere a un médico) y no prescribe fármacos ([plan, sección 8](plan-maestro.md#reglas-y-límites-del-coach)).
 - Ningún cambio del coach se guarda sin tu aprobación (COA-04).
-- Acceso solo por Tailscale (D-12, D-14); interfaz en español con unidades métricas por defecto.
+- Acceso solo por Tailscale (D-12, D-14); interfaz en español; peso corporal y cargas del gym en libras de fábrica y lo demás en métrico, cambiable en Ajustes (SIS-07).
 - Diseño B2 "Caucho y acento", acento de fábrica Caribe, Archivo como única fuente (D-17, [ADR 0017](adr/0017-direccion-visual-b2.md)).
 
 ### Fuera de alcance
@@ -327,3 +327,4 @@ Respuestas de Francis a las preguntas del borrador.
 | 10 | Flujos de la Fase 0.5 | Se diseñan los 9, incluido el del reloj |
 | 11 | Disponibilidad | Día completo; estimación recalculada en la sección 7 |
 | 12 | Nombre del plan | El plan maestro pasa a titularse "Coach Fitness AI" |
+| 13 | Unidades (añadida tras aprobar el PRD) | SIS-07 entra en la v1.0 con prioridad M: peso corporal y cargas del gym por separado en kg o lb (lb de fábrica); estatura en m, cm o pies y pulgadas; perímetros en cm o pulgadas; distancia en km o millas (métrico de fábrica). D-24, [ADR 0023](adr/0023-unidades-preferidas.md) |
