@@ -12,7 +12,7 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: "pnpm build && pnpm preview --port 4173 --strictPort",
+    command: "pnpm --dir ../.. turbo run build --filter=@coach/web... && pnpm preview --port 4173 --strictPort",
     url: "http://localhost:4173",
     reuseExistingServer: !process.env.CI,
   },
