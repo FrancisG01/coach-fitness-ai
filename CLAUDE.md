@@ -32,6 +32,14 @@ Si algo choca con el plan, no improvises: pregunta a Francis y registra la decis
 - Desarrollo en Windows dentro de WSL2 (Ubuntu). El código vive en el sistema de archivos de Linux (`~/proyectos/...`), nunca en `/mnt/c/`.
 - Postgres y Redis en Docker. Comandos del proyecto vía `pnpm` y `uv`.
 
+## Comandos
+
+- Servicios locales (Postgres + Redis): `docker compose up -d` / `docker compose down`.
+- Todo el monorepo desde la raíz: `pnpm install`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`.
+- Web: `pnpm --filter @coach/web dev` (http://localhost:5173).
+- Backend, dentro de `backend/`: `uv sync`, `uv run pytest`, `uv run ruff check .`, `uv run ruff format .`, `uv run mypy`, `uv run fastapi dev src/coach_api/main.py`.
+- Versiones fijadas: Node en `.node-version` (fnm), pnpm en `package.json`, Python en `backend/.python-version` (uv).
+
 ## Forma de trabajar
 
 1. Ninguna tarea empieza sin requisito y criterios de aceptación. Ninguna pantalla sin mockup aprobado (Fase 0.5).
