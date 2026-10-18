@@ -1,37 +1,36 @@
 # Estado del proyecto
 
-Última actualización: 18-oct-2026 (Fase S, sesión en Claude Code con el agente pm)
+Última actualización: 18-oct-2026 (cierre de la Fase S, arranque de la Fase 0)
 
-## Fase actual: S (setup) — criterio de salida cumplido; se cierra al fusionar el PR del servidor
+## Fase actual: 0 (fundaciones)
 
-### Hecho
+Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el diseño.
 
-- Entorno de Francis verificado e instalado en WSL: Node 24.22 (fnm, `.node-version`), pnpm 12.14, uv 0.13.1 + Python 3.12.15, EAS CLI 25.2, Playwright 1.64.1 + Chromium con dependencias del sistema.
-- Repositorio público https://github.com/FrancisG01/coach-fitness-ai (decisión de Francis; el Anexo A de salud queda público a sabiendas). Commits con el correo privado `37189333+FrancisG01@users.noreply.github.com`.
-- Monorepo (PR #1): backend FastAPI `/health`, web Vite + React + TS con página "hola", `@coach/brand`, Postgres 16 + pgvector y Redis en Docker. `apps/mobile` y `apps/watch` solo con README (fases 7 y 7b).
-- CLAUDE.md, agentes (todos `model: inherit`), skills Impeccable 4.6.0 y UX Heuristics 1.6.0, hook SessionStart (ADR 0019).
-- CI (web, backend, e2e, design) en verde; `main` protegida, solo por PR. Dependabot, escaneo de secretos.
-- **Servidor Oracle `coach` (ADR 0020, rama `chore/fase-s-servidor`):**
-  - Minecraft y todo su ecosistema retirados (sin respaldo, por decisión de Francis); Funnel apagado.
-  - Nombre `coach` en el sistema y en Tailscale; Ubuntu 24.04 al día, con actualizaciones automáticas de seguridad.
-  - Usuarios: `ubuntu` (admin, sudo) y `deploy` (Docker, sin sudo). SSH solo con llave, sin root, solo por Tailscale.
-  - Sin puertos públicos: iptables + lista de seguridad de la VCN (solo ICMP 3/4). Verificado desde fuera.
-  - Docker 29.9 + Compose v5.6; Caddy 2.10.2 en `infra/oracle/`, escuchando solo en la IP de Tailscale, sin root (uid 1002, `TS_PERMIT_CERT_UID`).
-- **Criterio de salida de la Fase S cumplido (18-oct-2026):** Francis abrió https://coach.tail72ec86.ts.net desde el teléfono por Tailscale con HTTPS. Playwright: 200, cero mensajes en la consola.
+### Fase S — cerrada el 18-oct-2026
+
+- Entorno WSL: Node 24.22 (fnm), pnpm 12.14, uv 0.13.1 + Python 3.12.15, EAS CLI 25.2, Playwright 1.64.1 + Chromium.
+- Repo público https://github.com/FrancisG01/coach-fitness-ai (Anexo A público a sabiendas). Commits con `37189333+FrancisG01@users.noreply.github.com`.
+- Monorepo (PR #1): backend FastAPI `/health`, web Vite + React "hola", `@coach/brand`, Postgres 16 + pgvector y Redis en Docker. `apps/mobile` y `apps/watch` solo con README.
+- CLAUDE.md, agentes (`model: inherit`), skills Impeccable 4.6.0 y UX Heuristics 1.6.0, hook SessionStart (ADR 0019).
+- CI (web, backend, e2e, design) en verde; `main` protegida, solo por PR; Dependabot y escaneo de secretos.
+- Servidor Oracle `coach` (PR #5, ADR 0020): Minecraft retirado; SSH solo con llave y por Tailscale; usuarios `ubuntu` (admin) y `deploy` (Docker); sin puertos públicos; Caddy en `infra/oracle/` solo en la IP de Tailscale.
+- Criterio de salida: Francis abrió https://coach.tail72ec86.ts.net desde el teléfono con HTTPS; Playwright 200 y consola limpia.
+
+### Decisiones vigentes
+
+- D-20 / ADR 0020: servidor Oracle. Carpeta `infra/` para configuración de servidores.
+- Claude Code solo puede `ssh oracle` y `scp … oracle:`; lo que toca el acceso SSH lo ejecuta Francis con un script preparado. Llave `~/.ssh/coach_oracle`, alias `oracle` y `oracle-deploy`.
+- Dirección B2 confirmada: acento de fábrica Caribe, modo según el sistema, nombre provisional "Coach Fitness AI" (casilla marcada en la sección 21 del plan).
+- Dependabot ignora los saltos de versión mayor en npm y uv; PRs #3 (`@types/node` 26) y #4 (TypeScript 7) cerrados.
 - Cada cambio entra por rama + PR; Francis fusiona con `gh pr merge <n> --squash --delete-branch`.
 
-### Decisiones de esta sesión
+## Siguiente (Fase 0, un paso a la vez)
 
-- D-20 / ADR 0020: preparación del servidor Oracle.
-- Carpeta nueva `infra/` en la raíz del monorepo para la configuración de servidores.
-- Claude Code tiene permiso solo para `ssh oracle` y `scp … oracle:` (`.claude/settings.local.json`). Lo que toca el acceso SSH lo ejecuta Francis con un script preparado.
-- Llave de WSL `~/.ssh/coach_oracle`, sin frase de contraseña; alias `oracle` y `oracle-deploy`.
-
-## Siguiente
-
-1. Revisión del agente revisor y fusión del PR del servidor → Fase S cerrada.
-2. Fase 0: PRD, `/impeccable init`, ADRs D-01 a D-18. Después, la Fase 0.5 (mockups).
-3. Fase 1: despliegue automático desde el CI (llave propia del CI y Tailscale en el runner). Del revisor (PR #5): `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile antes de servir la app real; despliegue atómico (carpeta versionada + enlace simbólico) y sin reinicio de Caddy si no cambió el Caddyfile.
+1. ADRs 0001 a 0018 a partir de D-01 a D-18 (agente `arquitecto`).
+2. PRD (agente `pm`): incluye recálculo de metas del Anexo A con la medición del 17-oct, estimación del costo de la API del coach y estimaciones de tiempo por fase. Lo aprueba Francis.
+3. `/impeccable init`: PRODUCT.md y DESIGN.md desde B2 y `docs/diseno/tokens.json`. Lo aprueba Francis.
+4. Después: Fase 0.5 (mockups).
+5. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
 
 ## Pendientes de Francis
 
@@ -45,6 +44,6 @@
 ## Red Tailscale (verificado 18-oct-2026)
 
 - `francisdesign`: PC Windows (WSL2 ve la red Tailscale con networkingMode=mirrored).
-- `coach` (antes `minecraft-server`), 100.105.148.38: Oracle Cloud (Ashburn), producción.
+- `coach`, 100.105.148.38: Oracle Cloud (Ashburn), producción.
 - `la-tribu-server`: servidor de casa; no se usa salvo decisión nueva.
 - `francis-s24-ultra`: teléfono Android, con Tailscale activo.

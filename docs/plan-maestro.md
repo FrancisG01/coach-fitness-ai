@@ -814,8 +814,8 @@ Con esto cierro la Fase 0 y arrancamos a programar.
 - [x] Estilo visual → propuesta en PDF preparada por Claude.
 - [x] Backlog → decidido (sección 19).
 - [x] Plan de Claude → Max: el coach usa los créditos mensuales de API incluidos (activar en la Fase 5).
-- [ ] Dirección B2: elegir acento y modo de fábrica; elegir nombre provisional de la app.
-- [ ] Confirmar el arranque de la Fase S (Setup).
+- [x] Dirección B2 → acento de fábrica Caribe, modo según el sistema, nombre provisional "Coach Fitness AI".
+- [x] Fase S (Setup) → cerrada el 18-oct-2026.
 
 ## Anexo A — Ficha del atleta
 
