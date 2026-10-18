@@ -4,7 +4,7 @@ Plataforma personal de entrenamiento, nutrición y salud con coach IA. Dueño de
 
 ## Fuente de verdad
 
-- `docs/plan-maestro.md` — plan completo: requisitos (IDs GYM-, SAL-, NUT-, SUP-, CAR-, COA-, DSH-, SIS-), stack, fases, decisiones. Léelo antes de planificar cualquier cosa.
+- `docs/plan-maestro.md` — plan completo: requisitos (IDs GYM-, WAT-, SAL-, NUT-, SUP-, CAR-, OBJ-, COA-, DSH-, SIS-), stack, fases, decisiones. Léelo antes de planificar cualquier cosa.
 - `docs/estado.md` — dónde quedó la última sesión. Léelo al empezar; actualízalo al terminar.
 - `docs/diseno/` — dirección visual aprobada (B2 "Caucho y acento") y tokens.
 - `docs/adr/` — decisiones técnicas. Una decisión nueva = un ADR nuevo.
