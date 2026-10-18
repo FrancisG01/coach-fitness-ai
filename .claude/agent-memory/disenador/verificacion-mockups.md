@@ -17,3 +17,7 @@ Ver [[flujo-2-calendario]].
 
 - Las láminas sin `<meta charset>` salen mal codificadas con `python3 -m http.server` ("×" se ve como "Ã—" y el detector lo cuenta como raya): toda lámina debe ser un documento completo.
 - Avisos (toasts): van en una ranura reservada al pie, nunca flotando sobre los controles (Never Cover Rule, en DESIGN.md).
+
+- Flujo 10 (18-oct-2026): un espacio reservado con borde discontinuo y radio dentro del teléfono cuenta como tarjeta anidada; con `outline` discontinuo hacia dentro pasa. Las listas de la lámina (`.cambios`, `.casos`) a 86ch disparan "line-length" en escritorio: usar 60ch.
+- Si se reutiliza el CSS del flujo 1 por rangos de líneas, incluir `.tabla-envoltura` (si falta, la tabla desborda a 390 px) y `.opcion-rutina`.
+- Contenido que no cabe en la pantalla del mockup: contenedor con `overflow-x: visible; overflow-y: clip` para cortar abajo sin recortar las anotaciones laterales.
