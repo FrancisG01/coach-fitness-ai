@@ -32,6 +32,14 @@ Si algo choca con el plan, no improvises: pregunta a Francis y registra la decis
 - Desarrollo en Windows dentro de WSL2 (Ubuntu). El código vive en el sistema de archivos de Linux (`~/proyectos/...`), nunca en `/mnt/c/`.
 - Postgres y Redis en Docker. Comandos del proyecto vía `pnpm` y `uv`.
 
+## Comandos
+
+- Servicios locales (Postgres + Redis): `docker compose up -d` / `docker compose down`.
+- Todo el monorepo desde la raíz: `pnpm install`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`.
+- Web: `pnpm --filter @coach/web dev` (http://localhost:5173).
+- Backend, dentro de `backend/`: `uv sync`, `uv run pytest`, `uv run ruff check .`, `uv run ruff format .`, `uv run mypy`, `uv run fastapi dev src/coach_api/main.py`.
+- Versiones fijadas: Node en `.node-version` (fnm), pnpm en `package.json`, Python en `backend/.python-version` (uv).
+
 ## Forma de trabajar
 
 1. Ninguna tarea empieza sin requisito y criterios de aceptación. Ninguna pantalla sin mockup aprobado (Fase 0.5).
@@ -42,6 +50,13 @@ Si algo choca con el plan, no improvises: pregunta a Francis y registra la decis
 6. Nunca dar una tarea por terminada si falla lint, tipos, tests, detector de diseño o la consola del navegador.
 7. Cada funcionalidad terminada lleva su guía de uso en el Centro de ayuda (agente `documentador`).
 8. Al cerrar la sesión: actualiza `docs/estado.md`.
+
+## Gestión de contexto
+
+- Al terminar cada tarea o cada commit, actualiza `docs/estado.md` sin que te lo pidan: qué se hizo, qué sigue, decisiones tomadas y pendientes. Mantenlo corto (menos de 100 líneas): se inyecta al inicio de cada conversación.
+- Delega a los agentes todo trabajo que lea muchos archivos o produzca salidas largas; la conversación principal solo coordina.
+- Al cerrar un bloque grande de trabajo, dile a Francis: "Buen momento para abrir una conversación nueva".
+- Un hook `SessionStart` (`.claude/settings.json`) inyecta `docs/estado.md` al iniciar, al usar `/clear`, tras compactar y al reanudar (ADR 0019).
 
 ## Modelos
 

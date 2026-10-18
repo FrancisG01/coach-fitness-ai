@@ -1,0 +1,32 @@
+name: Funcionalidad
+description: Una tarea o funcionalidad del plan maestro
+labels: [funcionalidad]
+body:
+  - type: input
+    id: requisito
+    attributes:
+      label: Requisito
+      description: ID del plan maestro (ej. GYM-04)
+    validations:
+      required: true
+  - type: textarea
+    id: descripcion
+    attributes:
+      label: Qué hace
+    validations:
+      required: true
+  - type: textarea
+    id: criterios
+    attributes:
+      label: Criterios de aceptación
+      value: |
+        - [ ]
+    validations:
+      required: true
+  - type: checkboxes
+    id: ready
+    attributes:
+      label: Definition of Ready
+      options:
+        - label: Tiene mockup aprobado (si toca interfaz)
+        - label: Tiene impacto en BD definido (si cambia el esquema)
