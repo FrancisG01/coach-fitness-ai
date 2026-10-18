@@ -2,6 +2,22 @@
 export const brand = {
   name: "Coach Fitness AI",
   shortName: "Coach",
+  // Logo provisional: glifo "barbell" de Tabler Icons 3.49.0 (MIT, © Paweł Kuna).
+  // Solo trazo con currentColor; la casilla (radio 10, texto principal sobre elevado)
+  // la pinta cada plataforma con sus tokens (DESIGN.md, Components → logo).
+  logo: {
+    viewBox: "0 0 24 24",
+    strokeWidth: 1.75,
+    paths: [
+      "M2 12h1",
+      "M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2",
+      "M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1",
+      "M9 12h6",
+      "M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1",
+      "M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2",
+      "M22 12h-1",
+    ],
+  },
 } as const;
 
 export type Brand = typeof brand;

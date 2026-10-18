@@ -9,7 +9,7 @@ Oct 17, 2026 · @Almonte
 | Campo | Valor |
 | --- | --- |
 | Proyecto | Coach Fitness AI (nombre provisional) |
-| Versión | 1.2 |
+| Versión | 1.3 |
 | Estado | En definición — Fase 0 |
 | Dueño del producto | Francis Guzman |
 | Responsable técnico | Claude (agente Project Manager) |
@@ -24,6 +24,7 @@ Oct 17, 2026 · @Almonte
 | 1.0 | 17-oct-2026 | Reestructura profesional y ficha del atleta integrada (Anexo A) |
 | 1.1 | 18-oct-2026 | Coherencia con D-14 a D-20: una sola fuente (Archivo), modo según el sistema, coach solo con créditos Max, staging por Tailscale, backlog v1.0 cerrado, 10 agentes, `apps/watch/`, NativeWind |
 | 1.2 | 18-oct-2026 | PRD aprobado (`docs/prd.md`): título "Coach Fitness AI"; fotos de progreso y mapa corporal fuera de la v1.0; embeddings locales en el servidor (D-21); estimación de tiempos en el PRD |
+| 1.3 | 18-oct-2026 | PRODUCT.md y DESIGN.md (Impeccable); MTB solo por captura de Strava en §1; íconos Tabler (D-22); barra inferior Hoy, Gym, Comida, Salud, Coach (D-23); logo provisional: mancuerna en `packages/brand` |
 
 ## 1. Resumen ejecutivo
 
@@ -31,7 +32,7 @@ Construimos una plataforma propia: backend en Python, web en React y app Android
 
 - **Reemplaza** GymTracker en Sheets y el enfoque de archivos .md en Cursor.
 - **Nutrición propia:** registro de comidas y base de alimentos dominicanos dentro del sistema; Cronometer pasa a opcional (no tiene API pública).
-- **Strava no puede alimentar al coach IA** por sus términos; los paseos de MTB entran por archivos FIT/GPX o directo desde el dispositivo que los graba.
+- **Strava no puede alimentar al coach IA** por sus términos; los paseos de MTB entran por captura de pantalla de Strava en el chat del coach (ADR 0005), con archivo GPX opcional para ver la ruta.
 - **Obsidian:** no como base del sistema; sí como bóveda de documentación del proyecto (opcional).
 - **Arranque físico:** Full Body A/B/C desde cero, combinado con MTB.
 
@@ -802,6 +803,8 @@ Decisiones ya tomadas; al arrancar el repo cada una se convierte en un ADR en `d
 | D-19 | 17-oct-2026 | Gestión automática del contexto: hook SessionStart que inyecta docs/estado.md (inicio, /clear, compactación, reanudar), estado.md actualizado en cada tarea y delegación a agentes (ADR 0019) | Que ninguna conversación ni compactación pierda el estado del proyecto |
 | D-20 | 18-oct-2026 | Servidor Oracle `coach`: Minecraft retirado, SSH solo con llave y solo por Tailscale, usuarios `ubuntu` (admin) y `deploy` (Docker), ningún puerto público (firewall del sistema + lista de seguridad de la VCN), Caddy en Docker escuchando solo en la IP de Tailscale con certificado de Tailscale (ADR 0020) | Servidor dedicado y sin exposición a internet, como pide D-12 |
 | D-21 | 18-oct-2026 | Embeddings de la memoria del coach con un modelo local en el servidor Oracle; el modelo concreto se elige en la Fase 1 con benchmark (ADR 0021) | Anthropic no ofrece embeddings; un servicio externo vería datos de salud y costaría dinero |
+| D-22 | 18-oct-2026 | Íconos de trazo Tabler Icons en web, Android y reloj; trazo 1.75, tamaños 16/20/24/32 (ADR 0022) | Única candidata con paquetes oficiales para React y React Native y con báscula de baño; MIT |
+| D-23 | 18-oct-2026 | Navegación inferior: Hoy, Gym, Comida, Salud, Coach; Ajustes en el botón de cuenta de Hoy; logo provisional = mancuerna de Tabler en casilla, desde `packages/brand` | Preferencia del dueño del producto; las cinco secciones de uso diario a un toque |
 
 ## 21. Pendientes: lo que necesito de ti
 
