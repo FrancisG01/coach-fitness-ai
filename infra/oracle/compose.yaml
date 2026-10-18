@@ -6,6 +6,11 @@ services:
   caddy:
     image: caddy:2.10.2-alpine
     restart: unless-stopped
+    # Usuario deploy (uid 1002), sin root. tailscaled le permite pedir
+    # certificados y nada más (TS_PERMIT_CERT_UID=1002 en /etc/default/tailscaled).
+    user: "1002:1002"
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
     # Red del host para escuchar solo en la IP de Tailscale (ver Caddyfile):
     # con puertos publicados, Docker se saltaría el firewall del sistema.
     network_mode: host
@@ -15,11 +20,7 @@ services:
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./web:/srv/web:ro
-      # Caddy pide a Tailscale el certificado HTTPS de *.ts.net por este socket.
-      - /var/run/tailscale/tailscaled.sock:/var/run/tailscale/tailscaled.sock
-      - caddy_data:/data
-      - caddy_config:/config
-
-volumes:
-  caddy_data:
-  caddy_config:
+      # Carpeta y no el socket suelto: tailscaled lo recrea al reiniciarse.
+      - /var/run/tailscale:/var/run/tailscale
+      - ./caddy/data:/data
+      - ./caddy/config:/config

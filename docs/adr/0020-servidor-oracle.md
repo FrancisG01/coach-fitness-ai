@@ -19,12 +19,17 @@ La instancia de Oracle Cloud (Ashburn, ARM, 2 núcleos, 11 GB de RAM, 193 GB de 
 
    SSH no admite root ni contraseñas, y solo deja entrar a esos dos usuarios (`/etc/ssh/sshd_config.d/10-coach.conf`).
 4. **Ningún puerto abierto a internet, con dos barreras:**
-   - el firewall del sistema (iptables, guardado en `/etc/iptables/rules.v4`) solo acepta SSH desde la interfaz `tailscale0`;
+   - el firewall del sistema (iptables, guardado en `/etc/iptables/rules.v4`, copia en `infra/oracle/iptables-rules.v4`) rechaza todo lo que entra por la interfaz pública, salvo ICMP y las respuestas a conexiones ya abiertas. Por `tailscale0` entra lo que permite la cadena `ts-input`, que crea `tailscaled` al arrancar (hoy, SSH y HTTPS). SSH tiene además su propia regla, limitada a `tailscale0`, que no depende de esa cadena;
    - la lista de seguridad de la VCN conserva solo dos reglas de ICMP: tipo 3 y 4 desde cualquier origen, y tipo 3 desde `10.0.0.0/16`.
 
-   Tailscale no necesita puertos de entrada.
+   Tailscale no necesita puertos de entrada. La instancia no tiene IPv6 público y `rules.v6` está vacío: si algún día se activa IPv6 en la VCN, hay que replicar ahí las reglas de IPv4.
 5. **Docker Engine y Compose** del repositorio oficial, con rotación de logs: 3 archivos de 10 MB por contenedor.
-6. **Caddy en Docker con `network_mode: host`, escuchando solo en la IP de Tailscale** (`default_bind`). El certificado de `*.ts.net` lo obtiene de `tailscaled` por su socket y lo renueva solo. Configuración y despliegue en `infra/oracle/`.
+6. **Caddy en Docker con `network_mode: host`, escuchando solo en la IP de Tailscale** (`default_bind`).
+   - El certificado de `*.ts.net` lo obtiene de `tailscaled` por su socket y lo renueva solo.
+   - Caddy no corre como root: usa el uid 1002 (`deploy`) y solo tiene la capacidad `NET_BIND_SERVICE`.
+   - `TS_PERMIT_CERT_UID=1002` en `/etc/default/tailscaled` le permite pedir certificados y nada más; no puede, por ejemplo, activar Funnel.
+   - Monta la carpeta `/var/run/tailscale` y no el socket suelto, porque `tailscaled` recrea el socket al reiniciarse.
+   - Configuración y despliegue en `infra/oracle/`. La configuración de SSH (`sshd-10-coach.conf`) y del firewall (`iptables-rules.v4`) también se versiona ahí, como copia de referencia de lo que hay en el servidor.
 7. **Actualizaciones automáticas de seguridad** activas (`unattended-upgrades`).
 
 ## Alternativas consideradas

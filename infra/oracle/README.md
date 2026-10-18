@@ -28,6 +28,18 @@ Host oracle-deploy
   IdentitiesOnly yes
 ```
 
+## Archivos
+
+| Archivo | En el servidor | Para qué |
+| --- | --- | --- |
+| `compose.yaml`, `Caddyfile` | `/srv/coach/` | Caddy; los copia `desplegar.sh` |
+| `sshd-10-coach.conf` | `/etc/ssh/sshd_config.d/10-coach.conf` | SSH solo con llave, sin root, solo `ubuntu` y `deploy` |
+| `iptables-rules.v4` | `/etc/iptables/rules.v4` | Firewall: nada entra por la interfaz pública |
+
+Los dos últimos son copias de referencia: si cambias uno en el servidor, actualiza también la copia del repo.
+
+Además, `/etc/default/tailscaled` tiene `TS_PERMIT_CERT_UID=1002`, para que Caddy (que corre como `deploy`) pueda pedir el certificado HTTPS a Tailscale.
+
 ## Desplegar
 
 Desde la raíz del repo, con Tailscale conectado:

@@ -16,7 +16,7 @@
   - Nombre `coach` en el sistema y en Tailscale; Ubuntu 24.04 al día, con actualizaciones automáticas de seguridad.
   - Usuarios: `ubuntu` (admin, sudo) y `deploy` (Docker, sin sudo). SSH solo con llave, sin root, solo por Tailscale.
   - Sin puertos públicos: iptables + lista de seguridad de la VCN (solo ICMP 3/4). Verificado desde fuera.
-  - Docker 29.9 + Compose v5.6; Caddy 2.10.2 en `infra/oracle/`, escuchando solo en la IP de Tailscale.
+  - Docker 29.9 + Compose v5.6; Caddy 2.10.2 en `infra/oracle/`, escuchando solo en la IP de Tailscale, sin root (uid 1002, `TS_PERMIT_CERT_UID`).
 - **Criterio de salida de la Fase S cumplido (18-oct-2026):** Francis abrió https://coach.tail72ec86.ts.net desde el teléfono por Tailscale con HTTPS. Playwright: 200, cero mensajes en la consola.
 - Cada cambio entra por rama + PR; Francis fusiona con `gh pr merge <n> --squash --delete-branch`.
 
@@ -31,7 +31,7 @@
 
 1. Revisión del agente revisor y fusión del PR del servidor → Fase S cerrada.
 2. Fase 0: PRD, `/impeccable init`, ADRs D-01 a D-18. Después, la Fase 0.5 (mockups).
-3. Fase 1: despliegue automático desde el CI (llave propia del CI y Tailscale en el runner).
+3. Fase 1: despliegue automático desde el CI (llave propia del CI y Tailscale en el runner). Del revisor (PR #5): `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile antes de servir la app real; despliegue atómico (carpeta versionada + enlace simbólico) y sin reinicio de Caddy si no cambió el Caddyfile.
 
 ## Pendientes de Francis
 

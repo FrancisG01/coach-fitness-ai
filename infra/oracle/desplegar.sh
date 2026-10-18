@@ -11,7 +11,8 @@ echo "Compilando la web"
 pnpm --filter @coach/web build
 
 echo "Copiando al servidor"
-rsync -a --delete infra/oracle/compose.yaml infra/oracle/Caddyfile "$DESTINO/"
+ssh oracle-deploy 'mkdir -p /srv/coach/caddy/data /srv/coach/caddy/config'
+rsync -a infra/oracle/compose.yaml infra/oracle/Caddyfile "$DESTINO/"
 rsync -a --delete apps/web/dist/ "$DESTINO/web/"
 
 echo "Levantando servicios"
