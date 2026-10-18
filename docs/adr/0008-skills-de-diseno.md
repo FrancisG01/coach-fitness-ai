@@ -20,7 +20,7 @@ El look "hecho con IA" sale de usar plantillas por defecto: shadcn sin tocar, gr
 
 ## Alternativas consideradas
 
-- **Taste Skill.** Descartada: se solapa con Impeccable y sus reglas chocarían. La sección 14 la deja solo como inspiración opcional en la Fase 0.
+- **Taste Skill.** Descartada: se solapa con Impeccable y sus reglas chocarían. No se usa ni como inspiración (aclarado el 18-oct-2026).
 
 ## Consecuencias
 

@@ -31,4 +31,4 @@ El plan no compara WSL2 con otras opciones de entorno en Windows. Sobre el alcan
 - El entorno de desarrollo es idéntico al del servidor (Linux con Docker), y se evitan diferencias entre Windows y producción.
 - El código nunca va en `/mnt/c/`; la integración Claude in Chrome no funciona en WSL, así que la web se prueba con Playwright dentro de WSL.
 - Ninguna línea de producto se escribe hasta cerrar la Fase S. Se cerró el 18-oct-2026 (sección 21).
-- Toda idea nueva entra al backlog (sección 19) y se evalúa con Francis; no entra a la fase en curso salvo que sea crítica.
+- Toda idea nueva entra al backlog (sección 19) para después de la v1.0, salvo que sea crítica y Francis lo decida (aclarado el 18-oct-2026).

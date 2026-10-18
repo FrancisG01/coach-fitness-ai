@@ -14,7 +14,7 @@ Claude interviene de dos formas distintas: como herramienta de desarrollo (Claud
 - **Desarrollo:** Claude Code con la suscripción de Claude de Francis.
 - **Coach de la app:** la API de Anthropic con tool use, llamada desde el backend:
   - la clave se crea en Claude Console y vive en variables de entorno del servidor, nunca en el repositorio;
-  - el gasto sale de los créditos mensuales de API que incluye el plan Max ($100 en Max 5x, $200 en Max 20x), vinculados a una organización de Claude Console. La tabla de la sección 20 dice "créditos Max o pago por uso";
+  - el gasto sale de los créditos mensuales de API que incluye el plan Max ($100 en Max 5x, $200 en Max 20x), vinculados a una organización de Claude Console. Solo créditos Max; el pago por uso queda como opción futura (aclarado el 18-oct-2026);
   - los créditos se activan en la Fase 5.
 
 ## Alternativas consideradas
