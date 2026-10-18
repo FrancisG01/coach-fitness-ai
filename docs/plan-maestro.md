@@ -32,6 +32,7 @@ Oct 17, 2026 · @Almonte
 | 1.8 | 18-oct-2026 | Revisión del flujo 1 (D-29): regla de la rampa según las reps objetivo (GYM-05), descanso, ajustes al vuelo y resumen al cerrar (GYM-04); ciclos de entrenamiento al backlog |
 | 1.9 | 18-oct-2026 | Guía del flujo 1 aprobada (D-30): modo gym también en la web como PWA, sesión sin programar, redondeo de la rampa, mancuernas, series por tiempo y cifra del descanso |
 | 1.10 | 18-oct-2026 | Flujo 1 aprobado (D-31): otra sesión el mismo día, volumen ×4 en ejercicios por pierna con mancuernas, serie por tiempo, sesión minimizada, avisos que no tapan acciones, contraste del subitem activo web corregido |
+| 1.11 | 18-oct-2026 | Revisión del flujo 10 (D-32): conexiones antes del punto de partida, cálculo de kcal y proteína en la bienvenida, bienvenida en móvil y web con retomar en el otro dispositivo |
 
 ## 1. Resumen ejecutivo
 
@@ -172,7 +173,9 @@ Módulo nuevo de la v1.0 (D-28). Ordena todo lo demás hacia una meta con fecha 
 
 ### Bienvenida y perfil (SIS-08, SIS-09)
 
-La primera vez que entras, la app te pregunta lo que el coach necesita saber de ti en 7 pasos (unos 3 minutos). Cada paso lleva una ilustración vectorial (ADR 0024). Puedes salir y retomar donde ibas, y todo se edita después en su sección.
+La primera vez que entras, la app te pregunta lo que el coach necesita saber de ti en 7 pasos (unos 3 minutos). Cada paso lleva una ilustración vectorial (ADR 0024). Puedes salir y retomar donde ibas, también en otro dispositivo (móvil o web), y todo se edita después en su sección.
+
+**Cálculo de tu plan (paso 7, D-32):** gasto en reposo con Katch-McArdle si ya se conoce el % de grasa (Renpho o Marina) y, si no, con Mifflin-St Jeor; multiplicado por el nivel de actividad del paso 3. Ajuste según el objetivo: −15 a −20 % para perder grasa, −10 % en recomposición, +5 a +10 % para ganar músculo y mantenimiento en fuerza, salud general y rendimiento MTB. Proteína de 1.8 a 2.2 g por kg. Para Francis no cambia nada: sigue el objetivo fijo de 2,350 kcal y 187 g de proteína hasta la revisión de las 6 semanas.
 
 | Paso | Qué pregunta |
 | --- | --- |
@@ -180,8 +183,8 @@ La primera vez que entras, la app te pregunta lo que el coach necesita saber de 
 | 2. Tu objetivo | Objetivo principal (OBJ-01) |
 | 3. Tu actividad | Experiencia o etapa en el gym, días por semana, duración y horario de la sesión, actividad fuera del gym (nivel diario) y MTB (frecuencia) |
 | 4. Tu salud | Lesiones o molestias, condiciones relevantes, alergias y restricciones alimentarias, con "ninguna" en un toque. El coach lo usa para tu seguridad y nunca diagnostica ni prescribe |
-| 5. Tu punto de partida | Peso y cintura obligatorios; el resto de medidas con "lo mido luego" |
-| 6. Conexiones | Renpho, Health Connect y reloj; todas se pueden saltar |
+| 5. Conexiones | Renpho, Health Connect y reloj; todas se pueden saltar (D-32: van antes del punto de partida para no escribir dos veces lo que trae Renpho) |
+| 6. Tu punto de partida | Peso y cintura obligatorios; el resto de medidas con "lo mido luego". Lo que trae Renpho (peso, % de grasa, masa muscular) llega lleno y se puede corregir |
 | 7. Tu plan | Resumen con kcal, proteína y primeras metas intermedias: "esto es lo que el coach sabe de ti" |
 
 El perfil (SIS-09) vive en Ajustes: todo lo de la bienvenida más lo que se llena después (preferencias de comida, presupuesto, si cocina, suplementos actuales, sueño y estrés habituales). Cada cambio guarda historial con fecha.
@@ -804,7 +807,7 @@ Cada flujo clave se entrega en cuatro piezas: diagrama del flujo, guía paso a p
 | Hablar con el coach | Pregunta → respuesta con tus datos → aprobar plan propuesto |
 | Empezar el día | Dashboard: entreno, comidas, suplementos pendientes, alertas, tarjeta de objetivos → página de Objetivos (metas intermedias, metas por medida y por fuerza, hitos) |
 | Entrenar desde el reloj | Iniciar sesión del día → serie → check → descanso → vibración → espera → play → siguiente → resumen de tiempos |
-| Bienvenida (primer uso) | Tú → tu objetivo → tu actividad → tu salud → tu punto de partida → conexiones → tu plan; salir y retomar |
+| Bienvenida (primer uso) | Tú → tu objetivo → tu actividad → tu salud → conexiones → tu punto de partida → tu plan; salir y retomar |
 
 Orden de trabajo: primero programar entrenamientos (flujo 2), después entrenar en el gym (flujo 1) y luego la bienvenida (flujo 10) (D-25, D-28).
 
@@ -935,6 +938,7 @@ Decisiones ya tomadas; al arrancar el repo cada una se convierte en un ADR en `d
 | D-29 | 18-oct-2026 | Revisión del flujo 1: la rampa (GYM-05) depende de las reps objetivo y el peso de trabajo de cada ejercicio (1-5 reps: 4 series y potenciación opcional; 6-12: 1 a 3 series según el peso; 13 o más: 1 o ninguna), con una sola serie de tanteo si el músculo ya está caliente y sin rampa en aislamiento. Descanso con +15 s, −15 s y saltar, vibración y tiempo extra; ajustar peso o reps al vuelo solo cambia esa sesión; resumen al cerrar con tiempos, volumen, récords e hitos. Los ciclos de entrenamiento (bloques de fuerza o hipertrofia) quedan fuera de la v1.0 | Criterio de coach: para recomposición la rampa solo prepara, y una rampa fija suma fatiga y tiempo; las reps reflejan la intensidad real en cualquier ciclo. La nutrición depende del objetivo de composición (OBJ-01), no del ciclo. La rutina A/B/C ya trae su progresión y el coach puede proponer un bloque de fuerza (COA-04) |
 | D-30 | 18-oct-2026 | Guía del flujo 1 aprobada: el modo gym existe en la app Android y en la web como PWA en el teléfono (escritorio: solo lectura); pantalla completa con flecha para minimizar; tachar con casilla o botón "Serie hecha"; Finalizar sin confirmación; ajuste al vuelo de fábrica en "Las que faltan"; sesión sin programar desde una rutina (la siguiente de la rotación) o vacía; redondeo de la rampa hacia abajo; mancuerna mínima 5 lb y volumen con las dos mancuernas; series por tiempo (plancha); cifra del descanso con token propio del modo gym | La Fase 2 entrega el modo gym como PWA antes que la app Android; calentar de menos es más seguro que pasarse; contar las dos mancuernas da la carga real y se compara con la barra; la plancha está en la rutina A/B/C; en el gym el teléfono se mira desde el banco |
 | D-31 | 18-oct-2026 | Flujo 1 aprobado con sus 4 piezas: "Empezar otra sesión" con la sesión del día hecha; volumen ×4 en ejercicios por pierna con mancuernas; serie por tiempo que se tacha sola con "Terminé antes"; franja de sesión minimizada; los avisos nunca tapan acciones del modo gym; la hoja de ajuste dice a qué series se aplica; esqueleto solo tras 300 ms; el subitem activo de la barra lateral web usa A5 en claro (antes 4.49:1, ahora cumple AA) | Revisión de Francis con el prototipo; criterio de coach: la carga real cuenta todo lo que mueves; el contraste por debajo de 4.5:1 se repetiría en cada pantalla web |
+| D-32 | 18-oct-2026 | Revisión del flujo 10 (bienvenida): conexiones pasan al paso 5 y el punto de partida al 6, con lo de Renpho ya lleno; kcal con Katch-McArdle si hay % de grasa y si no Mifflin-St Jeor, por nivel de actividad, ajustadas al objetivo (−15 a −20 % perder grasa, −10 % recomposición, +5 a +10 % ganar músculo, mantenimiento en el resto); proteína 1.8 a 2.2 g/kg; los objetivos de Francis no cambian (2,350 kcal, 187 g); bienvenida en móvil y web, y se retoma en cualquiera de los dos; en el flujo 2, "Sentadilla búlgara mancuernas" y "por mancuerna" en el paso de pesos | Revisión de Francis; criterio de coach: Katch-McArdle es más precisa cuando se conoce la masa magra, y no escribir dos veces lo que mide la báscula |
 
 ## 21. Pendientes: lo que necesito de ti
 
