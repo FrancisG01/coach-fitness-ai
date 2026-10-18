@@ -31,3 +31,4 @@ Formato de cada ADR: contexto, decisión, alternativas consideradas, consecuenci
 | [0021](0021-embeddings-locales-en-el-servidor.md) | Embeddings de la memoria del coach con un modelo local en el servidor |
 | [0022](0022-iconos-tabler.md) | Íconos: Tabler Icons (outline) en web, Android y reloj |
 | [0023](0023-unidades-preferidas.md) | Unidades preferidas por usuario y almacenamiento en kg, cm y m |
+| [0024](0024-ilustraciones-en-la-bienvenida.md) | Ilustraciones solo en la bienvenida, con colores de tokens |

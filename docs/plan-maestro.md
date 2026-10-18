@@ -9,7 +9,7 @@ Oct 17, 2026 · @Almonte
 | Campo | Valor |
 | --- | --- |
 | Proyecto | Coach Fitness AI (nombre provisional) |
-| Versión | 1.6 |
+| Versión | 1.7 |
 | Estado | En definición — Fase 0 |
 | Dueño del producto | Francis Guzman |
 | Responsable técnico | Claude (agente Project Manager) |
@@ -28,6 +28,7 @@ Oct 17, 2026 · @Almonte
 | 1.4 | 18-oct-2026 | Unidades preferidas por usuario (SIS-07, D-24, ADR 0023): peso corporal y cargas del gym en lb de fábrica; estatura, perímetros y distancia en métrico de fábrica; RNF-10 actualizado |
 | 1.5 | 18-oct-2026 | Calendario de entrenamientos (D-25): GYM-03 reescrito con días pasados, hoy y futuros, mover y copiar sesiones, paseos MTB y citas de análisis; el calendario vive en Gym; flujo 2 de la Fase 0.5 ampliado |
 | 1.6 | 18-oct-2026 | Revisión del flujo 2 (D-26): programar en tres pasos (rutina, series y repeticiones, pesos); semana 1 = semana de la primera actividad registrada; pestañas internas de Gym en móvil; subsección Análisis en Salud. Datos del paseo MTB y calorías del día (D-27): CAR-01 y CAR-02 reescritos, flujo 5 con dos capturas |
+| 1.7 | 18-oct-2026 | Objetivos, bienvenida y medidas corporales completas (D-28, excepción al backlog cerrado): módulo nuevo Objetivos (OBJ-01 a OBJ-04), bienvenida de primer uso (SIS-08), perfil editable (SIS-09), SAL-02 reescrito con la lista completa de medidas, medidas calculadas (SAL-07), re-preguntas del coach (COA-05); contexto fijo del coach ampliado; flujo 10 de la Fase 0.5 (bienvenida) y flujos 6 y 8 ampliados; ilustraciones solo en la bienvenida (ADR 0024) |
 
 ## 1. Resumen ejecutivo
 
@@ -71,7 +72,7 @@ Un coach personal de élite que conoce todos tus datos y una plataforma que hace
 
 ### Objetivos físicos (los que el sistema debe ayudarte a cumplir)
 
-Las metas de composición corporal están en el Anexo A. Como hubo una pausa de junio a octubre, se recalculan en la Fase 0 a partir de la medición de hoy.
+Las metas de composición corporal están en el Anexo A. Como hubo una pausa de junio a octubre, se recalcularon en la Fase 0 a partir de la medición de hoy (PRD, sección 5), y en la app se cargan como tu objetivo principal (OBJ-01).
 
 ## 4. Alcance, supuestos y restricciones
 
@@ -80,7 +81,7 @@ Es un producto personal para un solo usuario: tú. Todo lo que no ayude a ese ob
 | Dentro de la v1.0 | Fuera de la v1.0 |
 | --- | --- |
 | Web responsive instalable (PWA), app Android y app para Galaxy Watch (Wear OS) | App iOS |
-| Gym, salud, nutrición, suplementos, cardio/MTB, coach IA, dashboard | Apertura al público y registro de otros usuarios (la arquitectura queda lista, sección 11) |
+| Gym, salud, nutrición, suplementos, cardio/MTB, objetivos y metas, coach IA, dashboard; bienvenida de primer uso y perfil editable | Apertura al público y registro de otros usuarios (la arquitectura queda lista, sección 11) |
 | Sync automático Renpho; MTB por captura | API de Strava y de Cronometer |
 | Base de alimentos dominicanos sobre USDA | Escáner de código de barras (backlog) |
 | Despliegue en tu servidor Oracle | Publicación en Google Play |
@@ -101,17 +102,18 @@ Es un producto personal para un solo usuario: tú. Todo lo que no ayude a ese ob
 
 ## 5. Módulos y requisitos funcionales
 
-Siete módulos sobre una sola base de datos; el coach lee todos.
+Ocho módulos sobre una sola base de datos; el coach lee todos.
 
 | Módulo | Qué incluye |
 | --- | --- |
 | **Dashboard** | Resumen del día: entreno programado, macros vs objetivo, suplementos pendientes, peso y tendencia, volumen muscular semanal, alertas del coach |
-| **Salud y composición** | Mediciones Renpho (todos los campos), medidas con cinta, análisis de sangre con rangos, entrada manual de cualquier dato, gráficos de tendencia |
+| **Salud y composición** | Mediciones Renpho (todos los campos), medidas corporales completas (obligatorias, recomendadas y opcionales) y medidas calculadas, análisis de sangre con rangos, entrada manual de cualquier dato, gráficos de tendencia |
 | **Entrenamiento (Gym)** | Biblioteca de ejercicios con implicación por músculo, rutinas personalizadas, calendario de sesiones pasadas y futuras con pesos por ejercicio, modo gym (tachar series, cambiar peso/reps, temporizador de descanso), series rampa automáticas, historial y récords, volumen por músculo individual |
 | **Cardio / MTB** | Paseos registrados desde capturas de pantalla de Strava en el chat del coach (distancia, desnivel positivo, tiempo en movimiento, velocidad media, calorías, frecuencia cardiaca promedio y, de una segunda captura, el % de tiempo y el rango en ppm de cada zona de FC (Z1 a Z5)), con confirmación antes de guardar; carga cardiovascular, efecto sobre recuperación y calorías |
 | **Nutrición** | Registro de comidas, base de alimentos dominicanos con nutrientes completos, recetas y platos, planes día/semana/mes, objetivos por tipo de día, micronutrientes, importación opcional de Cronometer |
 | **Suplementación** | Catálogo, inventario y compras, dosis y horarios, registro de toma, aporte de nutrientes sumado al plan, alertas (ej. stock bajo, dosis olvidada) |
-| **Coach IA** | Chat con acceso a todos los datos vía herramientas, memoria de decisiones, revisiones semanales automáticas, generación de planes y rutinas |
+| **Objetivos** | Objetivo principal con meta medible y fecha, metas intermedias cada 4 semanas, metas por medida y por fuerza, hitos; tarjeta en Hoy y página propia |
+| **Coach IA** | Chat con acceso a todos los datos vía herramientas, memoria de decisiones, revisiones semanales automáticas, generación de planes y rutinas, re-preguntas periódicas de lo que cambia |
 
 ### Cómo se mide el trabajo por músculo
 
@@ -144,13 +146,54 @@ Cada usuario guarda en Ajustes → Unidades cómo quiere ver y escribir sus dato
 | Peso corporal | kg · lb | lb |
 | Cargas del gym | kg · lb | lb |
 | Estatura | m · cm · pies y pulgadas (5′ 9″) | cm |
-| Perímetros (cintura, cadera, pecho, brazos, muslos) | cm · pulgadas | cm |
+| Perímetros (todos los de SAL-02) | cm · pulgadas | cm |
 | Distancia (MTB y cardio) | km · millas | km |
 
 - **Comida:** la unidad se elige en cada registro (NUT-02); los nutrientes siempre en g, mg o µg.
 - **Por dentro:** todo se guarda en kg, cm y m, junto con la unidad en que se escribió; la conversión ocurre solo al mostrar (ADR 0023).
 - **Gym en libras:** los incrementos, la rampa (GYM-05) y la sugerencia de progresión se redondean a pasos de disco en la unidad elegida (por ejemplo, 5 lb en vez de 2.5 kg).
 - **Derivadas:** la velocidad y el desnivel siguen a la distancia (km/h y m, o mph y pies).
+- **Fijas:** los pliegues cutáneos van siempre en mm, la presión arterial en mmHg y la frecuencia cardiaca en ppm.
+
+### Objetivos (OBJ)
+
+Módulo nuevo de la v1.0 (D-28). Ordena todo lo demás hacia una meta con fecha y le da al coach con qué juzgar el progreso.
+
+| Pieza | Cómo funciona |
+| --- | --- |
+| Objetivo principal (OBJ-01) | Tipo (perder grasa, ganar músculo, recomposición, fuerza, salud general, rendimiento MTB), meta medible (peso, % de grasa, cintura u otra) y fecha. Uno activo a la vez; los anteriores quedan en el historial. Las metas de enero 2027 del PRD (sección 5) se cargan como el objetivo principal de Francis |
+| Metas intermedias (OBJ-02) | La app propone una cada 4 semanas, repartiendo en línea recta el camino desde la media de 7 días hasta la meta principal. El usuario las edita, añade o borra. El coach juzga cada una como adelante, en ritmo o atrasado con la media de 7 días y la tendencia de 4 semanas |
+| Metas por medida y por fuerza (OBJ-03) | Para cualquier medida de SAL-02 y para ejercicios (carga o repeticiones, en la unidad preferida de cargas). Se ven como línea punteada de referencia en su gráfico; esa línea no cuenta como serie |
+| Hitos (OBJ-04) | Se registra un hito al cumplir una meta intermedia, por medida o de fuerza, junto con los récords personales de GYM-07. Aviso discreto y lista de hitos en la página de Objetivos. Las rachas siguen fuera de la v1.0 |
+| Dónde se ve | Tarjeta en Hoy con el objetivo principal y la próxima meta intermedia; al tocarla abre la página de Objetivos. No es una sexta pestaña |
+
+### Bienvenida y perfil (SIS-08, SIS-09)
+
+La primera vez que entras, la app te pregunta lo que el coach necesita saber de ti en 7 pasos (unos 3 minutos). Cada paso lleva una ilustración vectorial (ADR 0024). Puedes salir y retomar donde ibas, y todo se edita después en su sección.
+
+| Paso | Qué pregunta |
+| --- | --- |
+| 1. Tú | Nombre, fecha de nacimiento, sexo, estatura y unidades (SIS-07) |
+| 2. Tu objetivo | Objetivo principal (OBJ-01) |
+| 3. Tu actividad | Experiencia o etapa en el gym, días por semana, duración y horario de la sesión, actividad fuera del gym (nivel diario) y MTB (frecuencia) |
+| 4. Tu salud | Lesiones o molestias, condiciones relevantes, alergias y restricciones alimentarias, con "ninguna" en un toque. El coach lo usa para tu seguridad y nunca diagnostica ni prescribe |
+| 5. Tu punto de partida | Peso y cintura obligatorios; el resto de medidas con "lo mido luego" |
+| 6. Conexiones | Renpho, Health Connect y reloj; todas se pueden saltar |
+| 7. Tu plan | Resumen con kcal, proteína y primeras metas intermedias: "esto es lo que el coach sabe de ti" |
+
+El perfil (SIS-09) vive en Ajustes: todo lo de la bienvenida más lo que se llena después (preferencias de comida, presupuesto, si cocina, suplementos actuales, sueño y estrés habituales). Cada cambio guarda historial con fecha.
+
+### Medidas corporales (SAL-02, SAL-07)
+
+| Grupo | Medidas |
+| --- | --- |
+| Obligatorias | Estatura (una vez), peso, cintura (ombligo) |
+| Recomendadas | Cuello, hombros, pecho, cadera, brazo relajado y contraído, muslo, pantorrilla |
+| Opcionales | Antebrazo, muñeca, tobillo, abdomen bajo; lado izquierdo y derecho en las bilaterales (de fábrica solo el derecho, como en el Anexo A.3); pliegues cutáneos (7 sitios); FC en reposo y presión arterial |
+| Automáticas | Los campos de Renpho (SAL-01) |
+| Calculadas (SAL-07) | IMC, cintura/estatura, cintura/cadera, hombros/cintura y % de grasa por el método de la Marina de EE. UU. (cuello, cintura y estatura; cadera en mujeres), como segunda opinión frente a la bioimpedancia de la báscula |
+
+Frecuencia sugerida: peso a diario y cinta cada 4 semanas; el coach lo recuerda (COA-05).
 
 ### Centro de ayuda (guía de uso)
 
@@ -163,7 +206,7 @@ Una sección "Ayuda" dentro de la app web que se escribe a la par del desarrollo
 | Ayuda en contexto | Un ícono "?" en cada pantalla lleva directo a su guía |
 | Capturas siempre al día | Se generan solas con las pruebas automáticas (Playwright en web, Maestro en Android, capturas del emulador en el reloj); si la pantalla cambia, la captura se actualiza en el CI |
 | Novedades | Página "Qué hay de nuevo" con cada versión publicada, en lenguaje de usuario |
-| Primeros pasos | Recorrido de bienvenida: configurar perfil, primera sesión de gym, primera comida, conectar reloj y Samsung Health |
+| Primeros pasos | Guía que sigue a la bienvenida (SIS-08): perfil, primera sesión de gym, primera comida, conectar reloj y Samsung Health |
 | Formato | Archivos MDX en el repo (`apps/web/src/ayuda/`), versionados junto al código |
 
 Regla: una funcionalidad no se da por terminada sin su guía (Definition of Done).
@@ -191,11 +234,12 @@ Cada requisito tiene un identificador que se usa en tareas, tests y pull request
 | WAT-06 | Sincronización en tiempo real reloj ↔ teléfono por Bluetooth: cada acción llega al teléfono al instante, con confirmación y reintento | M |
 | GYM-10 | Autoguardado continuo de la sesión y recuperación tras cierre, apagado o falta de batería; cierre automático tras 2 h sin actividad, sin perder datos | M |
 | SAL-01 | Sync diario de Renpho con todos los campos y fecha real de medición | M |
-| SAL-02 | Registro manual de medidas con cinta y cualquier métrica | M |
+| SAL-02 | Medidas corporales completas: obligatorias (estatura una vez, peso, cintura en el ombligo), recomendadas (cuello, hombros, pecho, cadera, brazo relajado y contraído, muslo, pantorrilla), opcionales (antebrazo, muñeca, tobillo, abdomen bajo, lado izquierdo y derecho en las bilaterales con solo el derecho de fábrica, pliegues cutáneos en 7 sitios, FC en reposo y presión arterial) y automáticas (campos de Renpho, SAL-01); registro manual de cualquier otra métrica. Frecuencia sugerida: peso diario, cinta cada 4 semanas | M |
 | SAL-03 | Fotos de progreso con comparador lado a lado | W |
 | SAL-04 | Análisis de sangre con rangos de referencia y tendencias, más calendario de análisis con recordatorios y preparación | M |
 | SAL-05 | Check-in diario: sueño, energía, dolor, estrés | W |
 | SAL-06 | Lectura de Samsung Health vía Health Connect en la app Android: pasos, frecuencia cardíaca diaria y en reposo, sueño | M |
+| SAL-07 | Medidas calculadas: IMC, cintura/estatura, cintura/cadera, hombros/cintura y % de grasa por el método de la Marina de EE. UU. (cuello, cintura y estatura; cadera en mujeres) como segunda opinión frente a la báscula de bioimpedancia | M |
 | NUT-01 | Base de alimentos con nutrientes completos por 100 g y fuente | M |
 | NUT-02 | Registro de comidas en g, kg, lb, oz, ml, L o porción casera | M |
 | NUT-03 | Totales diarios de macros y micros vs objetivos por tipo de día | M |
@@ -214,8 +258,13 @@ Cada requisito tiene un identificador que se usa en tareas, tests y pull request
 | COA-02 | Memoria de decisiones y preferencias | M |
 | COA-03 | Consejos y alertas del coach en el inicio del día y el panel web (diarios), más revisión semanal automática | M |
 | COA-04 | Propuestas de plan o rutina que tú apruebas antes de guardar | M |
+| COA-05 | Re-preguntas periódicas de lo que cambia: cinta y actividad cada 4 semanas; salud y lesiones cada 3 meses o cuando lo menciones. Las respuestas actualizan su sección (SIS-09, SAL-02) con historial. No es el check-in diario (SAL-05, W) | M |
 | DSH-01 | Dashboard del día: entreno, comidas, suplementos, peso, alertas | M |
 | DSH-02 | Informe mensual en PDF: composición, fuerza, nutrición, cardio y cumplimiento del mes | M |
+| OBJ-01 | Objetivo principal: tipo (perder grasa, ganar músculo, recomposición, fuerza, salud general, rendimiento MTB), meta medible (peso, % de grasa, cintura u otra) y fecha; uno activo a la vez, con historial de los anteriores. Tarjeta en Hoy con el objetivo y la próxima meta intermedia, que abre la página de Objetivos | M |
+| OBJ-02 | Metas intermedias: la app propone una cada 4 semanas (lineal sobre la media de 7 días); el usuario las edita, añade o borra; el coach juzga el progreso (adelante, en ritmo, atrasado) con la media de 7 días y la tendencia de 4 semanas | M |
+| OBJ-03 | Metas por medida (cualquiera de SAL-02) y por fuerza (carga o repeticiones de un ejercicio, en la unidad preferida de cargas), como línea punteada de referencia en sus gráficos | M |
+| OBJ-04 | Hitos al cumplir una meta intermedia, por medida o de fuerza, junto con los récords de GYM-07; aviso discreto y lista en la página de Objetivos | M |
 | SIS-01 | Inicio de sesión seguro y sesión persistente en web y app | M |
 | SIS-02 | Exportar todos tus datos (CSV/JSON) | S |
 | SIS-03 | Modo claro, oscuro o según el sistema, en web y móvil | M |
@@ -223,6 +272,8 @@ Cada requisito tiene un identificador que se usa en tareas, tests y pull request
 | SIS-05 | Marca configurable: nombre, logo e ícono de la app definidos en un solo lugar (archivo de marca) y cambiables sin tocar código de pantallas | M |
 | SIS-06 | Centro de ayuda en la web con guías de uso de web, Android y reloj, capturas automáticas, ayuda en contexto y página de novedades | M |
 | SIS-07 | Unidades preferidas en Ajustes: peso corporal y cargas del gym (kg o lb), estatura (m, cm o pies y pulgadas), perímetros (cm o pulgadas) y distancia (km o millas); guardadas en la cuenta y aplicadas en web, móvil, reloj y coach | M |
+| SIS-08 | Bienvenida de primer uso en 7 pasos (~3 min), con ilustración vectorial por paso: tú, tu objetivo, tu actividad, tu salud, tu punto de partida, conexiones y tu plan; se puede salir y retomar, y todo se edita después en su sección | M |
+| SIS-09 | Perfil editable en Ajustes: lo de la bienvenida más preferencias de comida, presupuesto, si cocina, suplementos actuales, sueño y estrés; cada cambio guarda historial con fecha | M |
 
 ## 6. Requisitos no funcionales
 
@@ -263,7 +314,7 @@ El coach no lee archivos sueltos: consulta la base de datos con herramientas, co
 
 - **Modelo:** Claude vía API de Anthropic, desde el backend.
 - **Herramientas que le damos:** consultar mediciones, sesiones, volumen por músculo, nutrición por rango de fechas, suplementos, análisis; crear borradores de plan, rutina o sesión (tú apruebas antes de guardar).
-- **Contexto fijo:** perfil, etapa actual, objetivos y reglas del coach (sin suavizar, no inventar datos).
+- **Contexto fijo:** perfil (SIS-09), etapa actual, objetivo principal (OBJ-01), metas intermedias vigentes y su estado (OBJ-02), y reglas del coach (sin suavizar, no inventar datos).
 - **Memoria:** tabla de decisiones y preferencias ("mantener face pull", "prefiere curl femoral a prensa") + resúmenes semanales automáticos. Búsqueda semántica con pgvector para recordar conversaciones viejas.
 - **Proactivo:** un job semanal revisa tendencias y deja alertas en el dashboard.
 
@@ -643,7 +694,7 @@ Pirámide de pruebas: muchas unitarias rápidas, menos de integración y pocas e
 | Unitarias | Cálculos: conversiones de unidades, rampa, volumen por músculo, nutrientes de recetas | pytest, Vitest | ≥ 80% backend, ≥ 70% frontend |
 | Integración | API + base de datos real, jobs, importación de Renpho | pytest + Postgres en contenedor | Todos los endpoints |
 | Contrato | Web y app usan la misma API que el backend expone | Cliente generado desde OpenAPI | Sin cambios rompientes |
-| End-to-end web | Flujos de la Fase 0.5 en el navegador | Playwright | Los 8 flujos clave |
+| End-to-end web | Flujos de la Fase 0.5 en el navegador | Playwright | Los 9 flujos clave de la web |
 | End-to-end móvil | Modo gym offline y sincronización | Maestro | Flujos del gym |
 | Reloj | Ciclo de serie, vibración, tiempos y sincronización con el teléfono | Pruebas de Compose for Wear OS + prueba real en el Watch4 Classic | Sesión completa sin teléfono cerca; matar la app, apagar el teléfono y cortar Bluetooth a mitad de sesión: cero series perdidas y sesión recuperada |
 | Visual y UX | Diseño genérico de IA, usabilidad, accesibilidad | Impeccable, UX Heuristics, Lighthouse | Sin hallazgos críticos |
@@ -703,10 +754,13 @@ Cada flujo clave se entrega en cuatro piezas: diagrama del flujo, guía paso a p
 | Registrar una comida | Buscar alimento → elegir unidad (g, lb, oz, ml…) → confirmar → ver macros y micros del día |
 | Crear receta o plan | Ingredientes → porciones → plan día/semana/mes con suplementos |
 | Registrar paseo MTB | Subir las capturas de Strava al chat (actividad y zonas de FC) → tarjeta de confirmación → guardar |
-| Registrar medición | Renpho automático o manual → medidas con cinta |
+| Registrar medición | Renpho automático o manual → medidas con cinta (lista completa de SAL-02: obligatorias, recomendadas y opcionales) → medidas calculadas (SAL-07) |
 | Hablar con el coach | Pregunta → respuesta con tus datos → aprobar plan propuesto |
-| Empezar el día | Dashboard: entreno, comidas, suplementos pendientes, alertas |
+| Empezar el día | Dashboard: entreno, comidas, suplementos pendientes, alertas, tarjeta de objetivos → página de Objetivos (metas intermedias, metas por medida y por fuerza, hitos) |
 | Entrenar desde el reloj | Iniciar sesión del día → serie → check → descanso → vibración → espera → play → siguiente → resumen de tiempos |
+| Bienvenida (primer uso) | Tú → tu objetivo → tu actividad → tu salud → tu punto de partida → conexiones → tu plan; salir y retomar |
+
+Orden de trabajo: primero programar entrenamientos (flujo 2), después entrenar en el gym (flujo 1) y luego la bienvenida (flujo 10) (D-25, D-28).
 
 Los mockups y diagramas los produzco aquí como diseños que puedes revisar, comentar y editar; si prefieres, los refinas en Figma. Cuando apruebas un flujo, Impeccable lo usa como referencia al programar.
 
@@ -738,10 +792,10 @@ El Gym va primero porque es lo que necesitas ya para volver a entrenar; el coach
 | 0.5 Diseño UX | Modelo conceptual de la base de datos (diagrama ER), diagramas de flujo de las tareas clave, wireframes, mockups de alta fidelidad (web y móvil), guías paso a paso en imágenes y prototipo navegable | Recorres cada flujo en el prototipo y lo apruebas antes de escribir código |
 | 1. Núcleo | Autenticación, modelo lógico y físico de la base de datos con diagrama DBML y diccionario de datos, perfil, API base, despliegue en Oracle con HTTPS y respaldos | API en producción con tests pasando y backup verificado |
 | 2. Gym | Biblioteca de ejercicios con músculos, rutinas A/B/C, calendario, modo gym, series rampa, historial, volumen por músculo | Entrenas una semana real registrando todo en el sistema |
-| 3. Salud | Sync Renpho, medidas, análisis de sangre, gráficos de tendencia (fotos de progreso, SAL-03, fuera de la v1.0) | Tus datos de abril y de hoy cargados y graficados |
+| 3. Salud | Sync Renpho, medidas corporales completas y calculadas, análisis de sangre, gráficos de tendencia, objetivos y metas, bienvenida y perfil (fotos de progreso, SAL-03, fuera de la v1.0) | Tus datos de abril y de hoy cargados y graficados; tu objetivo principal cargado con sus metas intermedias |
 | 4. Nutrición y suplementos | Base de alimentos dominicanos, registro, recetas, planes día/semana/mes, módulo de suplementación | Una semana de comidas registrada y comparada contra el plan |
-| 5. Coach IA | Chat con herramientas, memoria, revisiones semanales, generación de planes y rutinas | El coach responde con tus datos reales sin inventar |
-| 6. Dashboard y cardio | Panel del día, importación de paseos MTB, carga total | Dashboard útil como pantalla de inicio diaria |
+| 5. Coach IA | Chat con herramientas, memoria, revisiones semanales, generación de planes y rutinas, re-preguntas periódicas | El coach responde con tus datos reales sin inventar |
+| 6. Dashboard y cardio | Panel del día con la tarjeta de objetivos, importación de paseos MTB, carga total | Dashboard útil como pantalla de inicio diaria |
 | 7. App Android | Expo offline-first (gym, comidas y suplementos sin internet, sincronización automática), notificaciones, Health Connect | App instalada en tu teléfono, sin pérdida de datos sin señal |
 | 7b. Galaxy Watch | App Wear OS: sesión del día, ciclo de serie y descanso con vibración, tiempos de sesión, sincronización con el teléfono | Una sesión completa entrenando solo con el reloj, con los tiempos correctos en el sistema |
 | 8. Versión 1.0 | Rendimiento, seguridad, monitoreo, pulido visual | Auditoría del revisor sin hallazgos críticos |
@@ -779,7 +833,7 @@ Casi todo es gratuito; el único costo variable relevante es la API de Anthropic
 
 ## 19. Backlog de mejoras
 
-Decidido el 17-oct-2026: entran en la v1.0 el modo gym con temporizador y vibración, 1RM y RM múltiples con récords, carga combinada gym + MTB, informe mensual en PDF y calendario de análisis de sangre. El resto espera (prioridad W en la sección 5). El backlog de la v1.0 está cerrado (D-16): cada idea nueva va a esta lista para después de la v1.0, salvo que sea crítica, y eso lo decides tú.
+Decidido el 17-oct-2026: entran en la v1.0 el modo gym con temporizador y vibración, 1RM y RM múltiples con récords, carga combinada gym + MTB, informe mensual en PDF y calendario de análisis de sangre. El resto espera (prioridad W en la sección 5). El backlog de la v1.0 está cerrado (D-16): cada idea nueva va a esta lista para después de la v1.0, salvo que sea crítica, y eso lo decides tú. Excepciones que decidiste: unidades preferidas (D-24) y objetivos, bienvenida y medidas corporales completas (D-28).
 
 | Mejora | Qué aporta | Prioridad |
 | --- | --- | --- |
@@ -830,6 +884,7 @@ Decisiones ya tomadas; al arrancar el repo cada una se convierte en un ADR en `d
 | D-25 | 18-oct-2026 | Calendario de entrenamientos (GYM-03): muestra días pasados (hecha o no hecha, con resumen), hoy y futuros (programar, mover, copiar); incluye paseos MTB y citas de análisis de sangre (de solo lectura, llevan a Salud); vive en Gym, no en Hoy. Marcas: punto lleno de acento = hecha, contorno = programada, gris con ✕ = no hecha, `bike` = MTB, ícono propio = análisis. Una sesión no hecha ofrece "Mover a otro día"; existe "Copiar la semana anterior". En la Fase 0.5 se diseña primero el flujo 2 y después el flujo 1 | Decisión del dueño del producto; el calendario es parte de entrenar, y ver lo hecho junto a lo programado da contexto para planear |
 | D-26 | 18-oct-2026 | Revisión del flujo 2: programar va en tres pasos (elegir rutina → confirmar o editar series y repeticiones, que vienen de la rutina → confirmar o editar pesos); una sesión programada sin hacer se edita igual; un día pasado hecho es de solo lectura. La semana 1 de cada usuario es la de su primera actividad registrada en la app; el historial previo del Anexo A no se carga. Gym tiene pestañas internas en móvil (sesión, calendario, rutinas, historial, cardio y MTB). Salud suma la subsección Análisis (SAL-04) | Decisión del dueño del producto; arranca desde cero con la app y su gym |
 | D-27 | 18-oct-2026 | Cada paseo MTB guarda distancia, desnivel positivo, tiempo en movimiento, velocidad media, calorías, FC promedio y, por zona de FC (Z1 a Z5), el % de tiempo y el rango en ppm, leídos de dos capturas de Strava. El día del paseo, el objetivo calórico sube con el 50 % de sus kcal (de fábrica; Strava suele sobrestimar); el coach usa FC y zonas para medir el esfuerzo y su variación | El coach necesita el esfuerzo real de cada paseo, y las calorías del MTB deben llegar a Comida |
+| D-28 | 18-oct-2026 | Objetivos, bienvenida y medidas corporales completas entran en la v1.0 (M), como excepción al backlog cerrado (D-16): módulo Objetivos (OBJ-01 a OBJ-04: objetivo principal con meta y fecha, metas intermedias cada 4 semanas, metas por medida y por fuerza con línea punteada en los gráficos, hitos; tarjeta en Hoy y página propia, sin sexta pestaña), bienvenida de primer uso en 7 pasos con ilustraciones (SIS-08, ADR 0024), perfil editable con historial (SIS-09), SAL-02 con la lista completa de medidas, medidas calculadas con el método de la Marina (SAL-07) y re-preguntas del coach (COA-05). Las rachas siguen en el backlog. Suma ~1 semana a la estimación; el modo gym no se mueve | Decisión del dueño del producto; sin objetivo con fecha ni perfil completo, el coach no puede juzgar el progreso ni cuidar la seguridad, y añadirlo después obliga a rehacer el modelo de datos |
 
 ## 21. Pendientes: lo que necesito de ti
 
@@ -848,7 +903,7 @@ Con esto cierro la Fase 0 y arrancamos a programar.
 - [x] Dirección B2 → acento de fábrica Caribe, modo según el sistema, nombre provisional "Coach Fitness AI".
 - [x] Fase S (Setup) → cerrada el 18-oct-2026.
 - [x] PRD → aprobado el 18-oct-2026 (`docs/prd.md`).
-- [ ] Medidas con cinta de octubre (cintura, cadera, pecho, brazos, muslos).
+- [ ] Medidas con cinta de octubre: cintura (obligatoria) y las recomendadas de SAL-02 (cuello, hombros, pecho, cadera, brazo relajado y contraído, muslo, pantorrilla).
 
 ## Anexo A — Ficha del atleta
 

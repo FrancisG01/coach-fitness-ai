@@ -415,6 +415,8 @@ Noche de gym (oscuro, caucho, Caribe), Laguna (oscuro, pizarra, Mar), Monte (osc
 
 **The Three Series Rule.** Máximo tres series por gráfico: en oscuro A1, A3 y gris de datos; en claro A5, A3 y gris de datos. Nunca colores nuevos para distinguir datos.
 
+**The Goal Line Rule.** Una meta (OBJ-03, D-28) se dibuja como línea punteada horizontal de referencia en texto secundario, de 1 px, con su valor en detalle y `tnum` al extremo derecho. Es una referencia, no un dato: no cuenta como serie para la regla de tres series ni lleva acento.
+
 **The Error Has a Voice Rule.** El error es siempre rojo fijo con ícono y texto. El color solo nunca comunica un error, y un acento propio que se parezca al rojo no borra el ícono.
 
 **The Token Only Rule.** Todo componente usa variables (fondo, superficie, acento A1 a A5, datos, capas). Nunca un color suelto; el detector de Impeccable los bloquea.
@@ -469,7 +471,7 @@ Mínimo 48 px (cumple los 44 de RNF-07 y la guía de Android) con 8 px de separa
 
 Ritmo de espaciado: 4, 8, 12, 16, 24, 32 y 48 px. Los márgenes de pantalla, los anchos de canal y la asignación exacta de cada paso a cada contexto están pendientes de la Fase 0.5.
 
-En móvil, el inicio se ordena así: entreno de hoy, nutrición del día, lo que dice el coach, suplementos pendientes, y composición, fuerza y semana. En escritorio, el día va en orden de importancia sin franja de KPIs: el entreno de hoy ocupa el bloque más ancho y las demás tarjetas tienen anchos distintos según su peso.
+En móvil, el inicio se ordena así: entreno de hoy, nutrición del día, lo que dice el coach, suplementos pendientes, tu objetivo, y composición, fuerza y semana. La tarjeta de objetivos (OBJ-01, D-28) muestra el objetivo principal y la próxima meta intermedia con su estado (adelante, en ritmo, atrasado); toda la tarjeta es pulsable y abre la página de Objetivos, apilada dentro de Hoy. No es una sexta pestaña. Su posición exacta se confirma en los mockups del flujo 8. En escritorio, el día va en orden de importancia sin franja de KPIs: el entreno de hoy ocupa el bloque más ancho y las demás tarjetas tienen anchos distintos según su peso.
 
 ### Named Rules
 **The One Hand Rule.** En el modo gym todo se hace con una mano: objetivos táctiles de 56 px, registrar una serie en 3 toques o menos (RNF-07, O1) y sin gestos finos. Las acciones del modo gym responden en menos de 200 ms; el pressed y la háptica, en el mismo fotograma del toque.
@@ -593,6 +595,7 @@ Pista en elevado y relleno en acción. Las barras de macros usan las tres series
 
 ### Estados vacíos
 - **Anatomía:** ícono de Tabler de 32 px en texto secundario, título de sección, una frase que explica qué aparecerá aquí y para qué sirve, y una acción. Sin ilustraciones, emojis ni mascotas.
+- **Única excepción, la bienvenida (SIS-08):** cada uno de sus 7 pasos lleva una ilustración SVG de trazo lineal, coherente con Tabler outline, con colores solo de tokens (`currentColor` y variables, cambian con el modo y el acento). Fuera de la bienvenida, incluidos los estados vacíos, la regla no cambia (ADR 0024).
 - **Tres tipos:** primera vez ("Todavía no registras comidas hoy" · "Registra el desayuno para ver tus macros del día" · "Registrar comida"); sin resultados ("No hay alimentos con «yuca frita»" · "Prueba con otra palabra o créalo" · "Crear alimento"); faltan datos para un gráfico ("Faltan pesajes para la tendencia" · "Pésate en la Renpho dos veces más y aparece aquí").
 - **En el reloj:** una línea de texto y un botón ("Sin sesión para hoy" · "Abrir en el teléfono").
 
@@ -637,7 +640,7 @@ Duraciones de tokens.json con su curva:
 
 ### Don't:
 - **Don't** usar degradados decorativos ni repartir el acento por fondos y tarjetas (el error de la propuesta B).
-- **Don't** poner más de tres series en un gráfico ni traer colores nuevos para los datos.
+- **Don't** poner más de tres series en un gráfico ni traer colores nuevos para los datos (la línea punteada de meta no cuenta como serie).
 - **Don't** armar rejillas de tarjetas idénticas ni una franja de KPIs; el día va en orden de importancia.
 - **Don't** usar etiquetas en mayúsculas, signos de exclamación ni emojis como íconos.
 - **Don't** usar una segunda familia tipográfica ni fuentes por defecto (Inter, la del sistema).
