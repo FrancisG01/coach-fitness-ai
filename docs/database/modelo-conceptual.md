@@ -2,9 +2,9 @@
 
 | Campo | Valor |
 | --- | --- |
-| Versión | 1.0 (borrador para aprobación) |
+| Versión | 1.0 |
 | Fecha | 18-oct-2026 |
-| Estado | Pendiente de aprobación de Francis |
+| Estado | Aprobado por Francis el 19-oct-2026 (D-36, [ADR 0025](../adr/0025-modelo-conceptual-de-la-base-de-datos.md)) |
 | Fase | 0.5 (ADR 0010, nivel 1 de 3) |
 | Redacta | Arquitecto (Fable 5.1) |
 | Fuentes | [`plan-maestro.md`](../plan-maestro.md) v1.14 (§5, §8, §10, Anexo A), [`prd.md`](../prd.md) v1.11, ADR [0004](../adr/0004-base-de-alimentos-y-unidades.md), [0005](../adr/0005-mtb-por-captura.md), [0006](../adr/0006-coach-con-herramientas-y-memoria.md), [0010](../adr/0010-diseno-de-base-de-datos-en-tres-niveles.md), [0012](../adr/0012-acceso-privado-y-multiusuario.md), [0013](../adr/0013-samsung-health-via-health-connect.md), [0018](../adr/0018-app-galaxy-watch-nativa.md), [0021](../adr/0021-embeddings-locales-en-el-servidor.md), [0023](../adr/0023-unidades-preferidas.md); mockups de los flujos 1, 2 y 10 |
@@ -761,7 +761,9 @@ El panel del día no guarda nada propio: lee sesión de hoy, comidas, tomas pend
 
 Total: 73 entidades (9 de catálogo, 8 de catálogo con propios, 56 personales).
 
-## 14. Decisiones que tomé y necesito que confirmes
+## 14. Decisiones de modelado (aprobadas por Francis el 19-oct-2026)
+
+Las 18 se propusieron como iniciativas del arquitecto y Francis las aprobó todas (D-36).
 
 1. **Mediciones como tipos de medida más valores, no como una tabla ancha.** Una medición (un momento, una fuente) tiene muchos valores, cada uno de un tipo del catálogo. Así "cualquier otra métrica" (SAL-02) es solo un tipo nuevo, Renpho y la cinta comparten la misma estructura, y una meta por medida (OBJ-03) puede apuntar a cualquiera, incluidas las calculadas. El costo es que las consultas de "peso en el tiempo" filtran por tipo en vez de leer una columna; se resuelve con índices en la Fase 1.
 2. **Las medidas calculadas (SAL-07) se guardan.** Cada vez que entra una medición, la app recalcula IMC, índices y % de grasa Marina y los guarda como una medición de fuente "calculada". Ventaja: tienen tendencia en los gráficos y sirven de meta (el PRD ya pone cintura/altura ≤ 0.51 como meta). Alternativa: calcularlas al vuelo cada vez, más simple pero sin historial ni meta.

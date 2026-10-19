@@ -9,7 +9,7 @@ Oct 17, 2026 · @Almonte
 | Campo | Valor |
 | --- | --- |
 | Proyecto | Coach Fitness AI (nombre provisional) |
-| Versión | 1.14 |
+| Versión | 1.15 |
 | Estado | En definición — Fase 0 |
 | Dueño del producto | Francis Guzman |
 | Responsable técnico | Claude (agente Project Manager) |
@@ -36,6 +36,7 @@ Oct 17, 2026 · @Almonte
 | 1.12 | 18-oct-2026 | Guía del flujo 10 (D-33): proteína de Francis dentro del rango (172 g), revisión del plan cada 6 semanas desde la primera actividad de cada usuario, experiencia en 3 opciones |
 | 1.13 | 18-oct-2026 | Flujo 10 aprobado (D-34): reglas de la bienvenida (ajuste por objetivo, aviso de ritmo, fecha mínima de la meta, medidas obligatorias según la meta, límites), campos de fecha y número con máscara y filtrado en toda la app |
 | 1.14 | 18-oct-2026 | Nutrición ampliada (D-35, excepción al backlog cerrado): comidas del día con macros por comida (NUT-02), desglose de nutrientes con Total, Objetivo y Restan (NUT-03), recetas como combos (NUT-04), planes del coach con preferencias y entrenos (NUT-05); nuevos calendario de comidas (NUT-10), preferidos y evitar (NUT-11) y alimento desde la foto de la etiqueta (NUT-12); flujos 3 y 4 ampliados; código de barras al backlog |
+| 1.15 | 19-oct-2026 | Modelo conceptual de la base de datos aprobado (D-36, ADR 0025): 73 entidades en 9 módulos en `docs/database/modelo-conceptual.md`; la Fase 1 parte de él |
 
 ## 1. Resumen ejecutivo
 
@@ -455,7 +456,7 @@ Las capturas de los paseos MTB y los CSV opcionales se suben desde la web o la a
 
 La base de datos se diseña en tres niveles, como en una empresa de desarrollo, y siempre la puedes ver como diagrama visual de tablas y relaciones.
 
-1. **Modelo conceptual:** entidades y cómo se relacionan (Ejercicio ↔ Músculo, Sesión → Serie, Comida → Alimento → Nutriente). Lo apruebas en la Fase 0.5 junto con los flujos.
+1. **Modelo conceptual:** entidades y cómo se relacionan (Ejercicio ↔ Músculo, Sesión → Serie, Comida → Alimento → Nutriente). Aprobado el 19-oct-2026 en [`docs/database/modelo-conceptual.md`](database/modelo-conceptual.md) (D-36, ADR 0025).
 2. **Modelo lógico:** tablas, columnas, tipos, claves primarias y foráneas, cardinalidades (1-1, 1-N, N-N) y normalización.
 3. **Modelo físico:** índices, restricciones, particiones por fecha para las series de tiempo, convenciones de nombres. Se implementa con migraciones de Alembic.
 
@@ -967,6 +968,7 @@ Decisiones ya tomadas; al arrancar el repo cada una se convierte en un ADR en `d
 | D-33 | 18-oct-2026 | Guía del flujo 10: la proteína de Francis entra en el rango de D-32 (187 → 172 g, 2.2 g/kg) y los 60 kcal que salen pasan a carbohidratos (255 → 270 g), con 2,350 kcal sin cambio; la revisión del plan es cada 6 semanas contadas desde la primera actividad registrada de cada usuario (D-26), no una fecha fija; experiencia en 3 opciones (empiezo de cero, vuelvo tras una pausa, llevo tiempo entrenando); fecha de nacimiento de Francis 27-jul-1996; se aceptan las decisiones de diseño de la guía | Revisión de Francis; criterio de coach: 2.2 g/kg ya cubre el máximo útil en déficit y los carbohidratos extra rinden en el gym y en el MTB |
 | D-34 | 18-oct-2026 | Flujo 10 aprobado con sus 4 piezas: ajuste −15 % perder grasa y +5 % ganar músculo; proteína por objetivo; aviso de ritmo que no bloquea; meta a 4 semanas o más; medida de la meta obligatoria en el punto de partida y cuello (y cadera en mujeres) si la meta es de % de grasa sin Renpho; % de grasa a mano usa Katch-McArdle; edad 14-100 y estatura 120-230 cm; retomar en el otro dispositivo abre la bienvenida; el % de la Marina se actualiza al salir del campo; fecha con máscara y calendario propio (no el del navegador); campos numéricos filtrados; regla general de campos de fecha, número y hora en DESIGN.md; el selector de nacimiento abre en 1990–1999 si el campo está vacío, semana desde el lunes, días de 44 px en el teléfono, meta de 4 semanas a 2 años, hora en el formato del sistema (12 o 24 h), duración de la sesión de 10 a 240 min | Revisión de Francis con el prototipo: la fecha y la estatura aceptaban letras; criterio de coach: los extremos prudentes protegen músculo y adherencia, y un ritmo irreal se avisa sin frenar |
 | D-35 | 18-oct-2026 | Nutrición ampliada, como excepción al backlog cerrado (D-16), toda M: comidas del día con sus alimentos y macros por comida (de fábrica desayuno, merienda, almuerzo, merienda y cena; editables); calendario de comidas con días pasados, hoy y futuros, programar a mano y copiar, comida programada con contorno y "Lo comí", solo cuenta lo comido; desglose de cualquier día con barra y columnas Total, Objetivo y Restan, objetivos de micros por edad y sexo (DRI), sodio, azúcar añadida y grasa saturada como límites, fibra 14 g por 1,000 kcal; preferidos y lista de evitar (con las alergias de la bienvenida); planes del coach con las condiciones del pedido, que miran los entrenos, rellenan solo comidas vacías y se aprueban completos o por comida; plan de mes en 2 semanas tipo; recetas de 1 porción como combo; alimento nuevo desde la foto de la etiqueta (NUT-12). Escáner de código de barras al backlog. Flujos 3 y 4 ampliados. +~1 a 1.25 semanas en la Fase 4; el modo gym no se mueve | Decisión del dueño del producto; criterio de coach: sin lista de evitar el plan propone lo que no se come, repartir la proteína y los carbohidratos alrededor del entreno rinde más, y 2 semanas tipo se cumplen y se compran mejor que 30 días distintos. Leer una etiqueta es exacto; adivinar un plato no |
+| D-36 | 19-oct-2026 | Modelo conceptual de la base de datos aprobado (ADR 0025): 73 entidades en 9 módulos; mediciones como tipo de medida más valor, medidas calculadas guardadas, alergias sobre grupos de alimentos, condiciones de salud con vigencia, toda escritura del coach por una propuesta, sesión con estado más eventos, rutina con orden de rotación, cita y análisis en un registro, suplementos con aporte propio, crudo y cocido por factor, objetivo nutricional con vigencia, una sola entidad de metas y otra de avisos, costo de IA por llamada, Health Connect como resumen diario, dispositivo como entidad, catálogo y propios juntos, nombres técnicos en inglés | Nivel 1 de ADR 0010; sin él la Fase 1 no puede escribir el DBML. Las 18 decisiones las propuso el arquitecto y Francis las aprobó todas |
 
 ## 21. Pendientes: lo que necesito de ti
 

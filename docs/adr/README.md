@@ -32,3 +32,4 @@ Formato de cada ADR: contexto, decisión, alternativas consideradas, consecuenci
 | [0022](0022-iconos-tabler.md) | Íconos: Tabler Icons (outline) en web, Android y reloj |
 | [0023](0023-unidades-preferidas.md) | Unidades preferidas por usuario y almacenamiento en kg, cm y m |
 | [0024](0024-ilustraciones-en-la-bienvenida.md) | Ilustraciones solo en la bienvenida, con colores de tokens |
+| [0025](0025-modelo-conceptual-de-la-base-de-datos.md) | Modelo conceptual de la base de datos (D-36) |
