@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 112" width="112" height="112" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <!-- Coach Fitness AI · bienvenida (SIS-08, ADR 0024) · Conexiones: báscula, teléfono y reloj unidos por líneas de puntos; acento en el punto de unión.
+       Colores solo de tokens: trazo = currentColor (texto), --ilus-secundario (textoSecundario),
+       --ilus-acento (textoAcento: A4 en claro, A2 en oscuro). Decorativa: oculta a lectores de pantalla. -->
+  <path d="M44 14a4 4 0 0 1 4 -4h16a4 4 0 0 1 4 4v32a4 4 0 0 1 -4 4h-16a4 4 0 0 1 -4 -4z"/><path d="M54 15h4" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M8 74a6 6 0 0 1 6 -6h24a6 6 0 0 1 6 6v24a6 6 0 0 1 -6 6h-24a6 6 0 0 1 -6 -6z"/><path d="M18 84a8 8 0 0 1 16 0M26 84l3 -4" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M76 78a6 6 0 0 1 6 -6h12a6 6 0 0 1 6 6v12a6 6 0 0 1 -6 6h-12a6 6 0 0 1 -6 -6z"/><path d="M82 72v-6h12v6M82 96v6h12v-6" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M56 55V66M45 81L49 78.5M75 82L64 77" style="stroke: var(--ilus-secundario, currentColor); stroke-dasharray: 0.1 5"/><path d="M51 74a5 5 0 1 0 10 0a5 5 0 1 0 -10 0" style="stroke: var(--ilus-acento, currentColor)"/>
+</svg>

@@ -17,3 +17,10 @@ Ver [[flujo-2-calendario]].
 
 - Las láminas sin `<meta charset>` salen mal codificadas con `python3 -m http.server` ("×" se ve como "Ã—" y el detector lo cuenta como raya): toda lámina debe ser un documento completo.
 - Avisos (toasts): van en una ranura reservada al pie, nunca flotando sobre los controles (Never Cover Rule, en DESIGN.md).
+
+- Flujo 10 (18-oct-2026): un espacio reservado con borde discontinuo y radio dentro del teléfono cuenta como tarjeta anidada; con `outline` discontinuo hacia dentro pasa. Las listas de la lámina (`.cambios`, `.casos`) a 86ch disparan "line-length" en escritorio: usar 60ch.
+- Si se reutiliza el CSS del flujo 1 por rangos de líneas, incluir `.tabla-envoltura` (si falta, la tabla desborda a 390 px) y `.opcion-rutina`.
+- Contenido que no cabe en la pantalla del mockup: contenedor con `overflow-x: visible; overflow-y: clip` para cortar abajo sin recortar las anotaciones laterales.
+- Temas acotados en una lámina (claro/oscuro y acento por panel): las variables derivadas (`--accion`, `--texto-acento`) se resuelven donde se declaran, así que la clase de tema tiene que redefinirlas junto con el acento en el mismo elemento.
+- Prototipos (flujo 10): no repintar todo en `change`/`focusout` de un campo si el foco va a un botón (el clic se pierde porque el botón se reemplaza). En los prototipos, el aviso dentro de la ranura lleva `z-index: auto` para no quedar encima del velo de una hoja. La columna del guion a 600 px evita el hallazgo "first-viewport-column-overflow" del detector a 1440. Un contenedor de teléfono sin ancho fijo crece con textos largos (aviso) y se descentra: darle 376 px.
+- Prototipos con vista teléfono/web: vaciar la vista inactiva al repintar, o quedan ids repetidos y `querySelector` enfoca el elemento oculto. Para probar máscaras usa `pressSequentially` (teclea) y un `InputEvent` con `inputType: "insertFromPaste"` para pegar; `fill` no simula el borrado sobre un separador.

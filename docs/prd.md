@@ -2,12 +2,12 @@
 
 | Campo | Valor |
 | --- | --- |
-| Versión | 1.7 |
+| Versión | 1.10 |
 | Fecha | 18-oct-2026 |
 | Estado | Aprobado por Francis, 18-oct-2026 |
 | Dueño del producto | Francis Guzman |
 | Redacta | Agente `pm` |
-| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.10, [`adr/`](adr/), [`diseno/`](diseno/) |
+| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.13, [`adr/`](adr/), [`diseno/`](diseno/) |
 
 Este documento resume qué se construye en la v1.0, para quién y cómo sabremos que funcionó. No añade alcance: el backlog de la v1.0 está cerrado (D-16, [ADR 0016](adr/0016-wsl2-fase-s-y-backlog-cerrado.md)); las excepciones que decidió Francis (D-24, D-28) están en la sección 9. El detalle de cada requisito vive en el plan maestro; aquí solo se resume y se enlaza. Junto con el diseño (`/impeccable init`), cierra la Fase 0.
 
@@ -102,7 +102,7 @@ Requisitos añadidos el 18-oct-2026 como excepción al backlog cerrado (sección
 | OBJ-02 | Metas intermedias | Al guardar el objetivo principal, la app propone una meta cada 4 semanas hasta la fecha, en línea recta desde la media de 7 días del día de inicio hasta la meta. El usuario puede editar, añadir y borrar metas. Cada meta vigente tiene un estado (adelante, en ritmo, atrasado) calculado con la media de 7 días y la tendencia de 4 semanas, y el coach lo usa en sus respuestas y revisiones |
 | OBJ-03 | Metas por medida y por fuerza | Se puede crear una meta para cualquier medida de SAL-02 y para un ejercicio (carga o repeticiones, en la unidad preferida de cargas de SIS-07). En el gráfico de esa medida o ejercicio la meta aparece como línea punteada de referencia; la línea no cuenta para el máximo de tres series de DESIGN.md |
 | OBJ-04 | Hitos | Cumplir una meta intermedia, por medida o de fuerza registra un hito con fecha, igual que un récord personal de GYM-07. Se avisa con un aviso discreto (sin diálogo) y la página de Objetivos lista todos los hitos. No hay rachas |
-| SIS-08 | Bienvenida | Se muestra en el primer uso con 7 pasos: tú, tu objetivo, tu actividad, tu salud, tu punto de partida, conexiones y tu plan; cada paso con su ilustración (ADR 0024). Se completa en ~3 minutos. Solo peso y cintura son obligatorios en el punto de partida; el resto acepta "lo mido luego". Salud acepta "ninguna" en un toque. Cada conexión (Renpho, Health Connect, reloj) se puede saltar. Si se sale a mitad, al volver retoma en el mismo paso con lo ya escrito. El último paso resume kcal, proteína y primeras metas intermedias. Todo lo respondido se edita después en su sección |
+| SIS-08 | Bienvenida | Se muestra en el primer uso con 7 pasos: tú, tu objetivo, tu actividad, tu salud, conexiones, tu punto de partida y tu plan (D-32); cada paso con su ilustración (ADR 0024). Se completa en ~3 minutos. Solo peso y cintura son obligatorios en el punto de partida; el resto acepta "lo mido luego". Salud acepta "ninguna" en un toque. Cada conexión (Renpho, Health Connect, reloj) se puede saltar. Si se sale a mitad, al volver retoma en el mismo paso con lo ya escrito, en móvil o en web. Lo que trae Renpho llega lleno al punto de partida. El último paso resume kcal (Katch-McArdle con % de grasa, si no Mifflin-St Jeor, ajustadas al objetivo), proteína (1.8 a 2.2 g/kg) y primeras metas intermedias. Todo lo respondido se edita después en su sección |
 | SIS-09 | Perfil editable | Ajustes muestra el perfil con todo lo de la bienvenida y además preferencias de comida, presupuesto, si cocina, suplementos actuales, sueño y estrés. Cada cambio guarda el valor anterior con su fecha y el historial se puede consultar |
 | SAL-02 | Medidas corporales completas | Se pueden registrar todas las medidas obligatorias, recomendadas y opcionales del plan; las bilaterales piden solo el lado derecho de fábrica y permiten activar el izquierdo; los perímetros se muestran en la unidad de SIS-07, los pliegues en mm, la presión en mmHg y la FC en ppm. Los campos de Renpho llegan solos (SAL-01). La estatura se pide una vez |
 | SAL-07 | Medidas calculadas | La app calcula IMC, cintura/estatura, cintura/cadera, hombros/cintura y % de grasa por el método de la Marina (cuello, cintura y estatura; cadera en mujeres) con la medición más reciente de cada dato. Si falta un dato, dice cuál falta en lugar de mostrar una cifra. El % de grasa de la Marina se ve junto al de la báscula, rotulado como segunda opinión |
@@ -125,7 +125,7 @@ La [sección 13](plan-maestro.md#13-calidad-y-pruebas) pide pruebas E2E en Playw
 | 7 | Hablar con el coach | Pregunta → respuesta con tus datos → aprobar plan propuesto | COA-01, 04 | Playwright + evals |
 | 8 | Empezar el día | Dashboard: entreno, comidas, suplementos pendientes, alertas, tarjeta de objetivos → página de Objetivos (metas intermedias, metas por medida y por fuerza, hitos) | DSH-01, COA-03, OBJ-01 a 04 | Playwright |
 | 9 | Entrenar desde el reloj | Iniciar sesión del día → serie → check → descanso → vibración → espera → play → siguiente → resumen de tiempos | WAT-01, 02, 05, 06 | Compose for Wear OS + reloj real |
-| 10 | Bienvenida (primer uso) | Tú → tu objetivo → tu actividad → tu salud → tu punto de partida → conexiones → tu plan; salir y retomar | SIS-08, SIS-07, OBJ-01, 02 | Playwright |
+| 10 | Bienvenida (primer uso) | Tú → tu objetivo → tu actividad → tu salud → conexiones → tu punto de partida → tu plan; salir y retomar en móvil o web | SIS-08, SIS-07, OBJ-01, 02 | Playwright |
 
 Cada flujo se entrega en la Fase 0.5 en cuatro piezas: diagrama, guía paso a paso en imágenes, mockups de alta fidelidad (web y móvil) y prototipo navegable. Orden: primero el flujo 2 (calendario), después el flujo 1 (D-25) y luego el flujo 10 (bienvenida, D-28).
 
@@ -198,11 +198,11 @@ El Anexo A tiene dos cifras que no cuadran: el plan de comidas suma ~2,255 kcal 
 | Gasto estimado con 3 días de gym + 2 de caminata, trabajo sentado (×1.45-1.55) | 2,500-2,675 kcal |
 | Déficit para ~0.25 kg de grasa por semana | ~275 kcal/día |
 | **Objetivo** | **2,350 kcal/día, único para todos los días** (punto medio del rango declarado) |
-| Macros | Proteína 187 g (~2.4 g/kg), grasas 65 g (~0.83 g/kg, la propuesta del propio Anexo A.7), carbohidratos 255 g → 2,353 kcal |
+| Macros | Proteína 172 g (2.2 g/kg, D-33; antes 187), grasas 65 g (~0.83 g/kg, la propuesta del propio Anexo A.7), carbohidratos 270 g → 2,353 kcal |
 | Días con MTB | Se suman kcal según el gasto del paseo registrado (CAR-02); el coach decide cuánto con tus datos |
 | Suelo de alerta | Menos de 1,800 kcal en un día (Anexo A.10, sin cambio) |
 
-Para llegar a 2,350 el plan de comidas solo necesita ~100 kcal más (por ejemplo, +10 g de grasa con aceite de oliva o aguacate y algo de carbohidrato); se ajusta en la Fase 4. Punto de control a las 6 semanas (fin de noviembre): si bajas más de 0.5 % por semana, subir 100-150 kcal; si la media de 7 días no se mueve en 3 semanas, bajar 100-150 kcal.
+Para llegar a 2,350 el plan de comidas solo necesita ~100 kcal más (por ejemplo, +10 g de grasa con aceite de oliva o aguacate y algo de carbohidrato); se ajusta en la Fase 4. Punto de control cada 6 semanas desde tu primera actividad registrada (D-33): si bajas más de 0.5 % por semana, subir 100-150 kcal; si la media de 7 días no se mueve en 3 semanas, bajar 100-150 kcal.
 
 ---
 
@@ -335,7 +335,7 @@ Respuestas de Francis a las preguntas del borrador.
 | --- | --- | --- |
 | 1 | Plan Max | Max 5x: $100 de créditos de API al mes |
 | 2 | Metas de enero | Aprobadas tal como están en la sección 5, incluidos el IMC 25.5-26.0 y la TMB ≥ 1,725 |
-| 3 | Calorías | 2,350 kcal como objetivo único (P 187 / C 255 / G 65), revisión a las 6 semanas. El día de un paseo MTB sube con el 50 % de sus kcal (D-27) |
+| 3 | Calorías | 2,350 kcal como objetivo único (P 172 / C 270 / G 65 desde D-33), revisión cada 6 semanas desde la primera actividad. El día de un paseo MTB sube con el 50 % de sus kcal (D-27) |
 | 4 | Medidas con cinta | Pendientes de Francis: cintura, cadera, pecho, brazos y muslos |
 | 5 | Tope del coach | $80 al mes y $8 al día; al 80 % el chat pasa a Sonnet 5.5 y avisa |
 | 6 | Embeddings de la memoria | Modelo local en el servidor Oracle; el modelo concreto se elige en la Fase 1 (D-21, [ADR 0021](adr/0021-embeddings-locales-en-el-servidor.md)) |
@@ -353,3 +353,6 @@ Respuestas de Francis a las preguntas del borrador.
 | 18 | Revisión del flujo 1 | La rampa depende de las reps objetivo y el peso de trabajo de cada ejercicio, con una sola serie de tanteo si el músculo ya está caliente y sin rampa en aislamiento; potenciación opcional. Descanso con +15 s, −15 s y saltar; ajustes al vuelo solo en la sesión; resumen al cerrar con tiempos, volumen, récords e hitos. Ciclos de entrenamiento fuera de la v1.0 ([plan, §5](plan-maestro.md#modo-gym-y-series-rampa-gym-04-gym-05)). D-29 |
 | 19 | Guía del flujo 1 | Modo gym en la app Android y en la web como PWA en el teléfono (escritorio: solo lectura); sesión sin programar desde una rutina o vacía; rampa redondeada hacia abajo; volumen con las dos mancuernas; series por tiempo; cifra del descanso más grande. D-30 |
 | 20 | Flujo 1 aprobado | "Empezar otra sesión" el mismo día; volumen ×4 en ejercicios por pierna con mancuernas; avisos que no tapan acciones; contraste del subitem activo web corregido. D-31 |
+| 21 | Revisión del flujo 10 | Conexiones antes del punto de partida; kcal con Katch-McArdle o Mifflin-St Jeor ajustadas al objetivo y proteína 1.8 a 2.2 g/kg (los objetivos de Francis no cambian); bienvenida en móvil y web con retomar en el otro dispositivo. D-32 |
+| 22 | Guía del flujo 10 | Proteína de Francis 172 g (2.2 g/kg) y carbohidratos 270 g, 2,350 kcal sin cambio; revisión cada 6 semanas desde la primera actividad de cada usuario; experiencia en 3 opciones. D-33 |
+| 23 | Flujo 10 aprobado | Ajuste −15 % / +5 % y proteína por objetivo; aviso de ritmo sin bloquear; meta a 4 semanas o más; medidas obligatorias según la meta; fecha con máscara y calendario propio; campos numéricos filtrados en toda la app. D-34 |

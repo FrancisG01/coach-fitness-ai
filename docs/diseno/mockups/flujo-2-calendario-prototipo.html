@@ -419,7 +419,7 @@ const RUTINAS = {
     { n: "Jalón al pecho", s: 3, r: 10 }, { n: "Curl bíceps mancuernas", s: 3, r: 12, manc: true },
     { n: "Curl femoral tumbado", s: 3, r: 12 }, { n: "Hiperextensiones", s: 3, r: 12 }] },
   C: { nombre: "Día C", foco: "Full Body + Cardio", extra: "Caminata inclinada 15 min", ej: [
-    { n: "Sentadilla búlgara", s: 3, r: 10, lado: true, manc: true }, { n: "Press inclinado mancuernas", s: 3, r: 10, manc: true },
+    { n: "Sentadilla búlgara mancuernas", s: 3, r: 10, lado: true, manc: true }, { n: "Press inclinado mancuernas", s: 3, r: 10, manc: true },
     { n: "Face pull", s: 3, r: 15 }, { n: "Hip thrust", s: 3, r: 12 }, { n: "Pantorrillas", s: 3, r: 15 }] },
 };
 const SEMANA_TIPO = { 0: "A", 2: "B", 4: "C" };
@@ -696,7 +696,7 @@ function vistaPesos() {
     const marcaDif = b.ref && dif ? `<span class="t-detalle sube">${dif > 0 ? "+" : "−"}${Math.abs(dif)} desde el ${DIAS_C[dow(b.ref.k)]} ${aFecha(b.ref.k).getDate()}</span>` : "";
     const v = b.pesos[i];
     const p = b.plan[i];
-    return `<div class="peso-fila"><span class="txt"><span>${e.n.replace(" mancuernas", "")}</span><span class="t-detalle">${p.s} × ${p.r}${e.lado ? " c/pierna" : ""}</span>${marcaDif}</span>
+    return `<div class="peso-fila"><span class="txt"><span>${e.n.replace(" mancuernas", "")}</span><span class="t-detalle">${p.s} × ${p.r}${e.lado ? " c/pierna" : ""}${e.manc ? " · por mancuerna" : ""}</span>${marcaDif}</span>
       <div class="stepper" role="group" aria-label="Peso de ${e.n.toLowerCase()}">
       <button type="button" data-acc="menos" data-i="${i}" aria-label="Bajar 5 lb a ${e.n.toLowerCase()}">${ico("minus", "s20")}</button>
       <span class="valor" aria-live="polite"><span class="cifra">${v || "0"}</span><span class="t-detalle">lb</span></span>
