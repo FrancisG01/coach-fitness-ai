@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Última actualización: 18-oct-2026 (revisión del flujo 10, D-32)
+Última actualización: 18-oct-2026 (flujo 10 aprobado, D-32 a D-34)
 
 ## Fase actual: 0 (fundaciones)
 
@@ -30,6 +30,7 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 - D-30 (plan v1.9, PRD v1.6): guía del flujo 1 aprobada (https://claude.ai/artifact/Pp72v5qCzadtjWrMJdoYNB). Modo gym también en la web como PWA en el teléfono (escritorio solo lectura); sesión sin programar desde rutina o vacía; rampa redondea hacia abajo; volumen con las dos mancuernas (cambia el 7,055 lb del flujo 2); series por tiempo (plancha); token propio para la cifra del descanso.
 - D-31 (plan v1.10, PRD v1.7): flujo 1 aprobado. "Empezar otra sesión" el mismo día; ×4 en por pierna con mancuernas; avisos nunca tapan acciones; hoja de ajuste dice a qué series aplica; tarjeta "Sigue" más visible; subitem activo web con A5 en claro.
 - D-32 (plan v1.11, PRD v1.8): bienvenida con conexiones (paso 5) antes del punto de partida (paso 6), lo de Renpho llega lleno; kcal con Katch-McArdle si hay % de grasa, si no Mifflin-St Jeor, por actividad y ajustadas al objetivo; proteína 1.8-2.2 g/kg (los objetivos de Francis no cambian); bienvenida en móvil y web, retoma en cualquiera.
+- D-33 (plan v1.12): proteína 172 g, revisión cada 6 semanas desde la primera actividad, experiencia en 3 opciones. D-34 (plan v1.13): flujo 10 aprobado; reglas de la bienvenida; campos de fecha y número tipados en toda la app.
 - Francis quiere que Claude tome iniciativas y las liste para confirmar ("Decisiones que tomé y necesito que confirmes").
 - D-21 / ADR 0021: embeddings de la memoria del coach con modelo local en el servidor; el modelo se elige en la Fase 1 con benchmark.
 - Plan maestro v1.2: título "Coach Fitness AI".
@@ -50,8 +51,8 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 6. Paso 4B hecho y aprobado (PR #15): flujo 2 en `docs/diseno/mockups/flujo-2-calendario.html` (https://claude.ai/artifact/289fc21Nzt8UpHPNpznbk3) y `flujo-2-calendario-prototipo.html` (https://claude.ai/artifact/CWy7xv7P44k4nZgzMEP6a8). Francis confirmó: primera actividad = cualquier sesión (aunque sea programada) o paseo; series 1-10 y reps 1-30; editar sesión no cambia la rutina; mover o copiar lleva series, reps y pesos de la sesión; volumen con lo del día; zonas de FC solo con % visible; 50 % de kcal MTB.
 7. Paso 5A hecho (PR #17): D-28 en plan v1.7 y PRD v1.4 (criterios de aceptación en su §2), ADR 0024, DESIGN.md y PRODUCT.md.
 8. Flujo 1 (entrenar en el gym) **aprobado** (D-29 a D-31, PR de `docs/flujo-1-gym`): `flujo-1-gym.html` (https://claude.ai/artifact/Pp72v5qCzadtjWrMJdoYNB) y `flujo-1-gym-prototipo.html` (https://claude.ai/artifact/HmQQCjVWTSwXmfdyonyod6). Tokens nuevos `cifraDescanso` y `textoAcentoSobreElevado`; regla de avisos "Never Cover" en DESIGN.md; artefactos del flujo 2 y B2 republicados.
-9. **Flujo 10 (bienvenida) en curso, rama `docs/flujo-10-bienvenida`.** Revisión (D-32, D-33) hecha. Diagrama, guía, 7 ilustraciones (`docs/diseno/ilustraciones/bienvenida/`) y mockups móvil y web en `flujo-10-bienvenida.html` (https://claude.ai/artifact/6MH9WZLk7uhqDrGhPpAbNb), aprobados. Prototipo `flujo-10-bienvenida-prototipo.html` (https://claude.ai/artifact/XdjWPAwfD5RCF92cR486Dw) esperando aprobación (8 decisiones, 2 preguntas); al aprobar: D-34, PR y republicar los artefactos del flujo 2. Francis sigue revisando el prototipo; respuestas ya dadas: sin modo "error al guardar", Marina se actualiza al salir del campo. Cambios acordados para aplicar juntos al terminar su revisión: fecha de nacimiento con máscara dd/mm/aaaa (solo números, "/" automáticas) + calendario propio opcional que abre en vista de años (no `type=date`); campos numéricos que solo aceptan números y un decimal (también al pegar); regla general de campos de fecha, número y hora en DESIGN.md. Después, el modelo conceptual de la BD (califica para Fable 5.1: avisar antes).
-10. Flujo 2: "Sentadilla búlgara mancuernas" y "por mancuerna" en el paso de pesos ya en los HTML; falta republicar sus dos artefactos al cerrar el flujo 10.
+9. **Flujo 10 (bienvenida) en curso, rama `docs/flujo-10-bienvenida`.** Revisión (D-32, D-33) hecha. Diagrama, guía, 7 ilustraciones (`docs/diseno/ilustraciones/bienvenida/`) y mockups móvil y web en `flujo-10-bienvenida.html` (https://claude.ai/artifact/6MH9WZLk7uhqDrGhPpAbNb), aprobados. Prototipo `flujo-10-bienvenida-prototipo.html` (https://claude.ai/artifact/XdjWPAwfD5RCF92cR486Dw) aprobado con sus 8 decisiones (D-34, plan v1.13, PRD v1.10). Campos tipados aplicados (fecha con máscara y selector propio, números filtrados, hora hh:mm) y regla «The Typed Field Rule» en DESIGN.md; esperan que Francis confirme 6 decisiones del selector y los campos. Después: PR. Artefactos del flujo 2 ya republicados. Después, el modelo conceptual de la BD (califica para Fable 5.1: avisar antes).
+10. Flujo 2: "Sentadilla búlgara mancuernas" y "por mancuerna" en pesos, republicado.
 11. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
 
 ## Pendientes de Francis

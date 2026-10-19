@@ -275,6 +275,32 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
 .tarjeta.web { padding: var(--e5); gap: var(--e4); }
 
 
+/* ---------- campos con botón, selector de fecha propio ---------- */
+.cal-btn { width: 40px; height: 40px; margin-right: calc(-1 * var(--e2)); border-radius: var(--r-control); display: grid; place-items: center; color: var(--texto-2); flex: none; position: relative; transition: background var(--rapido) var(--estandar); }
+.cal-btn::after { content: ""; position: absolute; inset: -4px; }
+.cal-btn:active { background: var(--capa-pressed); color: var(--texto); }
+.ampm { min-height: 40px; padding-inline: var(--e2); margin-right: calc(-1 * var(--e2)); border-radius: var(--r-control); color: var(--texto-acento); font-size: 15px; line-height: 20px; font-weight: 650; flex: none; white-space: nowrap; position: relative; }
+.ampm::after { content: ""; position: absolute; inset: -4px 0; }
+.ampm:active { background: var(--capa-pressed); color: var(--accion-alta); }
+.cal-nav { display: flex; align-items: center; justify-content: space-between; gap: var(--e2); }
+.cal-et { display: inline-flex; align-items: center; gap: var(--e1); }
+.cal-nav .btn.texto.cal-et { margin-left: calc(-1 * var(--e3)); }
+.cal-flechas { display: flex; gap: var(--e1); margin-right: calc(-1 * var(--e2)); }
+.icono-btn:disabled { opacity: 0.4; cursor: default; }
+.cal-grid { display: grid; gap: var(--e1); }
+.cal-grid.c5 { grid-template-columns: repeat(5, 1fr); }
+.cal-grid.c4 { grid-template-columns: repeat(4, 1fr); }
+.cal-grid.c7 { grid-template-columns: repeat(7, 1fr); gap: 0; }
+.cal-sem span { text-align: center; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; padding-bottom: var(--e1); }
+.cal-celda { min-height: 48px; min-width: 0; border-radius: var(--r-control); display: grid; place-items: center; font-size: 15px; line-height: 20px; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; transition: background var(--rapido) var(--estandar); }
+.cal-celda:active { background: var(--capa-pressed); }
+.cal-celda[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.cal-celda:disabled { opacity: 0.4; cursor: default; }
+.cal-celda:disabled:active { background: none; }
+@media (hover: hover) and (pointer: fine) {
+  .cal-btn:hover, .cal-celda:not(:disabled):not([aria-pressed="true"]):hover, .ampm:hover, .icono-btn:not(:disabled):hover { background: var(--capa-hover); }
+}
+
 /* ---------- bienvenida (SIS-08, D-32) ---------- */
 .bv-cab { display: flex; align-items: center; justify-content: space-between; gap: var(--e2); margin-inline: -12px calc(-1 * var(--e3)); min-height: var(--tactil); }
 .bv-cab .hueco { width: 48px; height: 48px; flex: none; }
@@ -361,6 +387,7 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
 .ilus-svg { width: 112px; height: 112px; flex: none; display: block; color: var(--texto); --ilus-secundario: var(--texto-2); --ilus-acento: var(--texto-acento); fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
 .ilus-svg.grande { width: 200px; height: 200px; }
 .temas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 720px), 1fr)); gap: var(--e4); }
+.temas.par-temas { grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); }
 .tema { background: var(--fondo); color: var(--texto); border-radius: var(--r-tarjeta); padding: var(--e5); display: flex; flex-direction: column; gap: var(--e4); }
 .tema .rotulo { font-size: 15px; line-height: 20px; font-weight: 650; }
 .tema .rotulo span { color: var(--texto-2); font-weight: 500; }
@@ -510,6 +537,9 @@ figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
   <symbol id="i-cloud-check" viewBox="0 0 24 24"><path d="M11 18.004h-4.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.393 -1.762 1.794 -3.2 3.675 -3.773c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.388 0 2.585 .82 3.138 2.007"/><path d="M15 19l2 2l4 -4"/></symbol>
   <symbol id="i-settings" viewBox="0 0 24 24"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065"/><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></symbol>
   <symbol id="i-loader-2" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/><path d="M11 15h1"/><path d="M12 15v3"/></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 6l-6 6l6 6"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6l6 -6"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6"/><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"/><path d="M8 11v-4a4 4 0 1 1 8 0v4"/></symbol>
   <symbol id="ilu-01-tu" viewBox="0 0 112 112"><path d="M14 30a8 8 0 0 1 8 -8h44a8 8 0 0 1 8 8v60a8 8 0 0 1 -8 8h-44a8 8 0 0 1 -8 -8z"/><path d="M34 48a10 10 0 1 0 20 0a10 10 0 1 0 -20 0"/><path d="M28 80a16 16 0 0 1 32 0"/><path d="M30 89h28" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M86 16a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v80a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M86 26h7M86 46h7M86 66h7M86 86h7M86 56h4M86 76h4" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M80 36h22M76 32l4 4l-4 4" style="stroke: var(--ilus-acento, currentColor)"/></symbol>
   <symbol id="ilu-02-tu-objetivo" viewBox="0 0 112 112"><path d="M10 102L44 92L30 78L62 70L50 56L84 48" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M24 97a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M43 74a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M64 52a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M84 50V14"/><path d="M84 16h20l-6 7l6 7h-20" style="stroke: var(--ilus-acento, currentColor)"/></symbol>
@@ -616,6 +646,8 @@ const GRUPOS = {
   condiciones: ["Condiciones de salud", ["Ninguna", "Presión alta", "Diabetes", "Asma", "Otra"]],
   alergias: ["Alergias y restricciones", ["Ninguna", "Lactosa", "Gluten", "Maní", "Otra"]],
 };
+const MESES_L = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+const DIAS_S = ["lu", "ma", "mi", "ju", "vi", "sá", "do"];
 const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
 // ------------------------------------------------------------ estado
@@ -624,8 +656,8 @@ function datosVacios() {
   return {
     nombre: "", nacimiento: "", sexo: null, estatura: null,
     u: { peso: "lb", cargas: "lb", estatura: "cm", medidas: "cm", distancia: "km" },
-    tipo: null, medida: null, otra: "Cuello", meta: null, fecha: "", metasMedida: [],
-    experiencia: null, dias: null, duracion: 60, hora: "", fuera: null, mtb: "No",
+    tipo: null, medida: null, otra: "Cuello", meta: null, fecha: "", fechaTxt: "", metasMedida: [],
+    experiencia: null, dias: null, duracion: 60, hora: "", ampm: "a. m.", fuera: null, mtb: "No",
     nada: false, salud: { lesiones: [], condiciones: [], alergias: [] }, saludOtra: { lesiones: "", condiciones: "", alergias: "" },
     renpho: "no", renphoFecha: null, hc: false, reloj: false,
     peso: null, grasa: null, musculo: null, cintura: null, cuello: null, cadera: null, recomendadas: "luego", extra: {},
@@ -640,9 +672,9 @@ function reiniciar(conEjemplo) {
 function ejemploFrancis() {
   Object.assign(S.d, {
     nombre: "Francis", nacimiento: "27/07/1996", sexo: "hombre", estatura: 172,
-    tipo: "Recomposición", medida: "grasa", meta: 17.5, fecha: "2027-01-15",
+    tipo: "Recomposición", medida: "grasa", meta: 17.5, fecha: "2027-01-15", fechaTxt: "15/01/2027",
     metasMedida: [{ medida: "Peso", valor: 76 }, { medida: "Cintura", valor: 88 }],
-    experiencia: "Vuelvo tras una pausa", dias: 3, duracion: 60, hora: "08:00", fuera: "caminatas", mtb: "1 o 2",
+    experiencia: "Vuelvo tras una pausa", dias: 3, duracion: 60, hora: "08:00", ampm: "a. m.", fuera: "caminatas", mtb: "1 o 2",
     nada: true, salud: { lesiones: ["Ninguna"], condiciones: ["Ninguna"], alergias: ["Ninguna"] },
     cintura: 91,
   });
@@ -670,6 +702,27 @@ const pesoLeer = (v) => { const x = leer(v); return x == null ? null : (uPeso() 
 const uMed = () => (S.d.u.medidas === "in" ? "pulg." : "cm");
 const medVer = (cm) => cm == null ? "" : (S.d.u.medidas === "in" ? num(cm / CM_IN, 1) : num(cm, cm % 1 ? 1 : 0));
 const medLeer = (v) => { const x = leer(v); return x == null ? null : (S.d.u.medidas === "in" ? x * CM_IN : x); };
+
+// fecha dd/mm/aaaa → Date (o null si no existe)
+function deDMA(t) {
+  const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(t || "");
+  if (!m) return null;
+  const dd = +m[1], mm = +m[2] - 1, aa = +m[3], f = new Date(aa, mm, dd);
+  return f.getFullYear() === aa && f.getMonth() === mm && f.getDate() === dd ? f : null;
+}
+const dma = (f) => `${String(f.getDate()).padStart(2, "0")}/${String(f.getMonth() + 1).padStart(2, "0")}/${f.getFullYear()}`;
+const iso = (f) => `${f.getFullYear()}-${String(f.getMonth() + 1).padStart(2, "0")}-${String(f.getDate()).padStart(2, "0")}`;
+function errorFecha(t) {
+  if (!t) return "";
+  if (t.replace(/\D/g, "").length < 8) return "";
+  return deDMA(t) ? "" : "Esa fecha no existe. Revisa el día y el mes.";
+}
+const horaValida = (t) => { const m = /^(\d{1,2}):(\d{2})$/.exec(t); return !!m && +m[1] >= 1 && +m[1] <= 12 && +m[2] <= 59; };
+// límites de cada campo de fecha: nacimiento entre 14 y 100 años; meta entre 4 semanas y 2 años
+const LIMITES = {
+  nacimiento: { min: new Date(HOY.getFullYear() - 101, HOY.getMonth(), HOY.getDate() + 1), max: new Date(HOY.getFullYear() - 14, HOY.getMonth(), HOY.getDate()), vista: "anios", ref: new Date(HOY.getFullYear() - 30, 0, 1) },
+  fecha: { min: sumaDias(HOY, 28), max: sumaDias(HOY, 730), vista: "dias", ref: sumaDias(HOY, 91) },
+};
 
 function edad() {
   const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(S.d.nacimiento.trim());
@@ -756,13 +809,17 @@ function avisoRitmo() {
 }
 
 // ------------------------------------------------------------ piezas
-function campo(id, lbl, valor, { unidad = "", ayuda = "", origen = "", tipo = "text", modo = "decimal", ph = "", detalle = "" } = {}) {
+function campo(id, lbl, valor, { unidad = "", ayuda = "", origen = "", tipo = "text", modo = "text", ph = "", detalle = "", dec = null, ent = 3, mascara = "", boton = "" } = {}) {
   const e = S.err[id];
+  if (dec != null) { modo = dec > 0 ? "decimal" : "numeric"; valor = String(valor ?? "").replace(/,/g, "").replace(/\.0+$/, ""); }
+  if (mascara) modo = "numeric";
+  const extra = (dec != null ? ` data-dec="${dec}" data-ent="${ent}"` : "") + (mascara ? ` data-mascara="${mascara}" data-prev="${esc(valor)}" maxlength="${mascara === "fecha" ? 10 : 5}"` : "");
   return `<div class="campo"><label class="lbl" for="f-${id}">${lbl}</label>
-    <div class="entrada tnum${e ? " error" : ""}"><input id="f-${id}" data-campo="${id}" type="${tipo}"${modo ? ` inputmode="${modo}"` : ""} value="${esc(valor)}" placeholder="${esc(ph)}"${e ? ` aria-invalid="true" aria-describedby="e-${id}"` : ""} autocomplete="off">${unidad ? `<span class="u" id="u-${id}">${unidad}</span>` : ""}</div>
+    <div class="entrada tnum${e ? " error" : ""}"><input id="f-${id}" data-campo="${id}" type="${tipo}"${modo ? ` inputmode="${modo}"` : ""}${extra} value="${esc(valor)}" placeholder="${esc(ph)}"${e ? ` aria-invalid="true" aria-describedby="e-${id}"` : ""} autocomplete="off">${unidad ? `<span class="u" id="u-${id}">${unidad}</span>` : ""}${boton}</div>
     ${detalle}${origen ? `<span class="origen tnum">${ic("scale", 16)}${origen}</span>` : ""}
     ${e ? `<span class="error-linea" id="e-${id}">${ic("alert-circle", 16)}${e}</span>` : ayuda ? `<span class="ayuda">${ayuda}</span>` : ""}</div>`;
 }
+const botonCal = (id, lbl) => `<button type="button" class="cal-btn" data-acc="cal" data-v="${id}" aria-label="${lbl}: elegir en el calendario">${ic("calendar")}</button>`;
 const errorDe = (id) => S.err[id] ? `<span class="error-linea" id="e-${id}">${ic("alert-circle", 16)}${S.err[id]}</span>` : "";
 const chip = (acc, grupo, valor, on, extra = "") => `<button type="button" class="chip" data-acc="${acc}" data-g="${grupo}" data-v="${esc(valor)}" aria-pressed="${on}"${extra}>${valor}</button>`;
 function seg(acc, grupo, items, sel, cls = "", etiqueta = "") {
@@ -777,13 +834,13 @@ function paso1() {
   const est = d.u.estatura === "ftin"
     ? (() => { const tin = d.estatura ? d.estatura / CM_IN : null; const ft = tin ? Math.floor(tin / 12) : ""; const inch = tin ? Math.round(tin - ft * 12) : "";
         return `<div class="campo"><span class="lbl" id="l-est">Estatura</span><div class="par">
-          <div class="entrada tnum${S.err.estatura ? " error" : ""}"><input id="f-estatura" data-campo="est-ft" aria-label="Estatura: pies" inputmode="numeric" value="${ft}"><span class="u">pies</span></div>
-          <div class="entrada tnum${S.err.estatura ? " error" : ""}"><input data-campo="est-in" aria-label="Estatura: pulgadas" inputmode="numeric" value="${inch}"><span class="u">pulg.</span></div></div>${errorDe("estatura")}</div>`; })()
-    : campo("estatura", "Estatura", d.estatura == null ? "" : d.u.estatura === "m" ? num(d.estatura / 100, 2) : num(d.estatura), { unidad: d.u.estatura === "m" ? "m" : "cm" });
+          <div class="entrada tnum${S.err.estatura ? " error" : ""}"><input id="f-estatura" data-campo="est-ft" aria-label="Estatura: pies" inputmode="numeric" data-dec="0" data-ent="1" value="${ft}"><span class="u">pies</span></div>
+          <div class="entrada tnum${S.err.estatura ? " error" : ""}"><input data-campo="est-in" aria-label="Estatura: pulgadas" inputmode="numeric" data-dec="0" data-ent="2" value="${inch}"><span class="u">pulg.</span></div></div>${errorDe("estatura")}</div>`; })()
+    : campo("estatura", "Estatura", d.estatura == null ? "" : d.u.estatura === "m" ? num(d.estatura / 100, 2) : num(d.estatura, 1), d.u.estatura === "m" ? { unidad: "m", dec: 2, ent: 1 } : { unidad: "cm", dec: 1, ent: 3 });
   const resumenU = `Peso y cargas en ${d.u.peso === d.u.cargas ? d.u.peso : `${d.u.peso} y ${d.u.cargas}`} · medidas en ${uMed()} · distancia en ${d.u.distancia === "mi" ? "millas" : "km"}`;
   return `<span class="t-detalle sec pre">Te damos la bienvenida a <span data-brand-name>Coach Fitness AI</span></span>`
     + campo("nombre", "Nombre", d.nombre, { modo: "text" })
-    + campo("nacimiento", "Fecha de nacimiento", d.nacimiento, { unidad: a != null ? `${a} años` : "", modo: "numeric", ph: "dd/mm/aaaa" })
+    + campo("nacimiento", "Fecha de nacimiento", d.nacimiento, { unidad: a != null ? `${a} años` : "", mascara: "fecha", ph: "dd/mm/aaaa", boton: botonCal("nacimiento", "Fecha de nacimiento") })
     + `<div class="campo">${grupoLbl("sexo", "Sexo")}${seg("sexo", "sexo", [["hombre", "Hombre"], ["mujer", "Mujer"]], d.sexo, "", "Sexo")}
        ${S.err.sexo ? errorDe("sexo") : '<span class="ayuda">Lo usan las fórmulas de gasto y de grasa corporal.</span>'}</div>`
     + est
@@ -798,7 +855,7 @@ function paso2() {
       ${S.err.tipo ? errorDe("tipo") : t ? `<span class="ayuda">${t.desc}</span>` : ""}</div>`
     + (d.tipo ? `<div class="campo">${grupoLbl("medida", "Qué vas a medir")}${seg("medida", "medida", Object.entries(MEDIDAS), d.medida, "auto", "Qué vas a medir")}
       ${d.medida === "otra" ? `<div class="entrada"><select data-campo="otra" aria-label="Medida">${OTRAS.map((o) => `<option${o === d.otra ? " selected" : ""}>${o}</option>`).join("")}</select>${ic("chevron-right", 20)}</div>` : ""}</div>
-      <div class="par">${campo("meta", "Meta", metaVal, { unidad: unidadMeta })}${campo("fecha", "Fecha", d.fecha, { tipo: "date", modo: "" })}</div>
+      <div class="par">${campo("meta", "Meta", metaVal, { unidad: unidadMeta, dec: 1, ent: d.medida === "grasa" ? 2 : 3 })}${campo("fecha", "Fecha", d.fechaTxt, { mascara: "fecha", ph: "dd/mm/aaaa", boton: botonCal("fecha", "Fecha de la meta") })}</div>
       <span class="ayuda tnum semanas" id="semanas">${textoSemanas(semanas)}</span>
       ${d.metasMedida.length ? `<div class="lista">${d.metasMedida.map((m, i) => `<div class="fila"><span class="txt"><span>${m.medida}</span><span class="t-detalle sec tnum">Meta ${m.medida === "Peso" ? `${pesoVer(m.valor)} ${uPeso()}` : `${medVer(m.valor)} ${uMed()}`}</span></span><button type="button" class="icono-btn" data-acc="meta-quitar" data-v="${i}" aria-label="Quitar la meta de ${m.medida.toLowerCase()}">${ic("x")}</button></div>`).join("")}</div>` : ""}
       <button type="button" class="btn texto alinear" data-acc="hoja" data-v="metas">${ic("plus", 20)}Añadir metas por medida</button>` : "");
@@ -810,7 +867,7 @@ function paso3() {
     + `<div class="campo">${grupoLbl("dias", "Días de gym por semana")}${seg("dias", "dias", [1, 2, 3, 4, 5, 6, 7].map((n) => [n, n]), d.dias, "dias tnum", "Días de gym por semana")}${errorDe("dias")}</div>`
     + `<div class="campo">${grupoLbl("fuera", "Fuera del gym")}<div class="lista" role="radiogroup" aria-labelledby="l-fuera">${FUERA.map(([v, t, s]) =>
         `<button type="button" class="opcion-rutina" role="radio" data-acc="fuera" data-v="${v}" aria-checked="${d.fuera === v}"><span class="radio"></span><span class="txt"><span>${t}</span>${s ? `<span class="t-detalle">${s}</span>` : ""}</span></button>`).join("")}</div>${errorDe("fuera")}</div>`
-    + `<div class="par">${campo("duracion", "Cada sesión", d.duracion ?? "", { unidad: "min", modo: "numeric" })}${campo("hora", "Hora (opcional)", d.hora, { tipo: "time", modo: "" })}</div>`
+    + `<div class="par">${campo("duracion", "Cada sesión", d.duracion ?? "", { unidad: "min", dec: 0, ent: 3 })}${campo("hora", "Hora (opcional)", d.hora, { mascara: "hora", ph: "hh:mm", boton: `<button type="button" class="ampm" data-acc="ampm" aria-label="Cambiar a ${d.ampm === "a. m." ? "p. m." : "a. m."}">${d.ampm}</button>` })}</div>`
     + `<div class="campo">${grupoLbl("mtb", "MTB por semana")}${seg("mtb", "mtb", [["No", "No"], ["1 o 2", "1 o 2"], ["3 o más", "3 o más"]], d.mtb, "", "MTB por semana")}
        <span class="ayuda">El día de un paseo, tu objetivo sube con el 50 % de las kcal de Strava.</span></div>`;
 }
@@ -847,21 +904,21 @@ function pideCuello() {
 function paso6() {
   const d = S.d, o = d.origen, desde = d.renphoFecha ? `De Renpho · ${d.renphoFecha} · puedes corregirlo` : "";
   const m = marina();
-  let html = campo("peso", "Peso", pesoVer(d.peso), { unidad: uPeso(), origen: o.peso ? desde : "" })
-    + `<div class="par">${campo("grasa", "% de grasa (opcional)", d.grasa == null ? "" : num(d.grasa, 1), { unidad: "%" })}${campo("musculo", "Masa muscular (opcional)", pesoVer(d.musculo), { unidad: uPeso() })}</div>`
-    + campo("cintura", "Cintura, a la altura del ombligo", medVer(d.cintura), { unidad: uMed() });
+  let html = campo("peso", "Peso", pesoVer(d.peso), { unidad: uPeso(), origen: o.peso ? desde : "", dec: 1 })
+    + `<div class="par">${campo("grasa", "% de grasa (opcional)", d.grasa == null ? "" : num(d.grasa, 1), { unidad: "%", dec: 1, ent: 2 })}${campo("musculo", "Masa muscular (opcional)", pesoVer(d.musculo), { unidad: uPeso(), dec: 1 })}</div>`
+    + campo("cintura", "Cintura, a la altura del ombligo", medVer(d.cintura), { unidad: uMed(), dec: 1 });
   const idOtra = S.d.medida === "otra" ? (d.otra === "Cuello" ? "cuello" : d.otra === "Cadera" ? "cadera" : "x-" + slug(d.otra)) : null;
-  if (idOtra && !(idOtra === "cuello" && pideCuello())) html += campo(idOtra, `${d.otra} (tu meta)`, medVer(inicioMeta()), { unidad: uMed(), ayuda: "Es la medida de tu objetivo: el punto de partida de tus metas intermedias." });
+  if (idOtra && !(idOtra === "cuello" && pideCuello())) html += campo(idOtra, `${d.otra} (tu meta)`, medVer(inicioMeta()), { unidad: uMed(), dec: 1, ayuda: "Es la medida de tu objetivo: el punto de partida de tus metas intermedias." });
   if (pideCuello()) {
-    html += campo("cuello", "Cuello, bajo la nuez", medVer(d.cuello), { unidad: uMed(), ayuda: "Tu meta es de % de grasa y no hay medición de Renpho: con el cuello lo calculamos por el método de la Marina." });
-    if (d.sexo === "mujer") html += campo("cadera", "Cadera, en la parte más ancha", medVer(d.cadera), { unidad: uMed() });
+    html += campo("cuello", "Cuello, bajo la nuez", medVer(d.cuello), { unidad: uMed(), dec: 1, ayuda: "Tu meta es de % de grasa y no hay medición de Renpho: con el cuello lo calculamos por el método de la Marina." });
+    if (d.sexo === "mujer") html += campo("cadera", "Cadera, en la parte más ancha", medVer(d.cadera), { unidad: uMed(), dec: 1 });
     if (m != null) html += `<p class="nota tnum">${ic("info-circle", 16)}<span>Tu % de grasa por el método de la Marina: ${num(m, 1)} %.</span></p>`;
   }
   html += `<div class="campo">${grupoLbl("rec", "Medidas recomendadas")}${seg("rec", "rec", [["luego", "Lo mido luego"], ["ahora", "Medir ahora"]], d.recomendadas, "", "Medidas recomendadas")}`;
   if (d.recomendadas === "ahora") {
     const ya = (id) => id === idOtra || (id === "cuello" && pideCuello()) || (id === "cadera" && pideCuello() && d.sexo === "mujer");
-    html += `</div>` + (ya("cuello") ? "" : campo("cuello", "Cuello", medVer(d.cuello), { unidad: uMed() }))
-      + RECOMENDADAS.map((k) => { const id = k === "Cadera" ? "cadera" : "x-" + slug(k); if (ya(id)) return ""; return k === "Cadera" ? campo("cadera", "Cadera", medVer(d.cadera), { unidad: uMed() }) : campo(id, k, medVer(d.extra[slug(k)]), { unidad: uMed() }); }).join("");
+    html += `</div>` + (ya("cuello") ? "" : campo("cuello", "Cuello", medVer(d.cuello), { unidad: uMed(), dec: 1 }))
+      + RECOMENDADAS.map((k) => { const id = k === "Cadera" ? "cadera" : "x-" + slug(k); if (ya(id)) return ""; return k === "Cadera" ? campo("cadera", "Cadera", medVer(d.cadera), { unidad: uMed(), dec: 1 }) : campo(id, k, medVer(d.extra[slug(k)]), { unidad: uMed(), dec: 1 }); }).join("");
   } else html += `<span class="ayuda">Cuello, hombros, pecho y 5 más. El coach te las vuelve a pedir en 4 semanas.</span></div>`;
   return html;
 }
@@ -897,7 +954,8 @@ function validar(p) {
     else {
       if (d.meta == null) e.meta = "Escribe la meta.";
       const f = deISO(d.fecha);
-      if (!f) e.fecha = "Elige una fecha.";
+      if (!d.fechaTxt) e.fecha = "Elige una fecha.";
+      else if (!f) e.fecha = errorFecha(d.fechaTxt) || "Escribe la fecha como dd/mm/aaaa.";
       else if (diasEntre(HOY, f) < 28) e.fecha = "Elige una fecha a 4 semanas o más.";
     }
   }
@@ -905,6 +963,8 @@ function validar(p) {
     if (!d.experiencia) e.experiencia = "Elige una opción.";
     if (!d.dias) e.dias = "Elige cuántos días.";
     if (!d.fuera) e.fuera = "Elige la que más se parece a tu día.";
+    if (d.hora && !horaValida(d.hora)) e.hora = "Escribe la hora como hh:mm, de 1:00 a 12:59.";
+    if (d.duracion != null && (d.duracion < 10 || d.duracion > 240)) e.duracion = "Entre 10 y 240 minutos.";
   }
   if (p === 4) for (const g of Object.keys(GRUPOS)) if (!d.salud[g].length) e[g] = "Elige «Ninguna» o lo que aplique.";
   if (p === 6) {
@@ -931,7 +991,7 @@ function hojaHtml() {
   }
   if (h === "metas") {
     return cab("Meta por medida") + `<div class="campo">${grupoLbl("mm", "Medida")}<div class="chips" role="group" aria-labelledby="l-mm">${["Peso", "Cintura", "Cadera", "Brazo contraído", "Pecho", "Muslo"].map((k) => chip("mm", "mm", k, S.mm === k)).join("")}</div>${errorDe("mm")}</div>`
-      + campo("mmv", "Meta", S.mmv ?? "", { unidad: S.mm === "Peso" ? uPeso() : uMed() })
+      + campo("mmv", "Meta", S.mmv ?? "", { unidad: S.mm === "Peso" ? uPeso() : uMed(), dec: 1 })
       + `<button type="button" class="btn primario ancho" data-acc="meta-anadir">Añadir meta</button>`;
   }
   if (h === "renpho") {
@@ -941,6 +1001,7 @@ function hojaHtml() {
       + (S.err.renpho ? errorDe("renpho") : `<p class="nota">${ic("lock", 16)}<span>Se guardan cifradas y solo sirven para traer tus mediciones.</span></p>`)
       + `<button type="button" class="btn primario ancho" data-acc="renpho-enviar"${c ? ' aria-busy="true"' : ""}>${c ? `<svg class="i s20 girar" aria-hidden="true"><use href="#i-loader-2"/></svg>Conectando con Renpho…` : "Conectar"}</button>`;
   }
+  if (h === "cal") return calHtml(cab);
   if (h === "calculo") {
     const c = calcular();
     const filas = [
@@ -955,6 +1016,73 @@ function hojaHtml() {
       + (enWeb() ? `<div class="botones"><button type="button" class="btn secundario" data-acc="cerrar">Cerrar</button></div>` : "");
   }
   return "";
+}
+
+// ------------------------------------------------------------ selector de fecha propio
+function abrirCal(campoId) {
+  const L = LIMITES[campoId], txt = campoId === "nacimiento" ? S.d.nacimiento : S.d.fechaTxt;
+  const sel = deDMA(txt);
+  let ref = sel || L.ref;
+  if (!sel && txt.replace(/\D/g, "").length >= 8) { const a = +txt.slice(6, 10); if (a >= L.min.getFullYear() && a <= L.max.getFullYear()) ref = new Date(a, 0, 1); }
+  S.cal = { campo: campoId, vista: L.vista, anio: ref.getFullYear(), mes: ref.getMonth(), sel, foco: sel || ref };
+}
+function dentro(f, L) { return f >= new Date(L.min.getFullYear(), L.min.getMonth(), L.min.getDate()) && f <= L.max; }
+function calHtml(cab) {
+  const c = S.cal, L = LIMITES[c.campo];
+  const titulo = c.campo === "nacimiento" ? "Fecha de nacimiento" : "Fecha de la meta";
+  let etiqueta, celdas, cols, prevOk, nextOk, cabDias = "";
+  const pres = (cond) => (cond ? ' aria-pressed="true"' : ' aria-pressed="false"');
+  if (c.vista === "anios") {
+    const ini = Math.floor(c.anio / 10) * 10;
+    etiqueta = `${ini}–${ini + 9}`; cols = 5;
+    prevOk = ini > L.min.getFullYear(); nextOk = ini + 9 < L.max.getFullYear();
+    celdas = Array.from({ length: 10 }, (_, i) => { const a = ini + i, fuera = a < L.min.getFullYear() || a > L.max.getFullYear();
+      return `<button type="button" class="cal-celda" data-acc="cal-anio" data-v="${a}"${pres(c.sel && c.sel.getFullYear() === a)}${fuera ? " disabled" : ""}>${a}</button>`; }).join("");
+  } else if (c.vista === "meses") {
+    etiqueta = String(c.anio); cols = 4;
+    prevOk = c.anio > L.min.getFullYear(); nextOk = c.anio < L.max.getFullYear();
+    celdas = MESES.map((m, i) => { const fuera = new Date(c.anio, i + 1, 0) < L.min || new Date(c.anio, i, 1) > L.max;
+      return `<button type="button" class="cal-celda" data-acc="cal-mes" data-v="${i}" aria-label="${MESES_L[i]} de ${c.anio}"${pres(c.sel && c.sel.getFullYear() === c.anio && c.sel.getMonth() === i)}${fuera ? " disabled" : ""}>${m}</button>`; }).join("");
+  } else {
+    etiqueta = `${MESES_L[c.mes]} de ${c.anio}`; cols = 7;
+    prevOk = new Date(c.anio, c.mes, 1) > L.min; nextOk = new Date(c.anio, c.mes + 1, 1) <= L.max;
+    const hueco = (new Date(c.anio, c.mes, 1).getDay() + 6) % 7, n = new Date(c.anio, c.mes + 1, 0).getDate();
+    cabDias = `<div class="cal-grid c7 cal-sem" aria-hidden="true">${DIAS_S.map((x) => `<span>${x}</span>`).join("")}</div>`;
+    celdas = Array.from({ length: hueco }, () => "<span></span>").join("") + Array.from({ length: n }, (_, i) => { const f = new Date(c.anio, c.mes, i + 1), fuera = !dentro(f, L);
+      return `<button type="button" class="cal-celda" data-acc="cal-dia" data-v="${i + 1}" aria-label="${i + 1} de ${MESES_L[c.mes]} de ${c.anio}"${pres(c.sel && iso(c.sel) === iso(f))}${fuera ? " disabled" : ""}>${i + 1}</button>`; }).join("");
+  }
+  const sube = c.vista === "anios" ? `<span class="t-seccion tnum cal-et" aria-live="polite">${etiqueta}</span>`
+    : `<button type="button" class="btn texto cal-et tnum" data-acc="cal-subir" aria-label="${etiqueta}: ver ${c.vista === "dias" ? "meses" : "años"}">${etiqueta}${ic("chevron-down", 20)}</button>`;
+  const ayuda = { anios: "Elige el año; luego el mes y el día.", meses: "Elige el mes.", dias: "Elige el día." }[c.vista];
+  return cab(titulo)
+    + `<div class="cal-nav">${sube}<span class="cal-flechas"><button type="button" class="icono-btn" data-acc="cal-prev" aria-label="Anterior"${prevOk ? "" : " disabled"}>${ic("chevron-left")}</button><button type="button" class="icono-btn" data-acc="cal-next" aria-label="Siguiente"${nextOk ? "" : " disabled"}>${ic("chevron-right")}</button></span></div>`
+    + cabDias + `<div class="cal-grid c${cols} tnum" role="group" aria-label="${etiqueta}">${celdas}</div>`
+    + `<p class="nota">${ic("info-circle", 16)}<span>${ayuda} También puedes escribirla en el campo.</span></p>`;
+}
+function enfocarCal() {
+  const g = document.querySelector(".cal-grid:not(.cal-sem)"); if (!g) return;
+  const c = S.cal, f = c.foco;
+  let val = c.vista === "anios" ? f.getFullYear() : c.vista === "meses" ? f.getMonth() : f.getDate();
+  let b = g.querySelector(`[data-v="${val}"]:not([disabled])`) || g.querySelector('[aria-pressed="true"]:not([disabled])') || g.querySelector("button:not([disabled])");
+  if (b) b.focus();
+}
+function moverCal(paso) {
+  const c = S.cal, L = LIMITES[c.campo];
+  let f;
+  if (c.vista === "anios") f = new Date(c.foco.getFullYear() + paso, 0, 1);
+  else if (c.vista === "meses") f = new Date(c.anio, c.foco.getMonth() + paso, 1);
+  else f = sumaDias(c.foco, paso);
+  const fueraAnio = f.getFullYear() < L.min.getFullYear() || f.getFullYear() > L.max.getFullYear();
+  if (c.vista === "dias" ? !dentro(f, L) : fueraAnio) return;
+  c.foco = f; c.anio = f.getFullYear(); c.mes = f.getMonth();
+  pintarHoja(); enfocarCal();
+}
+function elegirFecha(f) {
+  const t = dma(f), c = S.cal;
+  if (c.campo === "nacimiento") S.d.nacimiento = t; else { S.d.fechaTxt = t; S.d.fecha = iso(f); }
+  delete S.err[c.campo];
+  S.hoja = null; S.cal = null; render();
+  const b = document.querySelector(`[data-acc="cal"][data-v="${c.campo}"]`); if (b) b.focus();
 }
 
 // ------------------------------------------------------------ render
@@ -1032,6 +1160,8 @@ function render() {
   const web = enWeb();
   $tel.hidden = web; $web.hidden = !web;
   const enApp = S.pantalla !== "bienvenida";
+  // la vista que no se usa queda vacía: así no hay ids repetidos
+  if (web) { $cuerpo.innerHTML = ""; $capa.innerHTML = ""; $barra.hidden = true; } else $webApp.innerHTML = "";
   if (web) {
     $webApp.innerHTML = enApp ? hoyHtml(true) : bienvenidaWeb();
     $url.textContent = enApp ? "coach.tail72ec86.ts.net/hoy" : `coach.tail72ec86.ts.net/bienvenida/${["tu", "tu-objetivo", "tu-actividad", "tu-salud", "conexiones", "punto-de-partida", "tu-plan"][S.paso - 1]}`;
@@ -1152,9 +1282,21 @@ document.addEventListener("click", (ev) => {
     case "meta-quitar": { const m = d.metasMedida[+v]; d.metasMedida.splice(+v, 1); aviso(`Meta de ${m.medida.toLowerCase()} quitada.`, ["Deshacer", "meta-deshacer"]); S.quitada = [+v, m]; render(); break; }
     case "meta-deshacer": if (S.quitada) { d.metasMedida.splice(S.quitada[0], 0, S.quitada[1]); S.quitada = null; S.aviso = null; render(); } break;
     case "renpho-enviar": conectarRenpho(); break;
+    case "cal": abrirCal(v); S.hoja = "cal"; S.volver = `[data-acc="cal"][data-v="${v}"]`; render(); enfocarCal(); break;
+    case "cal-prev": case "cal-next": {
+      const c = S.cal, n = acc === "cal-next" ? 1 : -1;
+      if (c.vista === "anios") c.anio += 10 * n; else if (c.vista === "meses") c.anio += n; else { const f = new Date(c.anio, c.mes + n, 1); c.anio = f.getFullYear(); c.mes = f.getMonth(); }
+      c.foco = new Date(c.anio, c.vista === "dias" ? c.mes : c.foco.getMonth(), 1);
+      pintarHoja(); const btn = document.querySelector(`[data-acc="${acc}"]:not([disabled])`); if (btn) btn.focus(); else enfocarCal(); break;
+    }
+    case "cal-subir": S.cal.vista = S.cal.vista === "dias" ? "meses" : "anios"; S.cal.foco = new Date(S.cal.anio, S.cal.mes, 1); pintarHoja(); enfocarCal(); break;
+    case "cal-anio": S.cal.anio = +v; S.cal.vista = "meses"; S.cal.foco = new Date(+v, S.cal.sel ? S.cal.sel.getMonth() : 0, 1); pintarHoja(); enfocarCal(); break;
+    case "cal-mes": S.cal.mes = +v; S.cal.vista = "dias"; S.cal.foco = new Date(S.cal.anio, +v, S.cal.sel && S.cal.sel.getMonth() === +v ? S.cal.sel.getDate() : 1); pintarHoja(); enfocarCal(); break;
+    case "cal-dia": elegirFecha(new Date(S.cal.anio, S.cal.mes, +v)); break;
+    case "ampm": d.ampm = d.ampm === "a. m." ? "p. m." : "a. m."; render(); break;
     default: break;
   }
-  if (!["hoja", "cerrar", "siguiente", "atras", "salir", "seguir", "renpho-enviar"].includes(acc)) {
+  if (!["hoja", "cerrar", "siguiente", "atras", "salir", "seguir", "renpho-enviar"].includes(acc) && !acc.startsWith("cal")) {
     const a = document.activeElement;
     if (!a || a === document.body || !document.contains(a)) { const f = document.querySelector(selB); if (f) f.focus(); }
   }
@@ -1169,24 +1311,75 @@ function refrescarFondo() {
   if (sel) { const f = document.querySelector(`.hoja ${sel}, .dialogo ${sel}`); if (f) f.focus(); }
 }
 
+function filtrarNum(el) {
+  const dec = +el.dataset.dec, ent = +(el.dataset.ent || 4), v = el.value, c = el.selectionStart ?? v.length;
+  let out = "", sep = false, nd = 0, ne = 0, pos = 0;
+  for (let i = 0; i < v.length; i++) {
+    const ch = v[i];
+    if (/\d/.test(ch)) { if (!sep && ne < ent) { out += ch; ne++; } else if (sep && nd < dec) { out += ch; nd++; } }
+    else if ((ch === "." || ch === ",") && !sep && dec > 0) { out += out === "" ? "0." : "."; sep = true; }
+    if (i < c) pos = out.length;
+  }
+  if (out !== v) { el.value = out; try { el.setSelectionRange(pos, pos); } catch (_) { /* sin cursor */ } }
+}
+// máscara: solo dígitos; los separadores se ponen solos y borrar sobre uno borra el dígito anterior
+function mascara(el, ev) {
+  const fecha = el.dataset.mascara === "fecha", maxD = fecha ? 8 : 4, cortes = fecha ? [2, 4] : [2], sepC = fecha ? "/" : ":";
+  const prev = el.dataset.prev || "", v = el.value, c = el.selectionStart ?? v.length;
+  let antes = v.slice(0, c).replace(/\D/g, "").length, dig = v.replace(/\D/g, "");
+  const prevDig = prev.replace(/\D/g, "");
+  if (ev.inputType === "deleteContentBackward" && dig === prevDig && antes > 0) { dig = dig.slice(0, antes - 1) + dig.slice(antes); antes--; }
+  if (ev.inputType === "deleteContentForward" && dig === prevDig) dig = dig.slice(0, antes) + dig.slice(antes + 1);
+  dig = dig.slice(0, maxD); antes = Math.min(antes, dig.length);
+  let f = "";
+  for (let i = 0; i < dig.length; i++) { if (cortes.includes(i)) f += sepC; f += dig[i]; }
+  el.value = f; el.dataset.prev = f;
+  let pos = 0, n = 0; while (pos < f.length && n < antes) { if (/\d/.test(f[pos])) n++; pos++; }
+  try { el.setSelectionRange(pos, pos); } catch (_) { /* sin cursor */ }
+}
+function errorEnCampo(id, msg) {
+  const el = document.getElementById("f-" + id); if (!el) return;
+  const c = el.closest(".campo"), ent = el.closest(".entrada"), viejo = c.querySelector(".error-linea"), ayuda = c.querySelector(".ayuda");
+  if (viejo) viejo.remove();
+  if (msg) {
+    S.err[id] = msg; ent.classList.add("error"); el.setAttribute("aria-invalid", "true"); el.setAttribute("aria-describedby", "e-" + id);
+    if (ayuda) ayuda.hidden = true;
+    c.insertAdjacentHTML("beforeend", `<span class="error-linea" id="e-${id}">${ic("alert-circle", 16)}${msg}</span>`);
+  } else { delete S.err[id]; ent.classList.remove("error"); el.removeAttribute("aria-invalid"); if (ayuda) ayuda.hidden = false; }
+}
+
 document.addEventListener("input", (ev) => {
   const el = ev.target, k = el.dataset && el.dataset.campo;
   if (!k) return;
-  const d = S.d, v = el.value;
+  if (el.dataset.dec != null) filtrarNum(el);
+  if (el.dataset.mascara) mascara(el, ev);
+  const d = S.d, v = el.value;   // ya filtrado
   const quitarError = (id) => { if (S.err[id]) { delete S.err[id]; const c = el.closest(".campo"); if (c) { c.querySelectorAll(".entrada.error").forEach((x) => x.classList.remove("error")); const e = c.querySelector(".error-linea"); if (e) e.remove(); el.removeAttribute("aria-invalid"); } } };
   switch (k) {
     case "nombre": d.nombre = v; break;
-    case "nacimiento": { d.nacimiento = v; const a = edad(), u = $("#u-nacimiento"); if (u) u.textContent = a != null ? `${a} años` : ""; else if (a != null) el.insertAdjacentHTML("afterend", `<span class="u" id="u-nacimiento">${a} años</span>`); break; }
-    case "estatura": { const x = leer(v); d.estatura = x == null ? null : d.u.estatura === "m" ? x * 100 : x; break; }
+    case "nacimiento": {
+      d.nacimiento = el.value; const a = edad(), u = $("#u-nacimiento");
+      if (u) u.textContent = a != null ? `${a} años` : ""; else if (a != null) el.insertAdjacentHTML("afterend", `<span class="u" id="u-nacimiento">${a} años</span>`);
+      const completa = el.value.length === 10, f = deDMA(el.value), L = LIMITES.nacimiento;
+      errorEnCampo("nacimiento", !completa ? "" : !f ? "Esa fecha no existe. Revisa el día y el mes." : f < L.min || f > L.max ? "Revisa el año: la edad debe estar entre 14 y 100 años." : "");
+      return;
+    }
+    case "estatura": { const x = leer(el.value); d.estatura = x == null ? null : d.u.estatura === "m" ? x * 100 : x; break; }
     case "est-ft": case "est-in": {
       const c = el.closest(".par"), ft = leer(c.querySelector('[data-campo="est-ft"]').value) || 0, inch = leer(c.querySelector('[data-campo="est-in"]').value) || 0;
       d.estatura = ft || inch ? (ft * 12 + inch) * CM_IN : null; quitarError("estatura"); return;
     }
     case "meta": { const x = leer(v); d.meta = x == null ? null : d.medida === "grasa" ? x : d.medida === "peso" ? pesoLeer(x) : medLeer(x); break; }
-    case "fecha": { d.fecha = v; const f = deISO(v), x = $("#semanas"); if (x) x.textContent = textoSemanas(f ? Math.round(diasEntre(HOY, f) / 7) : null); break; }
+    case "fecha": {
+      d.fechaTxt = el.value; const f = deDMA(el.value), L = LIMITES.fecha, x = $("#semanas");
+      d.fecha = f ? iso(f) : "";
+      if (x) x.textContent = textoSemanas(f ? Math.round(diasEntre(HOY, f) / 7) : null);
+      errorEnCampo("fecha", el.value.length < 10 ? "" : !f ? "Esa fecha no existe. Revisa el día y el mes." : f < L.min ? "Elige una fecha a 4 semanas o más." : f > L.max ? "Elige una fecha dentro de los próximos 2 años." : "");
+      return;
+    }
     case "otra": d.otra = v; d.meta = null; break;
     case "duracion": d.duracion = leer(v); break;
-    case "hora": d.hora = v; break;
+    case "hora": d.hora = el.value; break;
     case "peso": d.peso = pesoLeer(v); d.origen.peso = false; break;
     case "grasa": d.grasa = leer(v); d.origen.grasa = false; break;
     case "musculo": d.musculo = pesoLeer(v); d.origen.musculo = false; break;
@@ -1217,7 +1410,15 @@ document.addEventListener("focusout", (ev) => {
 });
 
 document.addEventListener("keydown", (ev) => {
-  if (ev.key === "Escape" && S.hoja) { ev.preventDefault(); cerrarHoja(); return; }
+  if (ev.key === "Escape" && S.hoja) { ev.preventDefault(); S.cal = null; cerrarHoja(); return; }
+  if (S.hoja === "cal" && ev.target.classList && ev.target.classList.contains("cal-celda")) {
+    const cols = S.cal.vista === "anios" ? 5 : S.cal.vista === "meses" ? 4 : 7;
+    const pasos = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -cols, ArrowDown: cols };
+    if (pasos[ev.key] != null) { ev.preventDefault(); const v = +ev.target.dataset.v, c = S.cal;
+      c.foco = c.vista === "anios" ? new Date(v, 0, 1) : c.vista === "meses" ? new Date(c.anio, v, 1) : new Date(c.anio, c.mes, v);
+      moverCal(pasos[ev.key]); return; }
+    if (ev.key === "PageUp" || ev.key === "PageDown") { ev.preventDefault(); document.querySelector(`[data-acc="${ev.key === "PageUp" ? "cal-prev" : "cal-next"}"]`)?.click(); return; }
+  }
   if (ev.key === "Enter" && ev.target.tagName === "INPUT" && !S.hoja && S.pantalla === "bienvenida") { ev.preventDefault(); siguiente(); return; }
   if (ev.key === "Tab" && S.hoja) {
     const h = document.querySelector(".hoja, .dialogo"); if (!h) return;

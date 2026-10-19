@@ -17,3 +17,5 @@ Prototipo: `flujo-10-bienvenida-prototipo.html` (JS en `proto10.js` del scratchp
 
 **Why:** lo que no está aprobado (prototipo) sigue pendiente de Francis.
 **How to apply:** las ilustraciones solo viven en la bienvenida (ADR 0024); reutiliza los SVG en la Fase 3. Ver [[flujo-1-gym]] y [[verificacion-mockups]].
+
+Campos tipados (feedback de Francis, 18-oct-2026, aprobado): fecha con máscara dd/mm/aaaa y selector propio (años → meses → días para nacimiento; en el mes para fechas cercanas), nunca type="date"; números filtrados con decimales por magnitud y coma o punto; hora hh:mm con botón a. m./p. m. Regla general «The Typed Field Rule» añadida a DESIGN.md (Inputs / Fields).
