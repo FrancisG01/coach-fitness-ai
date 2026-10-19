@@ -2,14 +2,14 @@
 
 | Campo | Valor |
 | --- | --- |
-| Versión | 1.10 |
+| Versión | 1.11 |
 | Fecha | 18-oct-2026 |
 | Estado | Aprobado por Francis, 18-oct-2026 |
 | Dueño del producto | Francis Guzman |
 | Redacta | Agente `pm` |
-| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.13, [`adr/`](adr/), [`diseno/`](diseno/) |
+| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.14, [`adr/`](adr/), [`diseno/`](diseno/) |
 
-Este documento resume qué se construye en la v1.0, para quién y cómo sabremos que funcionó. No añade alcance: el backlog de la v1.0 está cerrado (D-16, [ADR 0016](adr/0016-wsl2-fase-s-y-backlog-cerrado.md)); las excepciones que decidió Francis (D-24, D-28) están en la sección 9. El detalle de cada requisito vive en el plan maestro; aquí solo se resume y se enlaza. Junto con el diseño (`/impeccable init`), cierra la Fase 0.
+Este documento resume qué se construye en la v1.0, para quién y cómo sabremos que funcionó. No añade alcance: el backlog de la v1.0 está cerrado (D-16, [ADR 0016](adr/0016-wsl2-fase-s-y-backlog-cerrado.md)); las excepciones que decidió Francis (D-24, D-28, D-35) están en la sección 9. El detalle de cada requisito vive en el plan maestro; aquí solo se resume y se enlaza. Junto con el diseño (`/impeccable init`), cierra la Fase 0.
 
 Francis aprobó el documento el 18-oct-2026, incluidas las metas físicas, el costo del coach y los tiempos (secciones 5, 6 y 7). Sus respuestas están en la sección 9.
 
@@ -54,14 +54,14 @@ Del [plan, sección 3](plan-maestro.md#3-visión-objetivos-y-métricas-de-éxito
 
 ## 2. Alcance de la v1.0
 
-Prioridad MoSCoW del plan: **M** imprescindible, **S** debería entrar, **W** después de la v1.0. Total: 57 requisitos, 47 M, 4 S, 6 W. Lista completa en el [plan, sección 5](plan-maestro.md#requisitos-funcionales); requisitos no funcionales (RNF-01 a RNF-11) en la [sección 6](plan-maestro.md#6-requisitos-no-funcionales).
+Prioridad MoSCoW del plan: **M** imprescindible, **S** debería entrar, **W** después de la v1.0. Total: 60 requisitos, 50 M, 4 S, 6 W. Lista completa en el [plan, sección 5](plan-maestro.md#requisitos-funcionales); requisitos no funcionales (RNF-01 a RNF-11) en la [sección 6](plan-maestro.md#6-requisitos-no-funcionales).
 
 | Módulo | Qué incluye en la v1.0 | IDs (prioridad) | Fase |
 | --- | --- | --- | --- |
 | Gym | Biblioteca con implicación por músculo, rutinas, calendario con pesos, modo gym con temporizador y vibración, rampa automática, volumen semanal por músculo, historial con 1RM y RM múltiples, cronometría de sesión, autoguardado y recuperación | GYM-01 a 07, 09, 10 (M) | 2 |
 | Gym en el reloj | Sesión del día desde el reloj, ciclo serie/check/descanso/vibración, funciona sin el teléfono cerca, sync en tiempo real por Bluetooth | WAT-01, 02, 05, 06 (M); WAT-03 ajuste rápido de peso, WAT-04 FC en la sesión (S) | 7b |
 | Salud | Sync diario de Renpho, medidas corporales completas (obligatorias, recomendadas, opcionales y automáticas) y cualquier métrica, medidas calculadas (IMC, índices y % de grasa por el método de la Marina), análisis de sangre con rangos y calendario de análisis, Samsung Health vía Health Connect | SAL-01, 02, 04, 07 (M, fase 3); SAL-06 (M, fase 7) | 3 y 7 |
-| Nutrición | Base de alimentos (USDA + INCAP + Open Food Facts + manual) por 100 g, registro en g/kg/lb/oz/ml/L o porción casera, totales por tipo de día, recetas con crudo/cocido, planes día/semana/mes del coach, frecuentes y recientes | NUT-01 a 05, 09 (M) | 4 |
+| Nutrición | Base de alimentos (USDA + INCAP + Open Food Facts + manual) por 100 g, registro por comidas del día en g/kg/lb/oz/ml/L o porción casera con macros por comida, calendario de comidas pasadas y futuras, desglose de nutrientes con Total, Objetivo y Restan, recetas con crudo/cocido, preferidos y evitar, alimento desde la foto de la etiqueta, planes día/semana/mes del coach, frecuentes y recientes | NUT-01 a 05, 09 a 12 (M) | 4 |
 | Suplementos | Catálogo con dosis y horario, registro de toma sumado al día, inventario con alerta de stock bajo | SUP-01, 02 (M); SUP-03 (S) | 4 |
 | Cardio | Paseo MTB desde captura de Strava con tarjeta de confirmación; carga combinada gym + MTB | CAR-01, 02 (M) | 6 |
 | Objetivos | Objetivo principal con meta medible y fecha, metas intermedias cada 4 semanas, metas por medida y por fuerza, hitos; tarjeta en Hoy y página propia | OBJ-01 a 04 (M) | 3 (tarjeta en Hoy: 6) |
@@ -83,7 +83,7 @@ Reglas de producto que aplican a todo:
 | App iOS, publicación en Google Play | Usuario único con Android; APK directo y OTA |
 | Apertura al público y registro de otros usuarios | Arquitectura lista, decisión futura (D-12) |
 | API de Strava y de Cronometer | Términos de Strava; Cronometer sin API (D-03, D-05) |
-| Escáner de código de barras | Backlog |
+| Escáner de código de barras | Backlog (D-35); la foto de la etiqueta (NUT-12) cubre lo que no está en la base |
 | Farmacología y protocolo capilar | Decisión del dueño del producto (D-11) |
 | Dominio propio | Dirección gratuita de Tailscale (D-14) |
 | RPE/RIR y sugerencia de progresión | GYM-08 (W) |
@@ -108,6 +108,20 @@ Requisitos añadidos el 18-oct-2026 como excepción al backlog cerrado (sección
 | SAL-07 | Medidas calculadas | La app calcula IMC, cintura/estatura, cintura/cadera, hombros/cintura y % de grasa por el método de la Marina (cuello, cintura y estatura; cadera en mujeres) con la medición más reciente de cada dato. Si falta un dato, dice cuál falta en lugar de mostrar una cifra. El % de grasa de la Marina se ve junto al de la báscula, rotulado como segunda opinión |
 | COA-05 | Re-preguntas periódicas | El coach pregunta por la cinta y la actividad cada 4 semanas, y por salud y lesiones cada 3 meses o cuando el usuario las menciona. Cada respuesta confirmada actualiza SIS-09 o SAL-02 y queda en su historial con fecha. No reemplaza el check-in diario (SAL-05), que sigue en W |
 
+### Criterios de aceptación de los requisitos de D-35
+
+Nutrición ampliada el 18-oct-2026 como excepción al backlog cerrado (sección 9, decisión 24). Detalle en el [plan, sección 5](plan-maestro.md#comidas-calendario-y-planes-nut).
+
+| ID | Requisito | Criterios de aceptación |
+| --- | --- | --- |
+| NUT-02 | Registro por comidas | El día trae de fábrica desayuno, merienda, almuerzo, merienda y cena; en Ajustes se cambian los nombres y la cantidad. Cada alimento se registra dentro de una comida, en g, kg, lb, oz, ml, L o porción casera. Cada comida muestra su total de kcal, proteína, carbohidratos y grasa |
+| NUT-03 | Desglose de nutrientes | Para un día pasado, hoy o un día futuro se ven kcal, macros, fibra, azúcares, minerales y vitaminas, cada uno con barra de progreso y columnas Total, Objetivo y Restan en su unidad. Los objetivos de micros salen de las DRI por edad y sexo. Sodio (2,300 mg), azúcar añadida y grasa saturada se muestran como límite ("hasta el límite") y la barra avisa al pasarse. Fibra: 14 g por 1,000 kcal. Solo cuenta lo comido; un día futuro muestra lo programado. El objetivo de kcal sube el día de un paseo MTB (D-27) |
+| NUT-04 | Recetas | Una receta guarda ingredientes con cantidades, factor crudo/cocido y rendimiento en porciones. Agregar una receta a una comida pide cuántas porciones; con 1 porción entra en un toque, como combo |
+| NUT-05 | Planes del coach | Desde el chat se pide un plan de un día, una semana o un mes con condiciones ("con pollo y piña"). El coach respeta el objetivo del día, los preferidos, la lista de evitar y las condiciones, decide en qué comida va cada cosa, pone más carbohidratos alrededor de los entrenos programados y reparte la proteína en 4 o 5 tomas. Solo rellena comidas vacías y pregunta antes de reemplazar una programada. Nada se guarda sin aprobar, completo o por comida (COA-04). Un mes son 2 semanas tipo que se alternan |
+| NUT-10 | Calendario de comidas | Comida muestra días pasados, hoy y futuros. En hoy y en un día futuro se programan comidas a mano y se copia un día o la semana anterior. Una comida programada se ve con contorno; "Lo comí" la registra en un toque y se puede editar antes |
+| NUT-11 | Preferidos y evitar | Hay una lista de alimentos preferidos o de alcance local y otra de alimentos a evitar. Las alergias de la bienvenida aparecen solas en "evitar". El coach nunca propone un alimento de "evitar". Para Francis, la despensa base del plan (Anexo A.7) viene cargada como preferidos |
+| NUT-12 | Alimento desde la etiqueta | Al crear un alimento se puede tomar o subir una foto de la tabla nutricional. El coach llena el formulario convertido a 100 g, guarda la porción de la etiqueta como porción casera y marca los campos que no pudo leer. El usuario revisa y guarda; el alimento queda con fuente "etiqueta" y la foto en almacenamiento privado |
+
 ---
 
 ## 3. Flujos clave
@@ -118,8 +132,8 @@ La [sección 13](plan-maestro.md#13-calidad-y-pruebas) pide pruebas E2E en Playw
 | --- | --- | --- | --- | --- |
 | 1 | Entrenar en el gym | Abrir sesión programada → rampa → tachar series → ajustar peso → descanso → cerrar sesión | GYM-04, 05, 09, 10 | Playwright + Maestro |
 | 2 | Programar entrenamientos | Calendario en Gym (mes y semana) → ver día pasado con su resumen → elegir hoy o un día futuro → elegir rutina → confirmar o editar series y repeticiones → confirmar o editar pesos → guardar; editar una sesión programada; mover o copiar una sesión, copiar la semana anterior | GYM-02, 03 | Playwright |
-| 3 | Registrar una comida | Buscar alimento → elegir unidad → confirmar → ver macros y micros del día | NUT-02, 03, 09 | Playwright |
-| 4 | Crear receta o plan | Ingredientes → porciones → plan día/semana/mes con suplementos | NUT-04, 05, SUP-01 | Playwright |
+| 3 | Registrar una comida | Elegir la comida del día → buscar alimento (o crearlo con la foto de la etiqueta) → elegir unidad → confirmar → ver los macros de esa comida → desglose del día con Total, Objetivo y Restan | NUT-02, 03, 09, 12 | Playwright |
+| 4 | Crear receta o plan | Receta: ingredientes → porciones; calendario de comidas → programar a mano o copiar; preferidos y evitar → pedir al coach un plan de día, semana o mes con condiciones → aprobar completo o por comida, con suplementos | NUT-04, 05, 10, 11, SUP-01 | Playwright |
 | 5 | Registrar paseo MTB | Subir las capturas de Strava al chat (actividad y zonas de FC) → tarjeta de confirmación → guardar | CAR-01, 02 | Playwright |
 | 6 | Registrar medición | Renpho automático o manual → medidas con cinta (lista completa de SAL-02: obligatorias, recomendadas y opcionales) → medidas calculadas | SAL-01, 02, 07 | Playwright |
 | 7 | Hablar con el coach | Pregunta → respuesta con tus datos → aprobar plan propuesto | COA-01, 04 | Playwright + evals |
@@ -229,6 +243,7 @@ La escritura de caché cuesta 1.25× la entrada (2× con caché de 1 hora); el p
 | Consejos diarios (COA-03) | Sonnet 5.5 | 15K entrada, 0.8K salida | ~$0.04 |
 | Revisión semanal y resumen de memoria | Opus 5.5 | 60K entrada, 4K salida | ~$0.32 ($0.16 por lotes) |
 | Lectura de captura de Strava (CAR-01) | Sonnet 5.5 | ~1.6K de imagen + 8K de contexto, 0.5K salida | ~$0.03 |
+| Lectura de etiqueta nutricional (NUT-12) | Sonnet 5.5 | ~1.6K de imagen + 8K de contexto, 1K salida | ~$0.03 |
 | Generación de plan o rutina (NUT-05, COA-04) | Opus 5.5 | 40K entrada, 12K salida | ~$0.40 |
 | Texto del informe mensual (DSH-02) | Opus 5.5 | 50K entrada, 5K salida | ~$0.30 |
 
@@ -243,12 +258,13 @@ Sin caché, el mensaje de chat costaría ~$0.17: el prompt caching recorta casi 
 | Revisiones semanales | $1.5 | $1.5 | $3 |
 | Consejos diarios | $1.2 | $1.2 | $2.3 (con Opus) |
 | Capturas de Strava | $0.2 (6) | $0.3 (10) | $0.5 (15) |
+| Etiquetas nutricionales | $0.3 (10) | $0.6 (20) | $1.2 (40) |
 | Planes y rutinas | $1.2 (3) | $2.4 (6) | $6 (12) |
 | Informe mensual | $0.3 | $0.3 | $0.5 |
-| **Operación** | **~$17** | **~$42** | **~$132** |
+| **Operación** | **~$17** | **~$43** | **~$133** |
 | Evals del coach en CI (sobre todo en la Fase 5) | ~$5 | ~$15 | ~$40 |
-| **Total** | **~$22** | **~$57** | **~$172** |
-| ¿Alcanza con Max 5x ($100)? | Sí, sobra 78 % | Sí, sobra 43 % | No: se agotaría hacia el día 17 |
+| **Total** | **~$22** | **~$58** | **~$173** |
+| ¿Alcanza con Max 5x ($100)? | Sí, sobra 78 % | Sí, sobra 42 % | No: se agotaría hacia el día 17 |
 | ¿Alcanza con Max 20x ($200)? | Sí | Sí | Sí, justo |
 
 Los embeddings para la memoria semántica (pgvector) no salen de Anthropic, que no ofrece ese servicio: se generan con un modelo local en el servidor, sin costo de API (D-21, [ADR 0021](adr/0021-embeddings-locales-en-el-servidor.md)).
@@ -272,7 +288,7 @@ Los embeddings para la memoria semántica (pgvector) no salen de Anthropic, que 
 
 ## 7. Estimación de tiempo por fase
 
-Recalculada el 18-oct-2026 con la disponibilidad que confirmó Francis: día completo, y si está motivado, el día entero dedicado al proyecto. Ajustada el mismo día por D-28 (objetivos, bienvenida y medidas): +~1 semana, toda después de la Fase 2, para que el modo gym no se mueva.
+Recalculada el 18-oct-2026 con la disponibilidad que confirmó Francis: día completo, y si está motivado, el día entero dedicado al proyecto. Ajustada el mismo día por D-28 (objetivos, bienvenida y medidas): +~1 semana, y por D-35 (nutrición ampliada): +~1 a 1.25 semanas en la Fase 4. Todo cae después de la Fase 2, para que el modo gym no se mueva.
 
 ### Supuestos
 
@@ -287,23 +303,23 @@ Recalculada el 18-oct-2026 con la disponibilidad que confirmó Francis: día com
 | Fase | Optimista (sem.) | Probable (sem.) | Qué la marca |
 | --- | --- | --- | --- |
 | 0. Lo que falta (`/impeccable init`) | 0.3 | 0.5 | Una ronda de revisión |
-| 0.5 Diseño UX (10 flujos × 4 piezas, modelo conceptual de BD) | 1 | 2 | Producción de mockups y prototipo; el flujo 10 cabe en el rango |
+| 0.5 Diseño UX (10 flujos × 4 piezas, modelo conceptual de BD) | 1 | 2 | Producción de mockups y prototipo; el flujo 10 y los flujos 3 y 4 ampliados caben en el rango |
 | 1. Núcleo | 1 | 1.5 | Modelo de datos, RLS, despliegue y backups (Fable) |
 | 2. Gym (PWA) | 1.5 | 2 | Desarrollo + la semana real de entreno |
 | 3. Salud | 1 | 1.5 | Librería no oficial de Renpho; medidas completas, objetivos, bienvenida y perfil (D-28) |
-| 4. Nutrición y suplementos | 1.5 | 2 | Base de alimentos dominicanos + semana real de comidas |
+| 4. Nutrición y suplementos | 2.5 | 3.25 | Base de alimentos dominicanos, calendario de comidas, desglose, etiqueta y planes del coach (D-35) + semana real de comidas |
 | 5. Coach IA | 1.25 | 2.25 | Prompt, herramientas y evals; re-preguntas y juicio de metas (D-28) |
 | 6. Dashboard y cardio | 0.75 | 1.25 | Informe PDF, carga combinada y tarjeta de objetivos (D-28) |
 | 7. App Android | 1.5 | 3 | Offline-first sin pérdida de datos, Health Connect (Fable) |
 | 7b. Galaxy Watch | 1.5 | 2.5 | App nativa, Data Layer, pruebas en el Watch4 (Fable) |
 | 8. Versión 1.0 | 0.5 | 1 | Hallazgos de la auditoría |
-| **Total** | **~12 semanas** | **~19.5 semanas** | |
+| **Total** | **~13 semanas** | **~20.75 semanas** | |
 
 | Hito | Optimista | Probable |
 | --- | --- | --- |
 | Modo gym usable en el teléfono (empieza la semana real) | ~7-nov-2026 | ~22-nov-2026 |
 | Fase 2 cerrada | ~14-nov-2026 | ~29-nov-2026 |
-| Versión 1.0 | ~9-ene-2027 | ~4-mar-2027 |
+| Versión 1.0 | ~16-ene-2027 | ~13-mar-2027 |
 
 **Riesgo principal (plan, sección 17):** que el desarrollo retrase tu vuelta al gym. Aun en el escenario optimista, las primeras 3 semanas de la ventana de las metas de enero pasan sin modo gym. Mitigación: empezar ya con la rutina Full Body A/B/C en papel ([Anexo A.6](plan-maestro.md#a6-plan-de-entrenamiento-full-body-abc)), apuntar pesos y reps, y cargarlos en el sistema cuando llegue la Fase 2. Dedicar el día completo al proyecto no debe comerse la hora del gym de las 8:00 AM.
 
@@ -356,3 +372,4 @@ Respuestas de Francis a las preguntas del borrador.
 | 21 | Revisión del flujo 10 | Conexiones antes del punto de partida; kcal con Katch-McArdle o Mifflin-St Jeor ajustadas al objetivo y proteína 1.8 a 2.2 g/kg (los objetivos de Francis no cambian); bienvenida en móvil y web con retomar en el otro dispositivo. D-32 |
 | 22 | Guía del flujo 10 | Proteína de Francis 172 g (2.2 g/kg) y carbohidratos 270 g, 2,350 kcal sin cambio; revisión cada 6 semanas desde la primera actividad de cada usuario; experiencia en 3 opciones. D-33 |
 | 23 | Flujo 10 aprobado | Ajuste −15 % / +5 % y proteína por objetivo; aviso de ritmo sin bloquear; meta a 4 semanas o más; medidas obligatorias según la meta; fecha con máscara y calendario propio; campos numéricos filtrados en toda la app. D-34 |
+| 24 | Nutrición ampliada (añadida tras aprobar el PRD) | Entra en la v1.0 con prioridad M como excepción al backlog cerrado: comidas del día con macros por comida, calendario de comidas pasadas y futuras, desglose con Total, Objetivo y Restan, preferidos y evitar, planes del coach con condiciones y entrenos, recetas de 1 porción como combo y alimento desde la foto de la etiqueta (NUT-10 a 12 nuevos). Código de barras al backlog. Flujos 3 y 4 ampliados. +~1 a 1.25 semanas: ~13 optimista y ~20.75 probable, v1.0 ~16-ene a ~13-mar-2027; el modo gym no se mueve. Criterios de aceptación en la sección 2. D-35 |

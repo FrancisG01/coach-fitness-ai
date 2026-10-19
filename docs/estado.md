@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Última actualización: 18-oct-2026 (flujo 10 aprobado, D-32 a D-34)
+Última actualización: 18-oct-2026 (nutrición ampliada, D-35)
 
 ## Fase actual: 0 (fundaciones)
 
@@ -31,10 +31,11 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 - D-31 (plan v1.10, PRD v1.7): flujo 1 aprobado. "Empezar otra sesión" el mismo día; ×4 en por pierna con mancuernas; avisos nunca tapan acciones; hoja de ajuste dice a qué series aplica; tarjeta "Sigue" más visible; subitem activo web con A5 en claro.
 - D-32 (plan v1.11, PRD v1.8): bienvenida con conexiones (paso 5) antes del punto de partida (paso 6), lo de Renpho llega lleno; kcal con Katch-McArdle si hay % de grasa, si no Mifflin-St Jeor, por actividad y ajustadas al objetivo; proteína 1.8-2.2 g/kg (los objetivos de Francis no cambian); bienvenida en móvil y web, retoma en cualquiera.
 - D-33 (plan v1.12): proteína 172 g, revisión cada 6 semanas desde la primera actividad, experiencia en 3 opciones. D-34 (plan v1.13): flujo 10 aprobado; reglas de la bienvenida; campos de fecha y número tipados en toda la app.
+- D-35 (plan v1.14, PRD v1.11; excepción al backlog cerrado, todo M): comidas del día con macros por comida (5 de fábrica, editables); calendario de comidas (NUT-10) con programado en contorno y "Lo comí", solo cuenta lo comido; desglose Total/Objetivo/Restan con micros por DRI y límites (sodio, azúcar añadida, grasa saturada), fibra 14 g/1,000 kcal; preferidos y evitar (NUT-11); planes del coach con condiciones y entrenos, solo comidas vacías, plan de mes = 2 semanas tipo; receta de 1 porción = combo; alimento desde foto de la etiqueta (NUT-12). Código de barras al backlog. Flujos 3 y 4 ampliados. Subsecciones de Comida en DESIGN.md: registro, calendario, recetas, alimentos y suplementos.
 - Francis quiere que Claude tome iniciativas y las liste para confirmar ("Decisiones que tomé y necesito que confirmes").
 - D-21 / ADR 0021: embeddings de la memoria del coach con modelo local en el servidor; el modelo se elige en la Fase 1 con benchmark.
 - Plan maestro v1.2: título "Coach Fitness AI".
-- Estimación (Francis a tiempo completo, con D-28): ~12 semanas optimista / ~19.5 probable. Modo gym usable ~7-nov a ~22-nov-2026 (sin cambio); v1.0 ~9-ene a ~4-mar-2027.
+- Estimación (Francis a tiempo completo, con D-28 y D-35): ~13 semanas optimista / ~20.75 probable. Modo gym usable ~7-nov a ~22-nov-2026 (sin cambio); v1.0 ~16-ene a ~13-mar-2027.
 - D-20 / ADR 0020: servidor Oracle. Carpeta `infra/` para configuración de servidores.
 - Claude Code solo puede `ssh oracle` y `scp … oracle:`; lo que toca el acceso SSH lo ejecuta Francis con un script preparado. Llave `~/.ssh/coach_oracle`, alias `oracle` y `oracle-deploy`.
 - Dirección B2 confirmada: acento de fábrica Caribe, modo según el sistema, nombre provisional "Coach Fitness AI" (casilla marcada en la sección 21 del plan).
@@ -51,9 +52,10 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 6. Paso 4B hecho y aprobado (PR #15): flujo 2 en `docs/diseno/mockups/flujo-2-calendario.html` (https://claude.ai/artifact/289fc21Nzt8UpHPNpznbk3) y `flujo-2-calendario-prototipo.html` (https://claude.ai/artifact/CWy7xv7P44k4nZgzMEP6a8). Francis confirmó: primera actividad = cualquier sesión (aunque sea programada) o paseo; series 1-10 y reps 1-30; editar sesión no cambia la rutina; mover o copiar lleva series, reps y pesos de la sesión; volumen con lo del día; zonas de FC solo con % visible; 50 % de kcal MTB.
 7. Paso 5A hecho (PR #17): D-28 en plan v1.7 y PRD v1.4 (criterios de aceptación en su §2), ADR 0024, DESIGN.md y PRODUCT.md.
 8. Flujo 1 (entrenar en el gym) **aprobado** (D-29 a D-31, PR de `docs/flujo-1-gym`): `flujo-1-gym.html` (https://claude.ai/artifact/Pp72v5qCzadtjWrMJdoYNB) y `flujo-1-gym-prototipo.html` (https://claude.ai/artifact/HmQQCjVWTSwXmfdyonyod6). Tokens nuevos `cifraDescanso` y `textoAcentoSobreElevado`; regla de avisos "Never Cover" en DESIGN.md; artefactos del flujo 2 y B2 republicados.
-9. **Flujo 10 (bienvenida) en curso, rama `docs/flujo-10-bienvenida`.** Revisión (D-32, D-33) hecha. Diagrama, guía, 7 ilustraciones (`docs/diseno/ilustraciones/bienvenida/`) y mockups móvil y web en `flujo-10-bienvenida.html` (https://claude.ai/artifact/6MH9WZLk7uhqDrGhPpAbNb), aprobados. Prototipo `flujo-10-bienvenida-prototipo.html` (https://claude.ai/artifact/XdjWPAwfD5RCF92cR486Dw) aprobado con sus 8 decisiones (D-34, plan v1.13, PRD v1.10). Campos tipados aplicados (fecha con máscara y selector propio, números filtrados, hora hh:mm) y regla «The Typed Field Rule» en DESIGN.md; las 6 decisiones del selector y los campos, aprobadas. PR abierto. Artefactos del flujo 2 ya republicados. Después, el modelo conceptual de la BD (califica para Fable 5.1: avisar antes).
-10. Flujo 2: "Sentadilla búlgara mancuernas" y "por mancuerna" en pesos, republicado.
-11. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
+9. **Flujo 10 (bienvenida) en curso, rama `docs/flujo-10-bienvenida`.** Revisión (D-32, D-33) hecha. Diagrama, guía, 7 ilustraciones (`docs/diseno/ilustraciones/bienvenida/`) y mockups móvil y web en `flujo-10-bienvenida.html` (https://claude.ai/artifact/6MH9WZLk7uhqDrGhPpAbNb), aprobados. Prototipo `flujo-10-bienvenida-prototipo.html` (https://claude.ai/artifact/XdjWPAwfD5RCF92cR486Dw) aprobado con sus 8 decisiones (D-34, plan v1.13, PRD v1.10). Campos tipados aplicados (fecha con máscara y selector propio, números filtrados, hora hh:mm) y regla «The Typed Field Rule» en DESIGN.md; las 6 decisiones del selector y los campos, aprobadas. Fusionado (PR #20).
+10. **Nutrición ampliada (D-35), rama `docs/nutricion-d35`**: plan, PRD, DESIGN.md. Francis puede tener más notas antes de seguir. Después, el modelo conceptual de la BD (califica para Fable 5.1: avisar antes); los flujos 3 y 4 se diseñan con D-35.
+11. Flujo 2: "Sentadilla búlgara mancuernas" y "por mancuerna" en pesos, republicado.
+12. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
 
 ## Pendientes de Francis
 
