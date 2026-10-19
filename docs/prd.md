@@ -2,14 +2,14 @@
 
 | Campo | Valor |
 | --- | --- |
-| Versión | 1.11 |
-| Fecha | 18-oct-2026 |
+| Versión | 1.12 |
+| Fecha | 19-oct-2026 |
 | Estado | Aprobado por Francis, 18-oct-2026 |
 | Dueño del producto | Francis Guzman |
 | Redacta | Agente `pm` |
-| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.14, [`adr/`](adr/), [`diseno/`](diseno/) |
+| Fuentes | [`plan-maestro.md`](plan-maestro.md) v1.16, [`adr/`](adr/), [`diseno/`](diseno/) |
 
-Este documento resume qué se construye en la v1.0, para quién y cómo sabremos que funcionó. No añade alcance: el backlog de la v1.0 está cerrado (D-16, [ADR 0016](adr/0016-wsl2-fase-s-y-backlog-cerrado.md)); las excepciones que decidió Francis (D-24, D-28, D-35) están en la sección 9. El detalle de cada requisito vive en el plan maestro; aquí solo se resume y se enlaza. Junto con el diseño (`/impeccable init`), cierra la Fase 0.
+Este documento resume qué se construye en la v1.0, para quién y cómo sabremos que funcionó. No añade alcance: el backlog de la v1.0 está cerrado (D-16, [ADR 0016](adr/0016-wsl2-fase-s-y-backlog-cerrado.md)); las excepciones que decidió Francis (D-24, D-28, D-35, D-37) están en la sección 9. El detalle de cada requisito vive en el plan maestro; aquí solo se resume y se enlaza. Junto con el diseño (`/impeccable init`), cierra la Fase 0.
 
 Francis aprobó el documento el 18-oct-2026, incluidas las metas físicas, el costo del coach y los tiempos (secciones 5, 6 y 7). Sus respuestas están en la sección 9.
 
@@ -32,7 +32,7 @@ Un coach personal que conoce todos tus datos de entrenamiento, nutrición y salu
 
 | Aspecto | Detalle |
 | --- | --- |
-| Quién | Francis Guzman: 29 años, 172 cm, diseñador gráfico y trader algorítmico (trading 8-9 PM), República Dominicana |
+| Quién | Francis Guzman: 30 años, 172 cm, diseñador gráfico y trader algorítmico (trading 8-9 PM), República Dominicana |
 | Experiencia | Conoce series rampa, periodización y progresión de carga |
 | Contexto de uso | Gym completo a las 8:00 AM, a veces sin señal; MTB registrado en Strava; teléfono Galaxy S24 Ultra y Galaxy Watch4 Classic |
 | Usuarios en v1.0 | Solo tú. La arquitectura queda lista para varios usuarios (D-12) |
@@ -61,7 +61,7 @@ Prioridad MoSCoW del plan: **M** imprescindible, **S** debería entrar, **W** de
 | Gym | Biblioteca con implicación por músculo, rutinas, calendario con pesos, modo gym con temporizador y vibración, rampa automática, volumen semanal por músculo, historial con 1RM y RM múltiples, cronometría de sesión, autoguardado y recuperación | GYM-01 a 07, 09, 10 (M) | 2 |
 | Gym en el reloj | Sesión del día desde el reloj, ciclo serie/check/descanso/vibración, funciona sin el teléfono cerca, sync en tiempo real por Bluetooth | WAT-01, 02, 05, 06 (M); WAT-03 ajuste rápido de peso, WAT-04 FC en la sesión (S) | 7b |
 | Salud | Sync diario de Renpho, medidas corporales completas (obligatorias, recomendadas, opcionales y automáticas) y cualquier métrica, medidas calculadas (IMC, índices y % de grasa por el método de la Marina), análisis de sangre con rangos y calendario de análisis, Samsung Health vía Health Connect | SAL-01, 02, 04, 07 (M, fase 3); SAL-06 (M, fase 7) | 3 y 7 |
-| Nutrición | Base de alimentos (USDA + INCAP + Open Food Facts + manual) por 100 g, registro por comidas del día en g/kg/lb/oz/ml/L o porción casera con macros por comida, calendario de comidas pasadas y futuras, desglose de nutrientes con Total, Objetivo y Restan, recetas con crudo/cocido, preferidos y evitar, alimento desde la foto de la etiqueta, planes día/semana/mes del coach, frecuentes y recientes | NUT-01 a 05, 09 a 12 (M) | 4 |
+| Nutrición | Base de alimentos (USDA + INCAP + Open Food Facts + manual) por 100 g, registro por comidas del día en g/kg/lb/oz/ml/L o porción casera con macros por comida, calendario de comidas pasadas y futuras, desglose de nutrientes con Total, Objetivo y Restan, límites y topes máximos seguros (D-37), recetas con crudo/cocido, preferidos y evitar, alimento desde la foto de la etiqueta, planes día/semana/mes del coach, frecuentes y recientes | NUT-01 a 05, 09 a 12 (M) | 4 |
 | Suplementos | Catálogo con dosis y horario, registro de toma sumado al día, inventario con alerta de stock bajo | SUP-01, 02 (M); SUP-03 (S) | 4 |
 | Cardio | Paseo MTB desde captura de Strava con tarjeta de confirmación; carga combinada gym + MTB | CAR-01, 02 (M) | 6 |
 | Objetivos | Objetivo principal con meta medible y fecha, metas intermedias cada 4 semanas, metas por medida y por fuerza, hitos; tarjeta en Hoy y página propia | OBJ-01 a 04 (M) | 3 (tarjeta en Hoy: 6) |
@@ -83,7 +83,7 @@ Reglas de producto que aplican a todo:
 | App iOS, publicación en Google Play | Usuario único con Android; APK directo y OTA |
 | Apertura al público y registro de otros usuarios | Arquitectura lista, decisión futura (D-12) |
 | API de Strava y de Cronometer | Términos de Strava; Cronometer sin API (D-03, D-05) |
-| Escáner de código de barras | Backlog (D-35); la foto de la etiqueta (NUT-12) cubre lo que no está en la base |
+| Escáner de código de barras | Backlog (D-35); el botón se dibuja en el formulario de alimento nuevo y se programa después de la v1.0 (D-37). La foto de la etiqueta (NUT-12) cubre lo que no está en la base |
 | Farmacología y protocolo capilar | Decisión del dueño del producto (D-11) |
 | Dominio propio | Dirección gratuita de Tailscale (D-14) |
 | RPE/RIR y sugerencia de progresión | GYM-08 (W) |
@@ -108,19 +108,20 @@ Requisitos añadidos el 18-oct-2026 como excepción al backlog cerrado (sección
 | SAL-07 | Medidas calculadas | La app calcula IMC, cintura/estatura, cintura/cadera, hombros/cintura y % de grasa por el método de la Marina (cuello, cintura y estatura; cadera en mujeres) con la medición más reciente de cada dato. Si falta un dato, dice cuál falta en lugar de mostrar una cifra. El % de grasa de la Marina se ve junto al de la báscula, rotulado como segunda opinión |
 | COA-05 | Re-preguntas periódicas | El coach pregunta por la cinta y la actividad cada 4 semanas, y por salud y lesiones cada 3 meses o cuando el usuario las menciona. Cada respuesta confirmada actualiza SIS-09 o SAL-02 y queda en su historial con fecha. No reemplaza el check-in diario (SAL-05), que sigue en W |
 
-### Criterios de aceptación de los requisitos de D-35
+### Criterios de aceptación de los requisitos de D-35 y D-37
 
-Nutrición ampliada el 18-oct-2026 como excepción al backlog cerrado (sección 9, decisión 24). Detalle en el [plan, sección 5](plan-maestro.md#comidas-calendario-y-planes-nut).
+Nutrición ampliada el 18-oct-2026 como excepción al backlog cerrado (sección 9, decisión 24) y revisada con el flujo 3 el 19-oct-2026 (decisión 25), que suma los topes máximos seguros como otra excepción. Detalle en el [plan, sección 5](plan-maestro.md#comidas-calendario-y-planes-nut).
 
 | ID | Requisito | Criterios de aceptación |
 | --- | --- | --- |
-| NUT-02 | Registro por comidas | El día trae de fábrica desayuno, merienda, almuerzo, merienda y cena; en Ajustes se cambian los nombres y la cantidad. Cada alimento se registra dentro de una comida, en g, kg, lb, oz, ml, L o porción casera. Cada comida muestra su total de kcal, proteína, carbohidratos y grasa |
-| NUT-03 | Desglose de nutrientes | Para un día pasado, hoy o un día futuro se ven kcal, macros, fibra, azúcares, minerales y vitaminas, cada uno con barra de progreso y columnas Total, Objetivo y Restan en su unidad. Los objetivos de micros salen de las DRI por edad y sexo. Sodio (2,300 mg), azúcar añadida y grasa saturada se muestran como límite ("hasta el límite") y la barra avisa al pasarse. Fibra: 14 g por 1,000 kcal. Solo cuenta lo comido; un día futuro muestra lo programado. El objetivo de kcal sube el día de un paseo MTB (D-27) |
+| NUT-02 | Registro por comidas | El día trae de fábrica desayuno, media mañana, almuerzo, merienda y cena; en Ajustes se cambian los nombres y la cantidad, y los selectores y el chat usan esos nombres. Al abrir Comida queda elegida la comida según su hora habitual; la hora se pone sola y se edita; un bocado después de medianoche va al día abierto en pantalla. Cada alimento se registra dentro de una comida con unidad en chips que empiezan por las porciones caseras con sus gramos ("1 unidad · 50 g"), luego g, oz, lb y kg; ml y L solo si el alimento tiene densidad. Decimales: g y ml enteros, oz 1, lb, kg y L 2, porción casera 1 con atajos ¼ ½ ¾. En los alimentos donde importa hay selector "Crudo · Cocido" que usa el registro de la base con sus valores, recuerda la última elección y la primera vez marca "Cocido". Editar y quitar usan la misma hoja; quitar no pide confirmación y ofrece "Deshacer". Se puede agregar, editar y quitar en cualquier día pasado, con el objetivo que regía ese día. Cada comida muestra su total de kcal, proteína, carbohidratos y grasa |
+| NUT-03 | Desglose de nutrientes | Para un día pasado, hoy o un día futuro se ven kcal, macros, fibra, azúcares, minerales y vitaminas, cada uno con barra de progreso y columnas Total, Objetivo y Restan en su unidad. Restan empieza en el objetivo, baja al comer y al pasarse muestra el negativo ("−20 g") en texto normal con ícono `alert-triangle`, nunca en rojo; un micro alcanzado dice "Cumplido" con check. Los objetivos de micros salen de las DRI por edad y sexo. Sodio (2,300 mg), azúcar añadida y grasa saturada (10 % de las kcal objetivo: 59 g y 26 g para Francis con 2,350) se muestran como límite ("hasta 2,300 mg") con marca en la barra. Cada nutriente con tope máximo seguro (UL por edad y sexo, NIH) avisa al 80 % y al pasarse con el mismo estilo neutro; en magnesio, ácido fólico, niacina y vitamina E el tope suma solo suplementos y fortificados. La fila "Suplementos" suma las tomas, whey incluido. Fibra: 14 g por 1,000 kcal, sin cambiar el día del paseo. El día de un paseo MTB registrado el objetivo de kcal sube con el 50 % de sus kcal (D-27), repartidas en la proporción de macros del día, y se lee el origen ("2,350 + 600 del paseo"). Un alimento con datos opcionales faltantes genera el aviso "Faltan datos de 1 alimento". En el móvil el resumen (kcal y 3 macros) va arriba del registro y "Ver todos los nutrientes" abre la pantalla completa; en la web ancha va fijo a la derecha de las comidas. Hoy muestra la tarjeta "Nutrición de hoy" (flujo 8) |
 | NUT-04 | Recetas | Una receta guarda ingredientes con cantidades, factor crudo/cocido y rendimiento en porciones. Agregar una receta a una comida pide cuántas porciones; con 1 porción entra en un toque, como combo |
-| NUT-05 | Planes del coach | Desde el chat se pide un plan de un día, una semana o un mes con condiciones ("con pollo y piña"). El coach respeta el objetivo del día, los preferidos, la lista de evitar y las condiciones, decide en qué comida va cada cosa, pone más carbohidratos alrededor de los entrenos programados y reparte la proteína en 4 o 5 tomas. Solo rellena comidas vacías y pregunta antes de reemplazar una programada. Nada se guarda sin aprobar, completo o por comida (COA-04). Un mes son 2 semanas tipo que se alternan |
-| NUT-10 | Calendario de comidas | Comida muestra días pasados, hoy y futuros. En hoy y en un día futuro se programan comidas a mano y se copia un día o la semana anterior. Una comida programada se ve con contorno; "Lo comí" la registra en un toque y se puede editar antes |
+| NUT-09 | Frecuentes y armar el plato | Antes de escribir se ven recientes y frecuentes con su porción habitual (la última cantidad y unidad usadas con ese alimento; uno nuevo arranca en g) y se agregan con un toque. Los resultados salen en este orden: tus alimentos y los usados, la base local (INCAP) y USDA, con la fuente visible y sinónimos (guineo y banana, habichuelas y frijoles). Un alimento de la lista de evitar aparece marcado "En tu lista de evitar". Se agrega un alimento a la vez con la hoja de cantidad y "Agregar", y se vuelve a la búsqueda; una barra fija muestra el total de la comida (kcal y macros) y "Listo". Sin conexión (Android) solo busca en los alimentos guardados y lo dice |
+| NUT-05 | Planes del coach | Desde el chat se pide un plan de un día, una semana o un mes con condiciones ("con pollo y piña"). El coach respeta el objetivo del día, los preferidos, la lista de evitar y las condiciones, decide en qué comida va cada cosa, pone más carbohidratos alrededor de los entrenos programados y reparte la proteína en 4 o 5 tomas contando el whey. Solo rellena comidas vacías y pregunta antes de reemplazar una programada. Nada se guarda sin aprobar, completo o por comida (COA-04). Un mes son 2 semanas tipo que se alternan |
+| NUT-10 | Calendario de comidas | Comida muestra días pasados, hoy y futuros. En hoy y en un día futuro se programan comidas a mano o por plan del coach y se copia un día o la semana anterior. Una comida programada aparece con sus alimentos y en contorno; no hay tachado ni "Lo comí": se quita con una X lo que no se comió, se agrega lo que sí y se editan cantidades, y lo que queda cuenta como comido. Hoy, una comida programada sin tocar entra en el Total y baja Restan al pasar su hora habitual; antes, la barra muestra lo pendiente como tramo en contorno con "Con lo programado: 2,180". Los suplementos programados del día siguen la misma regla en el bloque "Suplementos" debajo de las comidas y en Hoy. Al programar se guarda una copia de lo programado que no se ve y permite comparar la semana contra el plan |
 | NUT-11 | Preferidos y evitar | Hay una lista de alimentos preferidos o de alcance local y otra de alimentos a evitar. Las alergias de la bienvenida aparecen solas en "evitar". El coach nunca propone un alimento de "evitar". Para Francis, la despensa base del plan (Anexo A.7) viene cargada como preferidos |
-| NUT-12 | Alimento desde la etiqueta | Al crear un alimento se puede tomar o subir una foto de la tabla nutricional. El coach llena el formulario convertido a 100 g, guarda la porción de la etiqueta como porción casera y marca los campos que no pudo leer. El usuario revisa y guarda; el alimento queda con fuente "etiqueta" y la foto en almacenamiento privado |
+| NUT-12 | Alimento desde la etiqueta | "Crear alimento" está siempre visible en Comida y en la búsqueda. El formulario tiene "Leer la etiqueta" (teléfono: tomar foto o galería; web: subir foto), selector crudo o cocido y el botón de código de barras dibujado sin función. El coach llena el formulario convertido a 100 g (de %VD a mg, de kJ a kcal y de ml a g con la densidad) y guarda la porción de la etiqueta como porción casera. Los obligatorios que falten (porción en g, kcal, proteína, carbohidratos, grasa) se marcan en rojo y no deja guardar sin ellos; los opcionales no leídos quedan "sin dato", no 0. Con una foto ilegible dice "No se pudo leer la etiqueta · Probar otra foto" y siempre se puede llenar a mano. Leer la etiqueta pide conexión. El alimento queda con fuente "etiqueta" y la foto en almacenamiento privado |
 
 ---
 
@@ -132,12 +133,12 @@ La [sección 13](plan-maestro.md#13-calidad-y-pruebas) pide pruebas E2E en Playw
 | --- | --- | --- | --- | --- |
 | 1 | Entrenar en el gym | Abrir sesión programada → rampa → tachar series → ajustar peso → descanso → cerrar sesión | GYM-04, 05, 09, 10 | Playwright + Maestro |
 | 2 | Programar entrenamientos | Calendario en Gym (mes y semana) → ver día pasado con su resumen → elegir hoy o un día futuro → elegir rutina → confirmar o editar series y repeticiones → confirmar o editar pesos → guardar; editar una sesión programada; mover o copiar una sesión, copiar la semana anterior | GYM-02, 03 | Playwright |
-| 3 | Registrar una comida | Elegir la comida del día → buscar alimento (o crearlo con la foto de la etiqueta) → elegir unidad → confirmar → ver los macros de esa comida → desglose del día con Total, Objetivo y Restan | NUT-02, 03, 09, 12 | Playwright |
+| 3 | Registrar una comida | Comida elegida por la hora → recientes y frecuentes o buscar alimento (o "Crear alimento" con "Leer la etiqueta") → hoja de cantidad con unidad en chips y crudo o cocido → "Agregar" y volver a buscar → "Listo" → macros de esa comida → desglose del día con Total, Objetivo y Restan; quitar o editar lo programado | NUT-02, 03, 09, 10, 12, SUP-02 | Playwright |
 | 4 | Crear receta o plan | Receta: ingredientes → porciones; calendario de comidas → programar a mano o copiar; preferidos y evitar → pedir al coach un plan de día, semana o mes con condiciones → aprobar completo o por comida, con suplementos | NUT-04, 05, 10, 11, SUP-01 | Playwright |
 | 5 | Registrar paseo MTB | Subir las capturas de Strava al chat (actividad y zonas de FC) → tarjeta de confirmación → guardar | CAR-01, 02 | Playwright |
 | 6 | Registrar medición | Renpho automático o manual → medidas con cinta (lista completa de SAL-02: obligatorias, recomendadas y opcionales) → medidas calculadas | SAL-01, 02, 07 | Playwright |
 | 7 | Hablar con el coach | Pregunta → respuesta con tus datos → aprobar plan propuesto | COA-01, 04 | Playwright + evals |
-| 8 | Empezar el día | Dashboard: entreno, comidas, suplementos pendientes, alertas, tarjeta de objetivos → página de Objetivos (metas intermedias, metas por medida y por fuerza, hitos) | DSH-01, COA-03, OBJ-01 a 04 | Playwright |
+| 8 | Empezar el día | Dashboard: entreno, tarjeta "Nutrición de hoy", suplementos pendientes, alertas, tarjeta de objetivos → página de Objetivos (metas intermedias, metas por medida y por fuerza, hitos) | DSH-01, NUT-03, COA-03, OBJ-01 a 04 | Playwright |
 | 9 | Entrenar desde el reloj | Iniciar sesión del día → serie → check → descanso → vibración → espera → play → siguiente → resumen de tiempos | WAT-01, 02, 05, 06 | Compose for Wear OS + reloj real |
 | 10 | Bienvenida (primer uso) | Tú → tu objetivo → tu actividad → tu salud → conexiones → tu punto de partida → tu plan; salir y retomar en móvil o web | SIS-08, SIS-07, OBJ-01, 02 | Playwright |
 
@@ -213,7 +214,7 @@ El Anexo A tiene dos cifras que no cuadran: el plan de comidas suma ~2,255 kcal 
 | Déficit para ~0.25 kg de grasa por semana | ~275 kcal/día |
 | **Objetivo** | **2,350 kcal/día, único para todos los días** (punto medio del rango declarado) |
 | Macros | Proteína 172 g (2.2 g/kg, D-33; antes 187), grasas 65 g (~0.83 g/kg, la propuesta del propio Anexo A.7), carbohidratos 270 g → 2,353 kcal |
-| Días con MTB | Se suman kcal según el gasto del paseo registrado (CAR-02); el coach decide cuánto con tus datos |
+| Días con MTB | Se suma el 50 % de las kcal del paseo registrado (D-27), repartido en la proporción de macros del día (D-37); la fibra no cambia |
 | Suelo de alerta | Menos de 1,800 kcal en un día (Anexo A.10, sin cambio) |
 
 Para llegar a 2,350 el plan de comidas solo necesita ~100 kcal más (por ejemplo, +10 g de grasa con aceite de oliva o aguacate y algo de carbohidrato); se ajusta en la Fase 4. Punto de control cada 6 semanas desde tu primera actividad registrada (D-33): si bajas más de 0.5 % por semana, subir 100-150 kcal; si la media de 7 días no se mueve en 3 semanas, bajar 100-150 kcal.
@@ -288,7 +289,7 @@ Los embeddings para la memoria semántica (pgvector) no salen de Anthropic, que 
 
 ## 7. Estimación de tiempo por fase
 
-Recalculada el 18-oct-2026 con la disponibilidad que confirmó Francis: día completo, y si está motivado, el día entero dedicado al proyecto. Ajustada el mismo día por D-28 (objetivos, bienvenida y medidas): +~1 semana, y por D-35 (nutrición ampliada): +~1 a 1.25 semanas en la Fase 4. Todo cae después de la Fase 2, para que el modo gym no se mueva.
+Recalculada el 18-oct-2026 con la disponibilidad que confirmó Francis: día completo, y si está motivado, el día entero dedicado al proyecto. Ajustada el mismo día por D-28 (objetivos, bienvenida y medidas): +~1 semana, por D-35 (nutrición ampliada): +~1 a 1.25 semanas en la Fase 4, y el 19-oct-2026 por D-37 (topes máximos seguros): +~1 día en la Fase 4, redondeado a 0.25 semanas. Todo cae después de la Fase 2, para que el modo gym no se mueva.
 
 ### Supuestos
 
@@ -307,19 +308,19 @@ Recalculada el 18-oct-2026 con la disponibilidad que confirmó Francis: día com
 | 1. Núcleo | 1 | 1.5 | Modelo de datos, RLS, despliegue y backups (Fable) |
 | 2. Gym (PWA) | 1.5 | 2 | Desarrollo + la semana real de entreno |
 | 3. Salud | 1 | 1.5 | Librería no oficial de Renpho; medidas completas, objetivos, bienvenida y perfil (D-28) |
-| 4. Nutrición y suplementos | 2.5 | 3.25 | Base de alimentos dominicanos, calendario de comidas, desglose, etiqueta y planes del coach (D-35) + semana real de comidas |
+| 4. Nutrición y suplementos | 2.75 | 3.5 | Base de alimentos dominicanos, calendario de comidas, desglose, etiqueta y planes del coach (D-35), topes máximos seguros (D-37) + semana real de comidas |
 | 5. Coach IA | 1.25 | 2.25 | Prompt, herramientas y evals; re-preguntas y juicio de metas (D-28) |
 | 6. Dashboard y cardio | 0.75 | 1.25 | Informe PDF, carga combinada y tarjeta de objetivos (D-28) |
 | 7. App Android | 1.5 | 3 | Offline-first sin pérdida de datos, Health Connect (Fable) |
 | 7b. Galaxy Watch | 1.5 | 2.5 | App nativa, Data Layer, pruebas en el Watch4 (Fable) |
 | 8. Versión 1.0 | 0.5 | 1 | Hallazgos de la auditoría |
-| **Total** | **~13 semanas** | **~20.75 semanas** | |
+| **Total** | **~13.25 semanas** | **~21 semanas** | |
 
 | Hito | Optimista | Probable |
 | --- | --- | --- |
 | Modo gym usable en el teléfono (empieza la semana real) | ~7-nov-2026 | ~22-nov-2026 |
 | Fase 2 cerrada | ~14-nov-2026 | ~29-nov-2026 |
-| Versión 1.0 | ~16-ene-2027 | ~13-mar-2027 |
+| Versión 1.0 | ~18-ene-2027 | ~15-mar-2027 |
 
 **Riesgo principal (plan, sección 17):** que el desarrollo retrase tu vuelta al gym. Aun en el escenario optimista, las primeras 3 semanas de la ventana de las metas de enero pasan sin modo gym. Mitigación: empezar ya con la rutina Full Body A/B/C en papel ([Anexo A.6](plan-maestro.md#a6-plan-de-entrenamiento-full-body-abc)), apuntar pesos y reps, y cargarlos en el sistema cuando llegue la Fase 2. Dedicar el día completo al proyecto no debe comerse la hora del gym de las 8:00 AM.
 
@@ -373,3 +374,4 @@ Respuestas de Francis a las preguntas del borrador.
 | 22 | Guía del flujo 10 | Proteína de Francis 172 g (2.2 g/kg) y carbohidratos 270 g, 2,350 kcal sin cambio; revisión cada 6 semanas desde la primera actividad de cada usuario; experiencia en 3 opciones. D-33 |
 | 23 | Flujo 10 aprobado | Ajuste −15 % / +5 % y proteína por objetivo; aviso de ritmo sin bloquear; meta a 4 semanas o más; medidas obligatorias según la meta; fecha con máscara y calendario propio; campos numéricos filtrados en toda la app. D-34 |
 | 24 | Nutrición ampliada (añadida tras aprobar el PRD) | Entra en la v1.0 con prioridad M como excepción al backlog cerrado: comidas del día con macros por comida, calendario de comidas pasadas y futuras, desglose con Total, Objetivo y Restan, preferidos y evitar, planes del coach con condiciones y entrenos, recetas de 1 porción como combo y alimento desde la foto de la etiqueta (NUT-10 a 12 nuevos). Código de barras al backlog. Flujos 3 y 4 ampliados. +~1 a 1.25 semanas: ~13 optimista y ~20.75 probable, v1.0 ~16-ene a ~13-mar-2027; el modo gym no se mueve. Criterios de aceptación en la sección 2. D-35 |
+| 25 | Revisión del flujo 3 (registrar una comida) | Lo programado se queda y cuenta salvo lo que quites, sin "Lo comí"; hoy cuenta al pasar su hora habitual; copia de lo programado para comparar con el plan. Whey como suplemento que suma al día; café como alimento. Crudo o cocido con su propio registro. Restan negativo en color neutro, "Cumplido" y límites "hasta". Kcal del paseo en la proporción de macros del día. Etiqueta con obligatorios en rojo y opcionales "sin dato". Días pasados editables. Plato de a un alimento con barra fija. De fábrica desayuno, media mañana, almuerzo, merienda y cena. "Crear alimento" siempre visible; código de barras dibujado y programado después de la v1.0. Azúcar añadida y grasa saturada al 10 % de las kcal. Topes máximos seguros (UL) en la v1.0 como excepción al backlog cerrado (M). +~1 día: ~13.25 optimista y ~21 probable, v1.0 ~18-ene a ~15-mar-2027; el modo gym no se mueve. Criterios de aceptación en la sección 2. D-37 |

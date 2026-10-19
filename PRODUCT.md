@@ -12,7 +12,7 @@ Un mismo producto en tres superficies: web responsive instalable (PWA), app Andr
 
 ## Users
 
-- **Usuario principal (v1.0):** Francis Guzman, 29 años, diseñador gráfico y trader algorítmico en República Dominicana. Conoce series rampa, periodización y progresión de carga. Es dueño y único usuario.
+- **Usuario principal (v1.0):** Francis Guzman, 30 años, diseñador gráfico y trader algorítmico en República Dominicana. Conoce series rampa, periodización y progresión de carga. Es dueño y único usuario.
 - **Situación:** gym completo a las 8:00 AM, a veces sin señal; trabajo sentado el resto del día; MTB registrado en Strava. Vuelve tras 19 semanas sin gym con una rutina Full Body A/B/C.
 - **Trabajo que hace:** registrar cada día entreno, comida, suplementos y mediciones para que un coach IA decida sobre datos reales y el progreso sea visible.
 - **Usuarios futuros:** la arquitectura es multiusuario desde el día 1, pero abrirla al público es una decisión futura. El perfil de ese público no está definido.
