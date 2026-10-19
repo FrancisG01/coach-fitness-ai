@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Última actualización: 18-oct-2026 (nutrición ampliada, D-35)
+Última actualización: 18-oct-2026 (modelo conceptual de la BD, pendiente de aprobar)
 
 ## Fase actual: 0 (fundaciones)
 
@@ -53,9 +53,10 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 7. Paso 5A hecho (PR #17): D-28 en plan v1.7 y PRD v1.4 (criterios de aceptación en su §2), ADR 0024, DESIGN.md y PRODUCT.md.
 8. Flujo 1 (entrenar en el gym) **aprobado** (D-29 a D-31, PR de `docs/flujo-1-gym`): `flujo-1-gym.html` (https://claude.ai/artifact/Pp72v5qCzadtjWrMJdoYNB) y `flujo-1-gym-prototipo.html` (https://claude.ai/artifact/HmQQCjVWTSwXmfdyonyod6). Tokens nuevos `cifraDescanso` y `textoAcentoSobreElevado`; regla de avisos "Never Cover" en DESIGN.md; artefactos del flujo 2 y B2 republicados.
 9. **Flujo 10 (bienvenida) en curso, rama `docs/flujo-10-bienvenida`.** Revisión (D-32, D-33) hecha. Diagrama, guía, 7 ilustraciones (`docs/diseno/ilustraciones/bienvenida/`) y mockups móvil y web en `flujo-10-bienvenida.html` (https://claude.ai/artifact/6MH9WZLk7uhqDrGhPpAbNb), aprobados. Prototipo `flujo-10-bienvenida-prototipo.html` (https://claude.ai/artifact/XdjWPAwfD5RCF92cR486Dw) aprobado con sus 8 decisiones (D-34, plan v1.13, PRD v1.10). Campos tipados aplicados (fecha con máscara y selector propio, números filtrados, hora hh:mm) y regla «The Typed Field Rule» en DESIGN.md; las 6 decisiones del selector y los campos, aprobadas. Fusionado (PR #20).
-10. Nutrición ampliada (D-35) fusionada (PR #21): plan v1.14, PRD v1.11, DESIGN.md. **Siguiente:** el modelo conceptual de la BD (califica para Fable 5.1: avisar antes); los flujos 3 y 4 se diseñan con D-35.
-11. Flujo 2: "Sentadilla búlgara mancuernas" y "por mancuerna" en pesos, republicado.
-12. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
+10. Nutrición ampliada (D-35) fusionada (PR #21): plan v1.14, PRD v1.11, DESIGN.md. Los flujos 3 y 4 se diseñan con D-35.
+11. **Modelo conceptual de la BD en curso, rama `docs/modelo-conceptual-bd`** (hecho con Fable 5.1): `docs/database/modelo-conceptual.md` (fuente, Mermaid por módulo) y su visor `modelo-conceptual.html` (https://claude.ai/artifact/Rg21WKNtrySEdzHNUkFZfX). 73 entidades en 9 módulos, patrones transversales (multiusuario, UUID y sync, unidades, fechas locales, historial, propuesta del coach), trazabilidad requisito → entidad y 18 decisiones que Francis debe confirmar (sección 14). **Siguiente:** Francis revisa y confirma o corrige las 18 decisiones; luego PR, y después los flujos 3 y 4 (comida) con D-35. Volver a Opus 5.5 al cerrar.
+12. Flujo 2: "Sentadilla búlgara mancuernas" y "por mancuerna" en pesos, republicado.
+13. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
 
 ## Pendientes de Francis
 
