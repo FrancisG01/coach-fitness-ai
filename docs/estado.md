@@ -37,7 +37,7 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 - Francis quiere que Claude tome iniciativas y las liste para confirmar ("Decisiones que tomé y necesito que confirmes").
 - D-21 / ADR 0021: embeddings de la memoria del coach con modelo local en el servidor; el modelo se elige en la Fase 1 con benchmark.
 - Plan maestro v1.2: título "Coach Fitness AI".
-- Estimación (Francis a tiempo completo, con D-28, D-35 y D-37): ~13.25 semanas optimista / ~21 probable. Modo gym usable ~7-nov a ~22-nov-2026 (sin cambio); v1.0 ~18-ene a ~15-mar-2027.
+- Estimación (Francis a tiempo completo, con D-28, D-35, D-37 y D-38): ~13.5 semanas optimista / ~21.25 probable. Modo gym usable ~7-nov a ~22-nov-2026 (sin cambio); v1.0 ~20-ene a ~17-mar-2027.
 - D-20 / ADR 0020: servidor Oracle. Carpeta `infra/` para configuración de servidores.
 - Claude Code solo puede `ssh oracle` y `scp … oracle:`; lo que toca el acceso SSH lo ejecuta Francis con un script preparado. Llave `~/.ssh/coach_oracle`, alias `oracle` y `oracle-deploy`.
 - Dirección B2 confirmada: acento de fábrica Caribe, modo según el sistema, nombre provisional "Coach Fitness AI" (casilla marcada en la sección 21 del plan).
