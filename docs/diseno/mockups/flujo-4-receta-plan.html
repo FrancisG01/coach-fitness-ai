@@ -1,0 +1,828 @@
+<title>Flujo 4 receta y plan</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Fase 0.5 · flujo 4, crear receta o plan: diagrama y guía paso a paso (NUT-04, NUT-05, NUT-10, NUT-11, SUP-01; D-38).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
+<style>
+/*
+  Fase 0.5 · flujo 4 "Crear receta o plan" (NUT-04, 05, 10, 11, SUP-01; D-38).
+  Piezas 1 y 2: diagrama y guía. CSS base del flujo 3 aprobado (mismos tokens de docs/diseno/tokens.json)
+  más el bloque "flujo 4" al final, con las piezas de calendario del flujo 2.
+*/
+:root {
+  /* neutros · claro (tiza) */
+  --fondo: #F3F4F1; --superficie: #FFFFFF; --elevado: #E9EBE7; --borde: #DADDD8;
+  --texto: #1E2228; --texto-2: #5B626B; --error: #C9333A; --dato-gris: #B5BBC2;
+  /* uso del acento · claro */
+  --accion: var(--a4); --accion-alta: var(--a5); --texto-accion: #FFFFFF; --texto-acento: var(--a4); --texto-acento-elevado: var(--a5);
+  --suave: color-mix(in srgb, var(--a3) 13%, var(--superficie));
+  --capa-hover: color-mix(in srgb, var(--texto) 6%, transparent);
+  --capa-pressed: color-mix(in srgb, var(--texto) 10%, transparent);
+  /* superposiciones · claro: velo texto al 40 %, hoja en superficie, aviso invertido con acción A2 */
+  --velo: color-mix(in srgb, #1E2228 40%, transparent);
+  --hoja: var(--superficie);
+  --aviso-accion: var(--a2);
+  /* serie única de datos (Three Series Rule: A5 en claro, A1 en oscuro) */
+  --dato-1: var(--a5);
+  /* acentos A1–A5 (por defecto Caribe) */
+  --a1: #CFE6F5; --a2: #7CC0EA; --a3: #3B95D1; --a4: #1F6FA8; --a5: #154E78;
+  /* tipografía */
+  --familia: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  /* espaciado, radios, trazos */
+  --e1: 4px; --e2: 8px; --e3: 12px; --e4: 16px; --e5: 24px; --e6: 32px; --e7: 48px;
+  --r-casilla: 6px; --r-control: 10px; --r-tarjeta: 16px; --r-pildora: 999px;
+  --t-borde: 1px; --t-sel: 2px;
+  --tactil: 48px; --tactil-gym: 56px; --barra: 64px;
+  --rapido: 120ms; --normal: 200ms; --lento: 320ms;
+  --estandar: cubic-bezier(0.2, 0, 0, 1); --entrar: cubic-bezier(0.05, 0.7, 0.1, 1); --salir: cubic-bezier(0.3, 0, 0.8, 0.15);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+    --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+    --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
+    --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+    --velo: color-mix(in srgb, #1B1E23 72%, transparent);
+    --hoja: var(--elevado);
+    --aviso-accion: var(--a4);
+    --dato-1: var(--a1);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+  --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+  --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
+  --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+  --velo: color-mix(in srgb, #1B1E23 72%, transparent);
+  --hoja: var(--elevado);
+  --aviso-accion: var(--a4);
+  --dato-1: var(--a1);
+  color-scheme: dark;
+}
+:root[data-accent="mar"]       { --a1: #C8EEEA; --a2: #6FD6CC; --a3: #22A99C; --a4: #157A70; --a5: #0F5850; }
+:root[data-accent="palma"]     { --a1: #CDEEDB; --a2: #6FD19B; --a3: #2FA866; --a4: #1E7D4A; --a5: #155A36; }
+:root[data-accent="mango"]     { --a1: #FCE7C2; --a2: #F7C062; --a3: #E89A1E; --a4: #9A5C06; --a5: #6E4307; }
+:root[data-accent="flamboyan"] { --a1: #FBD6CB; --a2: #F79A7E; --a3: #E8603C; --a4: #B6411F; --a5: #7E2C14; }
+:root[data-accent="uva"]       { --a1: #E3DBFA; --a2: #B4A2F2; --a3: #8466DB; --a4: #6446B8; --a5: #45307F; }
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--fondo); color: var(--texto);
+  font-family: var(--familia); font-size: 16px; line-height: 24px;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+:focus-visible { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.i { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.i.s16 { width: 16px; height: 16px; stroke-width: 2; }
+.i.s20 { width: 20px; height: 20px; }
+.i.s32 { width: 32px; height: 32px; }
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* tipografía (escala de tokens.json) */
+.t-pantalla { font-size: 25px; line-height: 30px; font-weight: 700; font-stretch: 85%; margin: 0; text-wrap: balance; }
+.t-seccion { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.t-detalle { font-size: 13px; line-height: 18px; font-weight: 500; }
+.t-boton { font-size: 15px; line-height: 20px; font-weight: 650; }
+.cifra { font-weight: 800; font-stretch: 62%; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.c-metrica { font-size: 32px; line-height: 32px; }
+.c-heroe { font-size: 56px; line-height: 52px; }
+.sec { color: var(--texto-2); }
+.acento { color: var(--texto-acento); }
+p { margin: 0; }
+
+/* ---------- teléfono ---------- */
+.telefono { width: 376px; padding: var(--e2); border-radius: var(--r-tarjeta); background: var(--borde); flex: none; }
+.pantalla { height: 780px; border-radius: var(--r-control); overflow: hidden; background: var(--fondo); display: flex; flex-direction: column; position: relative; }
+.estado { height: 28px; padding-top: var(--e1); flex: none; display: flex; align-items: center; justify-content: space-between; padding-inline: var(--e5); font-size: 13px; font-weight: 600; }
+.cuerpo { flex: 1; min-height: 0; overflow: hidden; padding: 0 var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e3); }
+.cuerpo > * { flex-shrink: 0; }
+.barra { height: var(--barra); flex: none; background: var(--superficie); border-top: var(--t-borde) solid var(--borde); display: grid; grid-template-columns: repeat(5, 1fr); }
+.pestana { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--texto-2); font-size: 13px; line-height: 16px; font-weight: 500; text-decoration: none; }
+.pestana .ovalo { width: 56px; height: 28px; border-radius: var(--r-pildora); display: grid; place-items: center; transition: background var(--rapido) var(--estandar); }
+.pestana:active .ovalo { background: var(--capa-pressed); }
+.pestana[aria-current="page"] { color: var(--texto-acento); font-weight: 650; }
+
+/* piezas comunes */
+.tarjeta { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e2); }
+.tarjeta.destacada { background: var(--suave); }
+.btn { min-height: var(--tactil); border-radius: var(--r-control); padding-inline: var(--e4); display: inline-flex; align-items: center; justify-content: center; gap: var(--e2); font-size: 15px; line-height: 20px; font-weight: 650; text-align: center; transition: background var(--rapido) var(--estandar), transform var(--rapido) var(--estandar), color var(--rapido) var(--estandar); }
+.btn.primario { background: var(--accion); color: var(--texto-accion); }
+.btn.primario:active { background: var(--accion-alta); transform: scale(0.97); }
+.btn.secundario { border: var(--t-borde) solid var(--texto-2); color: var(--texto); }
+.btn.secundario:active { background: var(--capa-pressed); }
+.btn.texto { color: var(--texto-acento); padding-inline: var(--e3); }
+.btn.texto:active { background: var(--capa-pressed); color: var(--accion-alta); }
+@media (hover: hover) and (pointer: fine) {
+  .btn.primario:hover { background: var(--accion-alta); }
+  .btn.secundario:hover { background: var(--capa-hover); }
+  .btn.texto:hover { background: var(--capa-hover); color: var(--accion-alta); }
+}
+.ancho { width: 100%; }
+.par { display: grid; grid-template-columns: 1fr 1fr; gap: var(--e3); }
+.lista { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; overflow: hidden; }
+.lista > * + * { border-top: var(--t-borde) solid var(--borde); }
+.fila { min-height: var(--tactil); padding: var(--e2) var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); width: 100%; }
+.fila .txt { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+button.fila:active { background: var(--capa-pressed); }
+.cabeza { display: flex; align-items: center; justify-content: space-between; gap: var(--e2); }
+.atras { width: 48px; height: 48px; display: grid; place-items: center; margin-left: -12px; border-radius: var(--r-pildora); }
+.atras:active, .icono-btn:active { background: var(--capa-pressed); }
+.icono-btn { width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--r-pildora); flex: none; }
+.carga { font-size: 20px; line-height: 24px; }
+.segmento { display: flex; background: var(--elevado); border-radius: var(--r-control); padding: var(--e1); gap: var(--e1); }
+.segmento button { min-height: 40px; padding-inline: var(--e3); border-radius: var(--r-casilla); color: var(--texto-2); flex: 1; text-align: center; position: relative; }
+/* el área táctil del segmento llega a 48 px con el relleno del contenedor */
+.segmento button::after { content: ""; position: absolute; inset: calc(-1 * var(--e1)) 0; }
+.segmento button[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.pildora { display: inline-flex; align-items: center; gap: var(--e1); min-height: 24px; padding-inline: var(--e2); border-radius: var(--r-pildora); background: var(--elevado); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.nota { display: flex; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.sinc { display: inline-flex; align-items: center; gap: var(--e1); color: var(--texto-2); }
+.error-linea { display: flex; align-items: center; gap: var(--e2); color: var(--error); font-size: 13px; line-height: 18px; font-weight: 500; }
+
+/* pestañas internas de Gym (móvil) */
+.sub-tabs { display: flex; overflow-x: auto; margin-inline: calc(-1 * var(--e4)); padding-inline: var(--e2); border-bottom: var(--t-borde) solid var(--borde); scrollbar-width: none; flex: none; }
+.sub-tab { text-decoration: none; display: inline-flex; align-items: center; min-height: var(--tactil); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; line-height: 20px; font-weight: 500; white-space: nowrap; border-bottom: var(--t-sel) solid transparent; flex: none; }
+.sub-tab:active { background: var(--capa-pressed); }
+.sub-tab[aria-current="page"] { color: var(--texto-acento); font-weight: 650; border-bottom-color: var(--accion); }
+
+/* semana (móvil) */
+.semana-lista > * { min-height: var(--tactil-gym); }
+.fila-dia { display: flex; align-items: center; gap: var(--e3); padding: var(--e1) var(--e4) var(--e1) var(--e3); width: 100%; text-align: left; }
+.fila-dia:active { background: var(--capa-pressed); }
+.fila-dia .dnum { width: 40px; display: flex; flex-direction: column; align-items: center; flex: none; }
+.fila-dia .dnum .n { width: 32px; height: 32px; border-radius: var(--r-pildora); display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.fila-dia.hoy .dnum .n, .fila-dia.hoy .dnum .t-detalle { color: var(--texto-acento); font-weight: 650; }
+.fila-dia[aria-pressed="true"] .dnum .n { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.fila-dia .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.fila-dia .txt .t-detalle { color: var(--texto-2); }
+.fila-dia .fin { display: flex; align-items: center; gap: var(--e2); color: var(--texto-2); }
+
+/* detalle de día */
+.dia-cab { display: flex; flex-direction: column; gap: var(--e1); }
+.dia-cab .volver { display: flex; align-items: center; gap: var(--e1); }
+.estado-dia { display: inline-flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.cifras { display: flex; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e1); }
+.cifras > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--e1); padding-inline: var(--e4); }
+.cifras .cifra { white-space: nowrap; }
+.cifras > div + div { border-left: var(--t-borde) solid var(--borde); }
+.cifras .cifra { font-size: 32px; line-height: 32px; }
+.cifras .unidad-c { font-size: 15px; font-weight: 650; font-stretch: 85%; color: var(--texto-2); }
+.record { flex-direction: row; align-items: center; gap: var(--e3); }
+.record .i { color: var(--texto-acento); }
+.record .txt { display: flex; flex-direction: column; }
+.vacio { display: flex; flex-direction: column; align-items: flex-start; gap: var(--e2); padding-block: var(--e5); color: var(--texto); }
+.vacio > .i { color: var(--texto-2); }
+.acciones { display: flex; flex-direction: column; gap: var(--e2); margin-top: auto; }
+.empuje { margin-top: auto; }
+
+/* asignar pesos */
+.peso-fila { min-height: 64px; padding: var(--e2) var(--e2) var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e2); }
+.peso-fila .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.peso-fila .txt .t-detalle { color: var(--texto-2); }
+.stepper { display: flex; align-items: center; gap: var(--e1); flex: none; }
+.stepper button { width: var(--tactil); height: var(--tactil); border-radius: var(--r-control); background: var(--elevado); display: grid; place-items: center; transition: background var(--rapido) var(--estandar); }
+.stepper button:active { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); }
+.stepper .valor { min-width: var(--barra); text-align: center; display: flex; flex-direction: column; align-items: center; line-height: 1; }
+.stepper .valor .cifra { font-size: 25px; line-height: 24px; }
+.stepper .valor .t-detalle { color: var(--texto-2); }
+.sube { color: var(--texto-acento); }
+
+/* hoja inferior y aviso */
+.velo { position: absolute; inset: 0; background: var(--velo); display: flex; flex-direction: column; justify-content: flex-end; z-index: 2; }
+.hoja { background: var(--hoja); border-top-left-radius: var(--r-tarjeta); border-top-right-radius: var(--r-tarjeta); padding: var(--e5) var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e4); }
+.hoja .mes .celda[aria-disabled="true"] { cursor: default; }
+.opcion-hoy { min-height: var(--tactil-gym); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); border-radius: var(--r-control); background: var(--elevado); border: var(--t-sel) solid transparent; width: 100%; text-align: left; }
+.opcion-hoy[aria-pressed="true"] { border-color: var(--accion); }
+.opcion-hoy .txt { flex: 1; display: flex; flex-direction: column; }
+.aviso { position: absolute; left: var(--e4); right: var(--e4); bottom: calc(var(--barra) + var(--e2)); background: var(--texto); color: var(--fondo); border-radius: var(--r-control); padding: var(--e1) var(--e1) var(--e1) var(--e4); min-height: var(--tactil-gym); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); z-index: 3; }
+.aviso .btn.texto { color: var(--aviso-accion); }
+.aviso .btn.texto:active { background: color-mix(in srgb, var(--fondo) 10%, transparent); }
+
+/* esqueleto */
+.esq { background: var(--elevado); border-radius: var(--r-casilla); }
+.esq.bloque { height: var(--e7); }
+@media (prefers-reduced-motion: no-preference) { .esq.pulso { animation: pulso 1600ms var(--estandar) infinite; } }
+@keyframes pulso { 50% { opacity: 0.5; } }
+
+/* título del calendario con número de semana */
+.cal-titulo { flex: 1; display: flex; flex-direction: column; align-items: center; }
+
+/* ---------- lámina ---------- */
+body { padding-block: var(--e6) var(--e7); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.lamina { max-width: 1560px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--e7); }
+.cabecera { display: flex; flex-wrap: wrap; gap: var(--e5); justify-content: space-between; align-items: end; }
+.cabecera h1 { font-size: 32px; line-height: 32px; font-weight: 800; font-stretch: 75%; margin: 0 0 var(--e2); text-wrap: balance; }
+.cabecera p { margin: 0; max-width: 62ch; color: var(--texto-2); }
+.controles { display: flex; flex-wrap: wrap; gap: var(--e4); }
+.control { display: flex; flex-direction: column; gap: var(--e1); }
+.controles .segmento button { flex: none; }
+.puntos { display: flex; gap: var(--e2); align-items: center; min-height: 48px; }
+.punto { width: 32px; height: 32px; border-radius: var(--r-pildora); background: var(--c); }
+.punto[aria-pressed="true"] { outline: var(--t-sel) solid var(--texto); outline-offset: 2px; }
+.indice { display: flex; flex-wrap: wrap; gap: var(--e2); }
+.indice a { color: var(--texto-acento); font-weight: 650; font-size: 15px; min-height: 48px; display: inline-flex; align-items: center; padding-inline: var(--e3); border-radius: var(--r-control); text-decoration: none; }
+.indice a:active { background: var(--capa-pressed); }
+@media (hover: hover) and (pointer: fine) { .indice a:hover { background: var(--capa-hover); } }
+
+.pagina { display: flex; flex-direction: column; gap: var(--e5); scroll-margin-top: var(--e5); }
+.pagina > header { display: flex; flex-direction: column; gap: var(--e2); border-top: var(--t-borde) solid var(--borde); padding-top: var(--e5); }
+.pagina h2 { font-size: 25px; line-height: 30px; font-weight: 800; font-stretch: 75%; margin: 0; }
+.pagina h3.sub { font-size: 20px; line-height: 26px; font-weight: 650; margin: var(--e3) 0 0; }
+.cambios { margin: 0; padding-left: 1.2em; color: var(--texto-2); max-width: 86ch; display: grid; gap: var(--e1); }
+.cambios strong { color: var(--texto); font-weight: 650; }
+.fila-telefonos { display: flex; flex-wrap: wrap; gap: var(--e6) var(--e4); }
+figure { margin: 0; display: flex; flex-direction: column; gap: var(--e3); width: 376px; }
+figcaption { display: flex; flex-direction: column; gap: 2px; font-size: 13px; line-height: 18px; color: var(--texto-2); max-width: 360px; }
+figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
+@media (max-width: 420px) { figure { zoom: 0.88; } }
+
+/* diagrama */
+.diagrama-envoltura { overflow-x: auto; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); }
+.diagrama { display: block; min-width: 1240px; width: 100%; height: auto; font-family: var(--familia); }
+.diagrama .nodo rect { fill: var(--elevado); stroke: var(--borde); stroke-width: 1; }
+.diagrama .nodo.inicio rect { fill: var(--suave); stroke: var(--accion); stroke-width: 2; }
+.diagrama .nodo.aviso rect { fill: var(--texto); stroke: none; }
+.diagrama .nodo.aviso .t1, .diagrama .nodo.aviso .t2 { fill: var(--fondo); }
+.diagrama .nodo.salud rect { fill: var(--superficie); stroke: var(--texto-2); stroke-dasharray: 4 4; }
+.diagrama .t1 { fill: var(--texto); font-size: 15px; font-weight: 650; }
+.diagrama .t2 { fill: var(--texto-2); font-size: 13px; font-weight: 500; }
+.diagrama .rama { fill: var(--texto-2); font-size: 13px; font-weight: 500; }
+.diagrama .flecha { fill: none; stroke: var(--texto-2); stroke-width: 1.75; }
+.diagrama .punta { fill: var(--texto-2); }
+.diagrama .paso circle { fill: var(--texto); }
+.diagrama .paso text { fill: var(--fondo); font-size: 13px; font-weight: 650; }
+.diagrama .estados rect { fill: var(--fondo); stroke: var(--borde); }
+.diagrama .estados .t1 { font-size: 15px; }
+.diagrama .fuerte { fill: var(--texto); font-weight: 650; }
+
+/* guía */
+.guia { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--e6) var(--e5); }
+.paso-guia { display: flex; flex-direction: column; gap: var(--e3); }
+.paso-guia .mini { zoom: 0.64; align-self: flex-start; }
+.paso-guia h3 { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.paso-guia ol { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--e2); }
+.paso-guia li { display: grid; grid-template-columns: 24px 1fr; gap: var(--e2); font-size: 15px; line-height: 20px; }
+.paso-guia li .num-a { width: 24px; height: 24px; border-radius: var(--r-pildora); background: var(--texto); color: var(--fondo); display: grid; place-items: center; font-size: 13px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.paso-guia .etapa { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.con-anota { position: relative; }
+.mini .lista { overflow: visible; }
+.anota { position: absolute; top: -10px; right: -6px; width: 28px; height: 28px; border-radius: var(--r-pildora); background: var(--texto); color: var(--fondo); border: var(--t-sel) solid var(--fondo); display: grid; place-items: center; font-size: 15px; line-height: 20px; font-weight: 650; font-variant-numeric: tabular-nums; z-index: 4; pointer-events: none; }
+.pestana .anota { top: 2px; right: 4px; }
+.sub-tab .anota { top: 2px; right: -4px; }
+
+
+
+/* series de datos de los macros (Three Series Rule: A5, A3, gris en claro; A1, A3, gris en oscuro) */
+:root { --dato-2: var(--a3); --dato-3: var(--dato-gris); }
+
+/* lámina */
+.cambios, .casos { max-width: 60ch; }
+.casos { display: grid; gap: var(--e2); color: var(--texto-2); margin: 0; padding-left: 1.2em; }
+.casos b { color: var(--texto); font-weight: 650; }
+.diagrama .nodo.pregunta rect { fill: var(--superficie); stroke: var(--texto-2); stroke-dasharray: 4 4; }
+.diagrama .titulo-alt { fill: var(--texto); font-size: 15px; font-weight: 650; }
+.diagrama .nodo.prog rect { fill: var(--fondo); stroke: var(--accion); stroke-width: 2; }
+.anota.izq { right: auto; left: -6px; }
+.anota.abajo { top: auto; bottom: -10px; }
+.anota.dentro { right: 4px; }
+
+/* aviso superpuesto al pie (Never Cover Rule): flota sobre la lista sin moverla ni reservar alto,
+   justo encima de las acciones fijas (el +, las pestañas, la barra del plato, el botón principal), sin taparlas */
+.ranura-aviso { position: absolute; left: var(--e4); right: var(--e4); bottom: calc(var(--barra) + var(--e3)); z-index: 3; display: flex; }
+.ranura-aviso:empty { display: none; }
+.ranura-aviso.sobre-fab { bottom: calc(var(--barra) + var(--e4) + var(--tactil-gym) + var(--e3)); }
+.ranura-aviso.sobre-acciones { bottom: calc(var(--tactil) + var(--e4) + var(--e3)); }
+.ranura-aviso .aviso { position: relative; left: auto; right: auto; bottom: auto; flex: 1; }
+.aviso .txt-av { flex: 1; font-size: 15px; line-height: 20px; }
+.unidad-c { font-size: 15px; line-height: 20px; font-weight: 650; font-stretch: 85%; color: var(--texto-2); }
+
+/* campos tipados y chips (flujo 10) */
+.campo { display: flex; flex-direction: column; gap: var(--e1); }
+.campo > .lbl { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.entrada { min-height: var(--tactil); background: var(--elevado); border-radius: var(--r-control); padding-inline: var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e2); position: relative; }
+.entrada .u { color: var(--texto-2); font-size: 15px; line-height: 20px; }
+.entrada.foco { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.entrada.error { outline: var(--t-sel) solid var(--error); outline-offset: calc(-1 * var(--t-sel)); }
+.entrada.vacia > span:first-child { color: var(--texto-2); }
+.chips { display: flex; flex-wrap: wrap; gap: var(--e3) var(--e2); }
+.chip { min-height: 36px; padding-inline: var(--e3); border-radius: var(--r-pildora); background: var(--elevado); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; display: inline-flex; align-items: center; position: relative; white-space: nowrap; transition: background var(--rapido) var(--estandar); }
+.chip::after { content: ""; position: absolute; inset: calc(-1 * var(--e2) + 2px) 0; }
+.chip:active { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); color: var(--texto); }
+.chip[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.chip .anota { top: -14px; right: -10px; }
+.entrada .anota { right: -10px; }
+
+/* ---------- Comida (flujo 3, D-37) ---------- */
+.desliza { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: var(--e3); overflow-x: visible; overflow-y: clip; padding-top: var(--e1); }
+.desliza > * { flex-shrink: 0; }
+.dia-nav { display: flex; align-items: center; gap: var(--e1); margin-inline: -12px; }
+.dia-nav .txt { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.dia-nav .t-seccion { font-size: 20px; }
+
+/* resumen del día: Total, Objetivo y Restan */
+.resumen { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e4) var(--e4); display: grid; grid-template-columns: minmax(0, 1fr) repeat(3, 70px); column-gap: var(--e2); align-items: baseline; position: relative; }
+.resumen .cab { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; text-align: right; padding-bottom: var(--e1); }
+.resumen .nom { font-size: 15px; line-height: 20px; min-width: 0; }
+.resumen .nom .u, .resumen .grupo-n .u { color: var(--texto-2); font-size: 13px; }
+.resumen .v { text-align: right; white-space: nowrap; display: flex; flex-direction: column; align-items: flex-end; position: relative; }
+.resumen .v .cifra { font-size: 20px; line-height: 24px; }
+.resumen .v .hasta { color: var(--texto-2); font-size: 13px; line-height: 14px; font-weight: 500; }
+.resumen .kcal .cifra { font-size: 25px; line-height: 26px; }
+.resumen .neg { display: inline-flex; align-items: center; gap: 2px; }
+.resumen .neg .i { color: var(--texto-2); }
+.resumen .ok { display: inline-flex; align-items: center; gap: 2px; font-size: 13px; line-height: 24px; font-weight: 650; }
+.resumen .ok .i { color: var(--texto-acento); }
+.resumen .linea { grid-column: 1 / -1; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; margin-top: calc(-1 * var(--e1)); padding-bottom: var(--e2); display: flex; align-items: center; gap: var(--e1); position: relative; }
+.resumen .linea.tope { color: var(--texto); }
+.resumen .linea.tope .i { color: var(--texto-2); }
+.resumen .grupo-n { grid-column: 1 / -1; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 650; padding-top: var(--e3); padding-bottom: var(--e1); border-top: var(--t-borde) solid var(--borde); margin-top: var(--e1); }
+.resumen .grupo-n:first-of-type { border-top: 0; margin-top: 0; padding-top: 0; }
+.resumen .pie-r { grid-column: 1 / -1; display: flex; justify-content: flex-start; margin: var(--e1) 0 calc(-1 * var(--e2)) calc(-1 * var(--e3)); }
+
+/* barra de progreso con tramo programado en contorno y marca de límite */
+.pista-n { grid-column: 1 / -1; position: relative; margin: var(--e1) 0 var(--e3); }
+.pista-n .p { height: var(--e1); border-radius: var(--r-pildora); background: var(--elevado); display: flex; overflow: hidden; }
+.pista-n .p i { display: block; height: 100%; flex: none; width: calc(var(--v) * 1%); background: var(--m, var(--accion)); }
+/* contorno = programado: el tramo pendiente es solo trazo */
+.pista-n .p i.prog { background: transparent; outline: var(--t-borde) solid var(--m, var(--accion)); outline-offset: calc(-1 * var(--t-borde)); border-radius: 0 var(--r-pildora) var(--r-pildora) 0; }
+.pista-n .lim { position: absolute; top: calc(-1 * var(--e1)); bottom: calc(-1 * var(--e1)); left: calc(var(--l) * 1%); width: var(--t-borde); background: var(--texto-2); }
+.pista-n .anota { top: -14px; }
+
+/* comidas del día */
+.comida { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; position: relative; }
+.comida > * + * { border-top: var(--t-borde) solid var(--borde); }
+/* contorno = programado: sin relleno, trazo neutro */
+.comida.programada { background: transparent; outline: var(--t-borde) solid var(--texto-2); outline-offset: calc(-1 * var(--t-borde)); }
+.comida-cab { padding: var(--e3) var(--e4); display: flex; align-items: flex-start; justify-content: space-between; gap: var(--e3); }
+.comida-cab .txt { display: flex; flex-direction: column; min-width: 0; }
+.comida-cab .t-seccion { display: flex; align-items: center; gap: var(--e2); }
+.comida-cab .t-detalle { color: var(--texto-2); display: inline-flex; align-items: center; gap: var(--e1); }
+.comida-cab .kc { text-align: right; white-space: nowrap; display: flex; flex-direction: column; align-items: flex-end; }
+.comida-cab .kc .cifra { font-size: 20px; line-height: 24px; }
+.comida-cab .kc .t-detalle { color: var(--texto-2); }
+.alimento { min-height: var(--tactil); padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); width: 100%; text-align: left; position: relative; }
+.alimento .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.alimento .txt .t-detalle { color: var(--texto-2); }
+.alimento .kc { white-space: nowrap; color: var(--texto); font-size: 15px; line-height: 20px; }
+.alimento.quitable { padding-right: var(--e1); }
+.alimento .icono-btn { margin-left: calc(-1 * var(--e2)); color: var(--texto-2); }
+button.alimento:active { background: var(--capa-pressed); }
+.comida-pie { padding: var(--e1) var(--e1); display: flex; }
+.comida-pie .btn.texto { gap: var(--e1); }
+.comida.vacia-c .comida-cab { padding-bottom: var(--e1); }
+.comida.vacia-c .comida-cab + .comida-pie { border-top: 0; }
+.estado-c { display: inline-flex; align-items: center; gap: var(--e1); }
+.m { width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); flex: none; }
+.m.prog { border: var(--t-sel) solid var(--accion); }
+.acciones-dia { display: grid; grid-template-columns: auto 1fr; gap: var(--e2); flex: none; }
+.ranura-aviso + .acciones-dia { margin-top: var(--e1); }
+.ver-todo { align-self: flex-start; margin-left: calc(-1 * var(--e3)); }
+
+/* botón flotante de Comida (móvil): un + que abre un menú con «Agregar a la comida de la hora» y «Crear alimento».
+   Plano como todo el sistema: relleno de acción y un anillo del color de fondo que lo separa del contenido, sin sombra. */
+.fab { position: absolute; right: var(--e4); bottom: calc(var(--barra) + var(--e4) + env(safe-area-inset-bottom, 0px)); width: var(--tactil-gym); height: var(--tactil-gym); border-radius: var(--r-pildora); background: var(--accion); color: var(--texto-accion); border: var(--t-sel) solid var(--fondo); display: grid; place-items: center; z-index: 4; transition: background var(--rapido) var(--estandar), transform var(--rapido) var(--estandar); }
+.fab:active { background: var(--accion-alta); transform: scale(0.97); }
+.fab .i { transition: transform var(--normal) var(--estandar); }
+.fab[aria-expanded="true"] .i { transform: rotate(45deg); }
+.velo-fab { position: absolute; inset: 0; background: var(--velo); z-index: 3; }
+.menu-fab { position: absolute; right: var(--e4); bottom: calc(var(--barra) + var(--e4) + var(--tactil-gym) + var(--e2) + env(safe-area-inset-bottom, 0px)); z-index: 4; min-width: 240px; background: var(--hoja); border-radius: var(--r-tarjeta); padding: var(--e2); display: flex; flex-direction: column; gap: var(--e1); }
+.menu-fab button { min-height: var(--tactil); padding-inline: var(--e3) var(--e4); border-radius: var(--r-control); display: flex; align-items: center; gap: var(--e3); font-size: 15px; line-height: 20px; font-weight: 650; text-align: left; }
+.menu-fab button .i { color: var(--texto-acento-elevado); }
+.menu-fab button:active { background: var(--capa-pressed); }
+@media (hover: hover) and (pointer: fine) { .fab:hover { background: var(--accion-alta); } .menu-fab button:hover { background: var(--capa-hover); } }
+@media (prefers-reduced-motion: reduce) { .fab, .fab .i { transition: none; } }
+/* lo último de la lista puede subir por encima del + */
+.desliza.con-fab { padding-bottom: calc(var(--tactil-gym) + var(--e3)); }
+
+
+/* buscar y armar el plato */
+.busca-cab { display: flex; align-items: center; gap: var(--e1); margin-inline: -12px calc(-1 * var(--e2)); min-height: var(--tactil); }
+.busca-cab .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.comida-btn { display: inline-flex; align-items: center; gap: var(--e1); font-size: 20px; line-height: 26px; font-weight: 650; min-height: 40px; border-radius: var(--r-control); align-self: flex-start; position: relative; }
+.comida-btn:active, .hora-btn:active { background: var(--capa-pressed); }
+.hora-btn { min-height: var(--tactil); padding-inline: var(--e3); border-radius: var(--r-control); color: var(--texto-acento); font-size: 15px; line-height: 20px; font-weight: 650; display: inline-flex; align-items: center; gap: var(--e1); position: relative; white-space: nowrap; }
+.entrada.buscar { padding-left: var(--e3); justify-content: flex-start; }
+.entrada.buscar > span { flex: 1; }
+.entrada.buscar .i { color: var(--texto-2); }
+.entrada.buscar .borrar { width: 40px; height: 40px; margin-right: calc(-1 * var(--e2)); display: grid; place-items: center; border-radius: var(--r-control); color: var(--texto-2); }
+.fila-crear { display: flex; gap: var(--e2); }
+.fila-crear .btn { flex: 1; }
+.grupo-tit { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 650; display: flex; align-items: center; justify-content: space-between; gap: var(--e2); margin-bottom: calc(-1 * var(--e1)); }
+.resultados { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; }
+.resultados > * + * { border-top: var(--t-borde) solid var(--borde); }
+.resultado { min-height: 56px; padding: var(--e1) var(--e1) var(--e1) var(--e4); display: flex; align-items: center; gap: var(--e2); position: relative; }
+.resultado .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.resultado .txt .t-detalle { color: var(--texto-2); }
+.resultado .txt .pildora { align-self: flex-start; margin-top: var(--e1); }
+.resultado .icono-btn { color: var(--texto-acento); }
+.resultado .icono-btn.hecho { color: var(--texto-acento); }
+.resultado .icono-btn.neutro { color: var(--texto-2); }
+mark { background: none; color: inherit; font-weight: 650; }
+.sinc-linea { display: flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; position: relative; }
+/* barra fija del plato: total de la comida y Listo */
+.barra-plato { flex: none; background: var(--superficie); border-top: var(--t-borde) solid var(--borde); padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); min-height: 72px; position: relative; }
+.barra-plato .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.barra-plato .txt .t-detalle { color: var(--texto-2); }
+.barra-plato .tot { display: flex; align-items: baseline; gap: var(--e1); }
+.barra-plato .tot .cifra { font-size: 25px; line-height: 26px; }
+.barra-plato .btn { min-width: 96px; }
+
+/* hoja de cantidad */
+.hoja .cab-hoja { display: flex; flex-direction: column; gap: 2px; }
+.hoja .cab-hoja .t-detalle { color: var(--texto-2); }
+.agarre { width: 32px; height: var(--e1); border-radius: var(--r-pildora); background: var(--borde); align-self: center; margin: calc(-1 * var(--e3)) 0 calc(-1 * var(--e1)); }
+.cant { display: flex; gap: var(--e2); align-items: center; }
+.cant .entrada { flex: 1; }
+.cant .entrada .cifra { font-size: 25px; line-height: 26px; }
+.fracciones { display: flex; gap: var(--e1); }
+.fracciones .chip { min-height: var(--tactil); min-width: var(--tactil); justify-content: center; font-size: 15px; }
+.fracciones .chip::after { display: none; }
+.vivo { display: flex; background: var(--elevado); border-radius: var(--r-control); padding: var(--e3) 0; position: relative; }
+.vivo > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: 2px; padding-inline: var(--e3); }
+.vivo > div + div { border-left: var(--t-borde) solid var(--borde); }
+.vivo .cifra { font-size: 25px; line-height: 26px; white-space: nowrap; }
+.vivo .t-detalle { color: var(--texto-2); }
+.botones-hoja { display: grid; grid-template-columns: auto 1fr; gap: var(--e2); }
+
+/* formulario de alimento nuevo */
+.form-scroll { gap: var(--e4); }
+.leer { display: flex; gap: var(--e2); }
+.leer .btn.secundario { flex: 1; }
+.leer .icono-btn[aria-disabled="true"] { opacity: 0.4; cursor: default; background: var(--elevado); border-radius: var(--r-control); }
+.leido { display: flex; align-items: center; gap: var(--e2); font-size: 13px; line-height: 18px; font-weight: 500; color: var(--texto); }
+.leido .i { color: var(--texto-acento); }
+.sub-form { font-size: 15px; line-height: 20px; font-weight: 650; display: flex; justify-content: space-between; align-items: baseline; gap: var(--e2); }
+.sub-form .t-detalle { color: var(--texto-2); font-weight: 500; }
+.opcionales { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; }
+.opcionales > div { min-height: 44px; padding: var(--e2) var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); }
+.opcionales > div + div { border-top: var(--t-borde) solid var(--borde); }
+.opcionales .sin { color: var(--texto-2); font-size: 15px; }
+.campo .error-linea { margin-top: 2px; }
+.acciones-form { display: flex; flex-direction: column; gap: var(--e2); flex: none; }
+
+/* suplementos */
+.supl .alimento .txt .t-detalle { display: inline-flex; align-items: center; gap: var(--e1); }
+.supl .alimento .m { margin-right: calc(-1 * var(--e1)); }
+
+@media (hover: hover) and (pointer: fine) {
+  button.alimento:hover, .comida-btn:hover, .hora-btn:hover, .chip:not([aria-pressed="true"]):hover { background: var(--capa-hover); }
+}
+
+/* ajustes de anotaciones y columnas del resumen */
+.resumen { padding: var(--e3) var(--e3) var(--e4); grid-template-columns: minmax(0, 1fr) 56px 58px 80px; column-gap: var(--e1); }
+.resumen .v .anota { top: -14px; right: -14px; }
+.resumen .v.res .anota { right: auto; left: -6px; }
+.resumen .cab .anota { top: -22px; right: 6px; }
+.resumen .linea .anota { position: static; margin-left: var(--e1); }
+.pista-n .anota { right: auto; left: 55%; top: -12px; }
+.dia-nav .txt .anota { right: auto; left: 8%; }
+.supl .alimento { padding-block: var(--e1); }
+.form-scroll.compacto { gap: var(--e3); }
+.resumen .v.res .anota { top: -16px; right: -8px; left: auto; }
+.resumen .v:not(.res) .anota { top: -6px; right: -28px; }
+.supl .comida-cab { padding-block: var(--e2); }
+.supl .comida-pie { padding-block: 0; }
+.desliza.arriba { padding-top: 0; }
+.resumen .v.res .anota { top: -22px; }
+.dia-nav .txt .anota { top: -16px; left: 4%; }
+
+/* ---------- web ---------- */
+.web-envoltura { overflow-x: auto; border-radius: var(--r-tarjeta); }
+.navegador { min-width: 1180px; background: var(--borde); border-radius: var(--r-tarjeta); padding: var(--e1); }
+.navegador .barra-nav { height: 32px; display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e4); }
+.navegador .url { background: var(--fondo); border-radius: var(--r-pildora); padding: 2px var(--e4); font-size: 13px; color: var(--texto-2); }
+.app-web { display: grid; grid-template-columns: 248px 1fr; background: var(--fondo); border-radius: 0 0 var(--r-tarjeta) var(--r-tarjeta); min-height: 820px; }
+.lateral { background: var(--superficie); border-right: var(--t-borde) solid var(--borde); padding: var(--e4) var(--e3); display: flex; flex-direction: column; gap: var(--e1); border-radius: 0 0 0 var(--r-tarjeta); }
+.marca { display: flex; align-items: center; gap: var(--e3); padding: var(--e2) var(--e2) var(--e4); font-weight: 650; font-size: 15px; }
+.logo { width: 32px; height: 32px; border-radius: var(--r-control); background: var(--elevado); color: var(--texto); display: grid; place-items: center; }
+.item { min-height: 44px; border-radius: var(--r-control); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; }
+.item.abierto { color: var(--texto); font-weight: 650; }
+.subitem { min-height: 36px; display: flex; align-items: center; padding-left: 44px; border-radius: var(--r-control); color: var(--texto-2); font-size: 15px; }
+/* texto de acento sobre elevado: A5 en claro, A2 en oscuro (tokens.json · textoAcentoSobreElevado) */
+.subitem[aria-current="page"] { background: var(--elevado); color: var(--texto-acento-elevado); font-weight: 650; }
+.lateral .pie { margin-top: auto; border-top: var(--t-borde) solid var(--borde); padding-top: var(--e3); display: flex; flex-direction: column; gap: var(--e1); }
+.lateral .pie .sinc { padding: var(--e2) var(--e3); }
+.principal { padding: var(--e6); display: flex; flex-direction: column; gap: var(--e5); position: relative; }
+.rejilla { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--e4); align-items: start; }
+.span-12 { grid-column: span 12; } .span-8 { grid-column: span 8; } .span-4 { grid-column: span 4; }
+.tarjeta.web { padding: var(--e5); gap: var(--e4); }
+.web-cab { display: flex; justify-content: space-between; align-items: end; gap: var(--e4); }
+.web-ctl { display: flex; align-items: center; gap: var(--e3); }
+.web-ctl .segmento button { flex: none; min-width: 72px; }
+.cal-nav.web { margin-left: 0; gap: var(--e1); }
+.cal-nav.web .t-seccion { min-width: 180px; text-align: center; }
+
+.cifras-plano { display: flex; }
+.cifras-plano > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--e1); padding-inline: var(--e4); }
+.cifras-plano > div:first-child { padding-left: 0; }
+.cifras-plano > div + div { border-left: var(--t-borde) solid var(--borde); }
+.cifras-plano .cifra { font-size: 32px; line-height: 32px; white-space: nowrap; }
+.record-linea { display: flex; align-items: center; gap: var(--e2); color: var(--texto); }
+.record-linea .i { color: var(--texto-acento); }
+.wfilas > div, .wpesos > * { border-top: var(--t-borde) solid var(--borde); }
+.wfila { min-height: var(--tactil); padding-block: var(--e2); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); }
+.wpesos .peso-fila { padding-left: 0; padding-right: 0; }
+.wpesos .fila { padding-inline: 0; }
+.semana-pie { display: flex; align-items: center; justify-content: space-between; gap: var(--e4); }
+.icono-btn.acento { color: var(--texto-acento); }
+.opcion-rutina .pildora { align-self: flex-start; margin-top: var(--e1); }
+
+
+.radio { width: 24px; height: 24px; border-radius: var(--r-pildora); border: var(--t-sel) solid var(--texto-2); display: grid; place-items: center; flex: none; }
+.radio::after { content: ""; width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); background: transparent; }
+[aria-checked="true"] .radio { border-color: var(--accion); }
+[aria-checked="true"] .radio::after { background: var(--accion); }
+.opcion-rutina { min-height: 64px; padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); width: 100%; text-align: left; }
+.opcion-rutina:active { background: var(--capa-pressed); }
+.opcion-rutina .txt { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.opcion-rutina .txt .t-detalle { color: var(--texto-2); }
+
+/* hover de la lámina (sin rejilla de calendario) */
+@media (hover: hover) and (pointer: fine) { button.fila:hover, .sub-tab:hover, .icono-btn:hover, .atras:hover, .atajos button:hover, .casilla:hover, .carga-btn:hover, .opcion-rutina:hover { background: var(--capa-hover); } }
+.m { width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); flex: none; }
+.m.hecha { background: var(--accion); }
+.m.prog { border: var(--t-sel) solid var(--accion); }
+
+
+
+/* ---------- pieza 3: mockups (flujo 3) ---------- */
+.wvacio { display: flex; flex-direction: column; align-items: flex-start; gap: var(--e2); max-width: 520px; padding-block: var(--e6); }
+.wvacio > .i { color: var(--texto-2); }
+.wvacio p { color: var(--texto-2); max-width: 60ch; }
+.wvacio.falla > .i { color: var(--error); }
+.app-web.corta { min-height: 560px; }
+.esq.linea { height: var(--e4); }
+.esq.alto { height: calc(4 * var(--e7)); }
+.vacio p { max-width: 36ch; }
+.vacio .btn { margin-top: var(--e2); }
+
+/* indicador circular dentro de un botón (20 px), solo si tarda más de 300 ms */
+.indicador { width: 20px; height: 20px; border-radius: var(--r-pildora); border: var(--t-sel) solid var(--borde); border-top-color: var(--texto); flex: none; }
+@media (prefers-reduced-motion: no-preference) { .indicador { animation: giro 800ms linear infinite; } }
+@keyframes giro { to { transform: rotate(1turn); } }
+.btn[aria-busy="true"] { cursor: progress; }
+
+/* esqueleto en el teléfono */
+.esq-tarjeta { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e3); }
+.esq-fila { display: flex; justify-content: space-between; gap: var(--e4); }
+
+/* web: dos columnas de Comida */
+.span-7 { grid-column: span 7; } .span-5 { grid-column: span 5; } .span-6 { grid-column: span 6; }
+.col { display: flex; flex-direction: column; gap: var(--e3); min-width: 0; }
+.col.fija { position: sticky; top: var(--e6); }
+.w-dia { display: flex; align-items: center; gap: var(--e1); margin-left: -12px; }
+.w-dia .t-pantalla { min-width: 300px; text-align: center; }
+.web-ctl .btn { flex: none; }
+/* comida que recibe lo que agregas: borde de acción de 2 px (tarjeta elegida) */
+.comida.elegida { outline: var(--t-sel) solid var(--accion); outline-offset: calc(-1 * var(--t-sel)); }
+.comida.elegida .comida-cab .t-detalle .destino { color: var(--texto); font-weight: 650; }
+.aviso-web { display: flex; justify-content: flex-start; min-height: var(--tactil-gym); }
+.aviso-web .aviso { position: relative; left: auto; right: auto; bottom: auto; width: 100%; max-width: 420px; }
+
+/* web: panel lateral para buscar, elegir la cantidad y crear un alimento */
+.panel-w { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e4) 0; display: flex; flex-direction: column; gap: var(--e3); overflow: hidden; }
+.panel-w.sin-pie { padding-bottom: var(--e4); }
+.panel-w .busca-cab { margin-right: calc(-1 * var(--e2)); }
+.panel-w .resultados { background: transparent; border-radius: 0; margin-inline: calc(-1 * var(--e4)); border-top: var(--t-borde) solid var(--borde); }
+.panel-w .grupo-tit { margin-bottom: calc(-1 * var(--e2)); }
+.panel-w .barra-plato { margin-inline: calc(-1 * var(--e4)); }
+.panel-w .vivo { background: var(--elevado); }
+.panel-w .cab-hoja .t-detalle { color: var(--texto-2); }
+.panel-w .opcionales { background: transparent; border-radius: 0; margin-inline: calc(-1 * var(--e4)); border-top: var(--t-borde) solid var(--borde); }
+.panel-w .vacio { padding-block: var(--e4); }
+.panel-w .acciones-form { padding-bottom: var(--e4); }
+.panel-w .sinc-linea { min-height: 24px; }
+
+/* web: todos los nutrientes en dos columnas */
+.w-nutri .resumen { padding: var(--e4) var(--e5) var(--e5); grid-template-columns: minmax(0, 1fr) 72px 80px 96px; column-gap: var(--e2); }
+.w-nutri .resumen .grupo-n { font-size: 15px; line-height: 20px; }
+.w-faltan { display: flex; align-items: center; gap: var(--e3); }
+.w-faltan .btn.texto { gap: var(--e1); }
+
+/* nota del día sin conexión en el teléfono */
+.dia-sinc { justify-content: center; margin-top: calc(-1 * var(--e2)); }
+
+@media (hover: hover) and (pointer: fine) {
+  .item:hover, .subitem:not([aria-current="page"]):hover { background: var(--capa-hover); }
+}
+.panel-w .busca-cab.sin-atras { margin-left: 0; }
+
+
+/* ===== flujo 4 · crear receta o plan (D-38) ===== */
+/* calendario (mismas piezas que flujo-2-calendario.html) */
+.cal-nav { display: flex; align-items: center; gap: 0; margin-inline: -12px; }
+.cal-nav .cal-titulo .t-seccion { font-size: 20px; }
+.cal-vista { display: flex; align-items: center; gap: var(--e2); }
+.cal-vista .segmento { flex: 1; }
+.mes { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: var(--e2); text-align: center; }
+.mes .sem { font-size: 13px; line-height: 18px; font-weight: 500; color: var(--texto-2); padding-bottom: var(--e2); }
+.celda { min-height: var(--tactil); display: flex; flex-direction: column; align-items: center; gap: 0; border-radius: var(--r-control); text-align: center; position: relative; }
+.celda:active { background: var(--capa-pressed); }
+.celda .n { width: 32px; height: 32px; border-radius: var(--r-pildora); display: grid; place-items: center; font-size: 16px; line-height: 24px; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.celda.hoy .n { color: var(--texto-acento); font-weight: 650; }
+.celda.fuera .n { color: var(--texto-2); }
+.marcas { height: var(--e4); display: flex; align-items: center; justify-content: center; gap: var(--e2); }
+.leyenda { display: flex; flex-wrap: wrap; gap: var(--e2) var(--e4); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.leyenda > span { display: inline-flex; align-items: center; gap: var(--e2); }
+.semana-cab { display: flex; align-items: baseline; justify-content: space-between; gap: var(--e2); }
+.fila-dia .fin .cifra { font-size: 20px; line-height: 24px; color: var(--texto); }
+.semana-acciones { display: flex; flex-direction: column; gap: var(--e2); }
+
+/* casilla de aprobar (objetivo de 48 px) */
+.casilla-btn { width: var(--tactil); height: var(--tactil); display: grid; place-items: center; flex: none; margin: calc(-1 * var(--e3)) 0 calc(-1 * var(--e3)) calc(-1 * var(--e3)); border-radius: var(--r-control); }
+.casilla-btn:active { background: var(--capa-pressed); }
+.casilla { width: var(--e5); height: var(--e5); border-radius: var(--r-casilla); border: var(--t-sel) solid var(--texto-2); display: grid; place-items: center; color: var(--texto-accion); }
+.casilla .i { opacity: 0; }
+.casilla-btn[aria-checked="true"] .casilla { background: var(--accion); border-color: var(--accion); }
+.casilla-btn[aria-checked="true"] .casilla .i { opacity: 1; }
+.comida-cab.con-casilla { justify-content: flex-start; }
+.comida-cab.con-casilla .txt { flex: 1; }
+.comida.descartada .comida-cab .t-seccion, .comida.descartada .comida-cab .kc .cifra { color: var(--texto-2); }
+.buscando { padding: var(--e3) var(--e4); display: flex; flex-direction: column; gap: var(--e2); }
+.buscando .t-detalle { color: var(--texto-2); }
+
+/* revisión de propuesta */
+.tira { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; }
+.tira button { min-height: var(--tactil); border-radius: var(--r-control); display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; position: relative; }
+.tira button .n { font-size: 16px; line-height: 20px; font-variant-numeric: tabular-nums; color: var(--texto); }
+.tira button:active { background: var(--capa-pressed); }
+.tira button[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); }
+.tira button[aria-pressed="true"] .n { color: var(--texto-accion); font-weight: 650; }
+.cuenta-tipo { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.pie-fijo { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; background: var(--fondo); border-top: var(--t-borde) solid var(--borde); padding: var(--e3) var(--e4) var(--e3); display: flex; flex-direction: column-reverse; gap: var(--e2); }
+.desliza.con-pie { padding-bottom: calc(2 * var(--tactil) + var(--e6)); }
+.ranura-aviso.sobre-pie { bottom: calc(2 * var(--tactil) + var(--e6)); }
+.pantalla.apilada .cuerpo { padding-top: 0; }
+
+/* coach */
+.linea-coach { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e4); display: flex; flex-direction: column; gap: var(--e2); position: relative; }
+.linea-coach .cab-c { display: flex; align-items: center; gap: var(--e2); color: var(--texto-acento); font-size: 13px; line-height: 18px; font-weight: 650; }
+.linea-coach p { font-size: 15px; line-height: 20px; }
+.linea-coach .acciones-c { display: flex; flex-wrap: wrap; gap: var(--e2); margin-top: var(--e2); }
+@media (prefers-reduced-motion: no-preference) { .pensando .cab-c .i { animation: pulso 1600ms var(--estandar) infinite; } }
+.pasos-c { display: flex; flex-direction: column; gap: var(--e2); }
+.pasos-c span { display: flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.pasos-c span.ahora { color: var(--texto); }
+.chat { display: flex; flex-direction: column; gap: var(--e3); }
+.burbuja { align-self: flex-end; max-width: 85%; background: var(--elevado); border-radius: var(--r-tarjeta); padding: var(--e2) var(--e3); font-size: 15px; line-height: 20px; }
+.chat-pie { position: absolute; left: 0; right: 0; bottom: var(--barra); z-index: 1; background: var(--fondo); padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e2); }
+.chat-pie .entrada { flex: 1; }
+.desliza.con-chat { padding-bottom: calc(var(--tactil) + var(--e5)); }
+.ranura-aviso.sobre-chat { bottom: calc(var(--barra) + var(--tactil) + var(--e5)); }
+.rango { display: flex; flex-wrap: wrap; gap: var(--e2); align-items: center; }
+
+/* recetas */
+.ing { padding: var(--e2) var(--e4) var(--e3); display: flex; flex-direction: column; gap: var(--e2); position: relative; }
+.ing .linea-i { display: flex; align-items: center; gap: var(--e3); }
+.ing .linea-i .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ing .linea-i .txt .t-detalle { color: var(--texto-2); }
+.ing .linea-i .kc { white-space: nowrap; font-size: 15px; line-height: 20px; }
+.porciones-fila { display: flex; align-items: center; justify-content: space-between; gap: var(--e3); padding: var(--e2) var(--e4); position: relative; }
+.porciones-fila .txt { display: flex; flex-direction: column; }
+.porciones-fila .txt .t-detalle { color: var(--texto-2); }
+.etiqueta-alerta { display: inline-flex; align-items: center; }
+.dos-botones { display: grid; grid-template-columns: 1fr; gap: var(--e2); }
+.diagrama .carril rect { fill: var(--fondo); stroke: none; }
+.diagrama .carril .t2 { font-weight: 650; }
+[role="checkbox"][aria-checked="true"] .casilla { background: var(--accion); border-color: var(--accion); }
+[role="checkbox"][aria-checked="true"] .casilla .i { opacity: 1; }
+.cabeza .t-pantalla { padding-block: var(--e2); }
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- Tabler Icons 3.49.0, outline (MIT, © Paweł Kuna) -->
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/></symbol>
+  <symbol id="i-barbell" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+  <symbol id="i-kitchen" viewBox="0 0 24 24"><path d="M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12m0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c3.255 2.777 3.695 7.266 1.029 10.501c-2.666 3.235 -7.615 4.215 -11.574 2.293l-4.7 1"/></symbol>
+  <symbol id="i-cloud-check" viewBox="0 0 24 24"><path d="M11 18.004h-4.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.393 -1.762 1.794 -3.2 3.675 -3.773c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.388 0 2.585 .82 3.138 2.007"/><path d="M15 19l2 2l4 -4"/></symbol>
+  <symbol id="i-cloud-off" viewBox="0 0 24 24"><path d="M9.58 5.548c.24 -.11 .492 -.207 .752 -.286c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.913 0 3.464 1.56 3.464 3.486c0 .957 -.383 1.824 -1.003 2.454m-2.997 1.033h-11.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.13 -.582 .37 -1.128 .7 -1.62"/><path d="M3 3l18 18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M5 12l14 0"/><path d="M5 12l6 6"/><path d="M5 12l6 -6"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065"/><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 6l-6 6l6 6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></symbol>
+  <symbol id="i-bike" viewBox="0 0 24 24"><path d="M2 18a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M16 18a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M12 19v-4l-3 -3l5 -4l2 3h3"/><path d="M13.007 5a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></symbol>
+  <symbol id="i-test-pipe-2" viewBox="0 0 24 24"><path d="M15 3v15a3 3 0 0 1 -6 0v-15"/><path d="M9 12h6"/><path d="M8 3h8"/></symbol>
+  <symbol id="i-calendar-plus" viewBox="0 0 24 24"><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v5"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/><path d="M16 19h6"/><path d="M19 16v6"/></symbol>
+  <symbol id="i-calendar-repeat" viewBox="0 0 24 24"><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v3"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h12"/><path d="M20 14l2 2h-3"/><path d="M20 18l2 -2"/><path d="M19 16a3 3 0 1 0 2 5.236"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><path d="M7 9.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667l0 -8.666"/><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1"/></symbol>
+  <symbol id="i-arrow-forward-up" viewBox="0 0 24 24"><path d="M15 14l4 -4l-4 -4"/><path d="M19 10h-11a4 4 0 1 0 0 8h1"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21l8 0"/><path d="M12 17l0 4"/><path d="M7 4l10 0"/><path d="M17 4v8a5 5 0 0 1 -10 0v-8"/><path d="M3 9a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M17 9a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 7v5l3 3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5l0 14"/><path d="M5 12l14 0"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12l14 0"/></symbol>
+  <symbol id="i-alert-circle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/></symbol>
+  <symbol id="i-info-circle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 9h.01"/><path d="M11 12h1v4h1"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <symbol id="i-player-play" viewBox="0 0 24 24"><path d="M7 4v16l13 -8l-13 -8"/></symbol>
+  <symbol id="i-player-skip-forward" viewBox="0 0 24 24"><path d="M4 5v14l12 -7l-12 -7"/><path d="M20 5l0 14"/></symbol>
+  <symbol id="i-vibrar" viewBox="0 0 24 24"><path d="M3 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2l0 -14"/><path d="M8 4l2 0"/><path d="M9 17l0 .01"/><path d="M21 6l-2 3l2 3l-2 3l2 3"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1 -7 0a5 5 0 0 0 -7 0v-9"/><path d="M5 21v-7"/></symbol>
+  <symbol id="i-stairs-up" viewBox="0 0 24 24"><path d="M22 6h-5v5h-5v5h-5v5h-5"/><path d="M6 10v-7"/><path d="M3 6l3 -3l3 3"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6l6 -6"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"/><path d="M13.5 6.5l4 4"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M12 8l0 4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></symbol>
+  <symbol id="i-device-mobile" viewBox="0 0 24 24"><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14"/><path d="M11 4h2"/><path d="M12 17v.01"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><path d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/><path d="M21 21l-6 -6"/></symbol>
+  <!-- logo provisional: glifo de packages/brand (barbell) -->
+  <symbol id="logo" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+  <symbol id="i-alert-triangle" viewBox="0 0 24 24"><path d="M12 9v4"/><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2"/><path d="M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></symbol>
+  <symbol id="i-barcode" viewBox="0 0 24 24"><path d="M4 7v-1a2 2 0 0 1 2 -2h2"/><path d="M4 17v1a2 2 0 0 0 2 2h2"/><path d="M16 4h2a2 2 0 0 1 2 2v1"/><path d="M16 20h2a2 2 0 0 0 2 -2v-1"/><path d="M5 11h1v2h-1l0 -2"/><path d="M10 11l0 2"/><path d="M14 11h1v2h-1l0 -2"/><path d="M19 11l0 2"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/></symbol>
+  <symbol id="i-ban" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M5.7 5.7l12.6 12.6"/></symbol>
+  <symbol id="i-check-small" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 9l5 -5l5 5"/><path d="M12 4l0 12"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"/></symbol>
+  <symbol id="i-player-stop" viewBox="0 0 24 24"><path d="M5 7a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M10 14l11 -11"/><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5"/></symbol>
+</svg>
+<main class="lamina">
+  <header class="cabecera">
+    <div>
+      <h1>Flujo 4 · crear receta o plan</h1>
+      <p>Comida en el teléfono (NUT-04, NUT-05, NUT-10, NUT-11, SUP-01; D-38). Ejemplo con los datos de Francis: domingo 25 de octubre de 2026, 2,350 kcal con 172 g de proteína, 270 de carbohidratos y 65 de grasa; plan del 26 de octubre al 22 de noviembre. «Maní · alergia» es un ejemplo de la lámina: Francis no tiene alergias. Los mockups y el prototipo vienen después.</p>
+    </div>
+    <div class="controles">
+      <div class="control">
+        <span class="t-detalle sec" id="lbl-modo">Modo</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-modo" id="ctl-modo">
+          <button type="button" data-modo="" aria-pressed="true">Sistema</button>
+          <button type="button" data-modo="light" aria-pressed="false">Claro</button>
+          <button type="button" data-modo="dark" aria-pressed="false">Oscuro</button>
+        </div>
+      </div>
+      <div class="control">
+        <span class="t-detalle sec" id="lbl-acento">Acento</span>
+        <div class="puntos" role="group" aria-labelledby="lbl-acento">
+          <button type="button" class="punto" data-a="caribe" style="--c:#3B95D1" aria-label="Caribe" aria-pressed="true"></button>
+          <button type="button" class="punto" data-a="mar" style="--c:#22A99C" aria-label="Mar" aria-pressed="false"></button>
+          <button type="button" class="punto" data-a="palma" style="--c:#2FA866" aria-label="Palma" aria-pressed="false"></button>
+          <button type="button" class="punto" data-a="mango" style="--c:#E89A1E" aria-label="Mango" aria-pressed="false"></button>
+          <button type="button" class="punto" data-a="flamboyan" style="--c:#E8603C" aria-label="Flamboyán" aria-pressed="false"></button>
+          <button type="button" class="punto" data-a="uva" style="--c:#8466DB" aria-label="Uva de playa" aria-pressed="false"></button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <nav class="indice" aria-label="Secciones de la lámina">
+    <a href="#diagrama">Diagrama</a><a href="#guia">Guía paso a paso</a><a href="#por-confirmar">Por confirmar</a>
+  </nav>
+
+  <section class="pagina" id="diagrama" aria-labelledby="h-diagrama">
+    <header>
+      <h2 id="h-diagrama">1 · Diagrama del flujo</h2>
+      <ul class="cambios">
+        <li><strong>Cuatro caminos:</strong> A receta, B calendario, C preferidos y evitar, D plan del coach; abajo, las dos ramas y los estados.</li>
+        <li><strong>D va en carriles:</strong> lo que ves, lo que hace el coach en el servidor y lo que se guarda.</li>
+        <li><strong>Los números</strong> coinciden con la guía. <strong>Trazo discontinuo:</strong> opcional o alterno. <strong>Borde de acento:</strong> entrada o algo programado. <strong>Nodo invertido:</strong> aviso.</li>
+        <li><strong>Nada pide confirmación:</strong> copiar, aprobar, descartar y mover se deshacen desde el aviso.</li>
+      </ul>
+    </header>
+    <div class="diagrama-envoltura"><svg class="diagrama" viewBox="0 0 1510 1490" role="img" aria-labelledby="dg-t dg-d"><title id="dg-t">Diagrama del flujo 4, crear receta o plan</title><desc id="dg-d">Cuatro caminos. A: en Comida › Recetas se crea una receta con ingredientes, cada uno crudo o cocido (crudo de fábrica), y su rendimiento en porciones; editar una receta usada no cambia los días pasados y «Guardar como receta nueva» crea una variante; la receta se agrega a una comida solo en porciones. B: el calendario de comidas en mes o semana; se programa a mano o se copia un día o la semana, que solo llena comidas vacías y en hoy salta las que ya pasaron su hora, con aviso y Deshacer. C: en Comida › Alimentos, preferidos y evitar con su motivo; la alergia bloquea al coach y el gusto cede si lo pides. D: se pide un plan al coach; el coach lee tus datos y arma un borrador; la pantalla de revisión muestra las semanas tipo, cada comida con casilla y Otra opción, y los suplementos; al aprobar se guardan las comidas y tomas en el calendario. Ramas: mover un entreno puede mover las comidas del plan, y un paseo MTB registrado lleva a una propuesta para cubrir sus kcal. Estados: sin conexión, error y modo reducido.</desc><text class="titulo-alt" x="20" y="30">A · Crear o editar una receta</text><g class="nodo inicio"><rect x="20" y="60" width="166" height="56" rx="10"/><text class="t1" x="32" y="84">Recetas</text><text class="t2" x="32" y="103">Comida › Recetas</text></g><g class="paso"><circle cx="184" cy="62" r="12"/><text x="184" y="66.5" text-anchor="middle">1</text></g><g class="nodo "><rect x="206" y="60" width="166" height="56" rx="10"/><text class="t1" x="218" y="84">Nueva receta</text><text class="t2" x="218" y="103">nombre · ingredientes</text></g><g class="paso"><circle cx="370" cy="62" r="12"/><text x="370" y="66.5" text-anchor="middle">2</text></g><g class="nodo "><rect x="392" y="60" width="166" height="56" rx="10"/><text class="t1" x="404" y="84">Ingrediente</text><text class="t2" x="404" y="103">búsqueda · Crudo de fábrica</text></g><g class="paso"><circle cx="556" cy="62" r="12"/><text x="556" y="66.5" text-anchor="middle">3</text></g><g class="nodo "><rect x="578" y="60" width="166" height="56" rx="10"/><text class="t1" x="590" y="84">Porciones</text><text class="t2" x="590" y="103">rendimiento · por porción</text></g><g class="nodo aviso"><rect x="764" y="60" width="166" height="56" rx="10"/><text class="t1" x="776" y="84">Receta guardada</text><text class="t2" x="776" y="103">aviso</text></g><g class="nodo "><rect x="950" y="60" width="166" height="56" rx="10"/><text class="t1" x="962" y="84">Agregar a una comida</text><text class="t2" x="962" y="103">solo en porciones</text></g><g class="paso"><circle cx="1114" cy="62" r="12"/><text x="1114" y="66.5" text-anchor="middle">5</text></g><g class="nodo prog"><rect x="1136" y="60" width="166" height="56" rx="10"/><text class="t1" x="1148" y="84">Comida del día</text><text class="t2" x="1148" y="103">en contorno si es futura</text></g><path class="flecha" d="M186 88 L200 88"/><path class="punta" d="M206 88 l-7 -4.5 v9 z"/><path class="flecha" d="M372 88 L386 88"/><path class="punta" d="M392 88 l-7 -4.5 v9 z"/><path class="flecha" d="M558 88 L572 88"/><path class="punta" d="M578 88 l-7 -4.5 v9 z"/><path class="flecha" d="M744 88 L758 88"/><path class="punta" d="M764 88 l-7 -4.5 v9 z"/><path class="flecha" d="M930 88 L944 88"/><path class="punta" d="M950 88 l-7 -4.5 v9 z"/><path class="flecha" d="M1116 88 L1130 88"/><path class="punta" d="M1136 88 l-7 -4.5 v9 z"/><path class="flecha" d="M475 116 L475 136 L326 136 L326 122"/><path class="punta" d="M326 116 l-4.5 7 h9 z"/><text class="rama" x="338" y="150" text-anchor="start">otro ingrediente</text><g class="nodo "><rect x="206" y="170" width="166" height="56" rx="10"/><text class="t1" x="218" y="194">Editar receta usada</text><text class="t2" x="218" y="213">«Usada en 12 comidas»</text></g><g class="paso"><circle cx="370" cy="172" r="12"/><text x="370" y="176.5" text-anchor="middle">4</text></g><g class="nodo "><rect x="392" y="170" width="166" height="56" rx="10"/><text class="t1" x="404" y="194">Guardar</text><text class="t2" x="404" y="213">rige desde hoy</text></g><g class="nodo salud"><rect x="578" y="170" width="166" height="56" rx="10"/><text class="t1" x="590" y="194">Días pasados</text><text class="t2" x="590" y="213">no cambian</text></g><g class="nodo pregunta"><rect x="392" y="246" width="166" height="56" rx="10"/><text class="t1" x="404" y="270">Guardar como nueva</text><text class="t2" x="404" y="289">una variante aparte</text></g><path class="flecha" d="M103 116 L103 198 L200 198"/><path class="punta" d="M206 198 l-7 -4.5 v9 z"/><path class="flecha" d="M372 198 L386 198"/><path class="punta" d="M392 198 l-7 -4.5 v9 z"/><path class="flecha" d="M558 198 L572 198" style="stroke-dasharray:4 4"/><path class="punta" d="M578 198 l-7 -4.5 v9 z"/><path class="flecha" d="M289 226 L289 274 L386 274" style="stroke-dasharray:4 4"/><path class="punta" d="M392 274 l-7 -4.5 v9 z"/><g class="nodo pregunta"><rect x="950" y="170" width="166" height="56" rx="10"/><text class="t1" x="962" y="194">Combo de 1 porción</text><text class="t2" x="962" y="213">un toque desde recientes</text></g><path class="flecha" d="M1033 170 L1033 122" style="stroke-dasharray:4 4"/><path class="punta" d="M1033 116 l-4.5 7 h9 z"/><text class="rama" x="1045" y="162" text-anchor="start">Mi desayuno de avena</text><text class="titulo-alt" x="20" y="330">B · Calendario de comidas</text><g class="nodo inicio"><rect x="20" y="360" width="166" height="56" rx="10"/><text class="t1" x="32" y="384">Calendario</text><text class="t2" x="32" y="403">Comida › Calendario</text></g><g class="paso"><circle cx="184" cy="362" r="12"/><text x="184" y="366.5" text-anchor="middle">7</text></g><g class="nodo "><rect x="206" y="360" width="166" height="56" rx="10"/><text class="t1" x="218" y="384">Mes o semana</text><text class="t2" x="218" y="403">lleno = registro · contorno</text></g><g class="paso"><circle cx="370" cy="362" r="12"/><text x="370" y="366.5" text-anchor="middle">14</text></g><g class="nodo "><rect x="392" y="360" width="166" height="56" rx="10"/><text class="t1" x="404" y="384">Hoy o un día futuro</text><text class="t2" x="404" y="403">el día con sus comidas</text></g><g class="nodo "><rect x="578" y="360" width="166" height="56" rx="10"/><text class="t1" x="590" y="384">Programar a mano</text><text class="t2" x="590" y="403">búsqueda del flujo 3</text></g><g class="nodo prog"><rect x="764" y="360" width="166" height="56" rx="10"/><text class="t1" x="776" y="384">Comida programada</text><text class="t2" x="776" y="403">en contorno</text></g><path class="flecha" d="M186 388 L200 388"/><path class="punta" d="M206 388 l-7 -4.5 v9 z"/><path class="flecha" d="M372 388 L386 388"/><path class="punta" d="M392 388 l-7 -4.5 v9 z"/><path class="flecha" d="M558 388 L572 388"/><path class="punta" d="M578 388 l-7 -4.5 v9 z"/><path class="flecha" d="M744 388 L758 388"/><path class="punta" d="M764 388 l-7 -4.5 v9 z"/><g class="nodo "><rect x="392" y="450" width="166" height="56" rx="10"/><text class="t1" x="404" y="474">Copiar día o semana</text><text class="t2" x="404" y="493">hoja de fechas · Hoy primero</text></g><g class="paso"><circle cx="556" cy="452" r="12"/><text x="556" y="456.5" text-anchor="middle">6</text></g><g class="nodo "><rect x="578" y="450" width="166" height="56" rx="10"/><text class="t1" x="590" y="474">Solo comidas vacías</text><text class="t2" x="590" y="493">salta horas pasadas</text></g><g class="nodo aviso"><rect x="764" y="450" width="166" height="56" rx="10"/><text class="t1" x="776" y="474">Día copiado</text><text class="t2" x="776" y="493">aviso con Deshacer</text></g><path class="flecha" d="M475 416 L475 444"/><path class="punta" d="M475 450 l-4.5 -7 h9 z"/><path class="flecha" d="M558 478 L572 478"/><path class="punta" d="M578 478 l-7 -4.5 v9 z"/><path class="flecha" d="M744 478 L758 478"/><path class="punta" d="M764 478 l-7 -4.5 v9 z"/><g class="nodo pregunta"><rect x="950" y="360" width="166" height="56" rx="10"/><text class="t1" x="962" y="384">Pedir un plan</text><text class="t2" x="962" y="403">abre el chat con el rango</text></g><path class="flecha" d="M289 360 L289 344 L1033 344 L1033 354" style="stroke-dasharray:4 4"/><path class="punta" d="M1033 360 l-4.5 -7 h9 z"/><text class="rama" x="1045" y="338" text-anchor="start">va a D</text><text class="titulo-alt" x="20" y="550">C · Preferidos y evitar</text><g class="nodo inicio"><rect x="20" y="580" width="166" height="56" rx="10"/><text class="t1" x="32" y="604">Alimentos</text><text class="t2" x="32" y="623">Comida › Alimentos</text></g><g class="paso"><circle cx="184" cy="582" r="12"/><text x="184" y="586.5" text-anchor="middle">8</text></g><g class="nodo "><rect x="206" y="580" width="166" height="56" rx="10"/><text class="t1" x="218" y="604">Preferidos · Evitar</text><text class="t2" x="218" y="623">una sola lista</text></g><g class="nodo "><rect x="392" y="580" width="166" height="56" rx="10"/><text class="t1" x="404" y="604">Motivo</text><text class="t2" x="404" y="623">gusto o alergia</text></g><g class="paso"><circle cx="556" cy="582" r="12"/><text x="556" y="586.5" text-anchor="middle">9</text></g><g class="nodo "><rect x="578" y="580" width="166" height="56" rx="10"/><text class="t1" x="590" y="604">Alergia o intolerancia</text><text class="t2" x="590" y="623">el coach nunca la usa</text></g><g class="nodo "><rect x="764" y="580" width="166" height="56" rx="10"/><text class="t1" x="776" y="604">Receta con alergia</text><text class="t2" x="776" y="623">se marca y no se propone</text></g><path class="flecha" d="M186 608 L200 608"/><path class="punta" d="M206 608 l-7 -4.5 v9 z"/><path class="flecha" d="M372 608 L386 608"/><path class="punta" d="M392 608 l-7 -4.5 v9 z"/><path class="flecha" d="M558 608 L572 608"/><path class="punta" d="M578 608 l-7 -4.5 v9 z"/><path class="flecha" d="M744 608 L758 608"/><path class="punta" d="M764 608 l-7 -4.5 v9 z"/><g class="nodo salud"><rect x="20" y="670" width="166" height="56" rx="10"/><text class="t1" x="32" y="694">Bienvenida, paso 4</text><text class="t2" x="32" y="713">tus alergias entran solas</text></g><g class="nodo "><rect x="206" y="670" width="166" height="56" rx="10"/><text class="t1" x="218" y="694">Desde un alimento</text><text class="t2" x="218" y="713">Preferido o Evitar</text></g><g class="nodo "><rect x="578" y="670" width="166" height="56" rx="10"/><text class="t1" x="590" y="694">Gusto</text><text class="t2" x="590" y="713">cede si lo nombras</text></g><path class="flecha" d="M103 670 L103 650 L246 650 L246 642" style="stroke-dasharray:4 4"/><path class="punta" d="M246 636 l-4.5 7 h9 z"/><path class="flecha" d="M372 698 L475 698 L475 642"/><path class="punta" d="M475 636 l-4.5 7 h9 z"/><path class="flecha" d="M558 620 L568 620 L568 698 L572 698"/><path class="punta" d="M578 698 l-7 -4.5 v9 z"/><text class="titulo-alt" x="20" y="770">D · Pedir un plan al coach</text><g class="carril"><rect x="10" y="790" width="1490" height="100" rx="12"/><text class="t2" x="24" y="810">Teléfono y web</text></g><g class="carril"><rect x="10" y="900" width="1490" height="100" rx="12"/><text class="t2" x="24" y="920">Coach en el servidor</text></g><g class="carril"><rect x="10" y="1010" width="1490" height="100" rx="12"/><text class="t2" x="24" y="1030">Datos</text></g><g class="nodo inicio"><rect x="20" y="818" width="166" height="56" rx="10"/><text class="t1" x="32" y="842">Pedir un plan</text><text class="t2" x="32" y="861">chat o Calendario</text></g><g class="paso"><circle cx="184" cy="820" r="12"/><text x="184" y="824.5" text-anchor="middle">10</text></g><g class="nodo "><rect x="206" y="818" width="166" height="56" rx="10"/><text class="t1" x="218" y="842">Generando</text><text class="t2" x="218" y="861">la tarjeta dice qué hace</text></g><g class="nodo aviso"><rect x="392" y="818" width="166" height="56" rx="10"/><text class="t1" x="404" y="842">Tu plan está listo</text><text class="t2" x="404" y="861">aviso · Revisar</text></g><g class="nodo "><rect x="578" y="818" width="166" height="56" rx="10"/><text class="t1" x="590" y="842">Revisión</text><text class="t2" x="590" y="861">semanas tipo · días</text></g><g class="paso"><circle cx="742" cy="820" r="12"/><text x="742" y="824.5" text-anchor="middle">11</text></g><g class="nodo "><rect x="764" y="818" width="166" height="56" rx="10"/><text class="t1" x="776" y="842">Desmarcar o cambiar</text><text class="t2" x="776" y="861">Otra opción por comida</text></g><g class="paso"><circle cx="928" cy="820" r="12"/><text x="928" y="824.5" text-anchor="middle">12</text></g><g class="nodo "><rect x="950" y="818" width="166" height="56" rx="10"/><text class="t1" x="962" y="842">Tomas del día</text><text class="t2" x="962" y="861">tus pautas, por entreno</text></g><g class="paso"><circle cx="1114" cy="820" r="12"/><text x="1114" y="824.5" text-anchor="middle">13</text></g><g class="nodo "><rect x="1136" y="818" width="166" height="56" rx="10"/><text class="t1" x="1148" y="842">Aprobar 132 de 140</text><text class="t2" x="1148" y="861">aviso con Deshacer</text></g><g class="nodo prog"><rect x="1322" y="818" width="166" height="56" rx="10"/><text class="t1" x="1334" y="842">Calendario</text><text class="t2" x="1334" y="861">en contorno</text></g><g class="paso"><circle cx="1486" cy="820" r="12"/><text x="1486" y="824.5" text-anchor="middle">15</text></g><path class="flecha" d="M186 846 L200 846"/><path class="punta" d="M206 846 l-7 -4.5 v9 z"/><path class="flecha" d="M558 846 L572 846"/><path class="punta" d="M578 846 l-7 -4.5 v9 z"/><path class="flecha" d="M744 846 L758 846"/><path class="punta" d="M764 846 l-7 -4.5 v9 z"/><path class="flecha" d="M930 846 L944 846"/><path class="punta" d="M950 846 l-7 -4.5 v9 z"/><path class="flecha" d="M1116 846 L1130 846"/><path class="punta" d="M1136 846 l-7 -4.5 v9 z"/><path class="flecha" d="M1302 846 L1316 846"/><path class="punta" d="M1322 846 l-7 -4.5 v9 z"/><g class="nodo "><rect x="206" y="928" width="166" height="56" rx="10"/><text class="t1" x="218" y="952">Lee tus datos</text><text class="t2" x="218" y="971">entrenos · evitar · pautas</text></g><g class="nodo "><rect x="392" y="928" width="166" height="56" rx="10"/><text class="t1" x="404" y="952">Arma el borrador</text><text class="t2" x="404" y="971">Sonnet en modo reducido</text></g><g class="nodo "><rect x="764" y="928" width="166" height="56" rx="10"/><text class="t1" x="776" y="952">Regenera una comida</text><text class="t2" x="776" y="971">Otra opción</text></g><path class="flecha" d="M289 874 L289 922"/><path class="punta" d="M289 928 l-4.5 -7 h9 z"/><path class="flecha" d="M372 956 L386 956"/><path class="punta" d="M392 956 l-7 -4.5 v9 z"/><path class="flecha" d="M475 928 L475 880"/><path class="punta" d="M475 874 l-4.5 7 h9 z"/><path class="flecha" d="M824 874 L824 922"/><path class="punta" d="M824 928 l-4.5 -7 h9 z"/><path class="flecha" d="M870 928 L870 880"/><path class="punta" d="M870 874 l-4.5 7 h9 z"/><g class="nodo "><rect x="392" y="1038" width="166" height="56" rx="10"/><text class="t1" x="404" y="1062">Propuesta pendiente</text><text class="t2" x="404" y="1081">con semanas tipo</text></g><g class="nodo "><rect x="1136" y="1038" width="166" height="56" rx="10"/><text class="t1" x="1148" y="1062">Aprobada en parte</text><text class="t2" x="1148" y="1081">sin lo descartado</text></g><g class="nodo "><rect x="1322" y="1038" width="166" height="56" rx="10"/><text class="t1" x="1334" y="1062">Comidas y tomas</text><text class="t2" x="1334" y="1081">28 días y su copia</text></g><path class="flecha" d="M475 984 L475 1032"/><path class="punta" d="M475 1038 l-4.5 -7 h9 z"/><path class="flecha" d="M1219 874 L1219 1032"/><path class="punta" d="M1219 1038 l-4.5 -7 h9 z"/><path class="flecha" d="M1302 1066 L1316 1066"/><path class="punta" d="M1322 1066 l-7 -4.5 v9 z"/><path class="flecha" d="M1405 1038 L1405 880"/><path class="punta" d="M1405 874 l-4.5 7 h9 z"/><text class="rama" x="661" y="806" text-anchor="middle">aviso si cae la revisión de 6 semanas</text><text class="titulo-alt" x="20" y="1150">Ramas: entreno movido y paseo MTB</text><g class="nodo inicio"><rect x="20" y="1180" width="166" height="56" rx="10"/><text class="t1" x="32" y="1204">Mover un entreno</text><text class="t2" x="32" y="1223">Gym › Calendario</text></g><g class="paso"><circle cx="184" cy="1182" r="12"/><text x="184" y="1186.5" text-anchor="middle">16</text></g><g class="nodo "><rect x="206" y="1180" width="166" height="56" rx="10"/><text class="t1" x="218" y="1204">Mover las comidas</text><text class="t2" x="218" y="1223">casilla, marcada si hay plan</text></g><g class="nodo "><rect x="392" y="1180" width="166" height="56" rx="10"/><text class="t1" x="404" y="1204">Intercambio sin IA</text><text class="t2" x="404" y="1223">entre los dos días</text></g><g class="nodo aviso"><rect x="578" y="1180" width="166" height="56" rx="10"/><text class="t1" x="590" y="1204">Sesión movida</text><text class="t2" x="590" y="1223">aviso con Deshacer</text></g><g class="nodo inicio"><rect x="764" y="1180" width="166" height="56" rx="10"/><text class="t1" x="776" y="1204">Paseo MTB</text><text class="t2" x="776" y="1223">registrado desde Strava</text></g><g class="paso"><circle cx="928" cy="1182" r="12"/><text x="928" y="1186.5" text-anchor="middle">17</text></g><g class="nodo "><rect x="950" y="1180" width="166" height="56" rx="10"/><text class="t1" x="962" y="1204">Objetivo del día sube</text><text class="t2" x="962" y="1223">2,350 + 600 del paseo</text></g><g class="nodo "><rect x="1136" y="1180" width="166" height="56" rx="10"/><text class="t1" x="1148" y="1204">Propuesta del coach</text><text class="t2" x="1148" y="1223">cubrir lo que queda del día</text></g><g class="nodo "><rect x="1322" y="1180" width="166" height="56" rx="10"/><text class="t1" x="1334" y="1204">Revisión</text><text class="t2" x="1334" y="1223">la misma pantalla</text></g><path class="flecha" d="M186 1208 L200 1208"/><path class="punta" d="M206 1208 l-7 -4.5 v9 z"/><path class="flecha" d="M372 1208 L386 1208"/><path class="punta" d="M392 1208 l-7 -4.5 v9 z"/><path class="flecha" d="M558 1208 L572 1208"/><path class="punta" d="M578 1208 l-7 -4.5 v9 z"/><path class="flecha" d="M930 1208 L944 1208"/><path class="punta" d="M950 1208 l-7 -4.5 v9 z"/><path class="flecha" d="M1116 1208 L1130 1208"/><path class="punta" d="M1136 1208 l-7 -4.5 v9 z"/><path class="flecha" d="M1302 1208 L1316 1208"/><path class="punta" d="M1322 1208 l-7 -4.5 v9 z"/><g class="estados"><rect x="20" y="1270" width="980" height="196" rx="16"/><text class="t1" x="36" y="1300">Estados</text><text class="t2" x="36" y="1332"><tspan class="fuerte">Sin conexión (19):</tspan> recetas, preferidos y programar a mano funcionan en el teléfono; pedir un plan necesita conexión y lo dice.</text><text class="t2" x="36" y="1362"><tspan class="fuerte">Error (18):</tspan> «No se pudo armar el plan. No se guardó nada.» con Reintentar; Otra opción fallida deja la comida anterior.</text><text class="t2" x="36" y="1392"><tspan class="fuerte">Modo reducido (18):</tspan> desde el 80 % del tope, los planes salen con Sonnet y la tarjeta lo avisa.</text><text class="t2" x="36" y="1422"><tspan class="fuerte">Carga:</tspan> esqueleto solo tras 300 ms; Otra opción pone en esqueleto solo esa comida.</text><text class="t2" x="36" y="1452"><tspan class="fuerte">Nada pide confirmación:</tspan> copiar, aprobar, descartar y mover se deshacen desde el aviso.</text></g></svg></div>
+  </section>
+
+  <section class="pagina" id="guia" aria-labelledby="h-guia">
+    <header>
+      <h2 id="h-guia">2 · Guía paso a paso</h2>
+      <ul class="cambios">
+        <li><strong>Pasos 1 a 5:</strong> crear «Pechuga al horno con vegetales» (6 porciones, 388 kcal cada una), corregirla y agregarla a la cena.</li>
+        <li><strong>Pasos 6 y 7:</strong> copiar un día a hoy y mirar la semana que viene. <strong>8 y 9:</strong> preferidos y evitar.</li>
+        <li><strong>Pasos 10 a 15:</strong> pedir el plan del mes, revisarlo y verlo en el calendario. <strong>16 a 19:</strong> ramas y estados.</li>
+        <li>Los círculos numerados son anotaciones de la lámina, no parte de la interfaz.</li>
+      </ul>
+    </header>
+    <div class="guia"><article class="paso-guia"><span class="etapa">Paso 1 · recetas</span><h3>Abre Recetas</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>8:02</span></div><div class="cuerpo"><nav class="sub-tabs" aria-label="Comida"><a class="sub-tab" href="#">Día</a><a class="sub-tab" href="#">Calendario</a><a class="sub-tab" href="#" aria-current="page">Recetas</a><a class="sub-tab" href="#">Alimentos</a><a class="sub-tab" href="#">Suplementos</a></nav><div class="desliza"><div class="fila-crear con-anota"><button type="button" class="btn primario"><svg class="i s20" aria-hidden="true"><use href="#i-plus"/></svg>Crear receta</button><span class="anota" aria-hidden="true">1</span></div><div class="lista"><button type="button" class="opcion-rutina con-anota"><span class="txt"><span>Mi desayuno de avena</span><span class="t-detalle tnum">1 porción · 625 kcal · combo</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg><span class="anota" aria-hidden="true">2</span></button><button type="button" class="opcion-rutina"><span class="txt"><span>Pechuga al horno con vegetales</span><span class="t-detalle tnum">6 porciones · 388 kcal por porción</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></button><button type="button" class="opcion-rutina con-anota"><span class="txt"><span>Batido de guineo y maní</span><span class="t-detalle tnum">1 porción · 418 kcal</span><span class="pildora etiqueta-alerta"><svg class="i s16" aria-hidden="true"><use href="#i-alert-triangle"/></svg>Contiene maní · alergia</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg><span class="anota" aria-hidden="true">3</span></button></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span><b>Crear receta</b> arriba, siempre a mano.</span></li><li><span class="num-a">2</span><span>Una sola lista con divisores: nombre, porciones y kcal por porción. Una receta de 1 porción es un <b>combo</b>.</span></li><li><span class="num-a">3</span><span>Una receta con algo de tu lista de evitar por alergia lleva <b>Contiene maní · alergia</b>; el coach no la propone. (Maní · alergia es un ejemplo de la lámina: Francis no tiene alergias.)</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 2 · receta nueva</span><h3>Arma la receta</h3><div class="mini"><div class="telefono"><div class="pantalla apilada"><div class="estado tnum"><span>8:04</span></div><div class="cuerpo"><div class="busca-cab"><button type="button" class="atras" aria-label="Volver"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><div class="txt"><span class="t-seccion">Nueva receta</span></div><button type="button" class="btn texto">Guardar</button></div><div class="desliza"><div class="campo"><span class="lbl">Nombre</span><div class="entrada"><span>Pechuga al horno con vegetales</span></div></div><span class="grupo-tit">Ingredientes</span><div class="lista"><div class="ing con-anota"><div class="linea-i"><span class="txt"><span>Pechuga de pollo sin piel</span><span class="t-detalle tnum">900 g</span></span><span class="kc tnum">1,080 kcal</span></div><div class="chips" role="group" aria-label="Estado de pechuga de pollo sin piel"><button type="button" class="chip" aria-pressed="true">Crudo</button><button type="button" class="chip" aria-pressed="false">Cocido</button></div><span class="anota" aria-hidden="true">1</span></div><div class="ing"><div class="linea-i"><span class="txt"><span>Papa</span><span class="t-detalle tnum">900 g</span></span><span class="kc tnum">693 kcal</span></div><div class="chips" role="group" aria-label="Estado de papa"><button type="button" class="chip" aria-pressed="true">Crudo</button><button type="button" class="chip" aria-pressed="false">Cocido</button></div></div><div class="ing"><div class="linea-i"><span class="txt"><span>Zanahoria</span><span class="t-detalle tnum">300 g</span></span><span class="kc tnum">123 kcal</span></div><div class="chips" role="group" aria-label="Estado de zanahoria"><button type="button" class="chip" aria-pressed="true">Crudo</button><button type="button" class="chip" aria-pressed="false">Cocido</button></div></div></div></div></div></div></div></div><ol><li><span class="num-a">1</span><span>Cada ingrediente lleva su <b>Crudo · Cocido</b>. En una receta, <b>Crudo</b> viene marcado: pesas antes de cocinar.</span></li><li><span class="num-a">2</span><span>Siguen cebolla 200 g (80 kcal) y aceite de oliva 3 cucharadas · 40 g (354 kcal), y al final <b>Agregar ingrediente</b>, que abre la búsqueda del flujo 3.</span></li><li><span class="num-a">3</span><span>Sin peso de la olla ni factor de cocción: la receta suma sus ingredientes y se reparte en porciones.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 3 · porciones</span><h3>Di cuántas porciones rinde</h3><div class="mini"><div class="telefono"><div class="pantalla apilada"><div class="estado tnum"><span>8:06</span></div><div class="cuerpo"><div class="busca-cab"><button type="button" class="atras" aria-label="Volver"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><div class="txt"><span class="t-seccion">Nueva receta</span></div><button type="button" class="btn texto">Guardar</button></div><div class="desliza arriba"><div class="lista"><div class="ing"><div class="linea-i"><span class="txt"><span>Cebolla</span><span class="t-detalle tnum">200 g</span></span><span class="kc tnum">80 kcal</span></div><div class="chips" role="group" aria-label="Estado de cebolla"><button type="button" class="chip" aria-pressed="true">Crudo</button><button type="button" class="chip" aria-pressed="false">Cocido</button></div></div><div class="ing"><div class="linea-i"><span class="txt"><span>Aceite de oliva</span><span class="t-detalle tnum">3 cucharadas · 40 g</span></span><span class="kc tnum">354 kcal</span></div><div class="chips" role="group" aria-label="Estado de aceite de oliva"><button type="button" class="chip" aria-pressed="true">Crudo</button><button type="button" class="chip" aria-pressed="false">Cocido</button></div></div><div class="comida-pie"><button type="button" class="btn texto"><svg class="i s20" aria-hidden="true"><use href="#i-plus"/></svg>Agregar ingrediente</button></div></div><div class="lista"><div class="porciones-fila con-anota"><span class="txt"><span>Porciones</span><span class="t-detalle">lo que rinde la receta</span></span><div class="stepper"><button type="button" aria-label="Menos porciones"><svg class="i" aria-hidden="true"><use href="#i-minus"/></svg></button><span class="valor"><span class="cifra">6</span></span><button type="button" aria-label="Más porciones"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></button></div><span class="anota" aria-hidden="true">1</span></div></div><div class="vivo tnum con-anota" aria-live="polite"><div><span class="cifra">388</span><span class="t-detalle">kcal por porción</span></div><div><span class="cifra">38</span><span class="t-detalle">proteína</span></div><div><span class="cifra">34</span><span class="t-detalle">carbohidr.</span></div><div><span class="cifra">11</span><span class="t-detalle">grasa</span></div><span class="anota" aria-hidden="true">2</span></div><p class="t-detalle sec tnum con-anota">Total de la receta: 2,330 kcal · P 225 · C 205 · G 65<span class="anota" aria-hidden="true">3</span></p></div></div></div></div></div><ol><li><span class="num-a">1</span><span>El rendimiento es un número de porciones, de 1 a 20, con − y +.</span></li><li><span class="num-a">2</span><span>En vivo: lo que trae <b>cada porción</b> (388 kcal, P 38, C 34, G 11).</span></li><li><span class="num-a">3</span><span>Debajo, el total de la receta. <b>Guardar</b> la deja en Recetas con el aviso «Receta guardada».</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 4 · editar</span><h3>Corrige una receta que ya usaste</h3><div class="mini"><div class="telefono"><div class="pantalla apilada"><div class="estado tnum"><span>8:10</span></div><div class="cuerpo"><div class="busca-cab"><button type="button" class="atras" aria-label="Volver"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><div class="txt"><span class="t-seccion">Pechuga al horno con vegetales</span></div></div><div class="desliza arriba"><div class="nota con-anota"><svg class="i s16" aria-hidden="true"><use href="#i-history"/></svg><span>Usada en 12 comidas: los días pasados no cambian.</span><span class="anota" aria-hidden="true">1</span></div><div class="lista"><div class="ing con-anota"><div class="linea-i"><span class="txt"><span>Aceite de oliva</span><span class="t-detalle tnum">2 cucharadas · 30 g</span></span><span class="kc tnum">265 kcal</span></div><div class="chips" role="group" aria-label="Estado de aceite de oliva"><button type="button" class="chip" aria-pressed="true">Crudo</button><button type="button" class="chip" aria-pressed="false">Cocido</button></div><span class="anota" aria-hidden="true">2</span></div><div class="ing"><div class="linea-i"><span class="txt"><span>Cebolla</span><span class="t-detalle tnum">200 g</span></span><span class="kc tnum">80 kcal</span></div><div class="chips" role="group" aria-label="Estado de cebolla"><button type="button" class="chip" aria-pressed="true">Crudo</button><button type="button" class="chip" aria-pressed="false">Cocido</button></div></div></div><div class="vivo tnum" aria-live="polite"><div><span class="cifra">374</span><span class="t-detalle">kcal por porción</span></div><div><span class="cifra">38</span><span class="t-detalle">proteína</span></div><div><span class="cifra">34</span><span class="t-detalle">carbohidr.</span></div><div><span class="cifra">9</span><span class="t-detalle">grasa</span></div></div><div class="acciones-form con-anota"><button type="button" class="btn primario ancho">Guardar</button><button type="button" class="btn secundario ancho">Guardar como receta nueva</button><span class="anota" aria-hidden="true">3</span></div></div></div></div></div></div><ol><li><span class="num-a">1</span><span>Si la receta ya está en comidas, una línea lo dice: los días pasados conservan sus valores.</span></li><li><span class="num-a">2</span><span>Bajas el aceite a 30 g: la porción pasa a 374 kcal y 9 g de grasa.</span></li><li><span class="num-a">3</span><span><b>Guardar</b> cambia la receta desde hoy y en lo programado. <b>Guardar como receta nueva</b> deja esta como está y crea una variante.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 5 · usarla</span><h3>Agrégala a una comida</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>3:05</span></div><div class="cuerpo"><nav class="sub-tabs" aria-label="Comida"><a class="sub-tab" href="#" aria-current="page">Día</a><a class="sub-tab" href="#">Calendario</a><a class="sub-tab" href="#">Recetas</a><a class="sub-tab" href="#">Alimentos</a><a class="sub-tab" href="#">Suplementos</a></nav><div class="desliza"><div class="dia-nav"><button type="button" class="icono-btn" aria-label="Día anterior"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button><div class="txt"><span class="t-seccion">Hoy</span><span class="t-detalle sec">domingo 25 de octubre</span></div><button type="button" class="icono-btn" aria-label="Día siguiente"><svg class="i" aria-hidden="true"><use href="#i-chevron-right"/></svg></button></div><section class="comida vacia-c" aria-label="Cena"><div class="comida-cab"><div class="txt"><h4 class="t-seccion" style="margin:0">Cena</h4><span class="t-detalle tnum">Sin alimentos todavía</span></div></div><div class="comida-pie"><button type="button" class="btn texto"><svg class="i s20" aria-hidden="true"><use href="#i-plus"/></svg>Agregar</button></div></section></div></div><div class="velo"><div class="hoja" role="dialog" aria-label="Porciones de pechuga al horno con vegetales"><span class="agarre" aria-hidden="true"></span><div class="cab-hoja"><h4 class="t-seccion" style="margin:0">Pechuga al horno con vegetales</h4><span class="t-detalle tnum">Receta · rinde 6 porciones</span></div><div class="campo"><span class="lbl">Porciones</span><div class="cant"><div class="entrada con-anota"><span class="cifra">1</span><span class="u">porción</span><span class="anota" aria-hidden="true">1</span></div><div class="fracciones" role="group" aria-label="Fracciones"><button type="button" class="chip">¼</button><button type="button" class="chip">½</button><button type="button" class="chip">¾</button></div></div></div><div class="vivo tnum" aria-live="polite"><div><span class="cifra">388</span><span class="t-detalle">kcal · 1 porción</span></div><div><span class="cifra">38</span><span class="t-detalle">proteína</span></div><div><span class="cifra">34</span><span class="t-detalle">carbohidr.</span></div><div><span class="cifra">11</span><span class="t-detalle">grasa</span></div></div><button type="button" class="btn primario ancho con-anota">Agregar<span class="anota" aria-hidden="true">2</span></button><div class="chips con-anota" role="group" aria-label="Porciones rápidas"><button type="button" class="chip tnum" aria-pressed="true">1 porción</button><button type="button" class="chip tnum" aria-pressed="false">1.5</button><button type="button" class="chip tnum" aria-pressed="false">2</button><span class="anota" aria-hidden="true">3</span></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>La receta se agrega <b>solo en porciones</b>: un decimal y atajos ¼ ½ ¾. Sin gramos ni Crudo · Cocido.</span></li><li><span class="num-a">2</span><span><b>Agregar</b> la deja en la cena de hoy. Como su hora no ha pasado, queda programada (en contorno).</span></li><li><span class="num-a">3</span><span>Atajos para 1, 1.5 y 2 porciones. Un combo de 1 porción entra con un toque desde recientes.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 6 · copiar</span><h3>Copia ayer a hoy</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>3:10</span></div><div class="cuerpo"><nav class="sub-tabs" aria-label="Comida"><a class="sub-tab" href="#" aria-current="page">Día</a><a class="sub-tab" href="#">Calendario</a><a class="sub-tab" href="#">Recetas</a><a class="sub-tab" href="#">Alimentos</a><a class="sub-tab" href="#">Suplementos</a></nav><div class="desliza arriba con-fab"><div class="dia-nav"><button type="button" class="icono-btn" aria-label="Día anterior"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button><div class="txt"><span class="t-seccion">Hoy</span><span class="t-detalle sec">domingo 25 de octubre</span></div><button type="button" class="icono-btn" aria-label="Día siguiente"><svg class="i" aria-hidden="true"><use href="#i-chevron-right"/></svg></button></div><section class="comida" aria-label="Desayuno"><div class="comida-cab"><div class="txt"><h4 class="t-seccion" style="margin:0">Desayuno</h4><span class="t-detalle tnum">7:05 a. m. · Mi desayuno de avena</span></div><span class="kc"><span><span class="cifra">625</span> <span class="unidad-c">kcal</span></span><span class="t-detalle tnum">P 31 · C 82 · G 19</span></span></div></section><section class="comida" aria-label="Media mañana"><div class="comida-cab"><div class="txt"><h4 class="t-seccion" style="margin:0">Media mañana</h4><span class="t-detalle tnum">10:10 a. m. · Mango</span></div><span class="kc"><span><span class="cifra">99</span> <span class="unidad-c">kcal</span></span><span class="t-detalle tnum">P 1 · C 25 · G 1</span></span></div></section><section class="comida vacia-c con-anota" aria-label="Almuerzo"><div class="comida-cab"><div class="txt"><h4 class="t-seccion" style="margin:0">Almuerzo</h4><span class="t-detalle tnum">Sin alimentos todavía</span></div></div><div class="comida-pie"><button type="button" class="btn texto"><svg class="i s20" aria-hidden="true"><use href="#i-plus"/></svg>Agregar</button></div><span class="anota" aria-hidden="true">1</span></section><section class="comida programada con-anota" aria-label="Merienda"><div class="comida-cab"><div class="txt"><h4 class="t-seccion" style="margin:0">Merienda</h4><span class="t-detalle tnum"><span class="m prog" aria-hidden="true"></span>Programada · 4:30 p. m.</span></div><span class="kc"><span><span class="cifra">397</span> <span class="unidad-c">kcal</span></span><span class="t-detalle tnum">P 26 · C 33 · G 21</span></span></div><div class="alimento quitable"><span class="txt"><span>Yogur griego natural</span><span class="t-detalle tnum">200 g</span></span><span class="kc tnum">118 kcal</span><button type="button" class="icono-btn" aria-label="Quitar yogur griego natural"><svg class="i s20" aria-hidden="true"><use href="#i-x"/></svg></button></div><div class="alimento quitable"><span class="txt"><span>Piña</span><span class="t-detalle tnum">1 taza · 165 g</span></span><span class="kc tnum">83 kcal</span><button type="button" class="icono-btn" aria-label="Quitar piña"><svg class="i s20" aria-hidden="true"><use href="#i-x"/></svg></button></div><div class="alimento quitable"><span class="txt"><span>Nueces</span><span class="t-detalle tnum">30 g</span></span><span class="kc tnum">196 kcal</span><button type="button" class="icono-btn" aria-label="Quitar nueces"><svg class="i s20" aria-hidden="true"><use href="#i-x"/></svg></button></div><span class="anota" aria-hidden="true">2</span></section><section class="comida programada" aria-label="Cena"><div class="comida-cab"><div class="txt"><h4 class="t-seccion" style="margin:0">Cena</h4><span class="t-detalle tnum"><span class="m prog" aria-hidden="true"></span>Programada · 7:30 p. m.</span></div><span class="kc"><span><span class="cifra">388</span> <span class="unidad-c">kcal</span></span><span class="t-detalle tnum">P 38 · C 34 · G 11</span></span></div><div class="alimento quitable"><span class="txt"><span>Pechuga al horno con vegetales</span><span class="t-detalle tnum">1 porción</span></span><span class="kc tnum">388 kcal</span><button type="button" class="icono-btn" aria-label="Quitar pechuga al horno con vegetales"><svg class="i s20" aria-hidden="true"><use href="#i-x"/></svg></button></div></section></div><div class="ranura-aviso sobre-fab"><div class="aviso con-anota" role="status"><span class="txt-av">Día copiado: 1 comida · 3 se respetaron</span><button type="button" class="btn texto">Deshacer</button><span class="anota" aria-hidden="true">3</span></div></div><button type="button" class="fab" aria-label="Agregar o crear alimento" aria-haspopup="menu" aria-expanded="false"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></button></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Copiaste el sábado 24 a hoy. El almuerzo se queda vacío: su hora ya pasó y contaría al instante como comido.</span></li><li><span class="num-a">2</span><span>La merienda estaba vacía: llega copiada y en contorno, con lo que quedó el sábado (lo real, no lo programado).</span></li><li><span class="num-a">3</span><span>El desayuno, la media mañana y la cena ya tenían algo y se respetan. El aviso lo cuenta y ofrece <b>Deshacer</b>.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 7 · semana</span><h3>Mira la semana que viene</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>8:30</span></div><div class="cuerpo"><nav class="sub-tabs" aria-label="Comida"><a class="sub-tab" href="#">Día</a><a class="sub-tab" href="#" aria-current="page">Calendario</a><a class="sub-tab" href="#">Recetas</a><a class="sub-tab" href="#">Alimentos</a><a class="sub-tab" href="#">Suplementos</a></nav><div class="desliza"><div class="cal-nav"><button type="button" class="icono-btn" aria-label="Semana anterior"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button><div class="cal-titulo"><span class="t-seccion tnum">26 oct. – 1 nov.</span><span class="t-detalle sec">Semana 4</span></div><button type="button" class="icono-btn" aria-label="Semana siguiente"><svg class="i" aria-hidden="true"><use href="#i-chevron-right"/></svg></button></div><div class="cal-vista"><div class="segmento" role="group" aria-label="Vista"><button type="button" aria-pressed="false">Mes</button><button type="button" aria-pressed="true">Semana</button></div></div><div class="semana-acciones con-anota"><button type="button" class="btn primario ancho"><svg class="i s20" aria-hidden="true"><use href="#i-copy"/></svg>Copiar la semana anterior</button><button type="button" class="btn secundario ancho"><svg class="i s20" aria-hidden="true"><use href="#i-message"/></svg>Pedir un plan al coach</button><span class="anota" aria-hidden="true">1</span></div><div class="lista semana-lista con-anota"><button type="button" class="fila-dia"><span class="dnum"><span class="t-detalle">lun</span><span class="n">26</span></span><span class="txt"><span>Sin comidas</span><span class="t-detalle">Día A en Gym</span></span></button><button type="button" class="fila-dia"><span class="dnum"><span class="t-detalle">mar</span><span class="n">27</span></span><span class="txt"><span>Sin comidas</span><span class="t-detalle"></span></span></button><button type="button" class="fila-dia"><span class="dnum"><span class="t-detalle">mié</span><span class="n">28</span></span><span class="txt"><span>Sin comidas</span><span class="t-detalle">Día B en Gym</span></span></button><button type="button" class="fila-dia"><span class="dnum"><span class="t-detalle">jue</span><span class="n">29</span></span><span class="txt"><span>Sin comidas</span><span class="t-detalle">Análisis de sangre 7:30 a. m.</span></span></button><button type="button" class="fila-dia"><span class="dnum"><span class="t-detalle">vie</span><span class="n">30</span></span><span class="txt"><span>Sin comidas</span><span class="t-detalle">Día C en Gym</span></span></button><button type="button" class="fila-dia"><span class="dnum"><span class="t-detalle">sáb</span><span class="n">31</span></span><span class="txt"><span>Sin comidas</span><span class="t-detalle"></span></span></button><button type="button" class="fila-dia"><span class="dnum"><span class="t-detalle">dom</span><span class="n">1</span></span><span class="txt"><span>Sin comidas</span><span class="t-detalle"></span></span></button><span class="anota" aria-hidden="true">2</span></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Con la semana vacía, <b>Copiar la semana anterior</b> es el botón principal (solo llena comidas vacías). <b>Pedir un plan al coach</b> abre el chat con estas fechas.</span></li><li><span class="num-a">2</span><span>La semana del 26 está libre. Cada día dice lo que ya tiene en Gym y en Salud, para planear alrededor.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 8 · evitar</span><h3>Revisa lo que no comes</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>8:40</span></div><div class="cuerpo"><nav class="sub-tabs" aria-label="Comida"><a class="sub-tab" href="#">Día</a><a class="sub-tab" href="#">Calendario</a><a class="sub-tab" href="#">Recetas</a><a class="sub-tab" href="#" aria-current="page">Alimentos</a><a class="sub-tab" href="#">Suplementos</a></nav><div class="desliza"><div class="segmento con-anota" role="group" aria-label="Lista"><button type="button" aria-pressed="false">Preferidos</button><button type="button" aria-pressed="true">Evitar</button><span class="anota" aria-hidden="true">1</span></div><div class="lista"><div class="fila con-anota"><span class="txt"><span>Maní</span><span class="t-detalle sec">Grupo · desde la bienvenida</span></span><span class="pildora">Alergia</span><span class="anota" aria-hidden="true">2</span></div><div class="fila"><span class="txt"><span>Mariscos</span><span class="t-detalle sec">Grupo</span></span><span class="pildora">Gusto</span></div></div><div class="nota con-icono con-anota"><svg class="i s16" aria-hidden="true"><use href="#i-info-circle"/></svg><span>Con alergia o intolerancia, el coach nunca lo propone, aunque se lo pidas. Por gusto, lo evita salvo que lo nombres.</span><span class="anota" aria-hidden="true">3</span></div><button type="button" class="btn secundario"><svg class="i s20" aria-hidden="true"><use href="#i-plus"/></svg>Agregar a evitar</button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Comida › Alimentos tiene <b>Preferidos</b> (tu despensa, 24 alimentos) y <b>Evitar</b>. Es la única lista; el perfil enlaza aquí.</span></li><li><span class="num-a">2</span><span>Cada elemento dice su motivo. Las alergias de la bienvenida llegan solas. (Maní · alergia es de ejemplo: Francis no tiene alergias.)</span></li><li><span class="num-a">3</span><span>La regla, dicha en una línea: alergia bloquea, gusto cede.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 9 · motivo</span><h3>Marca un alimento</h3><div class="mini"><div class="telefono"><div class="pantalla apilada"><div class="estado tnum"><span>8:42</span></div><div class="cuerpo"><div class="busca-cab"><button type="button" class="atras" aria-label="Volver"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><div class="txt"><span class="t-seccion">Camarones</span><span class="t-detalle sec">USDA · 99 kcal por 100 g cocidos</span></div></div><div class="desliza"></div></div><div class="velo"><div class="hoja" role="dialog" aria-label="Evitar camarones"><span class="agarre" aria-hidden="true"></span><div class="cab-hoja"><h4 class="t-seccion" style="margin:0">Evitar camarones</h4><span class="t-detalle">USDA · grupo Mariscos</span></div><div class="lista con-anota" role="radiogroup" aria-label="Qué evitar"><button type="button" class="opcion-rutina" role="radio" aria-checked="false"><span class="radio"></span><span class="txt"><span>Solo camarones</span></span></button><button type="button" class="opcion-rutina" role="radio" aria-checked="true"><span class="radio"></span><span class="txt"><span>Todo el grupo Mariscos</span><span class="t-detalle">camarones, langosta, lambí…</span></span></button><span class="anota" aria-hidden="true">1</span></div><div class="campo"><span class="lbl">Motivo</span><div class="chips con-anota" role="group" aria-label="Motivo"><button type="button" class="chip" aria-pressed="true">Gusto</button><button type="button" class="chip" aria-pressed="false">Alergia</button><button type="button" class="chip" aria-pressed="false">Intolerancia</button><span class="anota" aria-hidden="true">2</span></div></div><p class="t-detalle sec">El coach lo evita, pero si lo pides en un plan, lo usa.</p><button type="button" class="btn primario ancho con-anota">Guardar<span class="anota" aria-hidden="true">3</span></button></div></div></div></div></div><ol><li><span class="num-a">1</span><span>Desde cualquier alimento: <b>Preferido</b> o <b>Evitar</b>. Puedes evitar solo ese alimento o todo su grupo.</span></li><li><span class="num-a">2</span><span>El motivo cambia lo que hace el coach, y la línea de abajo lo explica según el chip.</span></li><li><span class="num-a">3</span><span><b>Guardar</b> no pide confirmación; se quita desde la lista.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 10 · pedir</span><h3>Pide el plan al coach</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>8:45</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Coach</span></div><div class="desliza con-chat"><div class="chat"><div class="rango con-anota"><span class="pildora tnum">Mes · 26 oct. – 22 nov.</span><span class="anota" aria-hidden="true">1</span></div><div class="burbuja">Programa mis comidas del mes con pollo y piña, sin mariscos.</div><div class="linea-coach pensando con-anota"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><div class="pasos-c tnum"><span><svg class="i s16" aria-hidden="true"><use href="#i-check"/></svg>Revisé tus entrenos del 26 de octubre al 22 de noviembre</span><span><svg class="i s16" aria-hidden="true"><use href="#i-check"/></svg>Leí tus preferidos, tu lista de evitar y tus recetas</span><span class="ahora"><svg class="i s16" aria-hidden="true"><use href="#i-clock"/></svg>Armando la semana tipo 1 de 2…</span></div><span class="anota" aria-hidden="true">2</span></div></div></div><div class="chat-pie"><div class="entrada vacia"><span>Escribe al coach</span></div><button type="button" class="btn secundario"><svg class="i s20" aria-hidden="true"><use href="#i-player-stop"/></svg>Detener</button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Desde el calendario, el chat abre con el rango puesto: un mes son 4 semanas, del lunes 26 al domingo 22.</span></li><li><span class="num-a">2</span><span>La tarjeta del coach dice qué consulta y qué arma, paso a paso. Puedes salir: al terminar llega «Tu plan está listo para revisar». <b>Detener</b> lo corta.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 11 · revisar</span><h3>Revisa el plan</h3><div class="mini"><div class="telefono"><div class="pantalla apilada"><div class="estado tnum"><span>8:47</span></div><div class="cuerpo"><div class="busca-cab"><button type="button" class="atras" aria-label="Volver"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><div class="txt con-anota"><span class="t-seccion">Plan del 26 oct. al 22 nov.</span><span class="t-detalle sec">Con pollo y piña, sin mariscos</span><span class="anota" aria-hidden="true">1</span></div></div><div class="desliza con-pie"><div class="linea-coach con-anota"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><p>Tu revisión de 6 semanas es el 16 de noviembre; desde ahí ajusto las porciones.</p><span class="anota" aria-hidden="true">2</span></div><div class="segmento" role="group" aria-label="Semana tipo"><button type="button" aria-pressed="true">Semana tipo 1</button><button type="button" aria-pressed="false">Semana tipo 2</button></div><span class="cuenta-tipo tnum">Se repite del 26 oct. al 1 nov. y del 9 al 15 nov.</span><div class="tira con-anota" role="group" aria-label="Días de la semana tipo"><button type="button" aria-pressed="true" aria-label="L 26">L<span class="n">26</span></button><button type="button" aria-pressed="false" aria-label="M 27">M<span class="n">27</span></button><button type="button" aria-pressed="false" aria-label="M 28">M<span class="n">28</span></button><button type="button" aria-pressed="false" aria-label="J 29">J<span class="n">29</span></button><button type="button" aria-pressed="false" aria-label="V 30">V<span class="n">30</span></button><button type="button" aria-pressed="false" aria-label="S 31">S<span class="n">31</span></button><button type="button" aria-pressed="false" aria-label="D 1">D<span class="n">1</span></button><span class="anota" aria-hidden="true">3</span></div><section class="resumen tnum" aria-label="Resumen del día propuesto"><span></span><span class="cab">Total</span><span class="cab">Objetivo</span><span class="cab">Restan</span><span class="nom kcal">Calorías <span class="u">kcal</span></span><span style="display:contents"><span class="v"><span class="cifra">2,336</span></span><span class="v"><span class="cifra">2,350</span></span><span class="v res"><span class="cifra">14</span></span></span><div class="pista-n" aria-hidden="true"><div class="p"><i style="--v:99.4"></i></div></div><span class="nom">Proteína <span class="u">g</span></span><span style="display:contents"><span class="v"><span class="cifra">177</span></span><span class="v"><span class="cifra">172</span></span><span class="v res"><span class="ok"><svg class="i s16" aria-hidden="true"><use href="#i-check"/></svg>Cumplido</span></span></span><div class="pista-n" style="--m:var(--dato-1)" aria-hidden="true"><div class="p"><i style="--v:100"></i></div></div><span class="nom">Carbohidratos <span class="u">g</span></span><span style="display:contents"><span class="v"><span class="cifra">269</span></span><span class="v"><span class="cifra">270</span></span><span class="v res"><span class="cifra">1</span></span></span><div class="pista-n" style="--m:var(--dato-2)" aria-hidden="true"><div class="p"><i style="--v:99.6"></i></div></div><span class="nom">Grasa <span class="u">g</span></span><span style="display:contents"><span class="v"><span class="cifra">65</span></span><span class="v"><span class="cifra">65</span></span><span class="v res"><span class="cifra">0</span></span></span><div class="pista-n" style="--m:var(--dato-3)" aria-hidden="true"><div class="p"><i style="--v:100"></i></div></div></section><section class="comida" aria-label="Desayuno"><div class="comida-cab con-casilla"><button type="button" class="casilla-btn" role="checkbox" aria-checked="true" aria-label="Aprobar desayuno"><span class="casilla"><svg class="i s16" aria-hidden="true"><use href="#i-check-small"/></svg></span></button><div class="txt"><h4 class="t-seccion" style="margin:0">Desayuno</h4><span class="t-detalle tnum">7:00 a. m.</span></div><span class="kc"><span><span class="cifra">625</span> <span class="unidad-c">kcal</span></span><span class="t-detalle tnum">P 31 · C 82 · G 19</span></span></div><button type="button" class="alimento"><span class="txt"><span>Mi desayuno de avena</span><span class="t-detalle tnum">1 porción</span></span><span class="kc tnum">625 kcal</span></button><div class="comida-pie"><button type="button" class="btn texto"><svg class="i s20" aria-hidden="true"><use href="#i-refresh"/></svg>Otra opción</button></div></section></div><div class="pie-fijo con-anota"><button type="button" class="btn texto">Descartar</button><button type="button" class="btn primario" aria-live="polite">Aprobar todo</button><span class="anota" aria-hidden="true">4</span></div></div></div></div></div><ol><li><span class="num-a">1</span><span>Pantalla propia, no un diálogo: el alcance y las condiciones del pedido arriba.</span></li><li><span class="num-a">2</span><span>Una línea del coach avisa que la revisión de 6 semanas cae dentro del plan.</span></li><li><span class="num-a">3</span><span>Semana tipo 1 o 2, y una tira con los 7 días. El lunes 26 (Día A) suma 2,336 de 2,350 kcal con su resumen.</span></li><li><span class="num-a">4</span><span>Todo viene marcado: con nada desmarcado, el botón dice <b>Aprobar todo</b>.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 12 · elegir</span><h3>Quita o cambia una comida</h3><div class="mini"><div class="telefono"><div class="pantalla apilada"><div class="estado tnum"><span>8:50</span></div><div class="cuerpo"><div class="busca-cab"><button type="button" class="atras" aria-label="Volver"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><div class="txt"><span class="t-seccion">Plan del 26 oct. al 22 nov.</span><span class="t-detalle sec">Con pollo y piña, sin mariscos</span></div></div><div class="desliza con-pie"><div class="segmento" role="group" aria-label="Semana tipo"><button type="button" aria-pressed="true">Semana tipo 1</button><button type="button" aria-pressed="false">Semana tipo 2</button></div><span class="cuenta-tipo tnum con-anota">Semana tipo 1: 31 de 35 comidas<span class="anota" aria-hidden="true">3</span></span><div class="tira" role="group" aria-label="Días de la semana tipo"><button type="button" aria-pressed="false" aria-label="L 26">L<span class="n">26</span></button><button type="button" aria-pressed="true" aria-label="M 27">M<span class="n">27</span></button><button type="button" aria-pressed="false" aria-label="M 28">M<span class="n">28</span></button><button type="button" aria-pressed="false" aria-label="J 29">J<span class="n">29</span></button><button type="button" aria-pressed="false" aria-label="V 30">V<span class="n">30</span></button><button type="button" aria-pressed="false" aria-label="S 31">S<span class="n">31</span></button><button type="button" aria-pressed="false" aria-label="D 1">D<span class="n">1</span></button></div><section class="comida con-anota" aria-label="Merienda"><div class="comida-cab con-casilla"><button type="button" class="casilla-btn" role="checkbox" aria-checked="true" aria-label="Aprobar merienda"><span class="casilla"><svg class="i s16" aria-hidden="true"><use href="#i-check-small"/></svg></span></button><div class="txt"><h4 class="t-seccion" style="margin:0">Merienda</h4><span class="t-detalle tnum">4:30 p. m.</span></div></div><div class="buscando" aria-busy="true"><span class="t-detalle">Buscando otra opción…</span><span class="esq pulso" style="height:var(--e4);width:70%"></span><span class="esq pulso" style="height:var(--e4);width:45%"></span></div><span class="anota" aria-hidden="true">1</span></section><section class="comida descartada con-anota" aria-label="Cena"><div class="comida-cab con-casilla"><button type="button" class="casilla-btn" role="checkbox" aria-checked="false" aria-label="Aprobar cena"><span class="casilla"><svg class="i s16" aria-hidden="true"><use href="#i-check-small"/></svg></span></button><div class="txt"><h4 class="t-seccion" style="margin:0">Cena</h4><span class="t-detalle tnum">7:30 p. m. · No se guarda</span></div><span class="kc"><span><span class="cifra">402</span> <span class="unidad-c">kcal</span></span><span class="t-detalle tnum">P 38 · C 36 · G 12</span></span></div><div class="comida-pie"><button type="button" class="btn texto"><svg class="i s20" aria-hidden="true"><use href="#i-refresh"/></svg>Otra opción</button></div><span class="anota" aria-hidden="true">2</span></section></div><div class="pie-fijo con-anota"><button type="button" class="btn texto">Descartar</button><button type="button" class="btn primario" aria-live="polite">Aprobar 132 de 140 comidas</button><span class="anota" aria-hidden="true">4</span></div></div></div></div></div><ol><li><span class="num-a">1</span><span><b>Otra opción</b> rehace solo esa comida: queda en esqueleto con «Buscando otra opción…» y cambia en su sitio.</span></li><li><span class="num-a">2</span><span>Desmarcada, la cena del martes pasa a gris, pliega sus alimentos y dice «No se guarda». Se quedará vacía.</span></li><li><span class="num-a">3</span><span>Cada semana tipo cuenta lo suyo: 31 de 35 (también desmarcaste la cena del jueves y la merienda y la cena del sábado).</span></li><li><span class="num-a">4</span><span>El botón cuenta lo que se guarda en los 28 días: <b>Aprobar 132 de 140 comidas</b>.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 13 · suplementos</span><h3>Mira tus tomas del día</h3><div class="mini"><div class="telefono"><div class="pantalla apilada"><div class="estado tnum"><span>8:52</span></div><div class="cuerpo"><div class="busca-cab"><button type="button" class="atras" aria-label="Volver"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><div class="txt"><span class="t-seccion">Plan del 26 oct. al 22 nov.</span><span class="t-detalle sec">Con pollo y piña, sin mariscos</span></div></div><div class="desliza con-pie"><div class="tira" role="group" aria-label="Días de la semana tipo"><button type="button" aria-pressed="true" aria-label="L 26">L<span class="n">26</span></button><button type="button" aria-pressed="false" aria-label="M 27">M<span class="n">27</span></button><button type="button" aria-pressed="false" aria-label="M 28">M<span class="n">28</span></button><button type="button" aria-pressed="false" aria-label="J 29">J<span class="n">29</span></button><button type="button" aria-pressed="false" aria-label="V 30">V<span class="n">30</span></button><button type="button" aria-pressed="false" aria-label="S 31">S<span class="n">31</span></button><button type="button" aria-pressed="false" aria-label="D 1">D<span class="n">1</span></button></div><section class="comida" aria-label="Cena"><div class="comida-cab con-casilla"><button type="button" class="casilla-btn" role="checkbox" aria-checked="true" aria-label="Aprobar cena"><span class="casilla"><svg class="i s16" aria-hidden="true"><use href="#i-check-small"/></svg></span></button><div class="txt"><h4 class="t-seccion" style="margin:0">Cena</h4><span class="t-detalle tnum">7:30 p. m.</span></div><span class="kc"><span><span class="cifra">400</span> <span class="unidad-c">kcal</span></span><span class="t-detalle tnum">P 43 · C 47 · G 4</span></span></div><button type="button" class="alimento"><span class="txt"><span>Tilapia a la plancha</span><span class="t-detalle tnum">150 g</span></span><span class="kc tnum">192 kcal</span></button><button type="button" class="alimento"><span class="txt"><span>Yuca hervida</span><span class="t-detalle tnum">150 g</span></span><span class="kc tnum">168 kcal</span></button><button type="button" class="alimento"><span class="txt"><span>Ensalada verde</span><span class="t-detalle tnum">2 tazas · 200 g</span></span><span class="kc tnum">40 kcal</span></button><div class="comida-pie"><button type="button" class="btn texto"><svg class="i s20" aria-hidden="true"><use href="#i-refresh"/></svg>Otra opción</button></div></section><section class="comida supl con-anota" aria-label="Suplementos"><div class="comida-cab"><div class="txt"><h4 class="t-seccion" style="margin:0">Suplementos</h4><span class="t-detalle tnum">6 tomas de tus pautas</span></div><span class="kc"><span><span class="cifra">138</span> <span class="unidad-c">kcal</span></span><span class="t-detalle tnum">P 25 · C 3 · G 3</span></span></div><button type="button" class="alimento"><span class="txt"><span>Vitamina D3</span><span class="t-detalle tnum">2,000 UI · 7:00 a. m.</span></span></button><button type="button" class="alimento"><span class="txt"><span>Creatina</span><span class="t-detalle tnum">5 g · 7:00 a. m.</span></span></button><button type="button" class="alimento"><span class="txt"><span>Whey</span><span class="t-detalle tnum">1 scoop · post-entreno, 10:00 a. m.</span></span><span class="kc tnum">120 kcal</span></button><button type="button" class="alimento"><span class="txt"><span>Omega-3</span><span class="t-detalle tnum">2 g · con el almuerzo</span></span><span class="kc tnum">18 kcal</span></button><button type="button" class="alimento"><span class="txt"><span>Zinc</span><span class="t-detalle tnum">15 mg · con la cena</span></span></button><button type="button" class="alimento"><span class="txt"><span>Magnesio glicinato</span><span class="t-detalle tnum">280 mg · 10:30 p. m.</span></span></button><span class="anota" aria-hidden="true">1</span></section><div class="nota con-anota"><svg class="i s16" aria-hidden="true"><use href="#i-info-circle"/></svg><span>Las pautas se cambian en Comida › Suplementos.</span><span class="anota" aria-hidden="true">2</span></div></div><div class="pie-fijo"><button type="button" class="btn texto">Descartar</button><button type="button" class="btn primario" aria-live="polite">Aprobar 132 de 140 comidas</button></div></div></div></div></div><ol><li><span class="num-a">1</span><span>Al final de cada día, las tomas que el plan ubica según el entreno: el lunes, whey post-entreno con la media mañana. Sin casilla: se aprueban con el día.</span></li><li><span class="num-a">2</span><span>El plan no crea ni cambia pautas; un suplemento nuevo llega como otra propuesta. El whey suma 25 g de proteína al día.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 14 · guardado</span><h3>El plan llega al calendario</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>8:53</span></div><div class="cuerpo"><nav class="sub-tabs" aria-label="Comida"><a class="sub-tab" href="#">Día</a><a class="sub-tab" href="#" aria-current="page">Calendario</a><a class="sub-tab" href="#">Recetas</a><a class="sub-tab" href="#">Alimentos</a><a class="sub-tab" href="#">Suplementos</a></nav><div class="desliza"><div class="cal-nav"><button type="button" class="icono-btn" aria-label="Mes anterior"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button><div class="cal-titulo"><span class="t-seccion">Octubre 2026</span></div><button type="button" class="icono-btn" aria-label="Mes siguiente"><svg class="i" aria-hidden="true"><use href="#i-chevron-right"/></svg></button></div><div class="cal-vista"><div class="segmento" role="group" aria-label="Vista"><button type="button" aria-pressed="true">Mes</button><button type="button" aria-pressed="false">Semana</button></div><button type="button" class="btn texto">Hoy</button></div><div class="mes con-anota" aria-label="Octubre 2026"><span class="sem" aria-hidden="true">L</span><span class="sem" aria-hidden="true">M</span><span class="sem" aria-hidden="true">M</span><span class="sem" aria-hidden="true">J</span><span class="sem" aria-hidden="true">V</span><span class="sem" aria-hidden="true">S</span><span class="sem" aria-hidden="true">D</span><span class="celda" aria-hidden="true"></span><span class="celda" aria-hidden="true"></span><span class="celda" aria-hidden="true"></span><button type="button" class="celda" aria-label="1 de octubre, sin comidas"><span class="n">1</span><span class="marcas"></span></button><button type="button" class="celda" aria-label="2 de octubre, sin comidas"><span class="n">2</span><span class="marcas"></span></button><button type="button" class="celda" aria-label="3 de octubre, sin comidas"><span class="n">3</span><span class="marcas"></span></button><button type="button" class="celda" aria-label="4 de octubre, sin comidas"><span class="n">4</span><span class="marcas"></span></button><button type="button" class="celda" aria-label="5 de octubre, con registro"><span class="n">5</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="6 de octubre, con registro"><span class="n">6</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="7 de octubre, con registro"><span class="n">7</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="8 de octubre, con registro"><span class="n">8</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="9 de octubre, con registro"><span class="n">9</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="10 de octubre, con registro"><span class="n">10</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="11 de octubre, con registro"><span class="n">11</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="12 de octubre, con registro"><span class="n">12</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="13 de octubre, con registro"><span class="n">13</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="14 de octubre, con registro"><span class="n">14</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="15 de octubre, con registro"><span class="n">15</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="16 de octubre, con registro"><span class="n">16</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="17 de octubre, con registro"><span class="n">17</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="18 de octubre, con registro"><span class="n">18</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="19 de octubre, con registro"><span class="n">19</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="20 de octubre, con registro"><span class="n">20</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="21 de octubre, con registro"><span class="n">21</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="22 de octubre, con registro"><span class="n">22</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="23 de octubre, con registro"><span class="n">23</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="24 de octubre, con registro"><span class="n">24</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda hoy" aria-label="25 de octubre, con registro"><span class="n">25</span><span class="marcas"><span class="m hecha"></span></span></button><button type="button" class="celda" aria-label="26 de octubre, programado"><span class="n">26</span><span class="marcas"><span class="m prog"></span></span></button><button type="button" class="celda" aria-label="27 de octubre, programado"><span class="n">27</span><span class="marcas"><span class="m prog"></span></span></button><button type="button" class="celda" aria-label="28 de octubre, programado"><span class="n">28</span><span class="marcas"><span class="m prog"></span></span></button><button type="button" class="celda" aria-label="29 de octubre, programado"><span class="n">29</span><span class="marcas"><span class="m prog"></span></span></button><button type="button" class="celda" aria-label="30 de octubre, programado"><span class="n">30</span><span class="marcas"><span class="m prog"></span></span></button><button type="button" class="celda" aria-label="31 de octubre, programado"><span class="n">31</span><span class="marcas"><span class="m prog"></span></span></button><span class="anota" aria-hidden="true">1</span></div><div class="leyenda con-anota"><span><span class="m hecha" aria-hidden="true"></span>Con registro</span><span><span class="m prog" aria-hidden="true"></span>Solo programado</span><span class="anota" aria-hidden="true">2</span></div></div><div class="ranura-aviso "><div class="aviso con-anota" role="status"><span class="txt-av">Plan guardado: 132 comidas</span><button type="button" class="btn texto">Deshacer</button><span class="anota" aria-hidden="true">3</span></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Vista de mes: punto lleno = día con registro; contorno = solo programado. Sin cifras en la celda. Hoy, el 25, en texto de acento.</span></li><li><span class="num-a">2</span><span>La leyenda va debajo, igual que en Gym. Las marcas se distinguen por forma, no solo por color.</span></li><li><span class="num-a">3</span><span>Aprobar no pide confirmación: el aviso cuenta lo guardado y ofrece <b>Deshacer</b>.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 15 · semana</span><h3>Revisa la semana con sus kcal</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>8:54</span></div><div class="cuerpo"><nav class="sub-tabs" aria-label="Comida"><a class="sub-tab" href="#">Día</a><a class="sub-tab" href="#" aria-current="page">Calendario</a><a class="sub-tab" href="#">Recetas</a><a class="sub-tab" href="#">Alimentos</a><a class="sub-tab" href="#">Suplementos</a></nav><div class="desliza"><div class="cal-nav"><button type="button" class="icono-btn" aria-label="Semana anterior"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button><div class="cal-titulo con-anota"><span class="t-seccion tnum">26 oct. – 1 nov.</span><span class="t-detalle sec">Semana 4 · Semana tipo 1</span><span class="anota" aria-hidden="true">1</span></div><button type="button" class="icono-btn" aria-label="Semana siguiente"><svg class="i" aria-hidden="true"><use href="#i-chevron-right"/></svg></button></div><div class="cal-vista"><div class="segmento" role="group" aria-label="Vista"><button type="button" aria-pressed="false">Mes</button><button type="button" aria-pressed="true">Semana</button></div></div><div class="lista semana-lista con-anota"><button type="button" class="fila-dia"><span class="dnum"><span class="t-detalle">lun</span><span class="n">26</span></span><span class="txt"><span>Programado</span><span class="t-detalle">Día A</span></span><span class="fin tnum"><span class="cifra">2,336</span><span class="t-detalle">de 2,350</span></span></button><button type="button" class="fila-dia"><span class="dnum"><span class="t-detalle">mar</span><span class="n">27</span></span><span class="txt"><span>Programado</span><span class="t-detalle">Sin entreno</span></span><span class="fin tnum"><span class="cifra">1,948</span><span class="t-detalle">de 2,350</span></span></button><button type="button" class="fila-dia"><span class="dnum"><span class="t-detalle">mié</span><span class="n">28</span></span><span class="txt"><span>Programado</span><span class="t-detalle">Día B</span></span><span class="fin tnum"><span class="cifra">2,344</span><span class="t-detalle">de 2,350</span></span></button><button type="button" class="fila-dia"><span class="dnum"><span class="t-detalle">jue</span><span class="n">29</span></span><span class="txt"><span>Programado</span><span class="t-detalle">Análisis 7:30 a. m.</span></span><span class="fin tnum"><span class="cifra">1,941</span><span class="t-detalle">de 2,350</span></span></button><button type="button" class="fila-dia"><span class="dnum"><span class="t-detalle">vie</span><span class="n">30</span></span><span class="txt"><span>Programado</span><span class="t-detalle">Día C</span></span><span class="fin tnum"><span class="cifra">2,352</span><span class="t-detalle">de 2,350</span></span></button><button type="button" class="fila-dia"><span class="dnum"><span class="t-detalle">sáb</span><span class="n">31</span></span><span class="txt"><span>Programado</span><span class="t-detalle">Sin entreno</span></span><span class="fin tnum"><span class="cifra">1,540</span><span class="t-detalle">de 2,350</span></span></button><button type="button" class="fila-dia"><span class="dnum"><span class="t-detalle">dom</span><span class="n">1</span></span><span class="txt"><span>Programado</span><span class="t-detalle">Sin entreno</span></span><span class="fin tnum"><span class="cifra">2,329</span><span class="t-detalle">de 2,350</span></span></button><span class="anota" aria-hidden="true">2</span></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>La cabecera dice qué semana tipo es. No hay marca nueva por día.</span></li><li><span class="num-a">2</span><span>La vista semana sí lleva cifras: kcal programadas de 2,350. El martes, el jueves y el sábado quedan cortos por las comidas que no aprobaste; llénalas a mano o con Otra opción en el chat.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 16 · Gym</span><h3>Mueve un entreno con sus comidas</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:15</span></div><div class="cuerpo"><nav class="sub-tabs" aria-label="Gym"><a class="sub-tab" href="#">Sesión</a><a class="sub-tab" href="#" aria-current="page">Calendario</a><a class="sub-tab" href="#">Rutinas</a><a class="sub-tab" href="#">Historial</a><a class="sub-tab" href="#">Cardio y MTB</a></nav><div class="desliza"></div></div><div class="velo"><div class="hoja" role="dialog" aria-label="Mover Día B"><span class="agarre" aria-hidden="true"></span><div class="cab-hoja"><h4 class="t-seccion" style="margin:0">Mover Día B</h4><span class="t-detalle">del miércoles 28</span></div><div class="lista" role="radiogroup" aria-label="Nuevo día"><button type="button" class="opcion-rutina" role="radio" aria-checked="true"><span class="radio"></span><span class="txt"><span>mar 27</span><span class="t-detalle">Tiene plan · sin entreno</span></span></button><button type="button" class="opcion-rutina" role="radio" aria-checked="false"><span class="radio"></span><span class="txt"><span>jue 29</span><span class="t-detalle">Análisis de sangre 7:30 a. m.</span></span></button><button type="button" class="opcion-rutina" role="radio" aria-checked="false"><span class="radio"></span><span class="txt"><span>sáb 31</span><span class="t-detalle">Tiene plan · sin entreno</span></span></button></div><button type="button" class="opcion-rutina con-anota" role="checkbox" aria-checked="true"><span class="casilla-btn" aria-hidden="true" style="margin:0"><span class="casilla"><svg class="i s16" aria-hidden="true"><use href="#i-check-small"/></svg></span></span><span class="txt"><span>Mover también las comidas del plan</span><span class="t-detalle">Cambia las comidas del miércoles 28 y el martes 27</span></span><span class="anota" aria-hidden="true">1</span></button><button type="button" class="btn primario ancho con-anota">Mover al martes 27<span class="anota" aria-hidden="true">2</span></button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Si el día tiene plan, la hoja de mover de Gym trae <b>Mover también las comidas del plan</b>, marcada. Intercambia las comidas de los dos días, sin IA: las kcal no cambian, solo dónde van los carbohidratos.</span></li><li><span class="num-a">2</span><span>Termina en el aviso «Día B movido al martes 27 · Deshacer». Si la desmarcas, la línea del coach del día lo señala.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 17 · MTB</span><h3>Registra un paseo y cubre sus kcal</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>2:40</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Coach</span></div><div class="desliza con-chat"><div class="chat"><div class="linea-coach con-anota"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><p>Guardé tu paseo: 1,200 kcal. Tu objetivo de hoy sube a 2,950 (2,350 + 600 del paseo).</p><span class="anota" aria-hidden="true">1</span></div><div class="linea-coach con-anota"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><p class="tnum">Te propongo cubrir los 600 en lo que queda del día: merienda con batido de guineo y avena (+310) y en la cena 1 taza de arroz y 100 g de batata (+291).</p><div class="acciones-c"><button type="button" class="btn primario">Revisar propuesta</button></div><span class="anota" aria-hidden="true">2</span></div></div></div><div class="chat-pie"><div class="entrada vacia"><span>Escribe al coach</span></div><button type="button" class="icono-btn acento" aria-label="Enviar"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>El paseo no se programa. Al guardarlo (martes 3 de noviembre, flujo 5), el objetivo del día sube con el 50 % de sus kcal.</span></li><li><span class="num-a">2</span><span>El coach propone cubrirlas en lo que queda del día. <b>Revisar propuesta</b> abre la misma pantalla de revisión.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 18 · estados</span><h3>Modo reducido y error</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>9:12</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Coach</span></div><div class="desliza con-chat"><div class="chat"><div class="linea-coach con-anota"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><p>Ya usaste el 80 % del tope del mes. Planes con Sonnet hasta el 1 de noviembre.</p><span class="anota" aria-hidden="true">1</span></div><div class="burbuja">Programa mi semana del 2 de noviembre.</div><div class="tarjeta con-anota"><span class="error-linea"><svg class="i s16" aria-hidden="true"><use href="#i-alert-circle"/></svg>No se pudo armar el plan.</span><p class="t-detalle sec">No se guardó nada. Tu calendario sigue igual.</p><div><button type="button" class="btn secundario"><svg class="i s20" aria-hidden="true"><use href="#i-refresh"/></svg>Reintentar</button></div><span class="anota" aria-hidden="true">2</span></div></div></div><div class="chat-pie"><div class="entrada vacia"><span>Escribe al coach</span></div><button type="button" class="icono-btn acento" aria-label="Enviar"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Desde el 80 % del tope, los planes también salen con Sonnet. La línea del coach lo dice una vez; el costo no se muestra en otro lugar.</span></li><li><span class="num-a">2</span><span>Si falla, el error dice que no se guardó nada y ofrece <b>Reintentar</b>. Si falla Otra opción, la comida anterior se queda.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 19 · sin conexión</span><h3>Sin conexión</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>9:20</span></div><div class="cuerpo"><nav class="sub-tabs" aria-label="Comida"><a class="sub-tab" href="#">Día</a><a class="sub-tab" href="#" aria-current="page">Calendario</a><a class="sub-tab" href="#">Recetas</a><a class="sub-tab" href="#">Alimentos</a><a class="sub-tab" href="#">Suplementos</a></nav><div class="desliza"><div class="cal-nav"><button type="button" class="icono-btn" aria-label="Semana anterior"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button><div class="cal-titulo"><span class="t-seccion tnum">2 – 8 nov.</span><span class="t-detalle sec">Semana 5</span></div><button type="button" class="icono-btn" aria-label="Semana siguiente"><svg class="i" aria-hidden="true"><use href="#i-chevron-right"/></svg></button></div><div class="sinc-linea con-anota"><svg class="i s16" aria-hidden="true"><use href="#i-cloud-off"/></svg>Sin conexión. Lo que programes se guarda en el teléfono.<span class="anota" aria-hidden="true">1</span></div><div class="semana-acciones"><button type="button" class="btn primario ancho"><svg class="i s20" aria-hidden="true"><use href="#i-copy"/></svg>Copiar la semana anterior</button><button type="button" class="btn secundario ancho"><svg class="i s20" aria-hidden="true"><use href="#i-message"/></svg>Pedir un plan al coach</button></div></div><div class="ranura-aviso "><div class="aviso con-anota" role="status"><span class="txt-av">Pedir un plan necesita conexión. Puedes programar a mano.</span><span class="anota" aria-hidden="true">2</span></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Recetas, preferidos, copiar y programar a mano funcionan sin conexión en el teléfono y se sincronizan después.</span></li><li><span class="num-a">2</span><span><b>Pedir un plan</b> sigue activo y, al tocarlo, explica que necesita conexión, como «Leer la etiqueta» en el flujo 3.</span></li></ol></article></div>
+  </section>
+
+  <section class="pagina" id="por-confirmar" aria-labelledby="h-confirmar">
+    <header>
+      <h2 id="h-confirmar">Por confirmar</h2>
+      <p class="sec" style="max-width:60ch">Decisiones nuevas al dibujar las piezas 1 y 2, por orden de importancia. Lo demás sale de D-38.</p>
+    </header>
+    <ul class="casos"><li><b>El botón de aprobar cuenta los 28 días del plan de mes:</b> «Aprobar 132 de 140 comidas», y cada semana tipo dice su cuenta debajo del control («Semana tipo 1: 31 de 35 comidas»). Recomiendo esto porque lo que se guarda son los 28 días; contar solo la semana tipo engaña a la mitad.</li><li><b>Revisión: una tira de 7 días en vez de la semana entera en una lista:</b> En el teléfono no caben 35 comidas con sus alimentos; un día a la vez deja ver el resumen contra el objetivo. En la web ancha, la semana tipo puede ir en columnas (pieza 3).</li><li><b>Copiar no cuenta en el aviso la comida que se saltó por la hora:</b> «Día copiado: 1 comida · 3 se respetaron». El almuerzo vacío se ve en el día; sumar una tercera cifra al aviso pasaría de dos líneas. Recomiendo dejarlo así.</li><li><b>Evitar: solo ese alimento o todo su grupo:</b> Al marcar «Evitar» desde un alimento, la hoja ofrece las dos opciones, con el grupo marcado. Las alergias casi siempre son de grupo (mariscos, maní), y el modelo ya guarda preferencias por grupo.</li><li><b>Las tomas del plan no llevan casilla:</b> Se aprueban con su día. Recomiendo esto porque el plan no crea ni cambia pautas (D-38); quitar una toma del día se hace después con la X, como en el flujo 3.</li><li><b>Pedir un plan sin conexión queda activo y explica:</b> Mismo criterio que «Leer la etiqueta» en el flujo 3: un botón apagado no dice por qué.</li><li><b>La semana muestra lo que ya hay en Gym y Salud:</b> Cada día libre dice «Día A en Gym» o «Análisis de sangre 7:30 a. m.», para planear alrededor; el coach usa lo mismo. El jueves 29 el desayuno va después del análisis (ayunas).</li></ul>
+  </section>
+</main>
+<script>
+  const raiz = document.documentElement;
+  function ponerAcento(a) {
+    if (a === "caribe") delete raiz.dataset.accent; else raiz.dataset.accent = a;
+    document.querySelectorAll("[data-a]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.a === a)));
+  }
+  function ponerModo(m) {
+    if (m) raiz.dataset.theme = m; else delete raiz.dataset.theme;
+    document.querySelectorAll("#ctl-modo button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.modo === m)));
+  }
+  document.querySelectorAll("[data-a]").forEach((b) => b.addEventListener("click", () => ponerAcento(b.dataset.a)));
+  document.querySelectorAll("#ctl-modo button").forEach((b) => b.addEventListener("click", () => ponerModo(b.dataset.modo)));
+  // Los enlaces de las maquetas no navegan.
+  document.querySelectorAll('.telefono a[href="#"]').forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));
+</script>
