@@ -1,5 +1,6 @@
 - [Verificación de mockups](verificacion-mockups.md) — detector Impeccable en modo URL, Playwright, A5 sobre elevado, láminas con charset
 - [Flujo 2 calendario](flujo-2-calendario.md) — 3 pasos, semana 1 por usuario, Salud › análisis, MTB con zonas FC
 - [Flujo 1 gym](flujo-1-gym.md) — 4 piezas aprobadas; ranura de avisos, Sigue destacada, búlgara ×4
-- [Flujo 3 comida](flujo-3-comida.md) — piezas 1-2 aprobadas; pieza 3 (mockups, panel lateral web) por aprobar; cifras del día
+- [Flujo 3 comida](flujo-3-comida.md) — aprobado completo 26-oct (D-37); cifras del día; pollo guisado es alimento
+- [Flujo 4 receta y plan](flujo-4-receta-plan.md) — revisión aprobada (D-38); receta solo en porciones; cifras de ejemplo
 - [Flujo 10 bienvenida](flujo-10-bienvenida.md) — piezas 1-3 aprobadas (D-33); prototipo con cálculo real y campos tipados por aprobar

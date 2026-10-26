@@ -2,12 +2,12 @@
 
 | Campo | Valor |
 | --- | --- |
-| Versión | 1.1 |
-| Fecha | 19-oct-2026 (1.0 del 18-oct-2026; 1.1 con D-37, sección 14) |
+| Versión | 1.2 |
+| Fecha | 26-oct-2026 (1.0 del 18-oct-2026; 1.1 con D-37 y 1.2 con D-38, sección 14) |
 | Estado | Aprobado por Francis el 19-oct-2026 (D-36, [ADR 0025](../adr/0025-modelo-conceptual-de-la-base-de-datos.md)) |
 | Fase | 0.5 (ADR 0010, nivel 1 de 3) |
 | Redacta | Arquitecto (Fable 5.1) |
-| Fuentes | [`plan-maestro.md`](../plan-maestro.md) v1.16 (§5, §8, §10, Anexo A), [`prd.md`](../prd.md) v1.12, ADR [0004](../adr/0004-base-de-alimentos-y-unidades.md), [0005](../adr/0005-mtb-por-captura.md), [0006](../adr/0006-coach-con-herramientas-y-memoria.md), [0010](../adr/0010-diseno-de-base-de-datos-en-tres-niveles.md), [0012](../adr/0012-acceso-privado-y-multiusuario.md), [0013](../adr/0013-samsung-health-via-health-connect.md), [0018](../adr/0018-app-galaxy-watch-nativa.md), [0021](../adr/0021-embeddings-locales-en-el-servidor.md), [0023](../adr/0023-unidades-preferidas.md); mockups de los flujos 1, 2 y 10 |
+| Fuentes | [`plan-maestro.md`](../plan-maestro.md) v1.17 (§5, §8, §10, Anexo A), [`prd.md`](../prd.md) v1.13, ADR [0004](../adr/0004-base-de-alimentos-y-unidades.md), [0005](../adr/0005-mtb-por-captura.md), [0006](../adr/0006-coach-con-herramientas-y-memoria.md), [0010](../adr/0010-diseno-de-base-de-datos-en-tres-niveles.md), [0012](../adr/0012-acceso-privado-y-multiusuario.md), [0013](../adr/0013-samsung-health-via-health-connect.md), [0018](../adr/0018-app-galaxy-watch-nativa.md), [0021](../adr/0021-embeddings-locales-en-el-servidor.md), [0023](../adr/0023-unidades-preferidas.md); mockups de los flujos 1, 2, 3 y 10 y revisión del flujo 4 |
 
 Este documento dice **qué cosas guarda el sistema y cómo se relacionan**. No dice todavía con qué columnas, tipos ni índices: eso es el modelo lógico y físico de la Fase 1, que se escribe en `schema.dbml` y en el diccionario de datos a partir de lo que se apruebe aquí.
 
@@ -384,6 +384,10 @@ erDiagram
   }
   RECETA["Receta"] {
     texto nombre
+    enum origen
+  }
+  VERSION_REC["Versión de receta"] {
+    fecha vigente_desde
     numero porciones
   }
   INGREDIENTE["Ingrediente"] {
@@ -446,12 +450,13 @@ erDiagram
   CONTENIDO }o--|| NUTRIENTE : "de"
   ALIMENTO ||--o{ PORCION : "se sirve en"
   ALIMENTO }o--o{ GRUPO_ALIM : "pertenece a"
-  RECETA ||--|{ INGREDIENTE : "lleva"
+  RECETA ||--|{ VERSION_REC : "se edita en"
+  VERSION_REC ||--|{ INGREDIENTE : "lleva"
   INGREDIENTE }o--|| ALIMENTO : "es"
   COMIDA }o--|| COMIDA_TIPO : "es un"
   COMIDA ||--o{ ITEM : "incluye"
   ITEM }o--o| ALIMENTO : "alimento"
-  ITEM }o--o| RECETA : "o receta"
+  ITEM }o--o| VERSION_REC : "o receta (versión)"
   ITEM }o--o| PORCION : "medido en"
   PREFERENCIA }o--o| ALIMENTO : "sobre un alimento"
   PREFERENCIA }o--o| GRUPO_ALIM : "o un grupo"
@@ -464,23 +469,24 @@ erDiagram
 | Entidad | Nombre técnico | Tipo | Qué guarda | Requisitos |
 | --- | --- | --- | --- | --- |
 | Nutriente | `nutrients` | catálogo | Energía, proteína, carbohidratos, grasa, fibra, azúcares, azúcar añadida, grasa saturada, sodio, potasio, calcio, hierro, magnesio, zinc, vitaminas…: nombre, unidad (kcal, g, mg, µg), clase (macro, micro, límite), orden en el desglose. | NUT-01, NUT-03 |
-| Alimento | `foods` | catálogo + propios | Nombre local, sinónimos (guineo y banana), marca, fuente (USDA, INCAP, Open Food Facts, manual, etiqueta), identificador en la fuente, densidad g/ml (y si es estimada), estado (crudo, cocido, listo) y la otra versión del mismo alimento (crudo ↔ cocido) para el selector (D-37), factor de cocción para recetas, grupo(s), foto de etiqueta (archivo), dueño si es propio, verificado, activo. Un alimento propio (a mano o desde la etiqueta) también guarda si es crudo o cocido. | NUT-01, NUT-02, NUT-12, ADR 0004 |
+| Alimento | `foods` | catálogo + propios | Nombre local, sinónimos (guineo y banana), marca, fuente (USDA, INCAP, Open Food Facts, manual, etiqueta), identificador en la fuente, densidad g/ml (y si es estimada), estado (crudo, cocido, listo) y la otra versión del mismo alimento (crudo ↔ cocido) para el selector (D-37), grupo(s), foto de etiqueta (archivo), dueño si es propio, verificado, activo. Un alimento propio (a mano o desde la etiqueta) también guarda si es crudo o cocido. | NUT-01, NUT-02, NUT-12, ADR 0004 |
 | Contenido por 100 g | `food_nutrients` | catálogo + propios | Alimento × nutriente: cantidad por 100 g. Sin fila = "sin dato", que no es 0 (D-37); kcal, proteína, carbohidratos y grasa son obligatorios en un alimento propio. | NUT-01, NUT-12 |
 | Porción casera | `food_portions` | catálogo + propios | Taza, cucharada, unidad, cucharón, rebanada, "porción de la etiqueta": nombre y gramos para ese alimento. | NUT-02, NUT-12 |
 | Grupo de alimentos | `food_groups` | catálogo | Lácteos, gluten, maní, frutos secos, mariscos, huevo, soya, pescado, carnes, cereales, frutas…: sirve para las alergias de la bienvenida y para buscar. | NUT-11, SIS-08 paso 4 |
-| Receta | `recipes` | personal | Nombre, porciones que rinde, peso total cocido (opcional), notas, origen (manual o propuesta del coach). Una receta de 1 porción es un combo. | NUT-04 |
-| Ingrediente | `recipe_ingredients` | personal | Alimento (en su versión cruda o cocida), cantidad, unidad escrita, gramos. El factor de cocción del alimento da el peso de la receta cocida. | NUT-04 |
+| Receta | `recipes` | personal | Nombre, notas, origen (manual o propuesta del coach), activa y, si es una variante, la receta de la que salió ("Guardar como receta nueva", D-38). Lo que cambia al editar (ingredientes y porciones) vive en su versión. Una receta de 1 porción es un combo. | NUT-04, D-38 |
+| Versión de receta | `recipe_versions` | personal | Receta, vigente desde y hasta, porciones que rinde (el rendimiento). No se ve en pantalla: el usuario ve una sola receta. Editarla cierra la versión vigente y abre otra; un alimento en comida apunta a la versión que regía al agregarlo, así los días pasados no cambian, y al editar, lo programado de hoy en adelante pasa a la versión nueva (D-38). | NUT-04, D-38 |
+| Ingrediente | `recipe_ingredients` | personal | Versión de receta, alimento en su versión cruda o cocida (el selector de la receta, con "Crudo" de fábrica), cantidad, unidad escrita, gramos. Sin peso de la olla ni factor de cocción: los nutrientes de la receta son la suma de sus ingredientes (D-38). | NUT-04, D-38 |
 | Comida del día (configuración) | `meal_slots` | personal | Las comidas que el usuario tiene (desayuno, media mañana, almuerzo, merienda y cena de fábrica, D-37): nombre, orden, hora habitual, activa. Se cambia en Ajustes. | NUT-02 |
 | Comida | `meals` | personal | Fecha local, comida del día a la que pertenece, hora real (automática y editable), origen (manual, copia de otro día, copia de la semana, plan del coach), plan al que pertenece, notas. No guarda estado (D-37): lo que queda en la comida cuenta como comido; una comida programada de hoy que no se tocó empieza a contar al pasar la hora habitual de su comida del día. | NUT-02, NUT-10, NUT-05 |
-| Alimento en comida | `meal_items` | personal | Alimento (en su versión cruda o cocida) **o** receta, cantidad, unidad escrita (g, kg, lb, oz, ml, L o porción casera), gramos calculados, porciones si es receta, orden. Quitar un alimento lo borra (con lápida); la copia de lo programado no cambia. | NUT-02, NUT-04, NUT-09 |
-| Preferencia de alimento | `food_preferences` | personal | Alimento **o** grupo, tipo (preferido, evitar), motivo (gusto, alergia, intolerancia, alcance local), origen (bienvenida, manual, despensa precargada), notas. | NUT-11, D-35 |
+| Alimento en comida | `meal_items` | personal | Alimento (en su versión cruda o cocida) **o** versión de receta, cantidad, unidad escrita (g, kg, lb, oz, ml, L o porción casera), gramos calculados, porciones si es receta (una receta solo se agrega en porciones, D-38), orden. Quitar un alimento lo borra (con lápida); la copia de lo programado no cambia. | NUT-02, NUT-04, NUT-09 |
+| Preferencia de alimento | `food_preferences` | personal | Alimento **o** grupo, tipo (preferido, evitar), motivo (gusto, alergia, intolerancia, alcance local), origen (bienvenida, manual, despensa precargada), notas. Evitar por alergia o intolerancia es un bloqueo duro para el coach: no lo propone aunque se pida, ni en una receta que lo contenga; por gusto, cede si el pedido lo nombra (D-38). | NUT-11, D-35, D-38 |
 | Objetivo nutricional | `nutrition_targets` | personal | Vigente desde y hasta, kcal del día, proteína, carbohidratos, grasa, porcentaje de las kcal del paseo que suma al día (50 % de fábrica), cómo se calculó (Katch-McArdle o Mifflin-St Jeor, nivel de actividad, ajuste por objetivo), origen (bienvenida, revisión de 6 semanas, propuesta del coach, manual). Cada revisión abre una fila nueva. | NUT-03, D-27, D-32 a D-34 |
 | Referencia DRI | `dri_references` | catálogo | Nutriente × sexo × rango de edad: valor y clase (objetivo o límite). Sodio 2,300 mg como límite fijo; azúcar añadida y grasa saturada son límite al 10 % de las kcal objetivo de cada persona (se calculan, D-37). | NUT-03 |
 | Tope máximo seguro (UL) | `upper_limits` | catálogo | Nutriente × sexo × rango de edad: tope diario (Institutos de Medicina / NIH) y si cuenta solo lo de suplementos y alimentos fortificados (magnesio, ácido fólico, niacina, vitamina E). El desglose avisa al 80 % y al pasarse. | NUT-03, D-37 |
 | Copia de lo programado | `planned_snapshots` | personal | Lo que tenía una comida o una toma de suplemento al programarse (a mano, copiada o por plan del coach): alimentos o suplementos, cantidades y gramos, cuándo se programó y su origen. No se ve en pantalla y no se edita; sirve para comparar la semana real contra el plan (criterio de salida de la Fase 4) y al coach para medir la adherencia. | NUT-10, NUT-05, D-37 |
-| Plan de comidas | `meal_plans` | personal | Pedido al coach: alcance (día, semana, mes), fechas, condiciones del pedido, estado (propuesto, aprobado completo, aprobado parcial, rechazado), propuesta de la que salió. Las comidas aprobadas quedan en el calendario apuntando al plan. | NUT-05, D-35 |
+| Plan de comidas | `meal_plans` | personal | Pedido al coach: alcance (día, semana, mes), fechas desde y hasta, condiciones del pedido, estado (propuesto, aprobado completo, aprobado parcial, rechazado), propuesta de la que salió, modelo que lo generó. Las comidas y tomas aprobadas quedan en el calendario apuntando al plan. Un plan de mes son 28 días hechos de 2 semanas tipo: las semanas tipo viven solo en el borrador de la propuesta y al aprobar se crean las comidas de cada día, independientes y editables. No hay entidad "semana tipo" (D-38). | NUT-05, D-35, D-38 |
 
-**Calculado, no guardado:** si una comida o una toma ya cuenta (por la hora habitual, D-37) y lo programado pendiente de hoy ("Con lo programado"); kcal y macros de cada comida y del día (gramos × contenido por 100 g, más las tomas de suplementos); nutrientes de una receta (desde sus ingredientes) y de una porción de receta; el objetivo del día (objetivo vigente de ese día + porcentaje de las kcal del paseo registrado, repartido en la proporción de macros del día); límites de azúcar añadida y grasa saturada (10 % de las kcal objetivo); avisos de tope (80 % y pasado) y de "Faltan datos"; fibra objetivo (14 g por 1,000 kcal); columnas Total, Objetivo y Restan; alimentos frecuentes y recientes con su porción habitual y la última elección crudo o cocido (desde el historial de "alimento en comida"); lo que el coach lee de una etiqueta antes de confirmarse (vive en la propuesta).
+**Calculado, no guardado:** si una comida o una toma ya cuenta (por la hora habitual, D-37) y lo programado pendiente de hoy ("Con lo programado"); kcal y macros de cada comida y del día (gramos × contenido por 100 g, más las tomas de suplementos); nutrientes de una receta (desde los ingredientes de su versión vigente, o de la versión que usó cada comida) y de una porción de receta; la semana tipo (1 o 2) de cada semana de un plan de mes, desde su fecha de inicio; si un alimento o una receta choca con la lista de evitar (por alimento o por grupo, D-38); el objetivo del día (objetivo vigente de ese día + porcentaje de las kcal del paseo registrado, repartido en la proporción de macros del día); límites de azúcar añadida y grasa saturada (10 % de las kcal objetivo); avisos de tope (80 % y pasado) y de "Faltan datos"; fibra objetivo (14 g por 1,000 kcal); columnas Total, Objetivo y Restan; alimentos frecuentes y recientes con su porción habitual y la última elección crudo o cocido (desde el historial de "alimento en comida"); lo que el coach lee de una etiqueta antes de confirmarse (vive en la propuesta).
 
 ## 7. Suplementos (SUP)
 
@@ -502,12 +508,13 @@ erDiagram
     numero dosis
     texto unidad_dosis
     enum momento
+    enum momento_sin_entreno
     fecha vigente_desde
   }
   TOMA["Toma"] {
     fecha instante
     fecha fecha_local
-    enum estado
+    enum origen
   }
   COMPRA["Compra"] {
     fecha fecha
@@ -525,11 +532,11 @@ erDiagram
 | --- | --- | --- | --- | --- |
 | Suplemento | `supplements` | catálogo + propios | Nombre (whey, creatina, vitamina D3, omega-3, magnesio, zinc, cafeína), forma (polvo, cápsula, tableta, líquido), unidad de dosis (g, mg, UI, cápsula), stock actual y umbral de alerta (SUP-03), notas, dueño si es propio. | SUP-01, SUP-03 |
 | Aporte por dosis | `supplement_nutrients` | catálogo + propios | Suplemento × nutriente: cantidad por unidad de dosis. Usa el mismo catálogo de nutrientes que los alimentos. | SUP-02 |
-| Pauta de suplemento | `supplement_regimens` | personal | Suplemento, dosis, momento (desayuno, pre-entreno, post-entreno, con comidas, antes de dormir, hora fija), días de la semana, vigente desde y hasta, activa, origen. Las pautas activas son los "suplementos actuales" del perfil. | SUP-01, SIS-09 |
-| Toma | `supplement_intakes` | personal | Pauta, instante, fecha local, dosis real, estado (tomada, saltada), dispositivo. Suma su aporte al día. Con D-37 las tomas programadas del día siguen la regla de las comidas: cuentan al pasar su hora salvo que se quiten; el whey (como todo lo que viene en pote) es una toma y su proteína y kcal suman al día. | SUP-02, D-37 |
+| Pauta de suplemento | `supplement_regimens` | personal | Suplemento, dosis, momento (desayuno, pre-entreno, post-entreno, con comidas, antes de dormir, hora fija), días de la semana, momento alterno para los días sin entreno ("sin entreno: con la media mañana", D-38), vigente desde y hasta, activa, origen. Cambiar dosis, momento o días cierra la fila y abre otra; los días pasados no cambian. Las pautas activas son los "suplementos actuales" del perfil. Un plan del coach no crea ni cambia pautas: eso es otra propuesta (D-38). | SUP-01, SIS-09, D-38 |
+| Toma | `supplement_intakes` | personal | Pauta, instante (hora programada o real), fecha local, dosis real, origen (pauta, plan del coach, manual), plan al que pertenece si la ubicó un plan, dispositivo. Sin estado tomada o saltada (D-38): las tomas de cada día se crean desde las pautas activas o al aprobar un plan, cuentan al pasar su hora salvo que se quiten, y quitar una la borra con lápida. Suma su aporte al día. Con D-37 las tomas programadas del día siguen la regla de las comidas: cuentan al pasar su hora salvo que se quiten; el whey (como todo lo que viene en pote) es una toma y su proteína y kcal suman al día. | SUP-02, D-37, D-38 |
 | Compra | `supplement_purchases` | personal | Suplemento, fecha, cantidad comprada, precio, tienda. Sube el stock; cada toma lo baja. | SUP-03 |
 
-**Calculado, no guardado:** dosis pendientes del día (pautas activas sin toma), aporte del día (tomas × aporte por dosis), alerta de stock bajo y recordatorio a la hora de cada toma (se escriben como avisos cuando se disparan; con D-37 no hay "dosis olvidada": lo programado que no se quita cuenta como tomado).
+**Calculado, no guardado:** dosis pendientes del día (tomas de hoy cuya hora no ha pasado), aporte del día (tomas × aporte por dosis), alerta de stock bajo y recordatorio a la hora de cada toma (se escriben como avisos cuando se disparan; con D-37 no hay "dosis olvidada": lo programado que no se quita cuenta como tomado).
 
 ## 8. Cardio (CAR)
 
@@ -693,7 +700,7 @@ erDiagram
 | Conversación | `conversations` | personal | Título, inicio, última actividad, estado (abierta, archivada), modelo con el que empezó, tokens y costo acumulados. | COA-01 |
 | Mensaje | `messages` | personal | Rol (usuario, coach, sistema), contenido, instante, modelo, tokens, estado (enviado, en cola sin conexión, fallido), embedding para la búsqueda semántica (ADR 0021). | COA-01, COA-02 |
 | Llamada a herramienta | `tool_calls` | personal | Mensaje, nombre de la herramienta, argumentos, resultado resumido y qué datos usó (rango de fechas, entidades), duración. Es lo que permite al coach "decir qué datos usó" y a la tarjeta decir "Revisando tus sesiones…". | COA-01, O3 |
-| Propuesta | `proposals` | personal | Toda escritura del coach: tipo (rutina, sesión, plan de comidas, comida, receta, objetivo nutricional, paseo desde captura, alimento desde etiqueta, cambio de perfil o de medidas por re-pregunta), borrador estructurado, mensaje de origen, estado (pendiente, aprobada, aprobada en parte, rechazada, caducada), fecha de decisión, registros creados al aprobar. | COA-04, NUT-05, NUT-12, CAR-01, COA-05 |
+| Propuesta | `proposals` | personal | Toda escritura del coach: tipo (rutina, sesión, plan de comidas, comida, receta, objetivo nutricional, paseo desde captura, alimento desde etiqueta, cambio de perfil o de medidas por re-pregunta), borrador estructurado, mensaje de origen, estado (pendiente, aprobada, aprobada en parte, rechazada, caducada), fecha de decisión, registros creados al aprobar. En un plan de comidas, el borrador guarda las semanas tipo y cada comida con su decisión (aprobada o descartada); "Otra opción" reemplaza una sola comida del borrador (D-38). | COA-04, NUT-05, NUT-12, CAR-01, COA-05 |
 | Memoria del coach | `coach_memories` | personal | Tipo (decisión, preferencia, hecho, resumen semanal), texto ("mantener face pull"), fecha, origen (mensaje, revisión, manual), vigente, embedding. | COA-02, ADR 0006, ADR 0021 |
 | Revisión semanal | `weekly_reviews` | personal | Semana, resumen, hallazgos, métricas de la semana en el momento de la revisión, estado, avisos y memorias que generó. La corre el job semanal. | COA-03 |
 | Re-pregunta periódica | `periodic_questions` | personal | Tema (cinta, actividad, salud y lesiones), cada cuántos días (28 o 90), última respuesta, próxima fecha, activa. La respuesta llega como propuesta que actualiza perfil, condiciones o mediciones. | COA-05 |
@@ -718,7 +725,8 @@ El panel del día no guarda nada propio: lee sesión de hoy, comidas, tomas pend
 | Meta por fuerza (OBJ) | Ejercicio (GYM) | La meta apunta a un ejercicio; el récord personal la cumple |
 | Hito (OBJ) | Récord personal (GYM) | Un récord nuevo genera un hito |
 | Paseo (CAR) | Objetivo nutricional (NUT) | El día del paseo, el objetivo de kcal sube con el porcentaje configurado |
-| Sesión programada (GYM) | Plan de comidas (NUT) | El coach reparte carbohidratos alrededor de los entrenos programados |
+| Sesión programada (GYM) | Plan de comidas (NUT) | El coach reparte carbohidratos alrededor de los entrenos programados; al mover un entreno, la hoja de Gym puede intercambiar las comidas del plan entre los dos días (D-38) |
+| Plan de comidas (NUT) | Toma (SUP) | Al aprobar un plan, las tomas de las pautas existentes se ubican en cada día y apuntan al plan (D-38) |
 | Toma (SUP) | Desglose del día (NUT) | El aporte por dosis se suma en una fila propia "Suplementos", fuera de las comidas |
 | Objetivo principal (OBJ) y perfil (SIS) | Objetivo nutricional (NUT) | Tipo de objetivo, % de grasa, peso y actividad fijan kcal y proteína (paso 7 de la bienvenida y cada revisión) |
 | Preferencia de alimento (NUT) | Bienvenida (SIS) | Las alergias del paso 4 se guardan como preferencias "evitar" sobre un grupo |
@@ -749,8 +757,8 @@ El panel del día no guarda nada propio: lee sesión de hoy, comidas, tomas pend
 | NUT-01 | Alimento, Nutriente, Contenido por 100 g, Porción casera, Grupo de alimentos |
 | NUT-02, NUT-09 | Comida del día (configuración), Comida, Alimento en comida, Alimento (versión cruda o cocida) |
 | NUT-03 | Objetivo nutricional, Referencia DRI, Tope máximo seguro (UL), Nutriente, Toma |
-| NUT-04 | Receta, Ingrediente |
-| NUT-05 | Plan de comidas, Propuesta, Comida |
+| NUT-04 | Receta, Versión de receta, Ingrediente |
+| NUT-05 | Plan de comidas, Propuesta, Comida, Toma |
 | NUT-10 | Comida (origen copia o plan), Copia de lo programado, Toma |
 | NUT-11 | Preferencia de alimento, Grupo de alimentos |
 | NUT-12 | Alimento (fuente etiqueta), Porción casera, Archivo adjunto, Propuesta, Llamada al modelo |
@@ -775,7 +783,7 @@ El panel del día no guarda nada propio: lee sesión de hoy, comidas, tomas pend
 | RNF-03, RNF-04 | UUID de cliente, Dispositivo, Evento de sesión, Historial de cambios, lápidas |
 | RNF-11 | Llamada al modelo, Presupuesto de IA |
 
-Total: 75 entidades (10 de catálogo, 8 de catálogo con propios, 57 personales). La versión 1.0 aprobada con D-36 tenía 73; D-37 suma Copia de lo programado y Tope máximo seguro (UL).
+Total: 76 entidades (10 de catálogo, 8 de catálogo con propios, 58 personales). La versión 1.0 aprobada con D-36 tenía 73; D-37 suma Copia de lo programado y Tope máximo seguro (UL); D-38 suma Versión de receta.
 
 ## 14. Decisiones de modelado (aprobadas por Francis el 19-oct-2026)
 
@@ -790,7 +798,7 @@ Las 18 se propusieron como iniciativas del arquitecto y Francis las aprobó toda
 7. **Rutina con orden de rotación, sin entidad "programa".** La rotación A → B → C es un número en la rutina y "la siguiente" se deduce de la última sesión hecha. La semana tipo (lunes A, miércoles B, viernes C) no se guarda: se programa en el calendario y se copia la semana anterior. Si entran los ciclos de entrenamiento (backlog), ahí nacerá la entidad programa.
 8. **Cita y análisis de sangre son la misma entidad con estado.** La cita del calendario es un análisis "programado" con su preparación y recordatorio; al cargar los resultados pasa a "hecho". No hay dos registros para una misma extracción.
 9. **Suplementos con su propio aporte por dosis, separados de los alimentos.** Comparten el catálogo de nutrientes, y la toma suma al día en una fila "Suplementos" del desglose, fuera de las comidas. Regla (D-37): lo artificial o en pote (whey, creatina, vitaminas) es suplemento y se registra como toma; sus nutrientes suman al día y el coach cuenta la proteína del whey al repartir las tomas. El café es alimento. Como el whey ya no está en la despensa de preferidos (Anexo A.7) ni se programa dentro de una comida, se quita el aviso de producto duplicado.
-10. **Crudo y cocido como dos versiones enlazadas del mismo alimento** (cambiado por D-37). Cada versión es su propio registro con sus valores medidos (USDA e INCAP traen los dos), y el alimento apunta a su otra versión. La búsqueda muestra uno solo con el selector "Crudo · Cocido", así el catálogo no se ve doble. El factor de cocción queda para las recetas. La propuesta original (un factor por alimento y una marca por registro) se descartó porque un factor estima y el registro medido es exacto.
+10. **Crudo y cocido como dos versiones enlazadas del mismo alimento** (cambiado por D-37). Cada versión es su propio registro con sus valores medidos (USDA e INCAP traen los dos), y el alimento apunta a su otra versión. La búsqueda muestra uno solo con el selector "Crudo · Cocido", así el catálogo no se ve doble. Las recetas tampoco usan factor: cada ingrediente elige su versión cruda o cocida (D-38). La propuesta original (un factor por alimento y una marca por registro) se descartó porque un factor estima y el registro medido es exacto.
 11. **Objetivo nutricional con vigencia y el porcentaje del paseo dentro.** Cada revisión de 6 semanas (o propuesta del coach aprobada) abre una fila nueva; así el desglose de un día pasado usa el objetivo que regía ese día. El 50 % de las kcal del paseo es un parámetro de esa fila, que el coach revisa.
 12. **Metas intermedias, por medida y por fuerza en una sola entidad "meta"** con clase, y los hitos apuntan a una meta o a un récord. Evita tres tablas casi iguales y un hito con tres orígenes distintos.
 13. **Avisos del coach y del sistema en una sola entidad.** Consejos diarios, alertas de tendencia, hitos, recordatorio de toma, stock bajo, sync fallido y sesión cerrada sola son avisos con origen y tipo; el panel del día los lee de un solo sitio.
@@ -810,11 +818,19 @@ Cambios con D-37 (revisión del flujo 3, 19-oct-2026):
 - Un nutriente sin dato no es 0; azúcar añadida y grasa saturada se calculan al 10 % de las kcal objetivo.
 - Comidas de fábrica: desayuno, media mañana, almuerzo, merienda y cena.
 
+Cambios con D-38 (revisión del flujo 4, 26-oct-2026):
+
+- Entidad nueva **Versión de receta** (`recipe_versions`): editar una receta abre una versión que no se ve; los días pasados apuntan a la suya y no cambian. "Guardar como receta nueva" crea otra receta que recuerda de cuál salió.
+- La receta pierde el peso total cocido y el alimento, el factor de cocción: cada ingrediente elige su versión cruda o cocida y la receta se reparte en porciones. Una receta solo se agrega en porciones.
+- El plan de mes no guarda semanas tipo: viven en el borrador de la propuesta y al aprobar se crean los 28 días. La propuesta guarda la decisión por comida y "Otra opción" reemplaza una comida del borrador.
+- La pauta suma un momento alterno para los días sin entreno. La toma pierde el estado tomada o saltada y gana origen y plan: quitarla la borra con lápida.
+- Evitar por alergia o intolerancia es un bloqueo duro para el coach; por gusto, cede si el pedido lo nombra.
+
 ## 15. Lo que queda para la Fase 1 (modelo lógico y físico)
 
 - Columnas, tipos y escalas de cada entidad (por ejemplo, la precisión de kg para que 45 lb → kg → 45.0 lb no cambie, ADR 0023).
 - Claves primarias (UUID), foráneas y restricciones (una sola preferencia por usuario, un objetivo activo por usuario, cinco zonas por paseo).
-- Normalización de las relaciones "alimento o receta" y "alimento o grupo" (dos claves opcionales con restricción, o una tabla por caso).
+- Normalización de las relaciones "alimento o versión de receta" y "alimento o grupo" (dos claves opcionales con restricción, o una tabla por caso).
 - Políticas RLS por tabla, roles de Postgres y usuario de la aplicación con permisos mínimos.
 - Índices para las consultas del coach y de los gráficos (por usuario y fecha; por usuario, tipo de medida y fecha; por usuario, ejercicio y fecha).
 - Particiones por fecha para las series de tiempo grandes (eventos de sesión, muestras de FC, llamadas al modelo) si el volumen lo justifica.

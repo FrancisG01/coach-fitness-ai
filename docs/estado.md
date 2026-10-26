@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Última actualización: 26-oct-2026 (mockups del flujo 3 aprobados)
+Última actualización: 26-oct-2026 (revisión del flujo 4, D-38)
 
 ## Fase actual: 0 (fundaciones)
 
@@ -41,7 +41,7 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 - D-20 / ADR 0020: servidor Oracle. Carpeta `infra/` para configuración de servidores.
 - Claude Code solo puede `ssh oracle` y `scp … oracle:`; lo que toca el acceso SSH lo ejecuta Francis con un script preparado. Llave `~/.ssh/coach_oracle`, alias `oracle` y `oracle-deploy`.
 - Dirección B2 confirmada: acento de fábrica Caribe, modo según el sistema, nombre provisional "Coach Fitness AI" (casilla marcada en la sección 21 del plan).
-- Dependabot ignora los saltos de versión mayor en npm y uv; PRs #3 (`@types/node` 26) y #4 (TypeScript 7) cerrados.
+- Dependabot: `main` exige rama al día; sus PRs se fusionan de a uno con `gh api -X PUT repos/FrancisG01/coach-fitness-ai/pulls/<n>/update-branch` + `gh pr checks <n> --watch` + merge (el `gh` local no trae `pr update-branch`). Ignora los saltos de versión mayor en npm y uv; PRs #3 (`@types/node` 26) y #4 (TypeScript 7) cerrados.
 - Cada cambio entra por rama + PR; Francis fusiona con `gh pr merge <n> --squash --delete-branch`.
 
 ## Siguiente (Fase 0, un paso a la vez)
@@ -57,9 +57,10 @@ Criterio de salida: repo compila, CI en verde, Francis aprueba el PRD y el dise�
 9. **Flujo 10 (bienvenida) en curso, rama `docs/flujo-10-bienvenida`.** Revisión (D-32, D-33) hecha. Diagrama, guía, 7 ilustraciones (`docs/diseno/ilustraciones/bienvenida/`) y mockups móvil y web en `flujo-10-bienvenida.html` (https://claude.ai/artifact/6MH9WZLk7uhqDrGhPpAbNb), aprobados. Prototipo `flujo-10-bienvenida-prototipo.html` (https://claude.ai/artifact/XdjWPAwfD5RCF92cR486Dw) aprobado con sus 8 decisiones (D-34, plan v1.13, PRD v1.10). Campos tipados aplicados (fecha con máscara y selector propio, números filtrados, hora hh:mm) y regla «The Typed Field Rule» en DESIGN.md; las 6 decisiones del selector y los campos, aprobadas. Fusionado (PR #20).
 10. Nutrición ampliada (D-35) fusionada (PR #21): plan v1.14, PRD v1.11, DESIGN.md. Los flujos 3 y 4 se diseñan con D-35.
 11. **Modelo conceptual de la BD aprobado** (D-36, ADR 0025, plan v1.15; hecho con Fable 5.1; PR de `docs/modelo-conceptual-bd`): `docs/database/modelo-conceptual.md` (fuente, Mermaid por módulo) y su visor `modelo-conceptual.html` (https://claude.ai/artifact/Rg21WKNtrySEdzHNUkFZfX). 73 entidades en 9 módulos, patrones transversales, trazabilidad requisito → entidad y las 18 decisiones de modelado, todas aprobadas el 19-oct-2026. Fusionado (PR #23).
-12. **Flujo 3 (registrar una comida) aprobado completo el 26-oct-2026** (D-37, plan v1.16, PRD v1.12, modelo conceptual 1.1 con 75 entidades; PR de `docs/flujo-3-comida`): diagrama, guía y mockups en `flujo-3-comida.html` (https://claude.ai/artifact/UwqsQHdANoK1pLwQQXs3Qc) y prototipo `flujo-3-comida-prototipo.html` (https://claude.ai/artifact/7fWP9qYCrKGN8kQ3mCHjWb). Ajustes tras probarlo en Android: botón + flotante con menú (Agregar a la comida de la hora / Crear alimento) en vez de la barra fija; avisos superpuestos sin mover el diseño (el modo gym conserva su ranura); hojas con campo se anclan arriba al tocarlo (no se detecta el teclado); barras de nutrientes de 4 px; pantalla nueva abre arriba; Restan: ícono solo con exceso > 5 %, proteína y fibra "Cumplido", límites sin tolerancia; la interfaz nunca nombra la infraestructura. **Siguiente:** flujo 4 (receta, calendario de comidas, preferidos y plan del coach), con Opus 5.5.
-13. Flujo 2: "Sentadilla búlgara mancuernas" y "por mancuerna" en pesos, republicado.
-14. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
+12. **Flujo 3 (registrar una comida) aprobado completo el 26-oct-2026** (D-37, plan v1.16, PRD v1.12, modelo conceptual 1.1 con 75 entidades; PR de `docs/flujo-3-comida`): diagrama, guía y mockups en `flujo-3-comida.html` (https://claude.ai/artifact/UwqsQHdANoK1pLwQQXs3Qc) y prototipo `flujo-3-comida-prototipo.html` (https://claude.ai/artifact/7fWP9qYCrKGN8kQ3mCHjWb). Ajustes tras probarlo en Android: botón + flotante con menú (Agregar a la comida de la hora / Crear alimento) en vez de la barra fija; avisos superpuestos sin mover el diseño (el modo gym conserva su ranura); hojas con campo se anclan arriba al tocarlo (no se detecta el teclado); barras de nutrientes de 4 px; pantalla nueva abre arriba; Restan: ícono solo con exceso > 5 %, proteína y fibra "Cumplido", límites sin tolerancia; la interfaz nunca nombra la infraestructura. Fusionado (PR #27).
+13. **Flujo 4 (crear receta o plan) en curso, rama `docs/flujo-4-receta-plan`.** Revisión aprobada (D-38, plan v1.17, PRD v1.13, modelo conceptual 1.2 con 76 entidades): recetas solo en porciones con crudo/cocido por ingrediente y versiones internas ("Guardar como receta nueva" = variante); copiar solo en comidas vacías y nunca en horas pasadas; plan de mes = 28 días materializados desde 2 semanas tipo; pantalla de revisión compartida con el flujo 7 ("Otra opción", "Aprobar 31 de 35"); suplementos: el plan solo ubica tomas, pauta con momento alterno sin entreno; alergia = bloqueo, gusto cede; "Mover también las comidas del plan"; MTB no se programa. Pollo guisado sigue como alimento; receta de ejemplo "Pechuga al horno con vegetales" (6 porciones); "Maní · alergia" solo de ejemplo (Francis sin alergias). Anexo A.7 unificado en 2,350 (P 172 / C 270 / G 65). **Siguiente:** diagrama y guía del flujo 4.
+14. Flujo 2: "Sentadilla búlgara mancuernas" y "por mancuerna" en pesos, republicado.
+15. Para la Fase 1 (del revisor, PR #5): despliegue automático desde el CI (llave propia y Tailscale en el runner); `Content-Security-Policy` y `Permissions-Policy` en el Caddyfile; despliegue atómico (carpeta versionada + enlace simbólico) sin reiniciar Caddy si no cambió el Caddyfile.
 
 ## Pendientes de Francis
 
