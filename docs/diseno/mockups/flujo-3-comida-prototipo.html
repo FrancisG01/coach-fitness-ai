@@ -712,6 +712,10 @@ mark { background: none; color: inherit; font-weight: 650; }
 @keyframes sube { from { transform: translateY(var(--e5)); opacity: 0; } }
 @keyframes sube-poco { from { transform: translateY(var(--e2)); opacity: 0; } }
 @keyframes funde { from { opacity: 0; } }
+/* el + flotante tiene su franja al pie: la lista termina encima, así el botón nunca tapa una cifra (Never Cover);
+   a su izquierda, lo que resta del día */
+.proto .desliza.con-fab { padding-bottom: var(--e2); margin-bottom: calc(var(--tactil-gym) + var(--e2)); }
+.franja-fab { position: absolute; left: var(--e4); right: calc(var(--e4) + var(--tactil-gym) + var(--e3)); bottom: calc(var(--barra) + var(--e4)); height: var(--tactil-gym); display: flex; align-items: center; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
 @media (max-width: 440px) {
   body { padding-left: 0; padding-right: 0; padding-top: 0; }
   #v-telefono { width: 100%; }
@@ -1472,7 +1476,9 @@ function fabHtml() {
   if (enWeb() || S.pant !== "dia" || S.hoja) return "";
   const pre = preseleccion(), abierto = !!S.fab;
   const menu = abierto ? `<div class="velo-fab" data-acc="cerrar-fab"></div><div class="menu-fab" id="menu-fab" role="menu" aria-label="Agregar o crear alimento"><button type="button" role="menuitem" data-acc="agregar" data-v="${pre}">${ic("plus", 20)}Agregar ${COMIDAS[pre].art}</button><button type="button" role="menuitem" data-acc="crear">${ic("pencil", 20)}Crear alimento</button></div>` : "";
-  return `${menu}<button type="button" class="fab" id="fab" data-acc="fab" aria-label="Agregar o crear alimento" aria-haspopup="menu" aria-expanded="${abierto}"${abierto ? ' aria-controls="menu-fab"' : ""}>${ic("plus")}</button>`;
+  const restan = Math.round(objetivo("kcal") - totalesDia().t.kcal);
+  const franja = `<div class="franja-fab tnum">${restan >= 0 ? `Restan ${nf(restan)} de ${nf(objetivo("kcal"))} kcal` : `${nf(-restan)} kcal sobre ${nf(objetivo("kcal"))}`}</div>`;
+  return `${franja}${menu}<button type="button" class="fab" id="fab" data-acc="fab" aria-label="Agregar o crear alimento" aria-haspopup="menu" aria-expanded="${abierto}"${abierto ? ' aria-controls="menu-fab"' : ""}>${ic("plus")}</button>`;
 }
 
 // ------------------------------------------------------------ web
