@@ -453,7 +453,7 @@ Noche de gym (oscuro, caucho, Caribe), Laguna (oscuro, pizarra, Mar), Monte (osc
 
 **The Sentence Case Rule.** Etiquetas, botones y títulos en tipo oración, con tuteo y sin signos de exclamación. Nada de etiquetas en mayúsculas.
 
-**The Plain Voice Rule.** Los textos de interfaz dicen qué pasó y qué puedes hacer, en ese orden y sin culpar: "No se pudo guardar la comida. Revisa la conexión y vuelve a intentarlo". Los botones usan el verbo de la acción ("Guardar plan", "Borrar serie"), nunca "Aceptar" u "OK". Los títulos de confirmación son preguntas ("¿Borrar esta serie?"). Lo que está en curso termina en puntos suspensivos ("Subiendo 3 series…").
+**The Plain Voice Rule.** Los textos de interfaz dicen qué pasó y qué puedes hacer, en ese orden y sin culpar: "No se pudo guardar la comida. Revisa la conexión y vuelve a intentarlo". Los botones usan el verbo de la acción ("Guardar plan", "Borrar serie"), nunca "Aceptar" u "OK". Los títulos de confirmación son preguntas ("¿Borrar esta serie?"). Lo que está en curso termina en puntos suspensivos ("Subiendo 3 series…"). La interfaz nunca nombra la infraestructura (Tailscale, Oracle, servidor, VPN): dice "tu conexión".
 
 ## Layout
 

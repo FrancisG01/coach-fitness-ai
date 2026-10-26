@@ -1,6 +1,6 @@
 ---
 name: flujo-3-comida
-description: Flujo 3 (registrar una comida, D-37): piezas 1 y 2 entregadas el 19-oct-2026 como artefacto sin doctype, pendientes de aprobar
+description: Flujo 3 (registrar una comida, D-37): piezas 1-2 aprobadas el 19-oct-2026; pieza 3 (mockups móvil y web) entregada, 12 decisiones nuevas por confirmar
 metadata:
   type: project
 ---
@@ -11,5 +11,7 @@ Cifras del ejemplo (lunes 19-oct, 1:18 p. m.): antes del almuerzo 862 kcal; almu
 
 Resumen Total/Objetivo/Restan: columnas 56/58/80 px con gap 4 y padding 12 para que quepan "Carbohidratos g" y "Cumplido".
 
-**Why:** las 12 decisiones de la sección "Por confirmar" siguen pendientes de Francis.
+Piezas 1-2 aprobadas con sus 12 decisiones (19-oct). Pieza 3: `f3_mock.py` + `f3_mock.css` (ejecutado con exec desde gen_flujo3.py, que ahora también toma el CSS web de flujo-1). Web: buscar/cantidad/crear en un panel en la columna derecha (no diálogo), comida destino con borde de acción. El detector marcó "monotonous-spacing" por una regla `gap: 2px` en el CSS: evitar valores sueltos fuera de la escala.
+
+**Why:** las 12 decisiones nuevas de "Por confirmar" (pieza 3) siguen pendientes de Francis.
 **How to apply:** reutiliza estas cifras en los mockups de alta fidelidad y el prototipo del flujo 3. Ver [[verificacion-mockups]].
