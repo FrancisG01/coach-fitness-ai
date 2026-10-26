@@ -791,7 +791,7 @@ mark { background: none; color: inherit; font-weight: 650; }
     <ol>
       <li><b>El almuerzo:</b> en el teléfono, el + de abajo y Agregar al almuerzo (en la web, el botón de la cabecera); toca + en arroz, pollo guisado y aguacate, escribe «habichuelas», elige la primera, Agregar y Listo. El día queda en 1,539 kcal.</li>
       <li><b>La cantidad:</b> chips de unidad con sus gramos, decimales según la unidad, ¼ ½ ¾ y Crudo · Cocido en arroz, habichuelas y pechuga de pollo.</li>
-      <li><b>Lo programado:</b> la X de la merienda o la cena, con Deshacer; toca un alimento para editarlo. Con la hora simulada en 9:30&nbsp;p.&nbsp;m., la merienda y la cena ya cuentan.</li>
+      <li><b>Lo programado:</b> la X de la merienda o la cena, con Deshacer; toca un alimento para editarlo. Con la hora simulada en 6:30&nbsp;a.&nbsp;m. todo el día está programado (en contorno, con su X); a la 1:18&nbsp;p.&nbsp;m. ya cuentan el desayuno, la media mañana y sus tomas; a las 9:30&nbsp;p.&nbsp;m., también la merienda y la cena.</li>
       <li><b>Suplementos:</b> quita el zinc o agrega whey o magnesio desde su Agregar; en Ver todos los nutrientes aparecen los topes seguros.</li>
       <li><b>Crear alimento:</b> busca «maíz dulce», Crear alimento y Leer la etiqueta. Completa la porción en g y guárdalo; luego agrégalo. Con Etiqueta en «No se lee», el error.</li>
       <li><b>Día pasado:</b> la flecha izquierda lleva a ayer, con el paseo MTB; agrega o edita igual.</li>
@@ -804,7 +804,7 @@ mark { background: none; color: inherit; font-weight: 650; }
           <button type="button" data-v="web" aria-pressed="false">Web</button></div></div>
       <div class="control"><span class="t-detalle sec" id="lbl-hora">Hora simulada</span>
         <div class="segmento tnum" role="group" aria-labelledby="lbl-hora" id="ctl-hora">
-          <button type="button" data-v="420" aria-pressed="false">7:00 a.&nbsp;m.</button>
+          <button type="button" data-v="390" aria-pressed="false">6:30 a.&nbsp;m.</button>
           <button type="button" data-v="798" aria-pressed="true">1:18 p.&nbsp;m.</button>
           <button type="button" data-v="1290" aria-pressed="false">9:30 p.&nbsp;m.</button></div></div>
       <div class="control"><span class="t-detalle sec" id="lbl-red">Conexión</span>
@@ -987,21 +987,21 @@ const HOY = "2026-10-19", AYER = "2026-10-18";
 const FUENTE = { INCAP: "INCAP", USDA: "USDA", tuyo: "Tus alimentos" };
 
 // ------------------------------------------------------------ estado
-const CLAVE = "coach-proto-flujo-3-v1";
+const CLAVE = "coach-proto-flujo-3-v2";
 let S;
 function diasIniciales() {
   let n = 0;
   const e = (f, q, u, x = {}) => Object.assign({ id: "e" + (++n), f, q, u }, x);
   const dias = {
     [HOY]: { paseo: 0, comidas: [
-      { k: "desayuno", h: 425, items: [e("avena", 80, "g"), e("huevo", 3, "p0"), e("guineo", 1, "p0"), e("cafe", 1, "p0")] },
-      { k: "media", h: 610, items: [e("mango", 1, "p0")] },
+      { k: "desayuno", h: 420, prog: true, items: [e("avena", 80, "g"), e("huevo", 3, "p0"), e("guineo", 1, "p0"), e("cafe", 1, "p0")] },
+      { k: "media", h: 600, prog: true, items: [e("mango", 1, "p0")] },
       { k: "almuerzo", h: null, items: [] },
       { k: "merienda", h: 990, prog: true, items: [e("yogur", 200, "g"), e("pina", 1, "p0"), e("nueces", 15, "g")] },
       { k: "cena", h: 1170, prog: true, items: [e("tilapia", 150, "g"), e("yuca-h", 150, "g"), e("ensalada", 2, "p0")] },
     ], supl: [
-      e("d3", 1, "p0", { h: 425 }), e("creatina", 1, "p0", { h: 425 }),
-      e("whey", 1, "p0", { h: 610, nota: "con la media mañana" }), e("omega", 2, "p0", { h: 780, nota: "con el almuerzo" }),
+      e("d3", 1, "p0", { h: 420, prog: true }), e("creatina", 1, "p0", { h: 420, prog: true }),
+      e("whey", 1, "p0", { h: 600, prog: true, nota: "con la media mañana" }), e("omega", 2, "p0", { h: 780, prog: true, nota: "con el almuerzo" }),
       e("zinc", 1, "p0", { h: 1170, prog: true }), e("magnesio", 2, "p0", { h: 1350, prog: true }),
     ] },
     [AYER]: { paseo: 600, comidas: [
@@ -1021,7 +1021,7 @@ function diasIniciales() {
 function estadoInicial(vista) {
   const { dias, sig } = diasIniciales();
   return {
-    v: 1, vista: vista || "telefono", hora: 798, offline: false, etiquetaFalla: false,
+    v: 2, vista: vista || "telefono", hora: 798, offline: false, etiquetaFalla: false,
     dia: HOY, dias, sig, extra: {}, hab: {}, est: {}, comp: {},
     pant: "dia", panel: null, hoja: null, volverNutri: false,
     destino: "almuerzo", horaDestino: 798, q: "", sesion: [],
@@ -1037,7 +1037,7 @@ function cargar() {
   S = estadoInicial();
   try {
     const o = JSON.parse(localStorage.getItem(CLAVE) || "null");
-    if (o && o.v === 1 && o.dias && o.dias[HOY] && o.dias[AYER]) PERSISTE.forEach((k) => { if (o[k] !== undefined) S[k] = o[k]; });
+    if (o && o.v === 2 && o.dias && o.dias[HOY] && o.dias[AYER]) PERSISTE.forEach((k) => { if (o[k] !== undefined) S[k] = o[k]; });
   } catch (_) { /* datos viejos o sin acceso: se empieza de cero */ }
 }
 
