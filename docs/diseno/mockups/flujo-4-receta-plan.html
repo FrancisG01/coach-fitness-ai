@@ -473,7 +473,7 @@ mark { background: none; color: inherit; font-weight: 650; }
 }
 
 /* ajustes de anotaciones y columnas del resumen */
-.resumen { padding: var(--e3) var(--e3) var(--e4); grid-template-columns: minmax(0, 1fr) 56px 58px 80px; column-gap: var(--e1); }
+.resumen { padding: var(--e3) var(--e3) var(--e4); grid-template-columns: minmax(0, 1fr) 48px 58px 76px; column-gap: var(--e1); }
 .resumen .v .anota { top: -14px; right: -14px; }
 .resumen .v.res .anota { right: auto; left: -6px; }
 .resumen .cab .anota { top: -22px; right: 6px; }
@@ -804,7 +804,7 @@ mark { background: none; color: inherit; font-weight: 650; }
     </div>
   </header>
   <nav class="indice" aria-label="Secciones de la lámina">
-    <a href="#diagrama">Diagrama</a><a href="#guia">Guía paso a paso</a><a href="#movil">Mockups móvil</a><a href="#web">Mockups web</a><a href="#por-confirmar">Por confirmar</a>
+    <a href="#diagrama">Diagrama</a><a href="#guia">Guía paso a paso</a><a href="#movil">Mockups móvil</a><a href="#web">Mockups web</a><a href="#por-confirmar">Decisiones</a>
   </nav>
 
   <section class="pagina" id="diagrama" aria-labelledby="h-diagrama">
@@ -859,8 +859,8 @@ mark { background: none; color: inherit; font-weight: 650; }
 
   <section class="pagina" id="por-confirmar" aria-labelledby="h-confirmar">
     <header>
-      <h2 id="h-confirmar">Por confirmar</h2>
-      <p class="sec" style="max-width:60ch">Decisiones nuevas de los mockups (pieza 3), por orden de importancia.</p>
+      <h2 id="h-confirmar">Decisiones aprobadas</h2>
+      <p class="sec" style="max-width:60ch">Decisiones de los mockups (pieza 3), aprobadas el 26 de octubre. El resumen Total, Objetivo y Restan del teléfono pasa a columnas de 48, 58 y 76 px para que «Carbohidratos g» quepa en una línea (también en el flujo 3).</p>
     </header>
     <ul class="casos"><li><b>Web, revisión: cada comida muestra nombre, kcal y hora, sin sus alimentos:</b> En 7 columnas no caben los alimentos. Recomiendo que tocar la comida la despliegue en su columna, con «Otra opción» ahí; el teléfono sigue mostrando los alimentos.</li><li><b>Web, revisión: el total de cada columna cuenta solo lo marcado:</b> Desmarcar la cena del martes baja su total a 1,973 en el acto, para ver cómo queda el día antes de aprobar.</li><li><b>Web, calendario: el mes lleva el día elegido en un panel a la derecha:</b> Con «Abrir el día» y «Copiar este día», como el panel del día de Gym (flujo 2). Así se planea sin salir del mes.</li><li><b>Móvil, día futuro: «Copiar este día» como botón secundario arriba de las comidas:</b> El + flotante sigue siendo para agregar; copiar es una acción del día, no de una comida.</li><li><b>Hoja de copiar: «Hoy» primero y el mes con contorno en los días que ya tienen plan:</b> Igual que mover o copiar en Gym. Un día con plan se puede elegir: solo se llenan sus comidas vacías.</li><li><b>Preferidos: quitar con la X, sin confirmación:</b> Aviso «Pollo quitado de preferidos · Deshacer», como quitar un alimento en el flujo 3.</li><li><b>Modo reducido: el aviso se repite en la pantalla de revisión:</b> Una línea del coach arriba de la revisión, porque se puede llegar a ella desde el aviso sin pasar por el chat.</li></ul>
     <h3 class="sub">Aprobadas con la guía (26 de octubre)</h3>
