@@ -1,0 +1,2068 @@
+<title>Prototipo flujo 3</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Fase 0.5 · flujo 3, prototipo navegable de registrar una comida: buscar, cantidad, armar el plato, lo programado, suplementos, crear alimento desde la etiqueta, día pasado, sin conexión y desglose de nutrientes (NUT-02, 03, 09, 10, 12, SUP-02; D-37).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
+<style>
+/*
+  Fase 0.5 · flujo 3 "Registrar una comida" (NUT-02, 03, 09, 10, 12, SUP-02; D-37).
+  Pieza 4: prototipo navegable. Mismo CSS que flujo-3-comida.html (piezas 1 a 3). Todos los valores salen de docs/diseno/tokens.json; mismo bloque de
+  tokens y piezas que flujo-1-gym.html y flujo-10-bienvenida.html (aprobados el 18-oct-2026).
+*/
+:root {
+  /* neutros · claro (tiza) */
+  --fondo: #F3F4F1; --superficie: #FFFFFF; --elevado: #E9EBE7; --borde: #DADDD8;
+  --texto: #1E2228; --texto-2: #5B626B; --error: #C9333A; --dato-gris: #B5BBC2;
+  /* uso del acento · claro */
+  --accion: var(--a4); --accion-alta: var(--a5); --texto-accion: #FFFFFF; --texto-acento: var(--a4); --texto-acento-elevado: var(--a5);
+  --suave: color-mix(in srgb, var(--a3) 13%, var(--superficie));
+  --capa-hover: color-mix(in srgb, var(--texto) 6%, transparent);
+  --capa-pressed: color-mix(in srgb, var(--texto) 10%, transparent);
+  /* superposiciones · claro: velo texto al 40 %, hoja en superficie, aviso invertido con acción A2 */
+  --velo: color-mix(in srgb, #1E2228 40%, transparent);
+  --hoja: var(--superficie);
+  --aviso-accion: var(--a2);
+  /* serie única de datos (Three Series Rule: A5 en claro, A1 en oscuro) */
+  --dato-1: var(--a5);
+  /* acentos A1–A5 (por defecto Caribe) */
+  --a1: #CFE6F5; --a2: #7CC0EA; --a3: #3B95D1; --a4: #1F6FA8; --a5: #154E78;
+  /* tipografía */
+  --familia: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  /* espaciado, radios, trazos */
+  --e1: 4px; --e2: 8px; --e3: 12px; --e4: 16px; --e5: 24px; --e6: 32px; --e7: 48px;
+  --r-casilla: 6px; --r-control: 10px; --r-tarjeta: 16px; --r-pildora: 999px;
+  --t-borde: 1px; --t-sel: 2px;
+  --tactil: 48px; --tactil-gym: 56px; --barra: 64px;
+  --rapido: 120ms; --normal: 200ms; --lento: 320ms;
+  --estandar: cubic-bezier(0.2, 0, 0, 1); --entrar: cubic-bezier(0.05, 0.7, 0.1, 1); --salir: cubic-bezier(0.3, 0, 0.8, 0.15);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+    --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+    --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
+    --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+    --velo: color-mix(in srgb, #1B1E23 72%, transparent);
+    --hoja: var(--elevado);
+    --aviso-accion: var(--a4);
+    --dato-1: var(--a1);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+  --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+  --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
+  --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+  --velo: color-mix(in srgb, #1B1E23 72%, transparent);
+  --hoja: var(--elevado);
+  --aviso-accion: var(--a4);
+  --dato-1: var(--a1);
+  color-scheme: dark;
+}
+:root[data-accent="mar"]       { --a1: #C8EEEA; --a2: #6FD6CC; --a3: #22A99C; --a4: #157A70; --a5: #0F5850; }
+:root[data-accent="palma"]     { --a1: #CDEEDB; --a2: #6FD19B; --a3: #2FA866; --a4: #1E7D4A; --a5: #155A36; }
+:root[data-accent="mango"]     { --a1: #FCE7C2; --a2: #F7C062; --a3: #E89A1E; --a4: #9A5C06; --a5: #6E4307; }
+:root[data-accent="flamboyan"] { --a1: #FBD6CB; --a2: #F79A7E; --a3: #E8603C; --a4: #B6411F; --a5: #7E2C14; }
+:root[data-accent="uva"]       { --a1: #E3DBFA; --a2: #B4A2F2; --a3: #8466DB; --a4: #6446B8; --a5: #45307F; }
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--fondo); color: var(--texto);
+  font-family: var(--familia); font-size: 16px; line-height: 24px;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+:focus-visible { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.i { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.i.s16 { width: 16px; height: 16px; stroke-width: 2; }
+.i.s20 { width: 20px; height: 20px; }
+.i.s32 { width: 32px; height: 32px; }
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* tipografía (escala de tokens.json) */
+.t-pantalla { font-size: 25px; line-height: 30px; font-weight: 700; font-stretch: 85%; margin: 0; text-wrap: balance; }
+.t-seccion { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.t-detalle { font-size: 13px; line-height: 18px; font-weight: 500; }
+.t-boton { font-size: 15px; line-height: 20px; font-weight: 650; }
+.cifra { font-weight: 800; font-stretch: 62%; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.c-metrica { font-size: 32px; line-height: 32px; }
+.c-heroe { font-size: 56px; line-height: 52px; }
+.sec { color: var(--texto-2); }
+.acento { color: var(--texto-acento); }
+p { margin: 0; }
+
+/* ---------- teléfono ---------- */
+.telefono { width: 376px; padding: var(--e2); border-radius: var(--r-tarjeta); background: var(--borde); flex: none; }
+.pantalla { height: 780px; border-radius: var(--r-control); overflow: hidden; background: var(--fondo); display: flex; flex-direction: column; position: relative; }
+.estado { height: 28px; padding-top: var(--e1); flex: none; display: flex; align-items: center; justify-content: space-between; padding-inline: var(--e5); font-size: 13px; font-weight: 600; }
+.cuerpo { flex: 1; min-height: 0; overflow: hidden; padding: 0 var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e3); }
+.cuerpo > * { flex-shrink: 0; }
+.barra { height: var(--barra); flex: none; background: var(--superficie); border-top: var(--t-borde) solid var(--borde); display: grid; grid-template-columns: repeat(5, 1fr); }
+.pestana { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--texto-2); font-size: 13px; line-height: 16px; font-weight: 500; text-decoration: none; }
+.pestana .ovalo { width: 56px; height: 28px; border-radius: var(--r-pildora); display: grid; place-items: center; transition: background var(--rapido) var(--estandar); }
+.pestana:active .ovalo { background: var(--capa-pressed); }
+.pestana[aria-current="page"] { color: var(--texto-acento); font-weight: 650; }
+
+/* piezas comunes */
+.tarjeta { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e2); }
+.tarjeta.destacada { background: var(--suave); }
+.btn { min-height: var(--tactil); border-radius: var(--r-control); padding-inline: var(--e4); display: inline-flex; align-items: center; justify-content: center; gap: var(--e2); font-size: 15px; line-height: 20px; font-weight: 650; text-align: center; transition: background var(--rapido) var(--estandar), transform var(--rapido) var(--estandar), color var(--rapido) var(--estandar); }
+.btn.primario { background: var(--accion); color: var(--texto-accion); }
+.btn.primario:active { background: var(--accion-alta); transform: scale(0.97); }
+.btn.secundario { border: var(--t-borde) solid var(--texto-2); color: var(--texto); }
+.btn.secundario:active { background: var(--capa-pressed); }
+.btn.texto { color: var(--texto-acento); padding-inline: var(--e3); }
+.btn.texto:active { background: var(--capa-pressed); color: var(--accion-alta); }
+@media (hover: hover) and (pointer: fine) {
+  .btn.primario:hover { background: var(--accion-alta); }
+  .btn.secundario:hover { background: var(--capa-hover); }
+  .btn.texto:hover { background: var(--capa-hover); color: var(--accion-alta); }
+}
+.ancho { width: 100%; }
+.par { display: grid; grid-template-columns: 1fr 1fr; gap: var(--e3); }
+.lista { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; overflow: hidden; }
+.lista > * + * { border-top: var(--t-borde) solid var(--borde); }
+.fila { min-height: var(--tactil); padding: var(--e2) var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); width: 100%; }
+.fila .txt { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+button.fila:active { background: var(--capa-pressed); }
+.cabeza { display: flex; align-items: center; justify-content: space-between; gap: var(--e2); }
+.atras { width: 48px; height: 48px; display: grid; place-items: center; margin-left: -12px; border-radius: var(--r-pildora); }
+.atras:active, .icono-btn:active { background: var(--capa-pressed); }
+.icono-btn { width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--r-pildora); flex: none; }
+.carga { font-size: 20px; line-height: 24px; }
+.segmento { display: flex; background: var(--elevado); border-radius: var(--r-control); padding: var(--e1); gap: var(--e1); }
+.segmento button { min-height: 40px; padding-inline: var(--e3); border-radius: var(--r-casilla); color: var(--texto-2); flex: 1; text-align: center; position: relative; }
+/* el área táctil del segmento llega a 48 px con el relleno del contenedor */
+.segmento button::after { content: ""; position: absolute; inset: calc(-1 * var(--e1)) 0; }
+.segmento button[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.pildora { display: inline-flex; align-items: center; gap: var(--e1); min-height: 24px; padding-inline: var(--e2); border-radius: var(--r-pildora); background: var(--elevado); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.nota { display: flex; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.sinc { display: inline-flex; align-items: center; gap: var(--e1); color: var(--texto-2); }
+.error-linea { display: flex; align-items: center; gap: var(--e2); color: var(--error); font-size: 13px; line-height: 18px; font-weight: 500; }
+
+/* pestañas internas de Gym (móvil) */
+.sub-tabs { display: flex; overflow-x: auto; margin-inline: calc(-1 * var(--e4)); padding-inline: var(--e2); border-bottom: var(--t-borde) solid var(--borde); scrollbar-width: none; flex: none; }
+.sub-tab { text-decoration: none; display: inline-flex; align-items: center; min-height: var(--tactil); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; line-height: 20px; font-weight: 500; white-space: nowrap; border-bottom: var(--t-sel) solid transparent; flex: none; }
+.sub-tab:active { background: var(--capa-pressed); }
+.sub-tab[aria-current="page"] { color: var(--texto-acento); font-weight: 650; border-bottom-color: var(--accion); }
+
+/* semana (móvil) */
+.semana-lista > * { min-height: var(--tactil-gym); }
+.fila-dia { display: flex; align-items: center; gap: var(--e3); padding: var(--e1) var(--e4) var(--e1) var(--e3); width: 100%; text-align: left; }
+.fila-dia:active { background: var(--capa-pressed); }
+.fila-dia .dnum { width: 40px; display: flex; flex-direction: column; align-items: center; flex: none; }
+.fila-dia .dnum .n { width: 32px; height: 32px; border-radius: var(--r-pildora); display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.fila-dia.hoy .dnum .n, .fila-dia.hoy .dnum .t-detalle { color: var(--texto-acento); font-weight: 650; }
+.fila-dia[aria-pressed="true"] .dnum .n { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.fila-dia .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.fila-dia .txt .t-detalle { color: var(--texto-2); }
+.fila-dia .fin { display: flex; align-items: center; gap: var(--e2); color: var(--texto-2); }
+
+/* detalle de día */
+.dia-cab { display: flex; flex-direction: column; gap: var(--e1); }
+.dia-cab .volver { display: flex; align-items: center; gap: var(--e1); }
+.estado-dia { display: inline-flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.cifras { display: flex; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e1); }
+.cifras > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--e1); padding-inline: var(--e4); }
+.cifras .cifra { white-space: nowrap; }
+.cifras > div + div { border-left: var(--t-borde) solid var(--borde); }
+.cifras .cifra { font-size: 32px; line-height: 32px; }
+.cifras .unidad-c { font-size: 15px; font-weight: 650; font-stretch: 85%; color: var(--texto-2); }
+.record { flex-direction: row; align-items: center; gap: var(--e3); }
+.record .i { color: var(--texto-acento); }
+.record .txt { display: flex; flex-direction: column; }
+.vacio { display: flex; flex-direction: column; align-items: flex-start; gap: var(--e2); padding-block: var(--e5); color: var(--texto); }
+.vacio > .i { color: var(--texto-2); }
+.acciones { display: flex; flex-direction: column; gap: var(--e2); margin-top: auto; }
+.empuje { margin-top: auto; }
+
+/* asignar pesos */
+.peso-fila { min-height: 64px; padding: var(--e2) var(--e2) var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e2); }
+.peso-fila .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.peso-fila .txt .t-detalle { color: var(--texto-2); }
+.stepper { display: flex; align-items: center; gap: var(--e1); flex: none; }
+.stepper button { width: var(--tactil); height: var(--tactil); border-radius: var(--r-control); background: var(--elevado); display: grid; place-items: center; transition: background var(--rapido) var(--estandar); }
+.stepper button:active { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); }
+.stepper .valor { min-width: var(--barra); text-align: center; display: flex; flex-direction: column; align-items: center; line-height: 1; }
+.stepper .valor .cifra { font-size: 25px; line-height: 24px; }
+.stepper .valor .t-detalle { color: var(--texto-2); }
+.sube { color: var(--texto-acento); }
+
+/* hoja inferior y aviso */
+.velo { position: absolute; inset: 0; background: var(--velo); display: flex; flex-direction: column; justify-content: flex-end; z-index: 2; }
+.hoja { background: var(--hoja); border-top-left-radius: var(--r-tarjeta); border-top-right-radius: var(--r-tarjeta); padding: var(--e5) var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e4); }
+.hoja .mes .celda[aria-disabled="true"] { cursor: default; }
+.opcion-hoy { min-height: var(--tactil-gym); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); border-radius: var(--r-control); background: var(--elevado); border: var(--t-sel) solid transparent; width: 100%; text-align: left; }
+.opcion-hoy[aria-pressed="true"] { border-color: var(--accion); }
+.opcion-hoy .txt { flex: 1; display: flex; flex-direction: column; }
+.aviso { position: absolute; left: var(--e4); right: var(--e4); bottom: calc(var(--barra) + var(--e2)); background: var(--texto); color: var(--fondo); border-radius: var(--r-control); padding: var(--e1) var(--e1) var(--e1) var(--e4); min-height: var(--tactil-gym); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); z-index: 3; }
+.aviso .btn.texto { color: var(--aviso-accion); }
+.aviso .btn.texto:active { background: color-mix(in srgb, var(--fondo) 10%, transparent); }
+
+/* esqueleto */
+.esq { background: var(--elevado); border-radius: var(--r-casilla); }
+.esq.bloque { height: var(--e7); }
+@media (prefers-reduced-motion: no-preference) { .esq.pulso { animation: pulso 1600ms var(--estandar) infinite; } }
+@keyframes pulso { 50% { opacity: 0.5; } }
+
+/* título del calendario con número de semana */
+.cal-titulo { flex: 1; display: flex; flex-direction: column; align-items: center; }
+
+/* ---------- lámina ---------- */
+body { padding-block: var(--e6) var(--e7); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.lamina { max-width: 1560px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--e7); }
+.cabecera { display: flex; flex-wrap: wrap; gap: var(--e5); justify-content: space-between; align-items: end; }
+.cabecera h1 { font-size: 32px; line-height: 32px; font-weight: 800; font-stretch: 75%; margin: 0 0 var(--e2); text-wrap: balance; }
+.cabecera p { margin: 0; max-width: 62ch; color: var(--texto-2); }
+.controles { display: flex; flex-wrap: wrap; gap: var(--e4); }
+.control { display: flex; flex-direction: column; gap: var(--e1); }
+.controles .segmento button { flex: none; }
+.puntos { display: flex; gap: var(--e2); align-items: center; min-height: 48px; }
+.punto { width: 32px; height: 32px; border-radius: var(--r-pildora); background: var(--c); }
+.punto[aria-pressed="true"] { outline: var(--t-sel) solid var(--texto); outline-offset: 2px; }
+.indice { display: flex; flex-wrap: wrap; gap: var(--e2); }
+.indice a { color: var(--texto-acento); font-weight: 650; font-size: 15px; min-height: 48px; display: inline-flex; align-items: center; padding-inline: var(--e3); border-radius: var(--r-control); text-decoration: none; }
+.indice a:active { background: var(--capa-pressed); }
+@media (hover: hover) and (pointer: fine) { .indice a:hover { background: var(--capa-hover); } }
+
+.pagina { display: flex; flex-direction: column; gap: var(--e5); scroll-margin-top: var(--e5); }
+.pagina > header { display: flex; flex-direction: column; gap: var(--e2); border-top: var(--t-borde) solid var(--borde); padding-top: var(--e5); }
+.pagina h2 { font-size: 25px; line-height: 30px; font-weight: 800; font-stretch: 75%; margin: 0; }
+.pagina h3.sub { font-size: 20px; line-height: 26px; font-weight: 650; margin: var(--e3) 0 0; }
+.cambios { margin: 0; padding-left: 1.2em; color: var(--texto-2); max-width: 86ch; display: grid; gap: var(--e1); }
+.cambios strong { color: var(--texto); font-weight: 650; }
+.fila-telefonos { display: flex; flex-wrap: wrap; gap: var(--e6) var(--e4); }
+figure { margin: 0; display: flex; flex-direction: column; gap: var(--e3); width: 376px; }
+figcaption { display: flex; flex-direction: column; gap: 2px; font-size: 13px; line-height: 18px; color: var(--texto-2); max-width: 360px; }
+figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
+@media (max-width: 420px) { figure { zoom: 0.88; } }
+
+/* diagrama */
+.diagrama-envoltura { overflow-x: auto; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); }
+.diagrama { display: block; min-width: 1240px; width: 100%; height: auto; font-family: var(--familia); }
+.diagrama .nodo rect { fill: var(--elevado); stroke: var(--borde); stroke-width: 1; }
+.diagrama .nodo.inicio rect { fill: var(--suave); stroke: var(--accion); stroke-width: 2; }
+.diagrama .nodo.aviso rect { fill: var(--texto); stroke: none; }
+.diagrama .nodo.aviso .t1, .diagrama .nodo.aviso .t2 { fill: var(--fondo); }
+.diagrama .nodo.salud rect { fill: var(--superficie); stroke: var(--texto-2); stroke-dasharray: 4 4; }
+.diagrama .t1 { fill: var(--texto); font-size: 15px; font-weight: 650; }
+.diagrama .t2 { fill: var(--texto-2); font-size: 13px; font-weight: 500; }
+.diagrama .rama { fill: var(--texto-2); font-size: 13px; font-weight: 500; }
+.diagrama .flecha { fill: none; stroke: var(--texto-2); stroke-width: 1.75; }
+.diagrama .punta { fill: var(--texto-2); }
+.diagrama .paso circle { fill: var(--texto); }
+.diagrama .paso text { fill: var(--fondo); font-size: 13px; font-weight: 650; }
+.diagrama .estados rect { fill: var(--fondo); stroke: var(--borde); }
+.diagrama .estados .t1 { font-size: 15px; }
+.diagrama .fuerte { fill: var(--texto); font-weight: 650; }
+
+/* guía */
+.guia { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--e6) var(--e5); }
+.paso-guia { display: flex; flex-direction: column; gap: var(--e3); }
+.paso-guia .mini { zoom: 0.64; align-self: flex-start; }
+.paso-guia h3 { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.paso-guia ol { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--e2); }
+.paso-guia li { display: grid; grid-template-columns: 24px 1fr; gap: var(--e2); font-size: 15px; line-height: 20px; }
+.paso-guia li .num-a { width: 24px; height: 24px; border-radius: var(--r-pildora); background: var(--texto); color: var(--fondo); display: grid; place-items: center; font-size: 13px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.paso-guia .etapa { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.con-anota { position: relative; }
+.mini .lista { overflow: visible; }
+.anota { position: absolute; top: -10px; right: -6px; width: 28px; height: 28px; border-radius: var(--r-pildora); background: var(--texto); color: var(--fondo); border: var(--t-sel) solid var(--fondo); display: grid; place-items: center; font-size: 15px; line-height: 20px; font-weight: 650; font-variant-numeric: tabular-nums; z-index: 4; pointer-events: none; }
+.pestana .anota { top: 2px; right: 4px; }
+.sub-tab .anota { top: 2px; right: -4px; }
+
+
+
+/* series de datos de los macros (Three Series Rule: A5, A3, gris en claro; A1, A3, gris en oscuro) */
+:root { --dato-2: var(--a3); --dato-3: var(--dato-gris); }
+
+/* lámina */
+.cambios, .casos { max-width: 60ch; }
+.casos { display: grid; gap: var(--e2); color: var(--texto-2); margin: 0; padding-left: 1.2em; }
+.casos b { color: var(--texto); font-weight: 650; }
+.diagrama .nodo.pregunta rect { fill: var(--superficie); stroke: var(--texto-2); stroke-dasharray: 4 4; }
+.diagrama .titulo-alt { fill: var(--texto); font-size: 15px; font-weight: 650; }
+.diagrama .nodo.prog rect { fill: var(--fondo); stroke: var(--accion); stroke-width: 2; }
+.anota.izq { right: auto; left: -6px; }
+.anota.abajo { top: auto; bottom: -10px; }
+.anota.dentro { right: 4px; }
+
+/* aviso superpuesto al pie (Never Cover Rule): flota sobre la lista sin moverla ni reservar alto,
+   justo encima de las acciones fijas (el +, las pestañas, la barra del plato, el botón principal), sin taparlas */
+.ranura-aviso { position: absolute; left: var(--e4); right: var(--e4); bottom: calc(var(--barra) + var(--e3)); z-index: 3; display: flex; }
+.ranura-aviso:empty { display: none; }
+.ranura-aviso.sobre-fab { bottom: calc(var(--barra) + var(--e4) + var(--tactil-gym) + var(--e3)); }
+.ranura-aviso.sobre-acciones { bottom: calc(var(--tactil) + var(--e4) + var(--e3)); }
+.ranura-aviso .aviso { position: relative; left: auto; right: auto; bottom: auto; flex: 1; }
+.aviso .txt-av { flex: 1; font-size: 15px; line-height: 20px; }
+.unidad-c { font-size: 15px; line-height: 20px; font-weight: 650; font-stretch: 85%; color: var(--texto-2); }
+
+/* campos tipados y chips (flujo 10) */
+.campo { display: flex; flex-direction: column; gap: var(--e1); }
+.campo > .lbl { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.entrada { min-height: var(--tactil); background: var(--elevado); border-radius: var(--r-control); padding-inline: var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e2); position: relative; }
+.entrada .u { color: var(--texto-2); font-size: 15px; line-height: 20px; }
+.entrada.foco { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.entrada.error { outline: var(--t-sel) solid var(--error); outline-offset: calc(-1 * var(--t-sel)); }
+.entrada.vacia > span:first-child { color: var(--texto-2); }
+.chips { display: flex; flex-wrap: wrap; gap: var(--e3) var(--e2); }
+.chip { min-height: 36px; padding-inline: var(--e3); border-radius: var(--r-pildora); background: var(--elevado); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; display: inline-flex; align-items: center; position: relative; white-space: nowrap; transition: background var(--rapido) var(--estandar); }
+.chip::after { content: ""; position: absolute; inset: calc(-1 * var(--e2) + 2px) 0; }
+.chip:active { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); color: var(--texto); }
+.chip[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.chip .anota { top: -14px; right: -10px; }
+.entrada .anota { right: -10px; }
+
+/* ---------- Comida (flujo 3, D-37) ---------- */
+.desliza { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: var(--e3); overflow-x: visible; overflow-y: clip; padding-top: var(--e1); }
+.desliza > * { flex-shrink: 0; }
+.dia-nav { display: flex; align-items: center; gap: var(--e1); margin-inline: -12px; }
+.dia-nav .txt { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.dia-nav .t-seccion { font-size: 20px; }
+
+/* resumen del día: Total, Objetivo y Restan */
+.resumen { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e4) var(--e4); display: grid; grid-template-columns: minmax(0, 1fr) repeat(3, 70px); column-gap: var(--e2); align-items: baseline; position: relative; }
+.resumen .cab { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; text-align: right; padding-bottom: var(--e1); }
+.resumen .nom { font-size: 15px; line-height: 20px; min-width: 0; }
+.resumen .nom .u, .resumen .grupo-n .u { color: var(--texto-2); font-size: 13px; }
+.resumen .v { text-align: right; white-space: nowrap; display: flex; flex-direction: column; align-items: flex-end; position: relative; }
+.resumen .v .cifra { font-size: 20px; line-height: 24px; }
+.resumen .v .hasta { color: var(--texto-2); font-size: 13px; line-height: 14px; font-weight: 500; }
+.resumen .kcal .cifra { font-size: 25px; line-height: 26px; }
+.resumen .neg { display: inline-flex; align-items: center; gap: 2px; }
+.resumen .neg .i { color: var(--texto-2); }
+.resumen .ok { display: inline-flex; align-items: center; gap: 2px; font-size: 13px; line-height: 24px; font-weight: 650; }
+.resumen .ok .i { color: var(--texto-acento); }
+.resumen .linea { grid-column: 1 / -1; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; margin-top: calc(-1 * var(--e1)); padding-bottom: var(--e2); display: flex; align-items: center; gap: var(--e1); position: relative; }
+.resumen .linea.tope { color: var(--texto); }
+.resumen .linea.tope .i { color: var(--texto-2); }
+.resumen .grupo-n { grid-column: 1 / -1; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 650; padding-top: var(--e3); padding-bottom: var(--e1); border-top: var(--t-borde) solid var(--borde); margin-top: var(--e1); }
+.resumen .grupo-n:first-of-type { border-top: 0; margin-top: 0; padding-top: 0; }
+.resumen .pie-r { grid-column: 1 / -1; display: flex; justify-content: flex-start; margin: var(--e1) 0 calc(-1 * var(--e2)) calc(-1 * var(--e3)); }
+
+/* barra de progreso con tramo programado en contorno y marca de límite */
+.pista-n { grid-column: 1 / -1; position: relative; margin: var(--e1) 0 var(--e3); }
+.pista-n .p { height: var(--e1); border-radius: var(--r-pildora); background: var(--elevado); display: flex; overflow: hidden; }
+.pista-n .p i { display: block; height: 100%; flex: none; width: calc(var(--v) * 1%); background: var(--m, var(--accion)); }
+/* contorno = programado: el tramo pendiente es solo trazo */
+.pista-n .p i.prog { background: transparent; outline: var(--t-borde) solid var(--m, var(--accion)); outline-offset: calc(-1 * var(--t-borde)); border-radius: 0 var(--r-pildora) var(--r-pildora) 0; }
+.pista-n .lim { position: absolute; top: calc(-1 * var(--e1)); bottom: calc(-1 * var(--e1)); left: calc(var(--l) * 1%); width: var(--t-borde); background: var(--texto-2); }
+.pista-n .anota { top: -14px; }
+
+/* comidas del día */
+.comida { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; position: relative; }
+.comida > * + * { border-top: var(--t-borde) solid var(--borde); }
+/* contorno = programado: sin relleno, trazo neutro */
+.comida.programada { background: transparent; outline: var(--t-borde) solid var(--texto-2); outline-offset: calc(-1 * var(--t-borde)); }
+.comida-cab { padding: var(--e3) var(--e4); display: flex; align-items: flex-start; justify-content: space-between; gap: var(--e3); }
+.comida-cab .txt { display: flex; flex-direction: column; min-width: 0; }
+.comida-cab .t-seccion { display: flex; align-items: center; gap: var(--e2); }
+.comida-cab .t-detalle { color: var(--texto-2); display: inline-flex; align-items: center; gap: var(--e1); }
+.comida-cab .kc { text-align: right; white-space: nowrap; display: flex; flex-direction: column; align-items: flex-end; }
+.comida-cab .kc .cifra { font-size: 20px; line-height: 24px; }
+.comida-cab .kc .t-detalle { color: var(--texto-2); }
+.alimento { min-height: var(--tactil); padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); width: 100%; text-align: left; position: relative; }
+.alimento .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.alimento .txt .t-detalle { color: var(--texto-2); }
+.alimento .kc { white-space: nowrap; color: var(--texto); font-size: 15px; line-height: 20px; }
+.alimento.quitable { padding-right: var(--e1); }
+.alimento .icono-btn { margin-left: calc(-1 * var(--e2)); color: var(--texto-2); }
+button.alimento:active { background: var(--capa-pressed); }
+.comida-pie { padding: var(--e1) var(--e1); display: flex; }
+.comida-pie .btn.texto { gap: var(--e1); }
+.comida.vacia-c .comida-cab { padding-bottom: var(--e1); }
+.comida.vacia-c .comida-cab + .comida-pie { border-top: 0; }
+.estado-c { display: inline-flex; align-items: center; gap: var(--e1); }
+.m { width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); flex: none; }
+.m.prog { border: var(--t-sel) solid var(--accion); }
+.acciones-dia { display: grid; grid-template-columns: auto 1fr; gap: var(--e2); flex: none; }
+.ranura-aviso + .acciones-dia { margin-top: var(--e1); }
+.ver-todo { align-self: flex-start; margin-left: calc(-1 * var(--e3)); }
+
+/* botón flotante de Comida (móvil): un + que abre un menú con «Agregar a la comida de la hora» y «Crear alimento».
+   Plano como todo el sistema: relleno de acción y un anillo del color de fondo que lo separa del contenido, sin sombra. */
+.fab { position: absolute; right: var(--e4); bottom: calc(var(--barra) + var(--e4) + env(safe-area-inset-bottom, 0px)); width: var(--tactil-gym); height: var(--tactil-gym); border-radius: var(--r-pildora); background: var(--accion); color: var(--texto-accion); border: var(--t-sel) solid var(--fondo); display: grid; place-items: center; z-index: 4; transition: background var(--rapido) var(--estandar), transform var(--rapido) var(--estandar); }
+.fab:active { background: var(--accion-alta); transform: scale(0.97); }
+.fab .i { transition: transform var(--normal) var(--estandar); }
+.fab[aria-expanded="true"] .i { transform: rotate(45deg); }
+.velo-fab { position: absolute; inset: 0; background: var(--velo); z-index: 3; }
+.menu-fab { position: absolute; right: var(--e4); bottom: calc(var(--barra) + var(--e4) + var(--tactil-gym) + var(--e2) + env(safe-area-inset-bottom, 0px)); z-index: 4; min-width: 240px; background: var(--hoja); border-radius: var(--r-tarjeta); padding: var(--e2); display: flex; flex-direction: column; gap: var(--e1); }
+.menu-fab button { min-height: var(--tactil); padding-inline: var(--e3) var(--e4); border-radius: var(--r-control); display: flex; align-items: center; gap: var(--e3); font-size: 15px; line-height: 20px; font-weight: 650; text-align: left; }
+.menu-fab button .i { color: var(--texto-acento-elevado); }
+.menu-fab button:active { background: var(--capa-pressed); }
+@media (hover: hover) and (pointer: fine) { .fab:hover { background: var(--accion-alta); } .menu-fab button:hover { background: var(--capa-hover); } }
+@media (prefers-reduced-motion: reduce) { .fab, .fab .i { transition: none; } }
+/* lo último de la lista puede subir por encima del + */
+.desliza.con-fab { padding-bottom: calc(var(--tactil-gym) + var(--e3)); }
+
+
+/* buscar y armar el plato */
+.busca-cab { display: flex; align-items: center; gap: var(--e1); margin-inline: -12px calc(-1 * var(--e2)); min-height: var(--tactil); }
+.busca-cab .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.comida-btn { display: inline-flex; align-items: center; gap: var(--e1); font-size: 20px; line-height: 26px; font-weight: 650; min-height: 40px; border-radius: var(--r-control); align-self: flex-start; position: relative; }
+.comida-btn:active, .hora-btn:active { background: var(--capa-pressed); }
+.hora-btn { min-height: var(--tactil); padding-inline: var(--e3); border-radius: var(--r-control); color: var(--texto-acento); font-size: 15px; line-height: 20px; font-weight: 650; display: inline-flex; align-items: center; gap: var(--e1); position: relative; white-space: nowrap; }
+.entrada.buscar { padding-left: var(--e3); justify-content: flex-start; }
+.entrada.buscar > span { flex: 1; }
+.entrada.buscar .i { color: var(--texto-2); }
+.entrada.buscar .borrar { width: 40px; height: 40px; margin-right: calc(-1 * var(--e2)); display: grid; place-items: center; border-radius: var(--r-control); color: var(--texto-2); }
+.fila-crear { display: flex; gap: var(--e2); }
+.fila-crear .btn { flex: 1; }
+.grupo-tit { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 650; display: flex; align-items: center; justify-content: space-between; gap: var(--e2); margin-bottom: calc(-1 * var(--e1)); }
+.resultados { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; }
+.resultados > * + * { border-top: var(--t-borde) solid var(--borde); }
+.resultado { min-height: 56px; padding: var(--e1) var(--e1) var(--e1) var(--e4); display: flex; align-items: center; gap: var(--e2); position: relative; }
+.resultado .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.resultado .txt .t-detalle { color: var(--texto-2); }
+.resultado .txt .pildora { align-self: flex-start; margin-top: var(--e1); }
+.resultado .icono-btn { color: var(--texto-acento); }
+.resultado .icono-btn.hecho { color: var(--texto-acento); }
+.resultado .icono-btn.neutro { color: var(--texto-2); }
+mark { background: none; color: inherit; font-weight: 650; }
+.sinc-linea { display: flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; position: relative; }
+/* barra fija del plato: total de la comida y Listo */
+.barra-plato { flex: none; background: var(--superficie); border-top: var(--t-borde) solid var(--borde); padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); min-height: 72px; position: relative; }
+.barra-plato .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.barra-plato .txt .t-detalle { color: var(--texto-2); }
+.barra-plato .tot { display: flex; align-items: baseline; gap: var(--e1); }
+.barra-plato .tot .cifra { font-size: 25px; line-height: 26px; }
+.barra-plato .btn { min-width: 96px; }
+
+/* hoja de cantidad */
+.hoja .cab-hoja { display: flex; flex-direction: column; gap: 2px; }
+.hoja .cab-hoja .t-detalle { color: var(--texto-2); }
+.agarre { width: 32px; height: var(--e1); border-radius: var(--r-pildora); background: var(--borde); align-self: center; margin: calc(-1 * var(--e3)) 0 calc(-1 * var(--e1)); }
+.cant { display: flex; gap: var(--e2); align-items: center; }
+.cant .entrada { flex: 1; }
+.cant .entrada .cifra { font-size: 25px; line-height: 26px; }
+.fracciones { display: flex; gap: var(--e1); }
+.fracciones .chip { min-height: var(--tactil); min-width: var(--tactil); justify-content: center; font-size: 15px; }
+.fracciones .chip::after { display: none; }
+.vivo { display: flex; background: var(--elevado); border-radius: var(--r-control); padding: var(--e3) 0; position: relative; }
+.vivo > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: 2px; padding-inline: var(--e3); }
+.vivo > div + div { border-left: var(--t-borde) solid var(--borde); }
+.vivo .cifra { font-size: 25px; line-height: 26px; white-space: nowrap; }
+.vivo .t-detalle { color: var(--texto-2); }
+.botones-hoja { display: grid; grid-template-columns: auto 1fr; gap: var(--e2); }
+
+/* formulario de alimento nuevo */
+.form-scroll { gap: var(--e4); }
+.leer { display: flex; gap: var(--e2); }
+.leer .btn.secundario { flex: 1; }
+.leer .icono-btn[aria-disabled="true"] { opacity: 0.4; cursor: default; background: var(--elevado); border-radius: var(--r-control); }
+.leido { display: flex; align-items: center; gap: var(--e2); font-size: 13px; line-height: 18px; font-weight: 500; color: var(--texto); }
+.leido .i { color: var(--texto-acento); }
+.sub-form { font-size: 15px; line-height: 20px; font-weight: 650; display: flex; justify-content: space-between; align-items: baseline; gap: var(--e2); }
+.sub-form .t-detalle { color: var(--texto-2); font-weight: 500; }
+.opcionales { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; }
+.opcionales > div { min-height: 44px; padding: var(--e2) var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); }
+.opcionales > div + div { border-top: var(--t-borde) solid var(--borde); }
+.opcionales .sin { color: var(--texto-2); font-size: 15px; }
+.campo .error-linea { margin-top: 2px; }
+.acciones-form { display: flex; flex-direction: column; gap: var(--e2); flex: none; }
+
+/* suplementos */
+.supl .alimento .txt .t-detalle { display: inline-flex; align-items: center; gap: var(--e1); }
+.supl .alimento .m { margin-right: calc(-1 * var(--e1)); }
+
+@media (hover: hover) and (pointer: fine) {
+  button.alimento:hover, .comida-btn:hover, .hora-btn:hover, .chip:not([aria-pressed="true"]):hover { background: var(--capa-hover); }
+}
+
+/* ajustes de anotaciones y columnas del resumen */
+.resumen { padding: var(--e3) var(--e3) var(--e4); grid-template-columns: minmax(0, 1fr) 56px 58px 80px; column-gap: var(--e1); }
+.resumen .v .anota { top: -14px; right: -14px; }
+.resumen .v.res .anota { right: auto; left: -6px; }
+.resumen .cab .anota { top: -22px; right: 6px; }
+.resumen .linea .anota { position: static; margin-left: var(--e1); }
+.pista-n .anota { right: auto; left: 55%; top: -12px; }
+.dia-nav .txt .anota { right: auto; left: 8%; }
+.supl .alimento { padding-block: var(--e1); }
+.form-scroll.compacto { gap: var(--e3); }
+.resumen .v.res .anota { top: -16px; right: -8px; left: auto; }
+.resumen .v:not(.res) .anota { top: -6px; right: -28px; }
+.supl .comida-cab { padding-block: var(--e2); }
+.supl .comida-pie { padding-block: 0; }
+.desliza.arriba { padding-top: 0; }
+.resumen .v.res .anota { top: -22px; }
+.dia-nav .txt .anota { top: -16px; left: 4%; }
+
+/* ---------- web ---------- */
+.web-envoltura { overflow-x: auto; border-radius: var(--r-tarjeta); }
+.navegador { min-width: 1180px; background: var(--borde); border-radius: var(--r-tarjeta); padding: var(--e1); }
+.navegador .barra-nav { height: 32px; display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e4); }
+.navegador .url { background: var(--fondo); border-radius: var(--r-pildora); padding: 2px var(--e4); font-size: 13px; color: var(--texto-2); }
+.app-web { display: grid; grid-template-columns: 248px 1fr; background: var(--fondo); border-radius: 0 0 var(--r-tarjeta) var(--r-tarjeta); min-height: 820px; }
+.lateral { background: var(--superficie); border-right: var(--t-borde) solid var(--borde); padding: var(--e4) var(--e3); display: flex; flex-direction: column; gap: var(--e1); border-radius: 0 0 0 var(--r-tarjeta); }
+.marca { display: flex; align-items: center; gap: var(--e3); padding: var(--e2) var(--e2) var(--e4); font-weight: 650; font-size: 15px; }
+.logo { width: 32px; height: 32px; border-radius: var(--r-control); background: var(--elevado); color: var(--texto); display: grid; place-items: center; }
+.item { min-height: 44px; border-radius: var(--r-control); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; }
+.item.abierto { color: var(--texto); font-weight: 650; }
+.subitem { min-height: 36px; display: flex; align-items: center; padding-left: 44px; border-radius: var(--r-control); color: var(--texto-2); font-size: 15px; }
+/* texto de acento sobre elevado: A5 en claro, A2 en oscuro (tokens.json · textoAcentoSobreElevado) */
+.subitem[aria-current="page"] { background: var(--elevado); color: var(--texto-acento-elevado); font-weight: 650; }
+.lateral .pie { margin-top: auto; border-top: var(--t-borde) solid var(--borde); padding-top: var(--e3); display: flex; flex-direction: column; gap: var(--e1); }
+.lateral .pie .sinc { padding: var(--e2) var(--e3); }
+.principal { padding: var(--e6); display: flex; flex-direction: column; gap: var(--e5); position: relative; }
+.rejilla { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--e4); align-items: start; }
+.span-12 { grid-column: span 12; } .span-8 { grid-column: span 8; } .span-4 { grid-column: span 4; }
+.tarjeta.web { padding: var(--e5); gap: var(--e4); }
+.web-cab { display: flex; justify-content: space-between; align-items: end; gap: var(--e4); }
+.web-ctl { display: flex; align-items: center; gap: var(--e3); }
+.web-ctl .segmento button { flex: none; min-width: 72px; }
+.cal-nav.web { margin-left: 0; gap: var(--e1); }
+.cal-nav.web .t-seccion { min-width: 180px; text-align: center; }
+
+.cifras-plano { display: flex; }
+.cifras-plano > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--e1); padding-inline: var(--e4); }
+.cifras-plano > div:first-child { padding-left: 0; }
+.cifras-plano > div + div { border-left: var(--t-borde) solid var(--borde); }
+.cifras-plano .cifra { font-size: 32px; line-height: 32px; white-space: nowrap; }
+.record-linea { display: flex; align-items: center; gap: var(--e2); color: var(--texto); }
+.record-linea .i { color: var(--texto-acento); }
+.wfilas > div, .wpesos > * { border-top: var(--t-borde) solid var(--borde); }
+.wfila { min-height: var(--tactil); padding-block: var(--e2); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); }
+.wpesos .peso-fila { padding-left: 0; padding-right: 0; }
+.wpesos .fila { padding-inline: 0; }
+.semana-pie { display: flex; align-items: center; justify-content: space-between; gap: var(--e4); }
+.icono-btn.acento { color: var(--texto-acento); }
+.opcion-rutina .pildora { align-self: flex-start; margin-top: var(--e1); }
+
+
+.radio { width: 24px; height: 24px; border-radius: var(--r-pildora); border: var(--t-sel) solid var(--texto-2); display: grid; place-items: center; flex: none; }
+.radio::after { content: ""; width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); background: transparent; }
+[aria-checked="true"] .radio { border-color: var(--accion); }
+[aria-checked="true"] .radio::after { background: var(--accion); }
+.opcion-rutina { min-height: 64px; padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); width: 100%; text-align: left; }
+.opcion-rutina:active { background: var(--capa-pressed); }
+.opcion-rutina .txt { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.opcion-rutina .txt .t-detalle { color: var(--texto-2); }
+
+/* hover de la lámina (sin rejilla de calendario) */
+@media (hover: hover) and (pointer: fine) { button.fila:hover, .sub-tab:hover, .icono-btn:hover, .atras:hover, .atajos button:hover, .casilla:hover, .carga-btn:hover, .opcion-rutina:hover { background: var(--capa-hover); } }
+.m { width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); flex: none; }
+.m.hecha { background: var(--accion); }
+.m.prog { border: var(--t-sel) solid var(--accion); }
+
+
+
+/* ---------- pieza 3: mockups (flujo 3) ---------- */
+.wvacio { display: flex; flex-direction: column; align-items: flex-start; gap: var(--e2); max-width: 520px; padding-block: var(--e6); }
+.wvacio > .i { color: var(--texto-2); }
+.wvacio p { color: var(--texto-2); max-width: 60ch; }
+.wvacio.falla > .i { color: var(--error); }
+.app-web.corta { min-height: 560px; }
+.esq.linea { height: var(--e4); }
+.esq.alto { height: calc(4 * var(--e7)); }
+.vacio p { max-width: 36ch; }
+.vacio .btn { margin-top: var(--e2); }
+
+/* indicador circular dentro de un botón (20 px), solo si tarda más de 300 ms */
+.indicador { width: 20px; height: 20px; border-radius: var(--r-pildora); border: var(--t-sel) solid var(--borde); border-top-color: var(--texto); flex: none; }
+@media (prefers-reduced-motion: no-preference) { .indicador { animation: giro 800ms linear infinite; } }
+@keyframes giro { to { transform: rotate(1turn); } }
+.btn[aria-busy="true"] { cursor: progress; }
+
+/* esqueleto en el teléfono */
+.esq-tarjeta { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e3); }
+.esq-fila { display: flex; justify-content: space-between; gap: var(--e4); }
+
+/* web: dos columnas de Comida */
+.span-7 { grid-column: span 7; } .span-5 { grid-column: span 5; } .span-6 { grid-column: span 6; }
+.col { display: flex; flex-direction: column; gap: var(--e3); min-width: 0; }
+.col.fija { position: sticky; top: var(--e6); }
+.w-dia { display: flex; align-items: center; gap: var(--e1); margin-left: -12px; }
+.w-dia .t-pantalla { min-width: 300px; text-align: center; }
+.web-ctl .btn { flex: none; }
+/* comida que recibe lo que agregas: borde de acción de 2 px (tarjeta elegida) */
+.comida.elegida { outline: var(--t-sel) solid var(--accion); outline-offset: calc(-1 * var(--t-sel)); }
+.comida.elegida .comida-cab .t-detalle .destino { color: var(--texto); font-weight: 650; }
+.aviso-web { display: flex; justify-content: flex-start; min-height: var(--tactil-gym); }
+.aviso-web .aviso { position: relative; left: auto; right: auto; bottom: auto; width: 100%; max-width: 420px; }
+
+/* web: panel lateral para buscar, elegir la cantidad y crear un alimento */
+.panel-w { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e4) 0; display: flex; flex-direction: column; gap: var(--e3); overflow: hidden; }
+.panel-w.sin-pie { padding-bottom: var(--e4); }
+.panel-w .busca-cab { margin-right: calc(-1 * var(--e2)); }
+.panel-w .resultados { background: transparent; border-radius: 0; margin-inline: calc(-1 * var(--e4)); border-top: var(--t-borde) solid var(--borde); }
+.panel-w .grupo-tit { margin-bottom: calc(-1 * var(--e2)); }
+.panel-w .barra-plato { margin-inline: calc(-1 * var(--e4)); }
+.panel-w .vivo { background: var(--elevado); }
+.panel-w .cab-hoja .t-detalle { color: var(--texto-2); }
+.panel-w .opcionales { background: transparent; border-radius: 0; margin-inline: calc(-1 * var(--e4)); border-top: var(--t-borde) solid var(--borde); }
+.panel-w .vacio { padding-block: var(--e4); }
+.panel-w .acciones-form { padding-bottom: var(--e4); }
+.panel-w .sinc-linea { min-height: 24px; }
+
+/* web: todos los nutrientes en dos columnas */
+.w-nutri .resumen { padding: var(--e4) var(--e5) var(--e5); grid-template-columns: minmax(0, 1fr) 72px 80px 96px; column-gap: var(--e2); }
+.w-nutri .resumen .grupo-n { font-size: 15px; line-height: 20px; }
+.w-faltan { display: flex; align-items: center; gap: var(--e3); }
+.w-faltan .btn.texto { gap: var(--e1); }
+
+/* nota del día sin conexión en el teléfono */
+.dia-sinc { justify-content: center; margin-top: calc(-1 * var(--e2)); }
+
+@media (hover: hover) and (pointer: fine) {
+  .item:hover, .subitem:not([aria-current="page"]):hover { background: var(--capa-hover); }
+}
+.panel-w .busca-cab.sin-atras { margin-left: 0; }
+
+
+/* ---------- prototipo (flujo 3) ---------- */
+/* mismas piezas que flujo-3-comida.html; aquí solo lo que hace falta para que se pueda tocar */
+.proto { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: var(--e6); }
+.vista[hidden] { display: none !important; }
+#v-telefono { width: 376px; max-width: 100%; flex: none; }
+.guion { max-width: 600px; display: flex; flex-direction: column; gap: var(--e4); }
+.guion .titulo { font-size: 32px; line-height: 32px; font-weight: 800; font-stretch: 75%; margin: 0; }
+.guion h2 { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.guion ol { margin: 0; padding-left: 1.4em; display: grid; gap: var(--e2); color: var(--texto-2); }
+.guion ol b { color: var(--texto); font-weight: 650; }
+.guion .controles { display: flex; flex-wrap: wrap; gap: var(--e4); }
+.guion .control { display: flex; flex-direction: column; gap: var(--e1); }
+.guion .segmento { flex-wrap: wrap; }
+.guion .segmento button { flex: none; }
+.proto .pantalla { position: relative; }
+.proto .cuerpo { overflow: hidden; }
+/* el contenido largo se desplaza dentro del teléfono; el margen negativo deja ver los botones de 48 px de las orillas */
+.proto .desliza { overflow-y: auto; overflow-x: hidden; margin-inline: calc(-1 * var(--e4)); padding-inline: var(--e4); padding-bottom: var(--e2); scrollbar-width: none; }
+.proto .desliza::-webkit-scrollbar { display: none; }
+.proto .resultados { overflow: hidden; }
+.proto .desliza.con-fab { padding-bottom: calc(var(--tactil-gym) + var(--e3)); }
+.proto .desliza.hueco-teclado { padding-bottom: calc(var(--e2) + var(--hueco-teclado, 0px)); }
+.aviso-web:empty { display: none; }
+/* teclado: la pantalla se queda con lo visible; las hojas suben y su acción principal no se pierde */
+.pantalla.con-teclado { padding-bottom: var(--tapado-abajo, 0px); padding-top: var(--tapado-arriba, 0px); }
+.pantalla.con-teclado .estado, .pantalla.con-teclado #barra { display: none; }
+.pantalla.con-teclado .velo { top: var(--tapado-arriba, 0px); bottom: var(--tapado-abajo, 0px); }
+.pantalla.con-teclado .hoja { max-height: 100%; }
+.hoja > .btn, .hoja > .botones-hoja { flex-shrink: 0; }
+/* hoja con un campo enfocado: se ancla arriba a pantalla completa (bajo la barra de estado, de 28 px como .estado),
+   así el teclado, se informe o no, solo tapa la parte baja; se queda así hasta cerrarse, sin huecos ni saltos */
+.pantalla.hoja-arriba .velo { top: 28px; justify-content: flex-start; }
+.pantalla.hoja-arriba .hoja { flex: 1; max-height: none; border-radius: 0; padding-top: var(--e4); }
+.pantalla.hoja-arriba .hoja .agarre { display: none; }
+.pantalla.con-teclado.hoja-arriba .velo { top: var(--tapado-arriba, 0px); }
+@media (prefers-reduced-motion: no-preference) { .pantalla.hoja-arriba .hoja { animation: crece var(--normal) var(--entrar); } }
+@keyframes crece { from { transform: translateY(var(--e6)); } }
+#res-zona { display: contents; }
+
+/* campos de verdad (Typed Field Rule), como en el prototipo del flujo 10 */
+.entrada { border: var(--t-sel) solid transparent; }
+.entrada.error { outline: none; border-color: var(--error); }
+.entrada:focus-within { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.entrada input { flex: 1; min-width: 0; width: 100%; border: 0; background: none; font: inherit; color: inherit; padding: 0; height: 40px; outline: none; appearance: none; -webkit-appearance: none; }
+.entrada input::placeholder { color: var(--texto-2); opacity: 1; }
+.entrada input::-webkit-search-cancel-button { display: none; }
+.cant .entrada input.cifra { font-weight: 800; font-stretch: 62%; font-size: 25px; line-height: 26px; }
+.entrada.buscar .borrar[hidden] { display: none; }
+.par > * { min-width: 0; }
+.opcionales label { flex: 1; }
+.opcionales .opc { display: inline-flex; align-items: center; gap: var(--e1); }
+.opcionales input { width: 80px; min-height: 32px; border: 0; background: none; font: inherit; color: inherit; padding: 0; text-align: right; border-radius: var(--r-casilla); }
+.opcionales input::placeholder { color: var(--texto-2); opacity: 1; }
+.opcionales input:focus-visible { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.opcionales input:placeholder-shown + .u { display: none; }
+.opcionales .u { color: var(--texto-2); }
+
+/* filas que se tocan */
+.alimento button.txt { text-align: left; min-height: 40px; justify-content: center; border-radius: var(--r-casilla); }
+.resultado[data-acc] { cursor: pointer; }
+.resultado[data-acc]:active { background: var(--capa-pressed); }
+.icono-btn[aria-disabled="true"] { opacity: 0.4; cursor: default; }
+.icono-btn[aria-disabled="true"]:active { background: none; }
+.btn[aria-disabled="true"] { cursor: default; }
+@media (hover: hover) and (pointer: fine) {
+  .resultado[data-acc]:hover, .alimento button.txt:hover, .opcion-hoy:hover { background: var(--capa-hover); }
+  .icono-btn[aria-disabled="true"]:hover { background: none; }
+}
+.opcion-hoy:active { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); }
+.opciones { display: flex; flex-direction: column; gap: var(--e2); }
+.hoja p.sec { margin-top: calc(-1 * var(--e2)); }
+.lista .fila > .i:first-child { color: var(--texto-2); }
+
+/* hoja inferior y avisos */
+.hoja { max-height: 92%; overflow-y: auto; }
+.hoja .campo, .hoja .vivo, .hoja .cab-hoja { flex-shrink: 0; }
+.ranura-aviso .aviso { z-index: auto; }
+.aviso[hidden] { display: none; }
+#barra[hidden] { display: none; }
+.pestana { font: inherit; font-size: 13px; line-height: 16px; }
+.hora-campos { display: grid; grid-template-columns: 1fr auto; gap: var(--e2); align-items: end; }
+.hora-campos .segmento { min-height: var(--tactil); }
+
+/* web */
+.proto .web-envoltura { width: min(100%, 1180px); }
+.app-web { position: relative; }
+.panel-w .vacio { padding-bottom: var(--e4); }
+.panel-w .desliza { overflow: visible; margin: 0; padding: 0; }
+.w-nutri .resumen { height: 100%; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .hoja { animation: sube var(--lento) var(--entrar); }
+  .velo { animation: funde var(--normal) var(--entrar); }
+  .aviso.entra { animation: sube-poco var(--normal) var(--entrar); }
+  .panel-w.entra { animation: sube-poco var(--normal) var(--entrar); }
+}
+@media (prefers-reduced-motion: reduce) { .hoja, .velo, .aviso.entra, .panel-w.entra { animation: funde var(--rapido) var(--estandar); } }
+@keyframes sube { from { transform: translateY(var(--e5)); opacity: 0; } }
+@keyframes sube-poco { from { transform: translateY(var(--e2)); opacity: 0; } }
+@keyframes funde { from { opacity: 0; } }
+@media (max-width: 440px) {
+  body { padding-left: 0; padding-right: 0; padding-top: 0; }
+  #v-telefono { width: 100%; }
+  .proto .telefono { width: 100%; padding: 0; border-radius: 0; background: none; }
+  .proto .pantalla { height: 100dvh; border-radius: 0; }
+  .guion { padding: 0 max(16px, env(safe-area-inset-right, 0px)) var(--e7) max(16px, env(safe-area-inset-left, 0px)); }
+  #v-web { margin: var(--e4) max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px)); width: auto; flex: 1 1 100%; min-width: 0; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- Tabler Icons 3.49.0, outline (MIT, © Paweł Kuna) -->
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/></symbol>
+  <symbol id="i-barbell" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+  <symbol id="i-kitchen" viewBox="0 0 24 24"><path d="M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12m0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c3.255 2.777 3.695 7.266 1.029 10.501c-2.666 3.235 -7.615 4.215 -11.574 2.293l-4.7 1"/></symbol>
+  <symbol id="i-cloud-check" viewBox="0 0 24 24"><path d="M11 18.004h-4.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.393 -1.762 1.794 -3.2 3.675 -3.773c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.388 0 2.585 .82 3.138 2.007"/><path d="M15 19l2 2l4 -4"/></symbol>
+  <symbol id="i-cloud-off" viewBox="0 0 24 24"><path d="M9.58 5.548c.24 -.11 .492 -.207 .752 -.286c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.913 0 3.464 1.56 3.464 3.486c0 .957 -.383 1.824 -1.003 2.454m-2.997 1.033h-11.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.13 -.582 .37 -1.128 .7 -1.62"/><path d="M3 3l18 18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M5 12l14 0"/><path d="M5 12l6 6"/><path d="M5 12l6 -6"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065"/><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 6l-6 6l6 6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></symbol>
+  <symbol id="i-bike" viewBox="0 0 24 24"><path d="M2 18a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M16 18a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M12 19v-4l-3 -3l5 -4l2 3h3"/><path d="M13.007 5a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></symbol>
+  <symbol id="i-test-pipe-2" viewBox="0 0 24 24"><path d="M15 3v15a3 3 0 0 1 -6 0v-15"/><path d="M9 12h6"/><path d="M8 3h8"/></symbol>
+  <symbol id="i-calendar-plus" viewBox="0 0 24 24"><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v5"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/><path d="M16 19h6"/><path d="M19 16v6"/></symbol>
+  <symbol id="i-calendar-repeat" viewBox="0 0 24 24"><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v3"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h12"/><path d="M20 14l2 2h-3"/><path d="M20 18l2 -2"/><path d="M19 16a3 3 0 1 0 2 5.236"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><path d="M7 9.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667l0 -8.666"/><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1"/></symbol>
+  <symbol id="i-arrow-forward-up" viewBox="0 0 24 24"><path d="M15 14l4 -4l-4 -4"/><path d="M19 10h-11a4 4 0 1 0 0 8h1"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21l8 0"/><path d="M12 17l0 4"/><path d="M7 4l10 0"/><path d="M17 4v8a5 5 0 0 1 -10 0v-8"/><path d="M3 9a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M17 9a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 7v5l3 3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5l0 14"/><path d="M5 12l14 0"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12l14 0"/></symbol>
+  <symbol id="i-alert-circle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/></symbol>
+  <symbol id="i-info-circle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 9h.01"/><path d="M11 12h1v4h1"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <symbol id="i-player-play" viewBox="0 0 24 24"><path d="M7 4v16l13 -8l-13 -8"/></symbol>
+  <symbol id="i-player-skip-forward" viewBox="0 0 24 24"><path d="M4 5v14l12 -7l-12 -7"/><path d="M20 5l0 14"/></symbol>
+  <symbol id="i-vibrar" viewBox="0 0 24 24"><path d="M3 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2l0 -14"/><path d="M8 4l2 0"/><path d="M9 17l0 .01"/><path d="M21 6l-2 3l2 3l-2 3l2 3"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1 -7 0a5 5 0 0 0 -7 0v-9"/><path d="M5 21v-7"/></symbol>
+  <symbol id="i-stairs-up" viewBox="0 0 24 24"><path d="M22 6h-5v5h-5v5h-5v5h-5"/><path d="M6 10v-7"/><path d="M3 6l3 -3l3 3"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6l6 -6"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"/><path d="M13.5 6.5l4 4"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M12 8l0 4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></symbol>
+  <symbol id="i-device-mobile" viewBox="0 0 24 24"><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14"/><path d="M11 4h2"/><path d="M12 17v.01"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><path d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/><path d="M21 21l-6 -6"/></symbol>
+  <!-- logo provisional: glifo de packages/brand (barbell) -->
+  <symbol id="logo" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+  <symbol id="i-alert-triangle" viewBox="0 0 24 24"><path d="M12 9v4"/><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2"/><path d="M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></symbol>
+  <symbol id="i-barcode" viewBox="0 0 24 24"><path d="M4 7v-1a2 2 0 0 1 2 -2h2"/><path d="M4 17v1a2 2 0 0 0 2 2h2"/><path d="M16 4h2a2 2 0 0 1 2 2v1"/><path d="M16 20h2a2 2 0 0 0 2 -2v-1"/><path d="M5 11h1v2h-1l0 -2"/><path d="M10 11l0 2"/><path d="M14 11h1v2h-1l0 -2"/><path d="M19 11l0 2"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/></symbol>
+  <symbol id="i-ban" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M5.7 5.7l12.6 12.6"/></symbol>
+  <symbol id="i-check-small" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+  <symbol id="i-photo" viewBox="0 0 24 24"><path d="M15 8h.01"/><path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z"/><path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5"/><path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 9l5 -5l5 5"/><path d="M12 4l0 12"/></symbol>
+</svg>
+<div class="proto">
+  <div class="vista" id="v-telefono"><div class="telefono"><div class="pantalla" id="pantalla">
+    <div class="estado tnum" aria-hidden="true"><span id="reloj">1:18</span></div>
+    <div class="cuerpo" id="cuerpo"></div>
+    <div id="bajo"></div>
+    <nav class="barra" id="barra" aria-label="Secciones"><button type="button" class="pestana" data-acc="nada"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</button><button type="button" class="pestana" data-acc="nada"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</button><button type="button" class="pestana" aria-current="page" data-acc="ir-dia"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</button><button type="button" class="pestana" data-acc="nada"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</button><button type="button" class="pestana" data-acc="nada"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</button></nav>
+    <div id="zona-fab"></div>
+    <div class="ranura-aviso" id="zona-aviso"></div>
+    <div id="capa"></div>
+  </div></div></div>
+  <div class="vista web-envoltura" id="v-web" hidden><div class="navegador"><div class="barra-nav"><span class="url" id="url"></span></div><div id="web-app"></div></div></div>
+  <aside class="guion" aria-label="Guion de prueba">
+    <p class="titulo">Prototipo · flujo 3</p>
+    <p class="sec">Registrar una comida, lunes 19 de octubre de 2026 a la 1:18&nbsp;p.&nbsp;m., antes del almuerzo. Objetivo del día: 2,350 kcal, P 172 · C 270 · G 65. Lo que haces se recuerda en este navegador; Reiniciar vuelve al principio.</p>
+    <h2>Qué puedes probar</h2>
+    <ol>
+      <li><b>El almuerzo:</b> en el teléfono, el + de abajo y Agregar al almuerzo (en la web, el botón de la cabecera); toca + en arroz, pollo guisado y aguacate, escribe «habichuelas», elige la primera, Agregar y Listo. El día queda en 1,539 kcal.</li>
+      <li><b>La cantidad:</b> chips de unidad con sus gramos, decimales según la unidad, ¼ ½ ¾ y Crudo · Cocido en arroz, habichuelas y pechuga de pollo.</li>
+      <li><b>Lo programado:</b> la X de la merienda o la cena, con Deshacer; toca un alimento para editarlo. Con la hora simulada en 9:30&nbsp;p.&nbsp;m., la merienda y la cena ya cuentan.</li>
+      <li><b>Suplementos:</b> quita el zinc o agrega whey o magnesio desde su Agregar; en Ver todos los nutrientes aparecen los topes seguros.</li>
+      <li><b>Crear alimento:</b> busca «maíz dulce», Crear alimento y Leer la etiqueta. Completa la porción en g y guárdalo; luego agrégalo. Con Etiqueta en «No se lee», el error.</li>
+      <li><b>Día pasado:</b> la flecha izquierda lleva a ayer, con el paseo MTB; agrega o edita igual.</li>
+      <li><b>Sin conexión:</b> el teléfono busca solo en lo guardado; la web muestra el error con Reintentar.</li>
+    </ol>
+    <div class="controles">
+      <div class="control"><span class="t-detalle sec" id="lbl-vista">Dispositivo</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-vista" id="ctl-vista">
+          <button type="button" data-v="telefono" aria-pressed="true">Teléfono</button>
+          <button type="button" data-v="web" aria-pressed="false">Web</button></div></div>
+      <div class="control"><span class="t-detalle sec" id="lbl-hora">Hora simulada</span>
+        <div class="segmento tnum" role="group" aria-labelledby="lbl-hora" id="ctl-hora">
+          <button type="button" data-v="420" aria-pressed="false">7:00 a.&nbsp;m.</button>
+          <button type="button" data-v="798" aria-pressed="true">1:18 p.&nbsp;m.</button>
+          <button type="button" data-v="1290" aria-pressed="false">9:30 p.&nbsp;m.</button></div></div>
+      <div class="control"><span class="t-detalle sec" id="lbl-red">Conexión</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-red" id="ctl-red">
+          <button type="button" data-v="on" aria-pressed="true">En línea</button>
+          <button type="button" data-v="off" aria-pressed="false">Sin conexión</button></div></div>
+      <div class="control"><span class="t-detalle sec" id="lbl-etiqueta">Etiqueta</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-etiqueta" id="ctl-etiqueta">
+          <button type="button" data-v="ok" aria-pressed="true">Se lee</button>
+          <button type="button" data-v="falla" aria-pressed="false">No se lee</button></div></div>
+      <div class="control"><span class="t-detalle sec" id="lbl-modo">Modo</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-modo" id="ctl-modo">
+          <button type="button" data-modo="" aria-pressed="true">Sistema</button>
+          <button type="button" data-modo="light" aria-pressed="false">Claro</button>
+          <button type="button" data-modo="dark" aria-pressed="false">Oscuro</button></div></div>
+      <div class="control"><span class="t-detalle sec" id="lbl-acento">Acento</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-acento" id="ctl-acento">
+          <button type="button" data-a="caribe" aria-pressed="true">Caribe</button>
+          <button type="button" data-a="mar" aria-pressed="false">Mar</button>
+          <button type="button" data-a="palma" aria-pressed="false">Palma</button>
+          <button type="button" data-a="mango" aria-pressed="false">Mango</button>
+          <button type="button" data-a="flamboyan" aria-pressed="false">Flamboyán</button>
+          <button type="button" data-a="uva" aria-pressed="false">Uva</button></div></div>
+    </div>
+    <div><button type="button" class="btn secundario" id="reiniciar"><svg class="i s20" aria-hidden="true"><use href="#i-refresh"/></svg>Reiniciar</button></div>
+  </aside>
+</div>
+<script>
+// Prototipo navegable del flujo 3, registrar una comida (NUT-02, 03, 09, 10, 12, SUP-02; D-37).
+// El estado vive en memoria; localStorage solo lo recuerda como comodidad (si falla, todo sigue igual).
+"use strict";
+
+// ------------------------------------------------------------ utilidades
+const $ = (s, r = document) => r.querySelector(s);
+const ic = (n, s = "", c = "") => `<svg class="i${s ? " s" + s : ""}${c ? " " + c : ""}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const nf = (x, d = 0) => Number(x).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const norm = (t) => String(t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const red = (x, d = 0) => { const f = 10 ** d; return Math.round((x + Number.EPSILON) * f) / f; };
+const MENOS = "−";
+const minus = (t) => t.charAt(0).toLowerCase() + t.slice(1);
+function horaTxt(min) { let h = Math.floor(min / 60); const m = min % 60, pm = h >= 12; h = h % 12 || 12; return `${h}:${String(m).padStart(2, "0")} ${pm ? "p. m." : "a. m."}`; }
+const FRAC = { 0.25: "¼", 0.5: "½", 0.75: "¾" };
+const GLIFO = { "¼": 0.25, "½": 0.5, "¾": 0.75 };
+// cantidad para leer: 1, ½, 1½, 1.3
+function fmtQ(q) {
+  const e = Math.floor(q + 1e-9), f = red(q - e, 2);
+  if (FRAC[f]) return (e ? e : "") + FRAC[f];
+  return nf(red(q, 1), q % 1 ? 1 : 0);
+}
+function parseQ(t) {
+  const m = /^(\d+(?:\.\d*)?)?([¼½¾])?$/.exec(String(t).trim());
+  if (!m || (!m[1] && !m[2])) return null;
+  return (m[1] ? parseFloat(m[1]) : 0) + (m[2] ? GLIFO[m[2]] : 0);
+}
+
+// ------------------------------------------------------------ nutrientes y objetivos (D-33, D-37)
+const BASE_KCAL = 2350;
+const NUT = {
+  kcal: { n: "Calorías", u: "kcal", obj: 2350, dia: true },
+  p: { n: "Proteína", u: "g", obj: 172, dia: true, m: 1, min: true },
+  c: { n: "Carbohidratos", u: "g", obj: 270, dia: true, m: 2 },
+  g: { n: "Grasa", u: "g", obj: 65, dia: true, m: 3 },
+  fib: { n: "Fibra", u: "g", obj: 33, min: true, prog: true },
+  na: { n: "Sodio", u: "mg", lim: 2300 },
+  az: { n: "Azúcar añadida", u: "g", lim: 59 },
+  sat: { n: "Grasa saturada", u: "g", lim: 26 },
+  va: { n: "Vitamina A", u: "µg", obj: 900, min: true, ul: 3000 },
+  vc: { n: "Vitamina C", u: "mg", obj: 90, min: true, ul: 2000 },
+  vd: { n: "Vitamina D", u: "µg", obj: 15, min: true, ul: 100 },
+  ve: { n: "Vitamina E", u: "mg", obj: 15, min: true, dec: 1, ul: 1000, ulSupl: true },
+  b12: { n: "Vitamina B12", u: "µg", obj: 2.4, min: true, dec: 1 },
+  fol: { n: "Folato", u: "µg", obj: 400, min: true, ul: 1000, ulSupl: true },
+  ca: { n: "Calcio", u: "mg", obj: 1000, min: true, ul: 2500 },
+  fe: { n: "Hierro", u: "mg", obj: 8, min: true, ul: 45 },
+  mg: { n: "Magnesio", u: "mg", obj: 400, min: true, ul: 350, ulSupl: true },
+  k: { n: "Potasio", u: "mg", obj: 3400, min: true },
+  zn: { n: "Zinc", u: "mg", obj: 11, min: true, dec: 1, ul: 40 },
+};
+const MICROS = ["fib", "na", "az", "sat", "va", "vc", "vd", "ve", "b12", "fol", "ca", "fe", "mg", "k", "zn"];
+const NOMBRE_DATO = { k: "potasio", zn: "zinc", fib: "fibra", az: "azúcar añadida", sat: "grasa saturada" };
+
+// ------------------------------------------------------------ catálogo de ejemplo (valores por 100 g)
+const A = {};
+function ali(id, n, src, kc, p, c, g, mic = {}, o = {}) {
+  A[id] = Object.assign({ id, n, src, kc, p, c, g, mic, pesable: true }, o);
+  A[id].por = (o.por || []).map(([pn, pl, pg, q, ml]) => ({ n: pn, pl, g: pg, q: q || 1, ml: !!ml }));
+}
+const P = (n, pl, g, q, ml) => [n, pl, g, q, ml];
+ali("arroz-c", "Arroz blanco, cocido", "INCAP", 129.75, 2.53, 28.5, 0.19, { fib: 0.4, na: 1, sat: 0.05, fe: 1.2, mg: 12, k: 35, zn: 0.5, fol: 20, ca: 10 },
+  { base: "Arroz blanco", estado: "cocido", ec: "cocido", par: "arroz-r", sin: ["arroz"], usado: 1, tel: 1, por: [P("taza", "tazas", 158), P("cucharada", "cucharadas", 12)], hab: { u: "p0", q: 1 } });
+ali("arroz-r", "Arroz blanco, crudo", "INCAP", 360, 6.6, 79.3, 0.6, { fib: 1.3, na: 5, fe: 4.3, mg: 25, k: 115, zn: 1.1, fol: 230, ca: 28 },
+  { base: "Arroz blanco", estado: "crudo", ec: "crudo", par: "arroz-c", sin: ["arroz"], tel: 1, por: [P("taza", "tazas", 185), P("cucharada", "cucharadas", 12)] });
+ali("hab-r-c", "Habichuelas rojas, cocidas", "INCAP", 127, 8.33, 22.5, 0.83, { fib: 7.4, na: 220, sat: 0.1, fe: 2.9, mg: 45, k: 405, zn: 1, fol: 60, ca: 28, vc: 1.2 },
+  { base: "Habichuelas rojas", estado: "cocido", ec: "cocidas", par: "hab-r-r", sin: ["frijoles", "frijoles rojos"], usado: 1, tel: 1, por: [P("cucharón", "cucharones", 120), P("taza", "tazas", 177), P("cucharada", "cucharadas", 11)], hab: { u: "p0", q: 1 } });
+ali("hab-r-r", "Habichuelas rojas, crudas", "INCAP", 337, 22.5, 61, 1.1, { fib: 15, na: 12, fe: 6.7, mg: 140, k: 1360, zn: 2.8, fol: 394, ca: 83 },
+  { base: "Habichuelas rojas", estado: "crudo", ec: "crudas", par: "hab-r-c", sin: ["frijoles", "frijoles rojos"], tel: 1, por: [P("taza", "tazas", 184), P("cucharada", "cucharadas", 12)] });
+ali("hab-n", "Habichuelas negras, cocidas", "INCAP", 132, 8.86, 23.7, 0.54, { fib: 8.7, na: 1, fe: 2.1, mg: 70, k: 355, zn: 1.1, fol: 149, ca: 27 },
+  { sin: ["frijoles", "frijoles negros"], por: [P("taza", "tazas", 172)] });
+ali("hab-dulce", "Habichuelas con dulce", "INCAP", 152, 3.5, 27, 3.6, { fib: 4, na: 60, az: 14, sat: 2.5, fe: 1.2, mg: 30, k: 250, zn: 0.6, fol: 50, ca: 60, va: 20 },
+  { evitar: 1, por: [P("taza", "tazas", 250)] });
+ali("fri-rojos", "Frijoles rojos, enlatados", "USDA", 84.4, 5.3, 15.5, 0.4, { fib: 6.3, na: 250, fe: 1.2, mg: 27, k: 260, zn: 0.6, fol: 55, ca: 25 },
+  { sin: ["habichuelas", "habichuelas rojas"], por: [P("taza", "tazas", 256, 0.5)] });
+ali("fri-pintos", "Frijoles pintos, cocidos", "USDA", 143.3, 9, 26.2, 0.65, { fib: 9, na: 1, fe: 2.1, mg: 50, k: 436, zn: 1, fol: 172, ca: 46 },
+  { sin: ["habichuelas", "habichuelas pintas"], por: [P("taza", "tazas", 171)] });
+ali("pollo-g", "Pollo guisado", "INCAP", 160, 24, 1.6, 5.6, { fib: 0.4, na: 560, az: 2, sat: 1.6, va: 25, vc: 10, b12: 0.6, fol: 6, ca: 14, fe: 1.1, mg: 24 },
+  { sin: ["pollo"], usado: 1, tel: 1, hab: { u: "g", q: 150 }, faltan: ["k", "zn"] });
+ali("pechuga-c", "Pechuga de pollo, cocida", "USDA", 165, 31, 0, 3.6, { na: 74, sat: 1, va: 6, b12: 0.34, ca: 15, fe: 1, mg: 29, k: 256, zn: 1, fol: 4 },
+  { base: "Pechuga de pollo", estado: "cocido", ec: "cocida", par: "pechuga-r", sin: ["pollo"], tel: 1, por: [P("filete", "filetes", 120)] });
+ali("pechuga-r", "Pechuga de pollo, cruda", "USDA", 120, 22.5, 0, 2.6, { na: 45, sat: 0.6, b12: 0.2, ca: 5, fe: 0.4, mg: 28, k: 334, zn: 0.7 },
+  { base: "Pechuga de pollo", estado: "crudo", ec: "cruda", par: "pechuga-c", sin: ["pollo"], tel: 1, por: [P("filete", "filetes", 150)] });
+ali("aguacate", "Aguacate", "INCAP", 160, 2, 9, 15, { fib: 6.7, na: 7, sat: 2.1, va: 7, vc: 10, ve: 2.1, fol: 81, ca: 12, fe: 0.55, mg: 29, k: 485, zn: 0.64 },
+  { sin: ["palta"], usado: 1, tel: 1, por: [P("tajada", "tajadas", 50), P("unidad", "unidades", 300, 0.5)], hab: { u: "p0", q: 1 } });
+ali("platano-m", "Plátano maduro hervido", "INCAP", 115.7, 0.8, 31, 0.2, { fib: 2.3, na: 4, va: 45, vc: 11, fol: 26, ca: 2, fe: 0.6, mg: 32, k: 450, zn: 0.1 },
+  { sin: ["platano"], usado: 1, tel: 1, por: [P("unidad", "unidades", 140)], hab: { u: "p0", q: 1 } });
+ali("ensalada", "Ensalada verde", "INCAP", 20, 1.5, 3.5, 0.1, { fib: 1.6, na: 15, va: 250, vc: 12, ve: 0.3, fol: 60, ca: 30, fe: 0.8, mg: 12, k: 220, zn: 0.2 },
+  { sin: ["lechuga"], usado: 1, tel: 1, por: [P("taza", "tazas", 100)], hab: { u: "p0", q: 1 } });
+ali("huevo", "Huevo entero", "USDA", 143.33, 12.6, 0.7, 9, { na: 142, sat: 3.1, va: 160, vd: 2, ve: 1.05, b12: 0.89, fol: 47, ca: 56, fe: 1.75, mg: 12, k: 138, zn: 1.29 },
+  { usado: 1, tel: 1, por: [P("unidad", "unidades", 50)], hab: { u: "p0", q: 2 } });
+ali("huevo-frito", "Huevo frito", "USDA", 195.65, 13.6, 0.8, 15, { na: 400, sat: 4.3, va: 180, vd: 2.2, ve: 1.3, b12: 0.9, fol: 44, ca: 62, fe: 1.9, mg: 13, k: 152, zn: 1.4 },
+  { por: [P("unidad", "unidades", 46)] });
+ali("guineo", "Guineo maduro", "INCAP", 89, 1.1, 22.9, 0.33, { fib: 2.6, na: 1, va: 3, vc: 8.7, fol: 20, ca: 5, fe: 0.26, mg: 27, k: 358, zn: 0.15 },
+  { sin: ["banana", "banano"], usado: 1, tel: 1, por: [P("unidad", "unidades", 118)], hab: { u: "p0", q: 1 } });
+ali("guineo-v", "Guineo verde hervido", "INCAP", 110, 1.3, 26, 0.2, { fib: 3, na: 4, vc: 10, fol: 20, mg: 30, k: 400, zn: 0.1, fe: 0.5 },
+  { sin: ["banana verde", "guineito"], por: [P("unidad", "unidades", 100)] });
+ali("mangu", "Mangú", "INCAP", 147.8, 1.3, 30, 2.78, { fib: 2.3, na: 300, sat: 0.8, va: 40, vc: 9, fol: 22, ca: 5, fe: 0.6, mg: 30, k: 420, zn: 0.15 },
+  { sin: ["pure de platano"], por: [P("taza", "tazas", 230)] });
+ali("yuca-h", "Yuca hervida", "INCAP", 112, 0.9, 26.7, 0.2, { fib: 1.8, na: 14, vc: 20, fol: 27, ca: 16, fe: 0.27, mg: 21, k: 270, zn: 0.34 },
+  { sin: ["mandioca"], usado: 1, tel: 1, por: [P("taza", "tazas", 206)], hab: { u: "g", q: 150 } });
+ali("yuca-f", "Yuca frita", "USDA", 320, 1.4, 40, 17, { fib: 2, na: 300, sat: 2.5, vc: 10, ca: 15, fe: 0.5, mg: 20, k: 300, zn: 0.3 },
+  { sin: ["mandioca frita"], tel: 1, por: [P("taza", "tazas", 103)] });
+ali("queso-f", "Queso de freír", "INCAP", 325, 19, 6, 27, { na: 1100, sat: 15, va: 230, b12: 1, ca: 650, fe: 0.3, mg: 25, k: 90, zn: 3, vd: 0.3 },
+  { sin: ["queso frito"], por: [P("lonja", "lonjas", 40)] });
+ali("mango", "Mango", "INCAP", 60, 0.82, 15, 0.38, { fib: 1.6, na: 1, va: 54, vc: 36.4, ve: 0.9, fol: 43, ca: 11, fe: 0.16, mg: 10, k: 168, zn: 0.09 },
+  { usado: 1, tel: 1, por: [P("taza", "tazas", 165), P("unidad", "unidades", 200)], hab: { u: "p0", q: 1 } });
+ali("pina", "Piña", "INCAP", 50.1, 0.54, 13.1, 0.12, { fib: 1.4, na: 1, va: 3, vc: 47.8, fol: 18, ca: 13, fe: 0.29, mg: 12, k: 109, zn: 0.12 },
+  { sin: ["anana"], usado: 1, tel: 1, por: [P("taza", "tazas", 165)], hab: { u: "p0", q: 1 } });
+ali("avena", "Avena en hojuelas", "USDA", 378.75, 13.2, 67.5, 6.5, { fib: 10, na: 6, sat: 1.2, fe: 4.3, mg: 138, k: 362, zn: 3.6, fol: 32, ca: 52 },
+  { sin: ["avena"], usado: 1, tel: 1, por: [P("taza", "tazas", 80)], hab: { u: "g", q: 80 } });
+ali("cafe", "Café negro", "USDA", 0.83, 0.12, 0, 0.02, { na: 2, mg: 3, k: 49 },
+  { usado: 1, tel: 1, dens: 1, por: [P("taza", "tazas", 240, 1, true)], hab: { u: "p0", q: 1 } });
+ali("batata", "Batata hervida", "INCAP", 86, 1.6, 20, 0.1, { fib: 3.3, na: 36, va: 787, vc: 12.8, ve: 0.7, fol: 6, ca: 27, fe: 0.7, mg: 18, k: 230, zn: 0.2 },
+  { sin: ["boniato", "camote"], por: [P("unidad", "unidades", 150)] });
+ali("tilapia", "Tilapia a la plancha", "USDA", 128, 26, 0, 2.4, { na: 56, sat: 0.8, vd: 3.7, ve: 0.8, b12: 1.86, fol: 6, ca: 14, fe: 0.69, mg: 34, k: 380, zn: 0.41 },
+  { sin: ["pescado"], usado: 1, tel: 1, hab: { u: "g", q: 150 } });
+ali("yogur", "Yogur griego natural", "USDA", 59, 10.5, 4.8, 0.4, { na: 36, sat: 0.1, b12: 0.75, ca: 110, fe: 0.07, mg: 11, k: 141, zn: 0.52, fol: 7 },
+  { usado: 1, tel: 1, por: [P("taza", "tazas", 245)], hab: { u: "g", q: 200 } });
+ali("nueces", "Nueces", "USDA", 654, 15, 14, 65, { fib: 6.7, na: 2, sat: 6.1, ve: 0.7, fol: 98, ca: 98, fe: 2.9, mg: 158, k: 441, zn: 3.1 },
+  { usado: 1, tel: 1, por: [P("puñado", "puñados", 30)], hab: { u: "g", q: 15 } });
+ali("leche", "Leche entera", "USDA", 61, 3.2, 4.8, 3.3, { na: 43, sat: 1.9, va: 46, vd: 1.3, b12: 0.45, ca: 113, mg: 10, k: 132, zn: 0.37, fol: 5 },
+  { dens: 1.03, por: [P("taza", "tazas", 240, 1, true)] });
+ali("pan-agua", "Pan de agua", "INCAP", 270, 8.5, 52, 2.5, { fib: 2.4, na: 490, az: 3, sat: 0.5, fol: 110, ca: 40, fe: 3, mg: 25, k: 110, zn: 0.8 },
+  { sin: ["pan"], por: [P("unidad", "unidades", 60)] });
+ali("moro", "Moro de guandules", "INCAP", 180, 4.5, 30, 4.5, { fib: 3.5, na: 350, sat: 1, fol: 40, ca: 20, fe: 1.3, mg: 30, k: 200, zn: 0.8 },
+  { sin: ["arroz con guandules"], por: [P("taza", "tazas", 195)] });
+ali("salami", "Salami dominicano", "INCAP", 336, 13, 3, 30, { na: 1500, sat: 11, b12: 1.2, ca: 10, fe: 1.2, mg: 15, k: 300, zn: 2.5 },
+  { por: [P("lonja", "lonjas", 25)] });
+ali("chinola", "Jugo de chinola", "INCAP", 51, 0.4, 12.5, 0.1, { na: 6, az: 10, va: 60, vc: 30, ca: 4, mg: 17, k: 280 },
+  { sin: ["maracuya", "parcha"], dens: 1.04, por: [P("vaso", "vasos", 250, 1, true)] });
+// suplementos (SUP-02): suman al día en su propia fila; el whey cuenta como proteína (Anexo A.7)
+const SUP = (o) => Object.assign({ supl: 1, src: "tuyo", usado: 1, tel: 1, pesable: false }, o);
+ali("d3", "Vitamina D3", "tuyo", 0, 0, 0, 0, { vd: 5000 }, SUP({ por: [P("cápsula", "cápsulas", 1)], dosis: [2000, "UI"], hab: { u: "p0", q: 1 } }));
+ali("creatina", "Creatina", "tuyo", 0, 0, 0, 0, {}, SUP({ pesable: true, por: [P("cucharadita", "cucharaditas", 5)], dosis: [5, "g"], hab: { u: "p0", q: 1 } }));
+ali("whey", "Whey", "tuyo", 400, 83.33, 10, 6.67, { na: 170, ca: 800, k: 500, mg: 60, az: 10, sat: 3.3, b12: 2 }, SUP({ sin: ["proteina", "suero"], pesable: true, por: [P("scoop", "scoops", 30)], hab: { u: "p0", q: 1 } }));
+ali("omega", "Omega-3", "tuyo", 900, 0, 0, 100, { ve: 100, sat: 20 }, SUP({ sin: ["aceite de pescado"], por: [P("cápsula", "cápsulas", 1)], dosis: [1, "g"], hab: { u: "p0", q: 2 } }));
+ali("zinc", "Zinc", "tuyo", 0, 0, 0, 0, { zn: 1500 }, SUP({ por: [P("tableta", "tabletas", 1)], dosis: [15, "mg"], hab: { u: "p0", q: 1 } }));
+ali("magnesio", "Magnesio glicinato", "tuyo", 0, 0, 0, 0, { mg: 14000 }, SUP({ por: [P("cápsula", "cápsulas", 1)], dosis: [140, "mg"], hab: { u: "p0", q: 2 } }));
+
+const RECIENTES = ["arroz-c", "pollo-g", "aguacate", "platano-m", "ensalada", "huevo", "hab-r-c"];
+const SUPLEMENTOS = ["d3", "creatina", "whey", "omega", "zinc", "magnesio"];
+const COMIDAS = {
+  desayuno: { n: "Desayuno", art: "al desayuno", reg: "Desayuno registrado", def: 420 },
+  media: { n: "Media mañana", art: "a la media mañana", reg: "Media mañana registrada", def: 600 },
+  almuerzo: { n: "Almuerzo", art: "al almuerzo", reg: "Almuerzo registrado", def: 780 },
+  merienda: { n: "Merienda", art: "a la merienda", reg: "Merienda registrada", def: 990 },
+  cena: { n: "Cena", art: "a la cena", reg: "Cena registrada", def: 1170 },
+  supl: { n: "Suplementos", art: "a los suplementos", reg: "Suplementos registrados", def: null },
+};
+const HOY = "2026-10-19", AYER = "2026-10-18";
+const FUENTE = { INCAP: "INCAP", USDA: "USDA", tuyo: "Tus alimentos" };
+
+// ------------------------------------------------------------ estado
+const CLAVE = "coach-proto-flujo-3-v1";
+let S;
+function diasIniciales() {
+  let n = 0;
+  const e = (f, q, u, x = {}) => Object.assign({ id: "e" + (++n), f, q, u }, x);
+  const dias = {
+    [HOY]: { paseo: 0, comidas: [
+      { k: "desayuno", h: 425, items: [e("avena", 80, "g"), e("huevo", 3, "p0"), e("guineo", 1, "p0"), e("cafe", 1, "p0")] },
+      { k: "media", h: 610, items: [e("mango", 1, "p0")] },
+      { k: "almuerzo", h: null, items: [] },
+      { k: "merienda", h: 990, prog: true, items: [e("yogur", 200, "g"), e("pina", 1, "p0"), e("nueces", 15, "g")] },
+      { k: "cena", h: 1170, prog: true, items: [e("tilapia", 150, "g"), e("yuca-h", 150, "g"), e("ensalada", 2, "p0")] },
+    ], supl: [
+      e("d3", 1, "p0", { h: 425 }), e("creatina", 1, "p0", { h: 425 }),
+      e("whey", 1, "p0", { h: 610, nota: "con la media mañana" }), e("omega", 2, "p0", { h: 780, nota: "con el almuerzo" }),
+      e("zinc", 1, "p0", { h: 1170, prog: true }), e("magnesio", 2, "p0", { h: 1350, prog: true }),
+    ] },
+    [AYER]: { paseo: 600, comidas: [
+      { k: "desayuno", h: 460, items: [e("mangu", 1, "p0"), e("huevo-frito", 2, "p0"), e("queso-f", 1, "p0")] },
+      { k: "media", h: 600, items: [e("guineo", 1, "p0"), e("yogur", 200, "g")] },
+      { k: "almuerzo", h: 870, items: [e("arroz-c", 1.5, "p0"), e("hab-r-c", 1, "p0"), e("pechuga-c", 200, "g"), e("aguacate", 1, "p0")] },
+      { k: "merienda", h: 1020, items: [e("pina", 1, "p0"), e("nueces", 15, "g"), e("chinola", 1, "p0")] },
+      { k: "cena", h: 1200, items: [e("tilapia", 250, "g"), e("yuca-h", 200, "g"), e("ensalada", 2, "p0"), e("huevo", 2, "p0")] },
+    ], supl: [
+      e("d3", 1, "p0", { h: 460 }), e("creatina", 1, "p0", { h: 460 }),
+      e("whey", 1, "p0", { h: 780, nota: "después del paseo" }), e("omega", 2, "p0", { h: 870, nota: "con el almuerzo" }),
+      e("zinc", 1, "p0", { h: 1200 }), e("magnesio", 2, "p0", { h: 1350 }),
+    ] },
+  };
+  return { dias, sig: n };
+}
+function estadoInicial(vista) {
+  const { dias, sig } = diasIniciales();
+  return {
+    v: 1, vista: vista || "telefono", hora: 798, offline: false, etiquetaFalla: false,
+    dia: HOY, dias, sig, extra: {}, hab: {}, est: {}, comp: {},
+    pant: "dia", panel: null, hoja: null, volverNutri: false,
+    destino: "almuerzo", horaDestino: 798, q: "", sesion: [],
+    cant: null, form: null, compForm: null, horaForm: null,
+    cargando: false, aviso: null, deshacer: null,
+  };
+}
+const PERSISTE = ["v", "vista", "hora", "offline", "etiquetaFalla", "dia", "dias", "sig", "extra", "hab", "est", "comp"];
+function guardar() {
+  try { const o = {}; PERSISTE.forEach((k) => (o[k] = S[k])); localStorage.setItem(CLAVE, JSON.stringify(o)); } catch (_) { /* sin almacenamiento: sigue en memoria */ }
+}
+function cargar() {
+  S = estadoInicial();
+  try {
+    const o = JSON.parse(localStorage.getItem(CLAVE) || "null");
+    if (o && o.v === 1 && o.dias && o.dias[HOY] && o.dias[AYER]) PERSISTE.forEach((k) => { if (o[k] !== undefined) S[k] = o[k]; });
+  } catch (_) { /* datos viejos o sin acceso: se empieza de cero */ }
+}
+
+// ------------------------------------------------------------ cálculo
+const al = (id) => A[id] || S.extra[id];
+const UF = { g: 1, oz: 28.3495, lb: 453.592, kg: 1000, ml: 1, L: 1000 };
+const DEC = { g: 0, ml: 0, oz: 1, lb: 2, kg: 2, L: 2, p: 1 };
+const ENT = { g: 4, ml: 4, oz: 3, lb: 2, kg: 2, L: 2, p: 2 };
+const tipoU = (u) => (u[0] === "p" ? "p" : u);
+function gPorU(it, u) {
+  if (u[0] === "p") { const p = it.por[+u.slice(1)]; return p.ml ? p.g * (it.dens || 1) : p.g; }
+  return UF[u] * (u === "ml" || u === "L" ? it.dens : 1);
+}
+const gramos = (it, q, u) => q * gPorU(it, u);
+function micro(it, k) { const c = S.comp[it.id]; return c && c[k] != null ? c[k] : it.mic[k] || 0; }
+function faltanDe(it) { return (it.faltan || []).filter((k) => !(S.comp[it.id] && S.comp[it.id][k] != null)); }
+function aporte(it, gr) {
+  const f = gr / 100, o = { kcal: it.kc * f, p: it.p * f, c: it.c * f, g: it.g * f };
+  for (const k of MICROS) o[k] = micro(it, k) * f;
+  return o;
+}
+const aporteE = (e) => { const it = al(e.f); return aporte(it, gramos(it, e.q, e.u)); };
+function suma(lista) {
+  const t = { kcal: 0, p: 0, c: 0, g: 0 };
+  MICROS.forEach((k) => (t[k] = 0));
+  lista.forEach((e) => { const a = aporteE(e); for (const k in t) t[k] += a[k]; });
+  return t;
+}
+const dia = () => S.dias[S.dia];
+const esHoy = () => S.dia === HOY;
+const cuenta = (x) => !x.prog || !esHoy() || S.hora >= x.h;
+const pendiente = (x) => !cuenta(x);
+function totalesDia() {
+  const d = dia(), si = [], no = [], supl = [];
+  for (const c of d.comidas) (cuenta(c) ? si : no).push(...c.items);
+  for (const s of d.supl) { if (cuenta(s)) { si.push(s); supl.push(s); } else no.push(s); }
+  return { t: suma(si), pend: suma(no), supl: suma(supl), items: si };
+}
+function objetivo(k) {
+  const nd = NUT[k];
+  if (nd.lim) return nd.lim;
+  if (nd.dia) return red(nd.obj * (BASE_KCAL + dia().paseo) / BASE_KCAL);
+  return nd.obj;
+}
+function faltanDia() {
+  const vistos = new Set(), r = [];
+  for (const e of totalesDia().items) { if (vistos.has(e.f)) continue; vistos.add(e.f); const it = al(e.f), f = faltanDe(it); if (f.length) r.push({ it, f }); }
+  return r;
+}
+function preseleccion() {
+  if (!esHoy()) return "desayuno";
+  const m = S.hora;
+  return m < 600 ? "desayuno" : m < 720 ? "media" : m < 960 ? "almuerzo" : m < 1140 ? "merienda" : "cena";
+}
+const comida = (k) => dia().comidas.find((c) => c.k === k);
+const listaDe = (k) => (k === "supl" ? dia().supl : comida(k).items);
+
+// textos de cantidad
+function porTxt(p, q) { return `${fmtQ(q)} ${q > 1 ? p.pl : p.n} · ${nf(red(p.g * q))} ${p.ml ? "ml" : "g"}`; }
+function cantTxt(it, q, u) {
+  if (it.dosis && u[0] === "p") return `${nf(red(q * it.dosis[0], 1), (q * it.dosis[0]) % 1 ? 1 : 0)} ${it.dosis[1]}`;
+  if (u[0] === "p") return porTxt(it.por[+u.slice(1)], q);
+  const gr = red(gramos(it, q, u));
+  if (u === "g") return `${nf(q)} g`;
+  if (u === "ml") return `${nf(q)} ml`;
+  if (u === "L") return `${nf(q, 2)} L · ${nf(red(q * 1000))} ml`;
+  return `${nf(q, DEC[u])} ${u} · ${nf(gr)} g`;
+}
+function habitual(it) {
+  const h = S.hab[it.id] || it.hab;
+  if (h) return h;
+  return it.por.length ? { u: "p0", q: it.por[0].q } : { u: "g", q: 100 };
+}
+const kcalDe = (it, q, u) => red(aporte(it, gramos(it, q, u)).kcal);
+const macrosTxt = (t) => `P ${nf(red(t.p))} · C ${nf(red(t.c))} · G ${nf(red(t.g))}`;
+
+// ------------------------------------------------------------ piezas comunes
+const enWeb = () => S.vista === "web";
+const sinPanel = () => !S.panel;
+function nombreDia(largo) {
+  if (S.dia === HOY) return largo ? "Hoy, lunes 19 de octubre" : ["Hoy", "lunes 19 de octubre"];
+  return largo ? "Ayer, domingo 18 de octubre" : ["Domingo 18 de octubre", "ayer"];
+}
+function flechas(cls = "") {
+  const ant = S.dia === AYER, sig = S.dia === HOY;
+  return [`<button type="button" class="icono-btn${cls}" data-acc="dia-ant" aria-label="Día anterior"${ant ? ' aria-disabled="true"' : ""}>${ic("chevron-left")}</button>`,
+    `<button type="button" class="icono-btn${cls}" data-acc="dia-sig" aria-label="Día siguiente"${sig ? ' aria-disabled="true"' : ""}>${ic("chevron-right")}</button>`];
+}
+function avisoHtml() {
+  const a = S.aviso;
+  return a ? `<div class="aviso${a.nuevo ? " entra" : ""}" role="status"><span class="txt-av">${a.texto}</span>${a.accion ? `<button type="button" class="btn texto" data-acc="${a.accion[1]}">${a.accion[0]}</button>` : ""}</div>` : "";
+}
+const subTabs = () => `<nav class="sub-tabs" aria-label="Comida"><a class="sub-tab" href="#" aria-current="page" data-acc="nada">Día</a><a class="sub-tab" href="#" data-acc="nada">Calendario</a><a class="sub-tab" href="#" data-acc="nada">Recetas</a><a class="sub-tab" href="#" data-acc="nada">Alimentos</a><a class="sub-tab" href="#" data-acc="nada">Suplementos</a></nav>`;
+
+// resumen: Total, Objetivo y Restan (NUT-03)
+function filaN(k, T) {
+  const nd = NUT[k], dec = nd.dec || 0, tot = red(T.t[k], dec), obj = objetivo(k);
+  const dif = red(obj - tot, dec);
+  let res;
+  if (nd.min && tot >= obj) res = `<span class="ok">${ic("check", 16)}Cumplido</span>`;
+  // pasarse: negativo en color normal; el ícono solo si el exceso pasa del 5 % del objetivo del día (los límites no tienen tolerancia)
+  else if (dif < 0) res = `<span class="neg">${nd.lim || -dif > obj * 0.05 ? ic("alert-triangle", 16) : ""}<span class="cifra">${MENOS}${nf(-dif, dec)}</span></span>`;
+  else res = `<span class="cifra">${nf(dif, dec)}</span>`;
+  const objH = nd.lim ? `<span class="hasta">hasta</span><span class="cifra">${nf(obj)}</span>` : `<span class="cifra">${nf(obj, obj % 1 ? 1 : 0)}</span>`;
+  const m = nd.m ? ` style="--m:var(--dato-${nd.m})"` : "";
+  let barra;
+  if (nd.lim) {
+    const v = Math.min(tot / (obj * 1.25), 1) * 100;
+    barra = `<div class="pista-n" aria-hidden="true"><div class="p"><i style="--v:${v.toFixed(1)}"></i></div><span class="lim" style="--l:80"></span></div>`;
+  } else {
+    const v = Math.min(tot / obj, 1) * 100, pend = esHoy() && (nd.dia || nd.prog) ? T.pend[k] : 0;
+    const pr = pend > 0.05 ? Math.min(pend / obj * 100, 100 - v) : 0;
+    barra = `<div class="pista-n"${m} aria-hidden="true"><div class="p"><i style="--v:${v.toFixed(1)}"></i>${pr > 0.05 ? `<i class="prog" style="--v:${pr.toFixed(1)}"></i>` : ""}</div></div>`;
+  }
+  let linea = "";
+  if (k === "kcal") {
+    if (dia().paseo) linea = `<span class="linea">${ic("bike", 16)}${nf(BASE_KCAL)} + ${nf(dia().paseo)} del paseo</span>`;
+    else if (esHoy() && T.pend.kcal >= 0.5) linea = `<span class="linea">Con lo programado: <span data-n="kcal-prog">${nf(red(T.t.kcal + T.pend.kcal))}</span></span>`;
+  }
+  if (nd.ul) {
+    const v = red(nd.ulSupl ? T.supl[k] : T.t[k]);
+    if (v >= nd.ul * 0.8) linea += `<span class="linea tope" data-n="${k}-tope">${ic("alert-triangle", 16)}${v > nd.ul ? "Pasaste el tope seguro" : "Cerca del tope seguro"}: ${nf(v)} de ${nf(nd.ul)} ${nd.u}</span>`;
+  }
+  const kc = k === "kcal";
+  return `<span class="nom${kc ? " kcal" : ""}">${nd.n} <span class="u">${nd.u}</span></span><span class="${kc ? "kcal" : ""}" style="display:contents"><span class="v" data-n="${k}-t"><span class="cifra">${nf(tot, dec)}</span></span><span class="v" data-n="${k}-o">${objH}</span><span class="v res" data-n="${k}-r">${res}</span></span>${barra}${linea}`;
+}
+function resumen(lista, pie = "") {
+  const T = totalesDia();
+  let h = `<section class="resumen tnum" aria-label="Resumen del día"><span></span><span class="cab">Total</span><span class="cab">Objetivo</span><span class="cab">Restan</span>`;
+  for (const x of lista) h += x[0] === "#" ? `<span class="grupo-n">${x.slice(1)}</span>` : filaN(x, T);
+  return h + pie + `</section>`;
+}
+const CORTO = ["kcal", "p", "c", "g"];
+const DESGLOSE_WEB = ["kcal", "p", "c", "g", "#Límites", "na", "az", "sat"];
+const TODOS = ["#Energía y macros", "kcal", "p", "c", "g", "fib", "#Límites", "na", "az", "sat", "#Vitaminas y minerales", "va", "vc", "vd", "ve", "b12", "fol", "ca", "fe", "mg", "k", "zn"];
+const WEB_IZQ = ["#Energía y macros", "kcal", "p", "c", "g", "fib", "#Límites", "na", "az", "sat"];
+const WEB_DER = ["#Vitaminas", "va", "vc", "vd", "ve", "b12", "fol", "#Minerales", "ca", "fe", "mg", "k", "zn"];
+
+// comidas del día
+function filaAlimento(e, prog) {
+  const it = al(e.f), kc = `<span class="kc tnum">${nf(kcalDe(it, e.q, e.u))} kcal</span>`;
+  const det = `<span class="t-detalle tnum">${cantTxt(it, e.q, e.u)}</span>`;
+  if (prog) return `<div class="alimento quitable"><button type="button" class="txt" data-acc="editar" data-v="${e.id}" aria-label="Editar ${esc(minus(it.n))}"><span>${esc(it.n)}</span>${det}</button>${kc}<button type="button" class="icono-btn" data-acc="quitar" data-v="${e.id}" aria-label="Quitar ${esc(minus(it.n))}">${ic("x", 20)}</button></div>`;
+  return `<button type="button" class="alimento" data-acc="editar" data-v="${e.id}"><span class="txt"><span>${esc(it.n)}</span>${det}</span>${kc}</button>`;
+}
+const pieComida = (k) => `<div class="comida-pie"><button type="button" class="btn texto" data-acc="agregar" data-v="${k}" aria-label="Agregar ${COMIDAS[k].art}">${ic("plus", 20)}Agregar</button></div>`;
+function comidaHtml(c) {
+  const M = COMIDAS[c.k], prog = pendiente(c), eleg = enWeb() && S.panel && S.destino === c.k ? " elegida" : "";
+  const h4 = `<h4 class="t-seccion" style="margin:0">${M.n}</h4>`;
+  if (!c.items.length) return `<section class="comida vacia-c${eleg}" aria-label="${M.n}" data-comida="${c.k}"><div class="comida-cab"><div class="txt">${h4}<span class="t-detalle tnum">Sin alimentos todavía</span></div></div>${pieComida(c.k)}</section>`;
+  const t = suma(c.items);
+  const sub = prog ? `<span class="m prog" aria-hidden="true"></span>Programada · ${horaTxt(c.h)}` : c.h != null ? horaTxt(c.h) : "";
+  return `<section class="comida${prog ? " programada" : ""}${eleg}" aria-label="${M.n}" data-comida="${c.k}"><div class="comida-cab"><div class="txt">${h4}<span class="t-detalle tnum">${sub}</span></div><span class="kc"><span><span class="cifra" data-n="comida-${c.k}">${nf(red(t.kcal))}</span> <span class="unidad-c">kcal</span></span><span class="t-detalle tnum">${macrosTxt(t)}</span></span></div>${c.items.map((e) => filaAlimento(e, prog)).join("")}${pieComida(c.k)}</section>`;
+}
+function suplHtml() {
+  const d = dia(), eleg = enWeb() && S.panel && S.destino === "supl" ? " elegida" : "";
+  const hechas = d.supl.filter(cuenta), t = suma(hechas);
+  const kc = t.kcal >= 0.5 ? `<span class="kc"><span><span class="cifra" data-n="comida-supl">${nf(red(t.kcal))}</span> <span class="unidad-c">kcal</span></span><span class="t-detalle tnum">${macrosTxt(t)}</span></span>` : "";
+  const filas = d.supl.map((e) => {
+    const it = al(e.f), cuando = e.nota || horaTxt(e.h), dosis = cantTxt(it, e.q, e.u);
+    if (pendiente(e)) return `<div class="alimento quitable"><button type="button" class="txt" data-acc="editar" data-v="${e.id}" aria-label="Editar ${esc(minus(it.n))}"><span>${esc(it.n)}</span><span class="t-detalle tnum"><span class="m prog" aria-hidden="true"></span>${ic("bell", 16)}${dosis} · ${cuando}</span></button><button type="button" class="icono-btn" data-acc="quitar" data-v="${e.id}" aria-label="Quitar ${esc(minus(it.n))}">${ic("x", 20)}</button></div>`;
+    const k = kcalDe(it, e.q, e.u);
+    return `<button type="button" class="alimento" data-acc="editar" data-v="${e.id}"><span class="txt"><span>${esc(it.n)}</span><span class="t-detalle tnum">${dosis} · ${cuando}</span></span>${k ? `<span class="kc tnum">${nf(k)} kcal</span>` : ""}</button>`;
+  }).join("");
+  return `<section class="comida supl${eleg}" aria-label="Suplementos" data-comida="supl"><div class="comida-cab"><div class="txt"><h4 class="t-seccion" style="margin:0">Suplementos</h4><span class="t-detalle tnum" data-n="tomas">${hechas.length} de ${d.supl.length} tomas</span></div>${kc}</div>${filas}${pieComida("supl")}</section>`;
+}
+const comidasHtml = () => dia().comidas.map(comidaHtml).join("") + suplHtml();
+
+// esqueletos (solo si tarda más de 300 ms)
+const esqMovil = () => {
+  const tarjeta = `<div class="esq-tarjeta"><span class="esq linea pulso" style="width:45%"></span><span class="esq linea pulso" style="width:80%"></span><span class="esq linea pulso" style="width:70%"></span><span class="esq linea pulso" style="width:75%"></span></div>`;
+  const fila = `<div class="esq-fila"><span class="esq linea pulso" style="width:38%"></span><span class="esq linea pulso" style="width:34%"></span></div><span class="esq linea pulso" style="width:100%"></span>`;
+  return `<div class="esq-tarjeta"><span class="esq linea pulso" style="width:30%"></span>${fila}${fila}${fila}</div>${tarjeta}${tarjeta}`;
+};
+const esqWeb = () => {
+  const t = `<div class="tarjeta web"><span class="esq linea pulso" style="width:30%"></span><span class="esq bloque pulso" style="width:100%"></span><span class="esq linea pulso" style="width:80%"></span><span class="esq linea pulso" style="width:70%"></span></div>`;
+  return `<div class="rejilla" aria-busy="true" aria-label="Cargando el día"><div class="span-7 col">${t}${t}</div><div class="span-5 col"><div class="tarjeta web"><span class="esq linea pulso" style="width:40%"></span><span class="esq alto pulso" style="width:100%"></span></div></div></div>`;
+};
+
+// ------------------------------------------------------------ búsqueda
+function coincide(it, palabras) {
+  const enTexto = (t) => { const ws = norm(t).split(/[^a-z0-9ñ]+/).filter(Boolean); return palabras.every((p) => ws.some((w) => w.startsWith(p))); };
+  if (enTexto(it.n)) return { ok: true };
+  const s = (it.sin || []).find((x) => enTexto(x));
+  return s ? { ok: true, sin: s } : { ok: false };
+}
+function visibleEstado(it) { return !it.par || it.estado === (S.est[it.base] || "cocido"); }
+function resultados(q) {
+  const palabras = norm(q).split(/[^a-z0-9ñ]+/).filter(Boolean);
+  const supl = S.destino === "supl";
+  const todos = [...Object.values(A), ...Object.values(S.extra)].filter((it) => !!it.supl === supl && visibleEstado(it));
+  const out = [];
+  for (const it of todos) {
+    if (S.offline && !enWeb() && !(it.tel || it.usado || it.src === "tuyo")) continue;
+    const m = coincide(it, palabras);
+    if (m.ok) out.push({ it, sin: m.sin });
+  }
+  return out;
+}
+function filaResultado({ it, sin }, conFuente) {
+  const h = conFuente ? habitual(it) : (it.por.length ? { u: "p0", q: it.por[0].q } : { u: "g", q: 100 });
+  const marca = sin ? `también <mark>${esc(sin)}</mark> · ` : "";
+  const fuente = conFuente ? `${FUENTE[it.src]} · ` : "";
+  const pild = it.evitar ? `<span class="pildora">${ic("ban", 16)}En tu lista de evitar</span>` : "";
+  return `<div class="resultado" data-acc="elegir" data-v="${it.id}"><span class="txt"><span>${esc(it.n)}</span><span class="t-detalle tnum">${marca}${fuente}${cantTxt(it, h.q, h.u)}${it.kc ? ` · ${nf(kcalDe(it, h.q, h.u))} kcal` : ""}</span>${pild}</span><button type="button" class="icono-btn neutro" data-acc="elegir" data-v="${it.id}" aria-label="Elegir cantidad de ${esc(minus(it.n))}">${ic("chevron-right")}</button></div>`;
+}
+function recientesHtml() {
+  const supl = S.destino === "supl", lista = listaDe(S.destino);
+  let ids;
+  if (supl) ids = SUPLEMENTOS;
+  else {
+    const creados = Object.keys(S.extra);
+    const base = [...creados, ...RECIENTES];
+    const en = lista.map((e) => e.f).filter((f, i, a) => a.indexOf(f) === i && base.includes(f));
+    ids = [...en, ...base.filter((f) => !en.includes(f))].slice(0, 7 + Math.min(creados.length, 2));
+  }
+  const filas = ids.map((id) => {
+    const it = al(id), h = habitual(it);
+    const ya = supl ? S.sesion.some((sid) => { const e = lista.find((x) => x.id === sid); return e && e.f === id; }) : lista.some((e) => e.f === id);
+    const nom = minus(it.n), destino = COMIDAS[S.destino].n.toLowerCase();
+    const btn = ya
+      ? `<button type="button" class="icono-btn hecho" data-acc="sacar" data-v="${id}" aria-label="${esc(it.n)}: ya está en ${S.destino === "supl" ? "los suplementos" : (COMIDAS[S.destino].art.startsWith("al ") ? "el " : "la ") + destino}. Tocar para sacarlo">${ic("check")}</button>`
+      : `<button type="button" class="icono-btn" data-acc="rapido" data-v="${id}" aria-label="Agregar ${esc(nom)} con su porción habitual">${ic("plus")}</button>`;
+    return `<div class="resultado" data-acc="elegir" data-v="${id}"><span class="txt"><span>${esc(it.n)}</span><span class="t-detalle tnum">${cantTxt(it, h.q, h.u)}${it.kc ? ` · ${nf(kcalDe(it, h.q, h.u))} kcal` : ""}</span></span>${btn}</div>`;
+  }).join("");
+  return `<span class="grupo-tit">${supl ? "Tus suplementos" : "Recientes y frecuentes"}</span><div class="resultados">${filas}</div>`;
+}
+function resultadosHtml() {
+  const q = S.q.trim();
+  if (!q) return recientesHtml();
+  const r = resultados(q);
+  if (!r.length) return "";
+  if (S.offline && !enWeb()) return `<span class="grupo-tit">En este teléfono</span><div class="resultados">${r.map((x) => filaResultado(x, true)).join("")}</div>`;
+  if (S.destino === "supl") return `<span class="grupo-tit">Tus suplementos</span><div class="resultados">${r.map((x) => filaResultado(x, false)).join("")}</div>`;
+  const g1 = r.filter((x) => x.it.usado || x.it.src === "tuyo"), resto = r.filter((x) => !g1.includes(x));
+  const g2 = resto.filter((x) => x.it.src === "INCAP"), g3 = resto.filter((x) => x.it.src === "USDA");
+  const grupo = (t, l, f) => (l.length ? `<span class="grupo-tit">${t}</span><div class="resultados">${l.map((x) => filaResultado(x, f)).join("")}</div>` : "");
+  return grupo("Tus alimentos y los que ya usaste", g1, true) + grupo("Base local · INCAP", g2, false) + grupo("USDA", g3, false);
+}
+function sinResultados() {
+  const q = S.q.trim();
+  return q && !resultados(q).length;
+}
+function vacioBusqueda() {
+  const p = S.offline && !enWeb() ? "Prueba con otra palabra o créalo. Sin conexión buscamos solo en tus alimentos guardados." : "Prueba con otra palabra o créalo. Buscamos en tus alimentos, en INCAP y en USDA.";
+  return `<div class="vacio">${ic("search", 32)}<span class="t-seccion">No hay alimentos con «${esc(S.q.trim())}»</span><p class="sec">${p}</p><button type="button" class="btn primario" data-acc="crear">${ic("plus", 20)}Crear alimento</button></div>`;
+}
+// zona que cambia mientras escribes (el campo no se vuelve a pintar)
+function zonaBusqueda() {
+  if (sinResultados()) return enWeb() ? vacioBusqueda() : `<div class="desliza" id="scroll">${vacioBusqueda()}</div>`;
+  const crear = `<div class="fila-crear"><button type="button" class="btn secundario" data-acc="crear">${ic("plus", 20)}Crear alimento</button></div>`;
+  return enWeb() ? crear + resultadosHtml() : `${crear}<div class="desliza" id="scroll">${resultadosHtml()}</div>`;
+}
+function cabBusqueda(web) {
+  const M = COMIDAS[S.destino];
+  const comidaBtn = `<div class="txt"><button type="button" class="comida-btn" data-acc="elegir-comida" aria-label="Cambiar de comida: ${M.n}">${M.n}${ic("chevron-down", 20)}</button></div>`;
+  const hora = S.destino === "supl" ? "" : `<button type="button" class="hora-btn tnum" data-acc="elegir-hora" aria-label="Cambiar la hora: ${horaTxt(S.horaDestino)}">${ic("clock", 16)}${horaTxt(S.horaDestino)}</button>`;
+  if (web) return `<div class="busca-cab sin-atras">${comidaBtn}${hora}<button type="button" class="icono-btn" data-acc="cerrar-panel" aria-label="Cerrar y volver al desglose">${ic("x")}</button></div>`;
+  return `<div class="busca-cab"><button type="button" class="atras" data-acc="volver-dia" aria-label="Volver al día">${ic("arrow-left")}</button>${comidaBtn}${hora}</div>`;
+}
+const campoBuscar = () => `<div class="entrada buscar" role="search">${ic("search", 20)}<input id="f-buscar" type="search" data-campo="buscar" aria-label="Buscar alimento" placeholder="Buscar ${S.destino === "supl" ? "suplemento" : "alimento"}" value="${esc(S.q)}" autocomplete="off" enterkeyhint="search"><button type="button" class="borrar" data-acc="borrar-busqueda" aria-label="Borrar la búsqueda"${S.q ? "" : " hidden"}>${ic("x", 20)}</button></div>`;
+function barraPlato() {
+  if (!S.sesion.length) return "";
+  const lista = listaDe(S.destino), t = suma(lista), n = lista.length, M = COMIDAS[S.destino];
+  const cuenta = S.destino === "supl" ? `${n} ${n === 1 ? "toma" : "tomas"}` : `${n} ${n === 1 ? "alimento" : "alimentos"}`;
+  return `<div class="barra-plato"><div class="txt"><span class="t-detalle tnum">${M.n} · ${cuenta}</span><span class="tot tnum"><span class="cifra" data-n="plato-kcal">${nf(red(t.kcal))}</span><span class="unidad-c">kcal</span></span><span class="t-detalle tnum" data-n="plato-macros">${macrosTxt(t)}</span></div><button type="button" class="btn primario" data-acc="listo">Listo</button></div>`;
+}
+const sincBuscar = () => `<span class="sinc-linea">${ic("cloud-off", 16)}Sin conexión · buscas solo en tus alimentos guardados</span>`;
+
+// ------------------------------------------------------------ cantidad (hoja en el teléfono, panel en la web)
+function cabCantidad() {
+  const c = S.cant, it = al(c.f), base = it.base || it.n;
+  const det = it.supl && !it.kc ? `${FUENTE[it.src]}` : `${FUENTE[it.src]} · ${nf(red(it.kc))} kcal por 100 g${it.ec ? " " + it.ec : ""}`;
+  return [base, det];
+}
+function unidadesDe(it) {
+  const u = it.por.map((p, i) => ["p" + i, porTxt(p, p.q)]);
+  if (it.pesable) u.push(["g", "g"], ["oz", "oz"], ["lb", "lb"], ["kg", "kg"]);
+  if (it.dens) u.push(["ml", "ml"], ["L", "L"]);
+  if (!u.length) u.push(["g", "g"]);
+  return u;
+}
+function uLabel(it, q, u) {
+  if (u[0] !== "p") return u;
+  const p = it.por[+u.slice(1)];
+  return q > 1 ? p.pl : p.n;
+}
+function vivoHtml() {
+  const c = S.cant, it = al(c.f), q = parseQ(c.txt) || 0, gr = gramos(it, q, c.u), a = aporte(it, gr);
+  const enMl = c.u === "ml" || c.u === "L" || (c.u[0] === "p" && it.por[+c.u.slice(1)].ml);
+  const vol = c.u === "ml" ? q : c.u === "L" ? q * 1000 : enMl ? q * it.por[+c.u.slice(1)].g : gr;
+  const lbl = it.pesable || it.dens ? `kcal · ${nf(red(vol))} ${enMl ? "ml" : "g"}` : "kcal";
+  return `<div><span class="cifra" data-n="vivo-kcal">${nf(red(a.kcal))}</span><span class="t-detalle">${lbl}</span></div><div><span class="cifra" data-n="vivo-p">${nf(red(a.p))}</span><span class="t-detalle">proteína</span></div><div><span class="cifra">${nf(red(a.c))}</span><span class="t-detalle">carbohidr.</span></div><div><span class="cifra">${nf(red(a.g))}</span><span class="t-detalle">grasa</span></div>`;
+}
+function camposCantidad() {
+  const c = S.cant, it = al(c.f), tu = tipoU(c.u), q = parseQ(c.txt);
+  let h = "", estado = "";
+  if (c.modo === "agregar" && it.par) {
+    estado = `<div class="campo"><span class="lbl" id="l-estado">Estado</span><div class="chips" role="group" aria-labelledby="l-estado"><button type="button" class="chip" data-acc="estado" data-v="crudo" aria-pressed="${it.estado === "crudo"}">Crudo</button><button type="button" class="chip" data-acc="estado" data-v="cocido" aria-pressed="${it.estado === "cocido"}">Cocido</button></div></div>`;
+  }
+  const modo = DEC[tu] > 0 ? "decimal" : "numeric";
+  const frac = tu === "p" ? `<div class="fracciones" role="group" aria-label="Fracciones">${["¼", "½", "¾"].map((g) => `<button type="button" class="chip" data-acc="frac" data-v="${g}" aria-label="Sumar ${g === "¼" ? "un cuarto" : g === "½" ? "medio" : "tres cuartos"}">${g}</button>`).join("")}</div>` : "";
+  h += `<div class="campo"><label class="lbl" for="f-cant">Cantidad</label><div class="cant"><div class="entrada${c.err ? " error" : ""}"><input id="f-cant" class="cifra tnum" data-campo="cant" inputmode="${modo}" value="${esc(c.txt)}" placeholder="0" autocomplete="off"${c.err ? ' aria-invalid="true" aria-describedby="e-cant"' : ""}><span class="u" id="u-cant">${uLabel(it, q || 0, c.u)}</span></div>${frac}</div>${c.err ? `<span class="error-linea" id="e-cant">${ic("alert-circle", 16)}${c.err}</span>` : ""}</div>`;
+  const unidad = `<div class="campo"><span class="lbl" id="l-unidad">Unidad</span><div class="chips" role="group" aria-labelledby="l-unidad">${unidadesDe(it).map(([u, t]) => `<button type="button" class="chip tnum" data-acc="unidad" data-v="${u}" aria-pressed="${u === c.u}">${t}</button>`).join("")}</div></div>`;
+  h += `<div class="vivo tnum" aria-live="polite" id="vivo">${vivoHtml()}</div>`;
+  const quitar = it.supl ? "Quitar toma" : "Quitar de la comida";
+  h += c.modo === "agregar"
+    ? `<button type="button" class="btn primario ancho" data-acc="agregar-hoja">Agregar</button>`
+    : `<div class="botones-hoja"><button type="button" class="btn secundario" data-acc="quitar-hoja">${ic("trash", 20)}${quitar}</button><button type="button" class="btn primario" data-acc="guardar-hoja">Guardar</button></div>`;
+  // lo crítico arriba (campo, macros, acción): con la hoja anclada arriba, el teclado solo tapa la parte baja
+  return h + unidad + estado;
+}
+function cantidadMovil() {
+  const [base, det] = cabCantidad();
+  return `<div class="velo" data-acc="cerrar-hoja"><div class="hoja" role="dialog" aria-modal="true" aria-labelledby="hoja-t"><span class="agarre" aria-hidden="true"></span><div class="cab-hoja"><h4 class="t-seccion" style="margin:0" id="hoja-t" tabindex="-1">${esc(base)}</h4><span class="t-detalle tnum">${det}</span></div>${camposCantidad()}</div></div>`;
+}
+function cantidadWeb() {
+  const [base, det] = cabCantidad(), c = S.cant;
+  const atras = c.modo === "agregar" ? `data-acc="volver-busqueda" aria-label="Volver a la búsqueda"` : `data-acc="cerrar-panel" aria-label="Cerrar y volver al desglose"`;
+  return `<aside class="panel-w sin-pie" aria-label="Cantidad de ${esc(minus(base))}"><div class="busca-cab"><button type="button" class="atras" ${atras}>${ic("arrow-left")}</button><div class="txt cab-hoja"><h4 class="t-seccion" style="margin:0" id="hoja-t" tabindex="-1">${esc(base)}</h4><span class="t-detalle tnum">${det}</span></div></div>${camposCantidad()}</aside>`;
+}
+
+// elegir comida y hora
+function opcionesComida() {
+  return `<div class="opciones">${Object.keys(COMIDAS).map((k) => {
+    const n = listaDe(k).length;
+    const det = k === "supl" ? `${n} tomas` : n ? `${n} ${n === 1 ? "alimento" : "alimentos"}${comida(k).h != null ? " · " + horaTxt(comida(k).h) : ""}` : "Sin alimentos todavía";
+    return `<button type="button" class="opcion-hoy" data-acc="set-comida" data-v="${k}" aria-pressed="${k === S.destino}"><span class="txt"><span>${COMIDAS[k].n}</span><span class="t-detalle sec tnum">${det}</span></span>${k === S.destino ? ic("check", 20, "acento") : ""}</button>`;
+  }).join("")}</div>`;
+}
+function camposHora() {
+  const f = S.horaForm;
+  return `<div class="hora-campos"><div class="campo"><label class="lbl" for="f-hora">Hora</label><div class="entrada${f.err ? " error" : ""}"><input id="f-hora" class="tnum" data-campo="hora" inputmode="numeric" maxlength="5" value="${esc(f.txt)}" placeholder="1:00" autocomplete="off"${f.err ? ' aria-invalid="true" aria-describedby="e-hora"' : ""}></div></div>
+    <div class="segmento" role="group" aria-label="Mañana o tarde"><button type="button" data-acc="ampm" data-v="am" aria-pressed="${!f.pm}">a. m.</button><button type="button" data-acc="ampm" data-v="pm" aria-pressed="${f.pm}">p. m.</button></div></div>
+    ${f.err ? `<span class="error-linea" id="e-hora">${ic("alert-circle", 16)}${f.err}</span>` : ""}
+    <button type="button" class="btn primario ancho" data-acc="guardar-hora">Guardar hora</button>`;
+}
+function hojaSimple(titulo, cuerpo, sub = "") {
+  return `<div class="velo" data-acc="cerrar-hoja"><div class="hoja" role="dialog" aria-modal="true" aria-labelledby="hoja-t"><span class="agarre" aria-hidden="true"></span><div class="cab-hoja"><h4 class="t-seccion" style="margin:0" id="hoja-t" tabindex="-1">${titulo}</h4>${sub ? `<span class="t-detalle">${sub}</span>` : ""}</div>${cuerpo}</div></div>`;
+}
+function panelSimple(titulo, cuerpo) {
+  return `<aside class="panel-w sin-pie" aria-label="${titulo}"><div class="busca-cab"><button type="button" class="atras" data-acc="volver-busqueda" aria-label="Volver a la búsqueda">${ic("arrow-left")}</button><div class="txt"><span class="t-seccion" id="hoja-t">${titulo}</span></div></div>${cuerpo}</aside>`;
+}
+const tituloHora = () => `Hora ${COMIDAS[S.destino].art.replace(/^al /, "del ").replace(/^a la /, "de la ")}`;
+const hojaFoto = () => hojaSimple("Leer la etiqueta", `<div class="lista"><button type="button" class="fila" data-acc="foto" data-v="camara">${ic("camera")}<span class="txt"><span>Tomar foto</span></span>${ic("chevron-right", 20)}</button><button type="button" class="fila" data-acc="foto" data-v="galeria">${ic("photo")}<span class="txt"><span>Elegir de la galería</span></span>${ic("chevron-right", 20)}</button></div>`, "La tabla nutricional, bien enfocada. Revisas los valores antes de guardar.");
+
+// ------------------------------------------------------------ crear alimento (NUT-12) y completar datos
+function campoTxt(id, lbl, valor, { u = "", dec = null, ent = 4, ph = "0", tipo = "num" } = {}) {
+  const f = S.form, e = f.err[id];
+  const attrs = tipo === "num" ? ` inputmode="${dec ? "decimal" : "numeric"}" data-dec="${dec || 0}" data-ent="${ent}"` : ' maxlength="60"';
+  return `<div class="campo"><label class="lbl" for="f-${id}">${lbl}</label><div class="entrada${e ? " error" : ""}"><input id="f-${id}" class="tnum" data-campo="${id}"${attrs} value="${esc(valor)}" placeholder="${esc(ph)}" autocomplete="off"${e ? ` aria-invalid="true" aria-describedby="e-${id}"` : ""}>${u ? `<span class="u">${u}</span>` : ""}</div>${e ? `<span class="error-linea" id="e-${id}">${ic("alert-circle", 16)}${e}</span>` : ""}</div>`;
+}
+function camposCrear(web) {
+  const f = S.form;
+  const leer = web
+    ? `<div class="leer"><button type="button" class="btn secundario" data-acc="leer"${f.leyendo ? ' aria-busy="true"' : ""}>${f.leyendo ? '<span class="indicador" aria-hidden="true"></span>Leyendo la etiqueta…' : ic("upload", 20) + "Subir foto de la etiqueta"}</button></div><span class="t-detalle sec">La tabla nutricional, en JPG o PNG. Revisas los valores antes de guardar.</span>`
+    : `<div class="leer"><button type="button" class="btn secundario" data-acc="leer"${f.leyendo ? ' aria-busy="true"' : ""}>${f.leyendo ? '<span class="indicador" aria-hidden="true"></span>Leyendo la etiqueta…' : ic("camera", 20) + "Leer la etiqueta"}</button><span><button type="button" class="icono-btn" aria-disabled="true" data-acc="nada" aria-label="Código de barras, disponible después de la v1.0">${ic("barcode")}</button></span></div>`;
+  let h = f.leido ? `<span class="leido">${ic("check", 16)}Leído de la etiqueta: revisa los valores</span>` : leer;
+  h += campoTxt("nombre", "Nombre", f.nombre, { tipo: "txt", ph: "Ej.: maíz dulce en lata" });
+  if (f.leyendo) {
+    const esq = `<div class="campo"><span class="esq linea pulso" style="width:40%"></span><span class="esq bloque pulso" style="width:100%"></span></div>`;
+    return h + `<div class="par" aria-hidden="true">${esq}${esq}</div>`.repeat(3);
+  }
+  h += `<div class="campo"><span class="lbl" id="l-festado">Estado</span><div class="chips" role="group" aria-labelledby="l-festado"><button type="button" class="chip" data-acc="form-estado" data-v="crudo" aria-pressed="${f.estado === "crudo"}">Crudo</button><button type="button" class="chip" data-acc="form-estado" data-v="cocido" aria-pressed="${f.estado === "cocido"}">Cocido</button></div></div>`;
+  h += `<div class="par">${campoTxt("porCasera", "Porción casera", f.porCasera, { tipo: "txt", ph: "Ej.: ½ taza" })}${campoTxt("porG", "Porción en g", f.porG, { u: "g", ent: 4 })}</div>`;
+  h += `<span class="sub-form">Valores por porción<span class="t-detalle">se guardan por 100 g</span></span>`;
+  h += `<div class="par">${campoTxt("kcal", "Energía", f.kcal, { u: "kcal", ent: 4 })}${campoTxt("p", "Proteína", f.p, { u: "g", dec: 1, ent: 3 })}</div>`;
+  h += `<div class="par">${campoTxt("c", "Carbohidratos", f.c, { u: "g", dec: 1, ent: 3 })}${campoTxt("g", "Grasa", f.g, { u: "g", dec: 1, ent: 3 })}</div>`;
+  const opc = (id, lbl) => `<div><label for="f-${id}">${lbl}</label><span class="opc"><input id="f-${id}" class="tnum" data-campo="${id}" inputmode="decimal" data-dec="1" data-ent="3" value="${esc(f[id])}" placeholder="sin dato" autocomplete="off"><span class="u">g</span></span></div>`;
+  h += `<span class="sub-form">Opcionales</span><div class="opcionales tnum">${opc("fib", "Fibra")}${opc("az", "Azúcar añadida")}${opc("sat", "Grasa saturada")}</div>`;
+  return h;
+}
+const accionesCrear = () => `<div class="acciones-form"><button type="button" class="btn primario ancho" data-acc="guardar-alimento">Guardar alimento</button></div>`;
+function crearMovil() {
+  return `<div class="busca-cab"><button type="button" class="atras" data-acc="cerrar-crear" aria-label="Cerrar">${ic("x")}</button><div class="txt"><span class="t-seccion" id="h-pant" tabindex="-1">Crear alimento</span></div></div>
+    ${S.offline ? `<span class="sinc-linea">${ic("cloud-off", 16)}Sin conexión · lo que guardes sube al volver</span>` : ""}
+    <div class="desliza form-scroll${S.form.leido ? " compacto" : ""}" id="scroll">${camposCrear(false)}</div>
+    ${accionesCrear()}`;
+}
+function crearWeb() {
+  const atras = S.form.desde === "buscar" ? `data-acc="volver-busqueda" aria-label="Volver a la búsqueda"` : `data-acc="cerrar-panel" aria-label="Cerrar y volver al desglose"`;
+  return `<aside class="panel-w sin-pie" aria-label="Crear alimento"><div class="busca-cab"><button type="button" class="atras" ${atras}>${ic("arrow-left")}</button><div class="txt"><span class="t-seccion" id="h-pant" tabindex="-1">Crear alimento</span></div></div>${camposCrear(true)}${accionesCrear()}</aside>`;
+}
+function camposCompletar() {
+  const f = S.compForm, it = al(f.f);
+  const pide = faltanDe(it);
+  const uni = { k: "mg", zn: "mg", fib: "g", az: "g", sat: "g" }, dec = { k: 0, zn: 1, fib: 1, az: 1, sat: 1 };
+  const filas = pide.map((k) => `<div class="campo"><label class="lbl" for="f-c-${k}">${NUT[k].n}</label><div class="entrada"><input id="f-c-${k}" class="tnum" data-campo="c-${k}" inputmode="${dec[k] ? "decimal" : "numeric"}" data-dec="${dec[k]}" data-ent="4" value="${esc(f[k] || "")}" placeholder="sin dato" autocomplete="off"><span class="u">${uni[k]}</span></div></div>`);
+  let par = "";
+  for (let i = 0; i < filas.length; i += 2) par += `<div class="par">${filas[i]}${filas[i + 1] || ""}</div>`;
+  return `<p class="sec">${esc(it.n)} · ${FUENTE[it.src]}. Escribe lo que sepas; lo demás puede quedar sin dato.</p><span class="sub-form">Valores por 100 g</span>${par}`;
+}
+function completarMovil() {
+  return `<div class="busca-cab"><button type="button" class="atras" data-acc="volver-nutrientes" aria-label="Volver a todos los nutrientes">${ic("arrow-left")}</button><div class="txt"><span class="t-seccion" id="h-pant" tabindex="-1">Completar alimento</span></div></div>
+    <div class="desliza form-scroll" id="scroll">${camposCompletar()}</div><div class="acciones-form"><button type="button" class="btn primario ancho" data-acc="guardar-completar">Guardar datos</button></div>`;
+}
+function completarWeb() {
+  return `<aside class="panel-w sin-pie" aria-label="Completar alimento"><div class="busca-cab"><button type="button" class="atras" data-acc="volver-nutrientes" aria-label="Volver a todos los nutrientes">${ic("arrow-left")}</button><div class="txt"><span class="t-seccion" id="h-pant" tabindex="-1">Completar alimento</span></div></div>${camposCompletar()}<div class="acciones-form"><button type="button" class="btn primario ancho" data-acc="guardar-completar">Guardar datos</button></div></aside>`;
+}
+
+// ------------------------------------------------------------ pantallas del teléfono
+function diaMovil() {
+  const [t1, t2] = nombreDia(false), [fa, fs] = flechas();
+  const contenido = S.cargando ? esqMovil()
+    : resumen(CORTO) + comidasHtml() + `<button type="button" class="btn texto ver-todo" data-acc="nutrientes">Ver todos los nutrientes${ic("chevron-right", 20)}</button>`;
+  return `${subTabs()}<div class="desliza con-fab" id="scroll"${S.cargando ? ' aria-busy="true" aria-label="Cargando el día"' : ""}><div class="dia-nav">${fa}<div class="txt"><span class="t-seccion" id="h-pant" tabindex="-1">${t1}</span><span class="t-detalle sec">${t2}</span></div>${fs}</div>
+    ${S.offline ? `<span class="sinc-linea dia-sinc">${ic("cloud-off", 16)}Sin conexión · lo que registres sube al volver</span>` : ""}${contenido}</div>`;
+}
+function buscarMovil() {
+  return `${cabBusqueda(false)}${campoBuscar()}${S.offline ? sincBuscar() : ""}<div id="res-zona">${zonaBusqueda()}</div>`;
+}
+function faltanTexto(corto) {
+  const f = faltanDia();
+  if (!f.length) return "";
+  const n = f.length;
+  let t = `Faltan datos de ${n} ${n === 1 ? "alimento" : "alimentos"}`;
+  if (!corto && n === 1) {
+    const ds = f[0].f.map((k) => NOMBRE_DATO[k]);
+    const lista = ds.length > 1 ? ds.slice(0, -1).join(", ") + " ni " + ds[ds.length - 1] : ds[0];
+    t += `: ${minus(f[0].it.n).replace(/^/, "el ")} no tiene ${lista}`;
+  }
+  return t;
+}
+function nutrientesMovil() {
+  const f = faltanTexto(true);
+  return `<div class="busca-cab"><button type="button" class="atras" data-acc="volver-dia" aria-label="Volver al día">${ic("arrow-left")}</button><div class="txt"><span class="t-seccion" id="h-pant" tabindex="-1">Todos los nutrientes</span><span class="t-detalle sec">${esHoy() ? "Hoy, lunes 19 de octubre" : "Domingo 18 de octubre"}</span></div></div>
+    <div class="desliza" id="scroll">${f ? `<button type="button" class="fila" style="padding-inline:0;min-height:40px" data-acc="completar"><span class="sinc-linea">${ic("info-circle", 16)}${f}</span>${ic("chevron-right", 20)}</button>` : ""}${resumen(TODOS)}</div>`;
+}
+
+// + flotante con menú (solo teléfono, solo en el día)
+function fabHtml() {
+  if (enWeb() || S.pant !== "dia" || S.hoja) return "";
+  const pre = preseleccion(), abierto = !!S.fab;
+  const menu = abierto ? `<div class="velo-fab" data-acc="cerrar-fab"></div><div class="menu-fab" id="menu-fab" role="menu" aria-label="Agregar o crear alimento"><button type="button" role="menuitem" data-acc="agregar" data-v="${pre}">${ic("plus", 20)}Agregar ${COMIDAS[pre].art}</button><button type="button" role="menuitem" data-acc="crear">${ic("pencil", 20)}Crear alimento</button></div>` : "";
+  return `${menu}<button type="button" class="fab" id="fab" data-acc="fab" aria-label="Agregar o crear alimento" aria-haspopup="menu" aria-expanded="${abierto}"${abierto ? ' aria-controls="menu-fab"' : ""}>${ic("plus")}</button>`;
+}
+
+// ------------------------------------------------------------ web
+const marca = () => `<div class="marca"><span class="logo"><svg class="i s20" aria-hidden="true"><use href="#logo"/></svg></span><span data-brand-name>Coach Fitness AI</span></div>`;
+function lateral() {
+  const items = [["home", "Hoy"], ["barbell", "Gym"], ["kitchen", "Comida", true], ["heart", "Salud"], ["message", "Coach"]];
+  const subs = ["Día", "Calendario", "Recetas", "Alimentos", "Suplementos"];
+  return `<aside class="lateral">${marca()}${items.map(([i, t, ab]) => `<a class="item${ab ? " abierto" : ""}">${ic(i, 20)}${t}</a>${ab ? subs.map((s, n) => `<a class="subitem"${n === 0 ? ' aria-current="page"' : ""}>${s}</a>`).join("") : ""}`).join("")}
+    <div class="pie"><a class="item">${ic("settings", 20)}Ajustes</a><span class="sinc t-detalle">${S.offline ? ic("cloud-off", 16) + "Sin conexión" : ic("cloud-check", 16) + "Sincronizado hace 1 min"}</span></div></aside>`;
+}
+function panelBuscar() {
+  const pie = barraPlato();
+  return `<aside class="panel-w${pie ? "" : " sin-pie"}" aria-label="Agregar ${COMIDAS[S.destino].art}">${cabBusqueda(true)}${campoBuscar()}<div id="res-zona">${zonaBusqueda()}</div><div id="pie-panel" style="display:contents">${pie}</div></aside>`;
+}
+function columnaDerecha() {
+  switch (S.panel) {
+    case "buscar": return panelBuscar();
+    case "cantidad": return cantidadWeb();
+    case "crear": return crearWeb();
+    case "completar": return completarWeb();
+    case "comida": return panelSimple("Elige la comida", opcionesComida());
+    case "hora": return panelSimple(tituloHora(), camposHora());
+    default: return resumen(DESGLOSE_WEB, `<div class="pie-r"><button type="button" class="btn texto" data-acc="nutrientes">Ver todos los nutrientes${ic("chevron-right", 20)}</button></div>`);
+  }
+}
+function webApp() {
+  const [fa, fs] = flechas(), pre = preseleccion();
+  if (S.pant === "nutrientes" && !S.offline) {
+    const f = faltanTexto(false);
+    return `${lateral()}<div class="principal"><div class="web-cab"><div><span class="t-detalle sec">Comida › Día</span><div class="w-dia">${fa}<h3 class="t-pantalla" id="h-pant" tabindex="-1">Todos los nutrientes</h3>${fs}</div><span class="t-detalle sec">${nombreDia(true)}</span></div><button type="button" class="btn secundario" data-acc="volver-dia">${ic("arrow-left", 20)}Volver al día</button></div>
+      ${f ? `<div class="w-faltan"><span class="sinc-linea">${ic("info-circle", 16)}${f}</span><button type="button" class="btn texto" data-acc="completar">Completar${ic("chevron-right", 20)}</button></div>` : ""}
+      ${S.cargando ? esqWeb() : `<div class="rejilla w-nutri"><div class="span-6">${resumen(WEB_IZQ)}</div><div class="span-6">${resumen(WEB_DER)}</div></div>`}</div>`;
+  }
+  const cab = `<div class="web-cab"><div><span class="t-detalle sec">Comida</span><div class="w-dia">${fa}<h3 class="t-pantalla" id="h-pant" tabindex="-1">${nombreDia(true)}</h3>${fs}</div></div>${sinPanel() && !S.offline ? `<div class="web-ctl"><button type="button" class="btn secundario" data-acc="crear">${ic("plus", 20)}Crear alimento</button><button type="button" class="btn primario" data-acc="agregar" data-v="${pre}">Agregar ${COMIDAS[pre].art}</button></div>` : ""}</div>`;
+  let cuerpo;
+  if (S.offline) cuerpo = S.cargando ? esqWeb() : `<div class="wvacio falla" role="alert">${ic("alert-circle", 32)}<span class="t-seccion">No se pudo cargar tu día</span><p>Revisa tu conexión y vuelve a intentarlo. Lo que registres en el teléfono se guarda allí y sube al volver.</p><button type="button" class="btn secundario" data-acc="reintentar">${ic("refresh", 20)}Reintentar</button></div>`;
+  else if (S.cargando) cuerpo = esqWeb();
+  else cuerpo = `<div class="rejilla"><div class="span-7 col">${comidasHtml()}</div><div class="span-5 col fija" id="col-der">${columnaDerecha()}</div></div><div class="aviso-web">${avisoHtml()}</div>`;
+  return `${lateral()}<div class="principal">${cab}${cuerpo}</div>`;
+}
+function urlWeb() {
+  const b = "coach.tail72ec86.ts.net/comida/dia";
+  if (S.pant === "nutrientes" && !S.panel) return b + "/nutrientes";
+  if (S.panel === "crear") return b + "/crear-alimento";
+  if (S.panel === "completar") return b + "/completar";
+  if (S.panel) return b + "/agregar";
+  return b;
+}
+
+// ------------------------------------------------------------ pintar
+const $tel = $("#v-telefono"), $web = $("#v-web"), $cuerpo = $("#cuerpo"), $bajo = $("#bajo"), $capa = $("#capa"), $barra = $("#barra"), $webApp = $("#web-app"), $url = $("#url");
+let foco = null, scrollGuardado = null;
+const posiciones = {};
+let ultimaClave = null; // pantalla que se pintó la vez anterior
+function render() {
+  const web = enWeb();
+  $tel.hidden = web; $web.hidden = !web;
+  const sc = $("#scroll"), clave = pantallaClave();
+  if (sc && scrollGuardado === null) scrollGuardado = { clave: ultimaClave, top: sc.scrollTop };
+  const act = document.activeElement, selFoco = act && act !== document.body && act.dataset && act.dataset.acc ? `[data-acc="${act.dataset.acc}"]${act.dataset.v != null ? `[data-v="${act.dataset.v}"]` : ""}` : null;
+  if (web) {
+    $cuerpo.innerHTML = ""; $bajo.innerHTML = ""; $capa.innerHTML = ""; $("#zona-fab").innerHTML = ""; $("#zona-aviso").innerHTML = "";
+    $webApp.innerHTML = `<div class="app-web">${webApp()}</div>`;
+    $url.textContent = urlWeb();
+  } else {
+    $webApp.innerHTML = "";
+    const p = S.pant;
+    $cuerpo.innerHTML = p === "buscar" ? buscarMovil() : p === "crear" ? crearMovil() : p === "nutrientes" ? nutrientesMovil() : p === "completar" ? completarMovil() : diaMovil();
+    $bajo.innerHTML = p === "buscar" ? `<div id="pie-panel" style="display:contents">${barraPlato()}</div>` : "";
+    $barra.hidden = p !== "dia";
+    $("#zona-fab").innerHTML = fabHtml();
+    $("#zona-aviso").innerHTML = avisoHtml();
+    $capa.innerHTML = !S.hoja ? "" : S.hoja === "cantidad" ? cantidadMovil() : S.hoja === "comida" ? hojaSimple("Elige la comida", opcionesComida()) : S.hoja === "hora" ? hojaSimple(tituloHora(), camposHora()) : S.hoja === "foto" ? hojaFoto() : "";
+    $("#reloj").textContent = horaTxt(S.hora).split(" ")[0];
+    if (!S.hoja) S.hojaArriba = false;
+    $("#pantalla").classList.toggle("hoja-arriba", !!S.hojaArriba);
+  }
+  const nuevo = $("#scroll");
+  if (scrollGuardado) posiciones[scrollGuardado.clave] = scrollGuardado.top;
+  // misma pantalla: conserva el desplazamiento; pantalla nueva: arriba, salvo al volver al día
+  if (nuevo) nuevo.scrollTop = scrollGuardado && scrollGuardado.clave === clave ? scrollGuardado.top : (S.pant === "dia" && posiciones[clave]) || 0;
+  if (scrollGuardado && scrollGuardado.clave !== clave) document.querySelectorAll(".app-web [data-scroll], .app-web .w-nutri, .panel-w").forEach(e => { e.scrollTop = 0; });
+  scrollGuardado = null; ultimaClave = clave;
+  if (S.aviso) S.aviso.nuevo = false;
+  if (foco) {
+    const f = typeof foco === "string" ? document.querySelector(foco) : foco;
+    foco = null;
+    if (f) f.focus({ preventScroll: true });
+  } else if (selFoco && (!document.activeElement || document.activeElement === document.body)) {
+    const f = document.querySelector(selFoco);
+    if (f) f.focus({ preventScroll: true });
+  }
+  actualizarControles();
+  guardar();
+  ajustarTeclado();
+}
+const pantallaClave = () => `${S.vista}|${S.pant}|${S.panel}|${S.dia}`;
+function repintarBusqueda() {
+  const z = $("#res-zona");
+  if (!z) return render();
+  const sc = $("#scroll"), top = sc ? sc.scrollTop : 0;
+  z.innerHTML = zonaBusqueda();
+  const pie = $("#pie-panel");
+  if (pie) pie.innerHTML = barraPlato();
+  if (enWeb()) { const pw = $(".panel-w"); if (pw) pw.classList.toggle("sin-pie", !S.sesion.length); refrescarIzquierda(); }
+  const b = $(".entrada.buscar .borrar"); if (b) b.hidden = !S.q;
+  const n = $("#scroll"); if (n) n.scrollTop = top;
+  guardar();
+}
+// en la web, la comida destino se llena en vivo a la izquierda
+function refrescarIzquierda() {
+  const col = $(".app-web .span-7.col");
+  if (col) col.innerHTML = comidasHtml();
+}
+
+// ------------------------------------------------------------ avisos (4 s sin acción, 8 s con acción; no se van con el foco o el puntero encima)
+let tAviso = null;
+function aviso(texto, accion = null) {
+  S.aviso = { texto, accion, nuevo: true };
+  clearTimeout(tAviso);
+  const fin = () => {
+    const el = document.querySelector(".aviso");
+    if (el && (el.matches(":hover") || el.contains(document.activeElement))) { tAviso = setTimeout(fin, 1000); return; }
+    S.aviso = null; S.deshacer = null;
+    document.querySelectorAll(".ranura-aviso, .aviso-web").forEach((x) => (x.innerHTML = ""));
+  };
+  tAviso = setTimeout(fin, accion ? 8000 : 4000);
+}
+function limpiarAviso() { clearTimeout(tAviso); S.aviso = null; S.deshacer = null; }
+
+// ------------------------------------------------------------ acciones
+function nuevaId() { return "e" + (++S.sig); }
+function abrirBusqueda(k) {
+  S.fab = false;
+  S.destino = k; S.q = ""; S.sesion = []; S.cant = null;
+  const c = k === "supl" ? null : comida(k);
+  S.horaDestino = c && c.h != null && c.items.length ? c.h : esHoy() && k === preseleccion() ? S.hora : (COMIDAS[k].def ?? S.hora);
+  limpiarAviso();
+  if (enWeb()) { S.panel = "buscar"; S.pant = "dia"; } else { S.pant = "buscar"; S.hoja = null; }
+  foco = "#f-buscar";
+  render();
+}
+function agregarEntrada(f, q, u) {
+  const it = al(f), e = { id: nuevaId(), f, q, u };
+  if (S.destino === "supl") { e.h = S.horaDestino; dia().supl.push(e); }
+  else { const c = comida(S.destino); if (c.h == null || !c.items.length) c.h = S.horaDestino; c.items.push(e); }
+  S.sesion.push(e.id);
+  S.hab[f] = { u, q };
+  if (it.par) S.est[it.base] = it.estado;
+}
+function buscarEntrada(id) {
+  const d = dia();
+  for (const c of d.comidas) { const i = c.items.findIndex((e) => e.id === id); if (i >= 0) return { lista: c.items, i, e: c.items[i], comida: c }; }
+  const i = d.supl.findIndex((e) => e.id === id);
+  return i >= 0 ? { lista: d.supl, i, e: d.supl[i], comida: null } : null;
+}
+function quitarEntrada(id) {
+  const r = buscarEntrada(id); if (!r) return;
+  r.lista.splice(r.i, 1);
+  S.sesion = S.sesion.filter((x) => x !== id);
+  S.deshacer = { dia: S.dia, lista: r.comida ? r.comida.k : "supl", i: r.i, e: r.e };
+  aviso(r.comida ? "Alimento quitado" : "Toma quitada", ["Deshacer", "deshacer"]);
+  return `[data-acc="agregar"][data-v="${r.comida ? r.comida.k : "supl"}"]`;
+}
+function abrirCantidad(f, modo, entrada = null) {
+  let it = al(f);
+  if (modo === "agregar" && it.par && it.estado !== (S.est[it.base] || it.estado)) it = al(it.par);
+  const h = entrada ? { u: entrada.e.u, q: entrada.e.q } : habitual(it);
+  S.cant = { f: it.id, u: h.u, txt: txtQ(h.q, h.u), modo, entrada: entrada ? entrada.e.id : null, err: "" };
+  if (enWeb()) S.panel = "cantidad"; else S.hoja = "cantidad";
+  foco = !enWeb() && tactil() ? "#hoja-t" : "#f-cant";
+  render();
+}
+function txtQ(q, u) {
+  if (!q) return "";
+  const t = tipoU(u);
+  if (t === "p") { const e = Math.floor(q + 1e-9), f = red(q - e, 2); if (FRAC[f]) return (e ? String(e) : "") + FRAC[f]; return String(red(q, 1)); }
+  return String(red(q, DEC[t]));
+}
+function cerrarHoja() {
+  const volver = S.hoja === "cantidad" && S.cant && S.cant.modo === "agregar" ? "#f-buscar" : null;
+  S.hoja = null; S.cant = null; S.horaForm = null;
+  foco = volver; render();
+}
+function cerrarPanel() {
+  S.panel = null; S.cant = null; S.form = null; S.compForm = null; S.horaForm = null;
+  if (S.sesion.length) { const M = COMIDAS[S.destino]; aviso(M.reg); }
+  S.sesion = [];
+  if (S.volverNutri) { S.volverNutri = false; S.pant = "nutrientes"; }
+  foco = "#h-pant"; render();
+}
+function cambiarDia(n) {
+  const nuevo = n < 0 ? AYER : HOY;
+  if (nuevo === S.dia) return;
+  S.dia = nuevo; S.panel = null; S.hoja = null; S.cant = null; S.form = null; S.sesion = [];
+  limpiarAviso(); cargando();
+}
+let tCarga = null;
+function cargando(ms = 650) {
+  S.cargando = true; render();
+  clearTimeout(tCarga);
+  tCarga = setTimeout(() => { S.cargando = false; render(); }, ms);
+}
+function nuevoForm(desde) {
+  const nombre = S.q.trim();
+  return { desde, nombre: nombre ? nombre.charAt(0).toUpperCase() + nombre.slice(1) : "", estado: "cocido", porCasera: "", porG: "", kcal: "", p: "", c: "", g: "", fib: "", az: "", sat: "", leido: false, leyendo: false, err: {} };
+}
+function abrirCrear() {
+  S.fab = false;
+  const desde = (S.pant === "buscar" || S.panel === "buscar") ? "buscar" : "dia";
+  if (desde === "dia") { S.destino = preseleccion(); S.horaDestino = esHoy() ? S.hora : COMIDAS[S.destino].def; S.q = ""; S.sesion = []; }
+  S.form = nuevoForm(desde);
+  limpiarAviso();
+  if (enWeb()) S.panel = "crear"; else S.pant = "crear";
+  foco = !enWeb() && tactil() ? "#h-pant" : "#f-nombre"; render();
+}
+let tLeer = null;
+function leerEtiqueta() {
+  if (S.offline && !enWeb()) { aviso("Leer la etiqueta necesita conexión. Puedes llenarlo a mano."); render(); return; }
+  const f = S.form; f.leyendo = true; f.err = {}; limpiarAviso(); render();
+  clearTimeout(tLeer);
+  tLeer = setTimeout(() => {
+    if (S.form !== f) return;
+    f.leyendo = false;
+    if (S.etiquetaFalla) { aviso("No se pudo leer la etiqueta", ["Probar otra foto", "leer"]); render(); return; }
+    Object.assign(f, { nombre: "Maíz dulce en lata", estado: "cocido", porCasera: "½ taza", porG: "", kcal: "70", p: "2", c: "15", g: "1", fib: "2", az: "", sat: "", leido: true, err: { porG: "Falta este dato" } });
+    foco = "#f-porG"; render();
+  }, 1500);
+}
+function parsePorcion(t) {
+  const m = /^\s*(\d+(?:[.,]\d+)?)?\s*([¼½¾])?\s*(.*)$/.exec(t || "");
+  const resto = (m && m[3] || "").trim();
+  if (!resto) return null;
+  const q = ((m[1] ? parseFloat(m[1].replace(",", ".")) : 0) + (m[2] ? GLIFO[m[2]] : 0)) || 1;
+  const [pal, ...mas] = resto.split(/\s+/);
+  const pl = /[aeiouáéó]$/i.test(pal) ? pal + "s" : /z$/i.test(pal) ? pal.slice(0, -1) + "ces" : pal + "es";
+  return { n: resto, pl: [pl, ...mas].join(" "), q };
+}
+function guardarAlimento() {
+  const f = S.form;
+  if (f.leyendo) return;
+  const err = {}, num = (k) => (f[k] === "" ? null : parseFloat(f[k]));
+  if (!f.nombre.trim()) err.nombre = "Falta este dato";
+  if (!num("porG")) err.porG = "Falta este dato";
+  for (const k of ["kcal", "p", "c", "g"]) if (num(k) == null) err[k] = "Falta este dato";
+  f.err = err;
+  const orden = ["nombre", "porG", "kcal", "p", "c", "g"].filter((k) => err[k]);
+  if (orden.length) { foco = "#f-" + orden[0]; render(); return; }
+  const g = num("porG"), x = 100 / g, id = "mio-" + (++S.sig), pc = parsePorcion(f.porCasera);
+  const mic = {}, faltan = [];
+  for (const k of ["fib", "az", "sat"]) { if (num(k) == null) faltan.push(k); else mic[k] = num(k) * x; }
+  S.extra[id] = { id, n: f.nombre.trim(), src: "tuyo", kc: num("kcal") * x, p: num("p") * x, c: num("c") * x, g: num("g") * x, mic, faltan, pesable: true, usado: 1, tel: 1, estado: f.estado,
+    por: pc ? [{ n: pc.n, pl: pc.pl, g: g / pc.q, q: pc.q, ml: false }] : [], hab: pc ? { u: "p0", q: pc.q } : { u: "g", q: g } };
+  S.form = null; S.q = f.nombre.trim();
+  if (enWeb()) S.panel = "buscar"; else S.pant = "buscar";
+  foco = "#f-buscar"; render();
+}
+function guardarCantidad(agregar) {
+  const c = S.cant, q = parseQ(c.txt);
+  if (!q || q <= 0) { c.err = "Escribe la cantidad"; foco = "#f-cant"; render(); return; }
+  if (agregar) {
+    agregarEntrada(c.f, q, c.u);
+    S.cant = null; S.q = "";
+    if (enWeb()) S.panel = "buscar"; else S.hoja = null;
+    foco = "#f-buscar"; render();
+  } else {
+    const r = buscarEntrada(c.entrada);
+    if (r) { r.e.q = q; r.e.u = c.u; r.e.f = c.f; S.hab[c.f] = { u: c.u, q }; }
+    S.cant = null;
+    if (enWeb()) { S.panel = null; foco = `[data-v="${c.entrada}"]`; } else { S.hoja = null; foco = `[data-v="${c.entrada}"]`; }
+    render();
+  }
+}
+function cambiarUnidad(u) {
+  const c = S.cant, it = al(c.f), q = parseQ(c.txt) || 0, gr = gramos(it, q, c.u);
+  let nq;
+  if (u[0] === "p") nq = it.por[+u.slice(1)].q;
+  else nq = gr ? red(gr / gPorU(it, u), DEC[u]) : 0;
+  c.u = u; c.txt = txtQ(nq, u); c.err = "";
+  foco = `[data-acc="unidad"][data-v="${u}"]`; render();
+}
+function cambiarEstado(est) {
+  const c = S.cant, it = al(c.f);
+  if (!it.par || it.estado === est) return;
+  const otro = al(it.par), q = parseQ(c.txt) || 0, gr = gramos(it, q, c.u);
+  c.f = otro.id;
+  if (c.u[0] === "p") { c.u = "p0"; c.txt = txtQ(otro.por[0] ? otro.por[0].q : 1, "p0"); }
+  else c.txt = txtQ(red(gr / gPorU(otro, c.u), DEC[c.u]), c.u);
+  S.est[otro.base] = est;
+  foco = `[data-acc="estado"][data-v="${est}"]`; render();
+}
+
+document.addEventListener("click", (ev) => {
+  const b = ev.target.closest("[data-acc]");
+  if (!b || !b.closest(".proto")) return;
+  const acc = b.dataset.acc, v = b.dataset.v;
+  if (b.tagName === "A") ev.preventDefault();
+  if (b.getAttribute("aria-disabled") === "true") return;
+  if (acc === "cerrar-hoja") { if (ev.target === b) cerrarHoja(); return; }
+  switch (acc) {
+    case "nada": break;
+    case "fab": S.fab = !S.fab; foco = S.fab ? "#menu-fab [role=menuitem]" : "#fab"; render(); break;
+    case "cerrar-fab": S.fab = false; foco = "#fab"; render(); break;
+    case "ir-dia": if (S.pant !== "dia") { S.pant = "dia"; S.hoja = null; render(); } break;
+    case "dia-ant": cambiarDia(-1); break;
+    case "dia-sig": cambiarDia(1); break;
+    case "agregar": abrirBusqueda(v); break;
+    case "crear": abrirCrear(); break;
+    case "volver-dia": {
+      const reg = S.pant === "buscar" && S.sesion.length;
+      S.pant = "dia"; S.hoja = null; S.cant = null;
+      if (reg) aviso(COMIDAS[S.destino].reg);
+      S.sesion = []; foco = "#h-pant"; render(); break;
+    }
+    case "listo":
+      if (enWeb()) { cerrarPanel(); break; }
+      aviso(COMIDAS[S.destino].reg); S.sesion = []; S.pant = "dia"; S.hoja = null; foco = "#h-pant"; render(); break;
+    case "rapido": { const h = habitual(al(v)); agregarEntrada(v, h.q, h.u); foco = `[data-acc="sacar"][data-v="${v}"]`; repintarBusqueda(); const f = document.querySelector(foco); foco = null; if (f) f.focus(); break; }
+    case "sacar": {
+      const lista = listaDe(S.destino);
+      const cand = S.destino === "supl" ? lista.filter((e) => e.f === v && S.sesion.includes(e.id)) : lista.filter((e) => e.f === v);
+      const e = cand[cand.length - 1];
+      if (e) { lista.splice(lista.indexOf(e), 1); S.sesion = S.sesion.filter((x) => x !== e.id); }
+      repintarBusqueda(); const f = document.querySelector(`[data-acc="rapido"][data-v="${v}"]`); if (f) f.focus(); break;
+    }
+    case "elegir": abrirCantidad(v, "agregar"); break;
+    case "editar": { const r = buscarEntrada(v); if (r) { S.destino = r.comida ? r.comida.k : "supl"; abrirCantidad(r.e.f, "editar", r); } break; }
+    case "quitar": foco = quitarEntrada(v) || "#h-pant"; render(); break;
+    case "deshacer": {
+      const d = S.deshacer; if (!d) break;
+      const lista = d.lista === "supl" ? S.dias[d.dia].supl : S.dias[d.dia].comidas.find((c) => c.k === d.lista).items;
+      lista.splice(Math.min(d.i, lista.length), 0, d.e);
+      limpiarAviso(); foco = `[data-v="${d.e.id}"]`; render(); break;
+    }
+    case "borrar-busqueda": S.q = ""; { const i = $("#f-buscar"); if (i) { i.value = ""; i.focus(); } } repintarBusqueda(); break;
+    case "elegir-comida": if (enWeb()) S.panel = "comida"; else S.hoja = "comida"; foco = `[data-acc="set-comida"][aria-pressed="true"]`; render(); break;
+    case "set-comida":
+      if (v !== S.destino) { S.destino = v; S.sesion = []; const c = v === "supl" ? null : comida(v); S.horaDestino = c && c.h != null && c.items.length ? c.h : esHoy() && v === preseleccion() ? S.hora : (COMIDAS[v].def ?? S.hora); }
+      if (enWeb()) S.panel = "buscar"; else S.hoja = null;
+      foco = "#f-buscar"; render(); break;
+    case "elegir-hora": {
+      const m = S.horaDestino, h = Math.floor(m / 60);
+      S.horaForm = { txt: `${h % 12 || 12}:${String(m % 60).padStart(2, "0")}`, pm: h >= 12, err: "" };
+      if (enWeb()) S.panel = "hora"; else S.hoja = "hora";
+      foco = !enWeb() && tactil() ? "#hoja-t" : "#f-hora"; render(); break;
+    }
+    case "ampm": S.horaForm.pm = v === "pm"; foco = `[data-acc="ampm"][data-v="${v}"]`; render(); break;
+    case "guardar-hora": {
+      const f = S.horaForm, m = /^(\d{1,2}):(\d{2})$/.exec(f.txt);
+      if (!m || +m[1] < 1 || +m[1] > 12 || +m[2] > 59) { f.err = "Revisa la hora: va de 1:00 a 12:59."; foco = "#f-hora"; render(); break; }
+      const min = ((+m[1] % 12) + (f.pm ? 12 : 0)) * 60 + +m[2];
+      S.horaDestino = min;
+      if (S.destino !== "supl") { const c = comida(S.destino); if (c.items.length && !c.prog) c.h = min; }
+      S.horaForm = null;
+      if (enWeb()) S.panel = "buscar"; else S.hoja = null;
+      foco = "#f-buscar"; render(); break;
+    }
+    case "estado": cambiarEstado(v); break;
+    case "unidad": cambiarUnidad(v); break;
+    case "frac": {
+      const c = S.cant, q = parseQ(c.txt) || 0, e = Math.floor(q + 1e-9);
+      c.txt = (e ? String(e) : "") + v; c.err = "";
+      const i = $("#f-cant"); if (i) i.value = c.txt;
+      actualizarVivo(); break;
+    }
+    case "agregar-hoja": guardarCantidad(true); break;
+    case "guardar-hoja": guardarCantidad(false); break;
+    case "quitar-hoja": { const id = S.cant.entrada; S.cant = null; S.hoja = null; S.panel = null; foco = quitarEntrada(id) || "#h-pant"; render(); break; }
+    case "cerrar-panel": cerrarPanel(); break;
+    case "volver-busqueda": S.cant = null; S.form = null; S.horaForm = null; S.panel = "buscar"; foco = "#f-buscar"; render(); break;
+    case "nutrientes": S.pant = "nutrientes"; S.panel = null; S.hoja = null; foco = "#h-pant"; render(); break;
+    case "volver-nutrientes": S.compForm = null; S.panel = null; S.pant = "nutrientes"; S.volverNutri = false; foco = "#h-pant"; render(); break;
+    case "completar": {
+      const f = faltanDia()[0]; if (!f) break;
+      S.compForm = { f: f.it.id };
+      if (enWeb()) { S.pant = "dia"; S.panel = "completar"; S.volverNutri = true; } else S.pant = "completar";
+      foco = "#h-pant"; render(); break;
+    }
+    case "guardar-completar": {
+      const f = S.compForm, it = al(f.f), c = S.comp[it.id] || {};
+      for (const k of faltanDe(it)) if (f[k] !== undefined && f[k] !== "") c[k] = parseFloat(f[k]);
+      S.comp[it.id] = c; S.compForm = null; S.panel = null; S.volverNutri = false; S.pant = "nutrientes"; foco = "#h-pant"; render(); break;
+    }
+    case "cerrar-crear": { const desde = S.form && S.form.desde; S.form = null; clearTimeout(tLeer); limpiarAviso(); S.pant = desde === "buscar" ? "buscar" : "dia"; foco = S.pant === "buscar" ? "#f-buscar" : "#h-pant"; render(); break; }
+    case "leer": if (enWeb() || (S.offline && !enWeb())) leerEtiqueta(); else { S.hoja = "foto"; foco = `[data-acc="foto"]`; render(); } break;
+    case "foto": S.hoja = null; leerEtiqueta(); break;
+    case "form-estado": S.form.estado = v; foco = `[data-acc="form-estado"][data-v="${v}"]`; render(); break;
+    case "guardar-alimento": guardarAlimento(); break;
+    case "reintentar": cargando(); break;
+  }
+});
+
+// campos: solo entra lo que el dato admite (Typed Field Rule)
+function filtrarNum(el, dec, ent) {
+  const v = el.value, c = el.selectionStart ?? v.length;
+  let out = "", sep = false, nd = 0, ne = 0, pos = 0;
+  for (let i = 0; i < v.length; i++) {
+    const ch = v[i];
+    if (/\d/.test(ch)) { if (!sep && ne < ent) { out += ch; ne++; } else if (sep && nd < dec) { out += ch; nd++; } }
+    else if ((ch === "." || ch === ",") && !sep && dec > 0) { out += out === "" ? "0." : "."; sep = true; }
+    if (i < c) pos = out.length;
+  }
+  if (out !== v) { el.value = out; try { el.setSelectionRange(pos, pos); } catch (_) { /* sin cursor */ } }
+}
+function mascaraHora(el) {
+  const d = el.value.replace(/\D/g, "").slice(0, 4);
+  el.value = d.length <= 2 ? d : d.length === 3 ? `${d[0]}:${d.slice(1)}` : `${d.slice(0, 2)}:${d.slice(2)}`;
+}
+function actualizarVivo() {
+  const c = S.cant; if (!c) return;
+  const it = al(c.f), v = $("#vivo"), u = $("#u-cant");
+  if (v) v.innerHTML = vivoHtml();
+  if (u) u.textContent = uLabel(it, parseQ(c.txt) || 0, c.u);
+  const campo = $("#f-cant") && $("#f-cant").closest(".campo");
+  if (campo) { campo.querySelector(".entrada").classList.remove("error"); const e = campo.querySelector(".error-linea"); if (e) e.remove(); $("#f-cant").removeAttribute("aria-invalid"); }
+}
+document.addEventListener("input", (ev) => {
+  const el = ev.target, k = el.dataset && el.dataset.campo;
+  if (!k) return;
+  if (k === "buscar") { S.q = el.value; repintarBusqueda(); return; }
+  if (k === "cant") {
+    const c = S.cant, t = tipoU(c.u);
+    if (/[¼½¾]/.test(el.value) && !/^\d*[¼½¾]$/.test(el.value)) el.value = el.value.replace(/[¼½¾]/g, "");
+    if (!/[¼½¾]/.test(el.value)) filtrarNum(el, DEC[t], ENT[t]);
+    c.txt = el.value; c.err = ""; actualizarVivo(); return;
+  }
+  if (k === "hora") { mascaraHora(el); S.horaForm.txt = el.value; return; }
+  if (el.dataset.dec != null) filtrarNum(el, +el.dataset.dec, +el.dataset.ent || 4);
+  if (k.startsWith("c-")) { S.compForm[k.slice(2)] = el.value; return; }
+  if (S.form) {
+    S.form[k] = el.value;
+    if (S.form.err[k] && el.value !== "") {
+      delete S.form.err[k];
+      const c = el.closest(".campo"); c.querySelector(".entrada").classList.remove("error");
+      const e = c.querySelector(".error-linea"); if (e) e.remove();
+      el.removeAttribute("aria-invalid"); el.removeAttribute("aria-describedby");
+    }
+  }
+});
+document.addEventListener("keydown", (ev) => {
+  if (S.fab && ev.target.closest && ev.target.closest("#menu-fab, #fab")) {
+    const items = [...document.querySelectorAll("#menu-fab [role=menuitem]")], i = items.indexOf(document.activeElement);
+    if (ev.key === "Escape") { ev.preventDefault(); S.fab = false; foco = "#fab"; render(); return; }
+    if (ev.key === "ArrowDown" || ev.key === "ArrowUp") { ev.preventDefault(); const n = items.length; items[(i + (ev.key === "ArrowDown" ? 1 : n - 1) + (i < 0 ? 0 : 0)) % n].focus(); return; }
+    if (ev.key === "Home" || ev.key === "End") { ev.preventDefault(); items[ev.key === "Home" ? 0 : items.length - 1].focus(); return; }
+    if (ev.key === "Tab") { S.fab = false; render(); return; }
+  }
+  if (ev.key === "Escape") {
+    if (S.hoja) { ev.preventDefault(); cerrarHoja(); return; }
+    if (enWeb() && S.panel) {
+      ev.preventDefault();
+      if (["comida", "hora"].includes(S.panel) || (S.panel === "cantidad" && S.cant.modo === "agregar")) { S.panel = "buscar"; S.cant = null; S.horaForm = null; foco = "#f-buscar"; render(); } else cerrarPanel();
+      return;
+    }
+  }
+  if (ev.key === "Enter" && ev.target.tagName === "INPUT") {
+    const k = ev.target.dataset.campo;
+    if (k === "cant") { ev.preventDefault(); guardarCantidad(S.cant.modo === "agregar"); }
+    else if (k === "hora") { ev.preventDefault(); $('[data-acc="guardar-hora"]').click(); }
+    else if (k === "buscar") { ev.preventDefault(); const r = $("#res-zona [data-acc='elegir']"); if (S.q.trim() && r) r.click(); }
+  }
+  if (ev.key === "Tab" && S.hoja && !enWeb()) {
+    const h = $(".hoja"); if (!h) return;
+    const f = [...h.querySelectorAll("button, input")].filter((x) => !x.disabled);
+    const i = f.indexOf(document.activeElement);
+    if (ev.shiftKey && i <= 0) { ev.preventDefault(); f[f.length - 1].focus(); }
+    else if (!ev.shiftKey && i === f.length - 1) { ev.preventDefault(); f[0].focus(); }
+  }
+});
+
+// ------------------------------------------------------------ aviso superpuesto (teléfono)
+// Flota sobre la lista sin moverla, justo encima de la acción fija más alta del pie (el +, la barra del plato,
+// el botón de guardar o las pestañas), así nunca la tapa.
+function posicionarAviso() {
+  const z = $("#zona-aviso"), pan = $("#pantalla");
+  if (!z || !z.firstElementChild || enWeb()) return;
+  const pr = pan.getBoundingClientRect();
+  let tope = pr.bottom - parseFloat(getComputedStyle(pan).paddingBottom || 0);
+  for (const sel of ["#fab", "#bajo .barra-plato", "#cuerpo .acciones-form", "#barra"]) {
+    const e = $(sel);
+    if (e && !e.closest("[hidden]") && e.offsetParent !== null) tope = Math.min(tope, e.getBoundingClientRect().top);
+  }
+  z.style.bottom = Math.round(pr.bottom - tope + 12) + "px";
+}
+
+// ------------------------------------------------------------ teclado del teléfono
+// El diseño solo cambia si el navegador informa de verdad el teclado (visualViewport más bajo que la ventana).
+// Entonces una hoja inferior abierta se queda con la parte visible y deja a la vista el campo y su acción principal.
+// Las pantallas completas (búsqueda, crear alimento) no se encogen: su lista ya se desplaza; solo se lleva el campo a la vista.
+// Si el navegador no informa (por ejemplo, dentro de un iframe), no se toca nada.
+const tactil = () => window.matchMedia("(pointer: coarse)").matches;
+const campoEnPantalla = (el) => !!(el && el.tagName === "INPUT" && el.closest("#pantalla"));
+function quitarTeclado() {
+  const pan = $("#pantalla");
+  if (pan.classList.contains("con-teclado")) { pan.classList.remove("con-teclado"); pan.style.removeProperty("--tapado-abajo"); pan.style.removeProperty("--tapado-arriba"); }
+  posicionarAviso();
+}
+function tecladoAlto() {
+  const vv = window.visualViewport;
+  if (!vv) return 0;
+  const t = Math.round(window.innerHeight - (vv.offsetTop + vv.height));
+  return t >= 80 ? t : 0;
+}
+function mostrarEnfocado(visAbajo) {
+  const a = document.activeElement; if (!campoEnPantalla(a)) return;
+  const sc = a.closest(".hoja, #scroll"); if (!sc) return;
+  const caja = (a.closest(".campo") || a).getBoundingClientRect(), r = sc.getBoundingClientRect();
+  const fijo = sc.querySelector(":scope > .btn.primario.ancho, :scope > .botones-hoja");
+  const limite = Math.min(r.bottom - (fijo ? fijo.offsetHeight + 16 : 8), visAbajo - 8);
+  if (caja.bottom > limite) sc.scrollTop += caja.bottom - limite;
+  else if (caja.top < r.top + 8) sc.scrollTop -= r.top + 8 - caja.top;
+}
+function ajustarTeclado() {
+  const pan = $("#pantalla"), a = document.activeElement, vv = window.visualViewport;
+  const kb = enWeb() ? 0 : tecladoAlto();
+  if (!kb || !campoEnPantalla(a)) { quitarTeclado(); return; }
+  const visAbajo = vv.offsetTop + vv.height;
+  if (!a.closest(".hoja")) {
+    // pantalla completa: no se encoge; el campo ya subió al enfocarlo (subirCampo)
+    quitarTeclado(); mostrarEnfocado(visAbajo); return;
+  }
+  pan.classList.remove("con-teclado");
+  let r = pan.getBoundingClientRect();
+  // en el teléfono el prototipo va a pantalla completa: se alinea arriba para que solo el teclado tape (abajo)
+  if (Math.abs(r.top - vv.offsetTop) > 1 && r.height <= window.innerHeight + 1) { window.scrollBy(0, r.top - vv.offsetTop); r = pan.getBoundingClientRect(); }
+  const abajo = Math.max(0, Math.round(r.bottom - visAbajo)), arriba = Math.max(0, Math.round(vv.offsetTop - r.top));
+  if (!abajo && !arriba) { quitarTeclado(); return; }
+  pan.style.setProperty("--tapado-abajo", abajo + "px"); pan.style.setProperty("--tapado-arriba", arriba + "px");
+  pan.classList.add("con-teclado");
+  mostrarEnfocado(visAbajo);
+  posicionarAviso();
+}
+// Sin depender del teclado: al enfocar un campo de una hoja, la hoja sube arriba; en un formulario a pantalla
+// completa, el campo se lleva a la mitad de arriba, con recorrido de sobra al final de la lista.
+function subirCampo(a) {
+  const sc = a.closest("#scroll");
+  if (!sc || S.pant === "buscar") return;
+  sc.style.setProperty("--hueco-teclado", Math.round(sc.clientHeight * 0.6) + "px"); sc.classList.add("hueco-teclado");
+  const caja = (a.closest(".campo") || a).getBoundingClientRect(), r = sc.getBoundingClientRect();
+  const mitad = r.top + Math.min(sc.clientHeight, window.innerHeight) * 0.35;
+  if (caja.top > mitad) sc.scrollTop += caja.top - (r.top + 8);
+}
+document.addEventListener("focusin", (ev) => {
+  const a = ev.target;
+  if (!campoEnPantalla(a) || enWeb()) return;
+  if (a.closest(".hoja")) { if (tactil() && !S.hojaArriba) { S.hojaArriba = true; $("#pantalla").classList.add("hoja-arriba"); } }
+  else subirCampo(a);
+  ajustarTeclado(); setTimeout(ajustarTeclado, 350);
+});
+document.addEventListener("focusout", () => { setTimeout(() => { if (!campoEnPantalla(document.activeElement)) quitarTeclado(); }, 60); });
+if (window.visualViewport) { window.visualViewport.addEventListener("resize", ajustarTeclado); window.visualViewport.addEventListener("scroll", ajustarTeclado); }
+window.addEventListener("resize", ajustarTeclado);
+
+// ------------------------------------------------------------ controles del prototipo
+const raiz = document.documentElement;
+function actualizarControles() {
+  document.querySelectorAll("#ctl-vista button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === S.vista)));
+  document.querySelectorAll("#ctl-hora button").forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.v === S.hora)));
+  document.querySelectorAll("#ctl-red button").forEach((b) => b.setAttribute("aria-pressed", String((b.dataset.v === "off") === S.offline)));
+  document.querySelectorAll("#ctl-etiqueta button").forEach((b) => b.setAttribute("aria-pressed", String((b.dataset.v === "falla") === S.etiquetaFalla)));
+}
+document.querySelectorAll("#ctl-modo button").forEach((b) => b.addEventListener("click", () => {
+  if (b.dataset.modo) raiz.dataset.theme = b.dataset.modo; else delete raiz.dataset.theme;
+  document.querySelectorAll("#ctl-modo button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+}));
+document.querySelectorAll("#ctl-acento button").forEach((b) => b.addEventListener("click", () => {
+  if (b.dataset.a === "caribe") delete raiz.dataset.accent; else raiz.dataset.accent = b.dataset.a;
+  document.querySelectorAll("#ctl-acento button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+}));
+document.querySelectorAll("#ctl-vista button").forEach((b) => b.addEventListener("click", () => {
+  if (S.vista === b.dataset.v) return;
+  S.vista = b.dataset.v; S.hoja = null; S.panel = null; S.cant = null; S.horaForm = null;
+  if (S.form) { if (enWeb()) S.panel = "crear"; else S.pant = "crear"; }
+  else if (S.pant === "buscar" && enWeb()) { S.pant = "dia"; S.panel = "buscar"; }
+  else if (S.pant === "completar") S.pant = "nutrientes";
+  limpiarAviso(); render();
+}));
+document.querySelectorAll("#ctl-hora button").forEach((b) => b.addEventListener("click", () => { S.hora = +b.dataset.v; render(); }));
+document.querySelectorAll("#ctl-red button").forEach((b) => b.addEventListener("click", () => {
+  const off = b.dataset.v === "off"; if (off === S.offline) return;
+  S.offline = off;
+  if (enWeb()) { S.panel = null; S.cant = null; S.form = null; S.sesion = []; }
+  render();
+}));
+document.querySelectorAll("#ctl-etiqueta button").forEach((b) => b.addEventListener("click", () => { S.etiquetaFalla = b.dataset.v === "falla"; actualizarControles(); guardar(); }));
+$("#reiniciar").addEventListener("click", () => {
+  clearTimeout(tLeer); clearTimeout(tCarga); limpiarAviso();
+  S = estadoInicial(S.vista); foco = "#h-pant"; render(); ajustarTeclado();
+});
+
+cargar();
+render();
+</script>
