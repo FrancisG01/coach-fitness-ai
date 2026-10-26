@@ -13,7 +13,7 @@
     "test": "turbo run test"
   },
   "devDependencies": {
-    "impeccable": "4.6.0",
-    "turbo": "2.11.9"
+    "impeccable": "4.7.0",
+    "turbo": "2.11.10"
   }
 }
