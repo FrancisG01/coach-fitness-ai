@@ -1,6 +1,6 @@
 ---
 name: flujo-5-mtb
-description: Flujo 5 (registrar paseo MTB, CAR-01/02, D-39): guía y mockups aprobados el 27-oct-2026 (commit 1a2936c); prototipo entregado ese día y por aprobar
+description: Flujo 5 (registrar paseo MTB, CAR-01/02, D-39): guía y mockups aprobados el 27-oct-2026 (commit 1a2936c); prototipo aprobado (94a726e); el + de Comida cambió tras probarlo en Android
 metadata:
   type: project
 ---
@@ -28,3 +28,5 @@ Mockups aprobados con sus 15 decisiones (commit 1a2936c): el domingo 18 del fluj
 
 Prototipo (pieza 4, 27-oct): `flujo-5-mtb-prototipo.html`, generado con `gen_proto5.py` + `proto5.js` (scratchpad de esa sesión); toma CSS y sprite de flujo-5-mtb.html y las reglas de prototipo de flujo-4-receta-plan-prototipo.html. Solo teléfono (sin vista web). Escenarios: sábado 17 a las 9:40 a. m. o p. m. (comparten estado) y martes 3-nov 6:10 p. m. (recuperación, se reinicia). Recorridos probados con `recorrido5.cjs` (1440 claro y 390 oscuro), `contraste-proto.cjs` y `movil5.cjs`.
 Lecciones: `.proto .desliza` pisa el padding de `.desliza.con-chat`: hay que repetirlo con `.proto .desliza.con-chat`. En oscuro la hoja (elevado) y el campo (elevado) se funden: el campo baja a fondo dentro de la hoja. Un guion largo dispara «first-viewport-column-overflow» a 1440. Sin `<meta viewport>` el archivo local no se prueba con isMobile (lo pone el artefacto); usar viewport 390 sin isMobile.
+
+Cambio del + de Comida (Francis, Android, 27-oct-2026; flujos 3, 4 y 5 y DESIGN.md): sin franja al pie; el + flota solo y puede tapar datos durante el scroll; el día termina con «Restan N de X kcal» como línea de cierre (`.cierre-dia`, detalle, tnum) después de Suplementos y «Ver todos los nutrientes», y un margen de 72 px (`.desliza.con-fab { padding-bottom: calc(var(--tactil-gym) + var(--e4)) }`). En oscuro, el campo dentro de una hoja va sobre fondo (decisión 12 aprobada).

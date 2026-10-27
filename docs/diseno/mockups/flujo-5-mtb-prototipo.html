@@ -729,6 +729,12 @@ mark { background: none; color: inherit; font-weight: 650; }
 .hora-campos { display: grid; grid-template-columns: 1fr auto; gap: var(--e2); align-items: end; }
 .hora-campos .segmento { min-height: var(--tactil); }
 .hora-campos .segmento button { white-space: nowrap; }
+/* en oscuro la hoja va en elevado, igual que el campo: dentro de una hoja el campo va sobre fondo (aprobado el 27-oct-2026) */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hoja .entrada { background: var(--fondo); } }
+:root[data-theme="dark"] .hoja .entrada { background: var(--fondo); }
+/* sin palabras sueltas al final del párrafo ni títulos desbalanceados (detector, 27-oct-2026) */
+p, li { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; }
 
 /* lámina y maquetas: sin palabras sueltas al final del párrafo */
 p, li, .txt-av, .linea-coach p { text-wrap: pretty; }
@@ -824,9 +830,13 @@ button.dato:active, .fecha-btn:active { background: var(--capa-pressed); }
 .pagina h3.sub { text-wrap: balance; }
 .error-linea .i { color: var(--error); }
 .entrada.error.vacia > span:first-child { color: var(--texto-2); }
-/* Comida: el + con su franja al pie (aprobado con el prototipo del flujo 4) */
-.desliza.con-franja { padding-bottom: var(--e2); margin-bottom: calc(var(--tactil-gym) + var(--e2)); }
-.franja-fab { position: absolute; left: var(--e4); right: calc(var(--e4) + var(--tactil-gym) + var(--e3)); bottom: calc(var(--barra) + var(--e4)); height: var(--tactil-gym); display: flex; align-items: center; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+/* Comida: el + flota solo, sin franja (cambio pedido por Francis al probar el prototipo del flujo 5 en Android, 27-oct-2026);
+   al final del día, un margen del alto de la antigua franja y antes la línea de cierre «Restan…» */
+.desliza.con-fab { padding-bottom: calc(var(--tactil-gym) + var(--e4)); }
+.cierre-dia { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+/* en oscuro la hoja va en elevado, igual que el campo: dentro de una hoja el campo va sobre fondo */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hoja .entrada { background: var(--fondo); } }
+:root[data-theme="dark"] .hoja .entrada { background: var(--fondo); }
 .ejercicio .txt .t-detalle { color: var(--texto-2); }
 .ejercicio .baja { color: var(--texto); font-size: 13px; line-height: 18px; font-weight: 650; white-space: nowrap; }
 
@@ -951,10 +961,14 @@ button.dato:active, .fecha-btn:active { background: var(--capa-pressed); }
 @keyframes sube { from { transform: translateY(var(--e5)); opacity: 0; } }
 @keyframes sube-poco { from { transform: translateY(var(--e2)); opacity: 0; } }
 @keyframes funde { from { opacity: 0; } }
-/* el + flotante tiene su franja al pie: la lista termina encima, así el botón nunca tapa una cifra (Never Cover);
-   a su izquierda, lo que resta del día */
-.proto .desliza.con-fab { padding-bottom: var(--e2); margin-bottom: calc(var(--tactil-gym) + var(--e2)); }
-.franja-fab { position: absolute; left: var(--e4); right: calc(var(--e4) + var(--tactil-gym) + var(--e3)); bottom: calc(var(--barra) + var(--e4)); height: var(--tactil-gym); display: flex; align-items: center; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+/* el + flota solo abajo a la derecha, sin franja (cambio pedido por Francis al probar el prototipo del flujo 5 en Android,
+   27-oct-2026): durante el scroll puede tapar datos; al final del día, un margen del alto de la antigua franja deja a la vista
+   la última comida y la línea de cierre «Restan…» */
+.proto .desliza.con-fab { padding-bottom: calc(var(--tactil-gym) + var(--e4)); }
+.cierre-dia { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+/* en oscuro la hoja va en elevado, igual que el campo: dentro de una hoja el campo va sobre fondo para que se vea su caja */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hoja .entrada { background: var(--fondo); } }
+:root[data-theme="dark"] .hoja .entrada { background: var(--fondo); }
 @media (max-width: 440px) {
   body { padding-left: 0; padding-right: 0; padding-top: 0; }
   #v-telefono { width: 100%; }
@@ -985,6 +999,9 @@ button.dato:active, .fecha-btn:active { background: var(--capa-pressed); }
 .proto .web-envoltura { width: min(100%, 1400px); }
 .w-com .btn.texto { white-space: nowrap; font-size: 13px; line-height: 18px; gap: var(--e1); }
 .w-col-cab .kcal-d { display: flex; flex-direction: column; }
+/* sin palabras sueltas al final del párrafo ni títulos desbalanceados (detector, 27-oct-2026) */
+p, li { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; }
 
 
 /* ---------- prototipo (flujo 5) ---------- */
@@ -1004,9 +1021,7 @@ button.dato:active, .fecha-btn:active { background: var(--capa-pressed); }
 .proto .desliza.con-chat { padding-bottom: calc(var(--tactil) + var(--e5)); }
 .proto .desliza.con-pie { padding-bottom: calc(2 * var(--tactil) + var(--e6)); }
 .guion .nota-g { color: var(--texto-2); }
-/* en oscuro la hoja va en elevado, igual que el campo: el campo baja a fondo para que se vea su caja */
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hoja .entrada { background: var(--fondo); } }
-:root[data-theme="dark"] .hoja .entrada { background: var(--fondo); }
+
 @media (hover: hover) and (pointer: fine) { button.dato:hover, .fecha-btn:hover, .sel-caps .opcion-rutina:hover { background: var(--capa-hover); } }
 
 </style>
@@ -1090,7 +1105,7 @@ button.dato:active, .fecha-btn:active { background: var(--capa-pressed); }
       <li><b>Sin conexión:</b> envía, cambia de pestaña y vuelve a En línea.</li>
       <li><b>Sin créditos:</b> Registrar a mano; Guardar vacío y luego 18.4 km en 0:52.</li>
       <li><b>Cardio y MTB:</b> totales por semana, ruta GPX, Editar y Borrar con Deshacer.</li>
-      <li><b>De noche:</b> 9:40 p.&nbsp;m.: sin propuesta. <b>Recuperación:</b> Martes 3 nov., en Hoy y en Gym › Sesión. <b>Comida:</b> el objetivo del día y la franja del +.</li>
+      <li><b>De noche:</b> 9:40 p.&nbsp;m.: sin propuesta. <b>Recuperación:</b> Martes 3 nov., en Hoy y en Gym › Sesión. <b>Comida:</b> el objetivo del día y, al final, «Restan…».</li>
     </ol>
     <div class="controles"><div class="control"><span class="t-detalle sec" id="lbl-escena">Día y hora</span><div class="segmento" role="group" aria-labelledby="lbl-escena" id="ctl-escena"><button type="button" data-v="sab-am" aria-pressed="true">Sábado 17, 9:40&nbsp;a.&nbsp;m.</button><button type="button" data-v="sab-pm" aria-pressed="false">Sábado 17, 9:40&nbsp;p.&nbsp;m.</button><button type="button" data-v="mar" aria-pressed="false">Martes 3 nov., 6:10&nbsp;p.&nbsp;m.</button></div></div><div class="control"><span class="t-detalle sec" id="lbl-red">Conexión</span><div class="segmento" role="group" aria-labelledby="lbl-red" id="ctl-red"><button type="button" data-v="on" aria-pressed="true">En línea</button><button type="button" data-v="off" aria-pressed="false">Sin conexión</button></div></div><div class="control"><span class="t-detalle sec" id="lbl-creditos">Créditos del coach</span><div class="segmento" role="group" aria-labelledby="lbl-creditos" id="ctl-creditos"><button type="button" data-v="con" aria-pressed="true">Con créditos</button><button type="button" data-v="sin" aria-pressed="false">Sin créditos</button></div></div><div class="control"><span class="t-detalle sec" id="lbl-modo">Modo</span><div class="segmento" role="group" aria-labelledby="lbl-modo" id="ctl-modo"><button type="button" data-modo="" aria-pressed="true">Sistema</button><button type="button" data-modo="light" aria-pressed="false">Claro</button><button type="button" data-modo="dark" aria-pressed="false">Oscuro</button></div></div><div class="control"><span class="t-detalle sec" id="lbl-acento">Acento</span><div class="segmento" role="group" aria-labelledby="lbl-acento" id="ctl-acento"><button type="button" data-a="caribe" aria-pressed="true">Caribe</button><button type="button" data-a="mar" aria-pressed="false">Mar</button><button type="button" data-a="palma" aria-pressed="false">Palma</button><button type="button" data-a="mango" aria-pressed="false">Mango</button><button type="button" data-a="flamboyan" aria-pressed="false">Flamboyán</button><button type="button" data-a="uva" aria-pressed="false">Uva</button></div></div></div>
     <div><button type="button" class="btn secundario" id="reiniciar"><svg class="i s20" aria-hidden="true"><use href="#i-refresh"/></svg>Reiniciar</button></div>
@@ -1442,7 +1457,9 @@ function comidaMovil() {
   const vacio = !come && !prog ? `<div class="vacio">${ic("kitchen", 32)}<span class="t-seccion">${s === S.hoy ? "Todavía no registras comidas hoy" : "Este día no tiene comidas en el prototipo"}</span><p>Registrar comidas es el flujo 3; aquí se ve cómo cambia el objetivo con el paseo.</p></div>` : "";
   const subs = `<nav class="sub-tabs" aria-label="Comida"><a class="sub-tab" href="#" data-acc="nada" aria-current="page">Día</a><a class="sub-tab" href="#" data-acc="nada">Calendario</a><a class="sub-tab" href="#" data-acc="nada">Recetas</a><a class="sub-tab" href="#" data-acc="nada">Alimentos</a><a class="sub-tab" href="#" data-acc="nada">Suplementos</a></nav>`;
   const nav = `<div class="dia-nav"><button type="button" class="icono-btn" data-acc="dia-mover" data-v="-1" aria-label="Día anterior">${ic("chevron-left")}</button><div class="txt"><span class="t-seccion" id="h-pant" tabindex="-1">${diaLargo(s)}</span><span class="t-detalle sec">${s === S.hoy ? "hoy" : entre(s, S.hoy) === 1 ? "ayer" : ""}</span></div><button type="button" class="icono-btn" data-acc="dia-mover" data-v="1" aria-label="Día siguiente"${s >= S.hoy ? ' aria-disabled="true"' : ""}>${ic("chevron-right")}</button></div>`;
-  return `${subs}<div class="desliza con-fab" id="scroll">${nav}${resumen}${desayuno}${prog}${vacio}</div>`;
+  // línea de cierre del día: lo que resta, al final de todo y antes del margen del + (27-oct-2026)
+  const cierre = `<button type="button" class="btn texto ver-todo" data-acc="nutrientes">Ver todos los nutrientes${ic("chevron-right", 20)}</button><p class="cierre-dia tnum">Restan ${nf(o - t.kcal)} de ${nf(o)} kcal</p>`;
+  return `${subs}<div class="desliza con-fab" id="scroll">${nav}${resumen}${desayuno}${prog}${vacio}${cierre}</div>`;
 }
 function lineaRecup(enGym) {
   const se = S.sesion, p = paseoRecup();
@@ -1507,7 +1524,7 @@ function render() {
   $barra.hidden = !!cima();
   document.querySelectorAll("#barra [data-v]").forEach((b) => { if (b.dataset.v === S.sec) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
   const fab = !cima() && S.sec === "comida" && !S.hoja;
-  $("#zona-fab").innerHTML = fab ? `<div class="franja-fab tnum">Restan ${nf(objetivo(S.dia) - (comidaHoy(S.dia) ? DESAYUNO.kcal : 0))} de ${nf(objetivo(S.dia))} kcal</div><button type="button" class="fab" id="fab" data-acc="fab" aria-label="Agregar al ${SLOTS.find(([, , h]) => h > S.hora) ? SLOTS.find(([, , h]) => h > S.hora)[1].toLowerCase() : "día"}">${ic("plus")}</button>` : "";
+  $("#zona-fab").innerHTML = fab ? `<button type="button" class="fab" id="fab" data-acc="fab" aria-label="Agregar al ${SLOTS.find(([, , h]) => h > S.hora) ? SLOTS.find(([, , h]) => h > S.hora)[1].toLowerCase() : "día"}">${ic("plus")}</button>` : "";
   $("#zona-aviso").innerHTML = avisoHtml();
   $capa.innerHTML = capaMovil();
   $("#reloj").textContent = horaTxt(S.hora).split(NB)[0];
@@ -1739,6 +1756,7 @@ document.addEventListener("click", (ev) => {
     case "ir-sesion": S.sec = "gym"; S.gsub = "sesion"; S.pila = []; foco = "#h-pant"; render(); break;
     case "dia-mover": { const n = masDias(S.dia, +v); if (n > S.hoy || n < PRIMER_REG) break; S.dia = n; foco = `[data-acc="dia-mover"][data-v="${v}"]`; render(); break; }
     case "fab": aviso("Agregar comida es del flujo 3."); render(); break;
+    case "nutrientes": aviso("Todos los nutrientes son del flujo 3."); render(); break;
     case "recup": {
       const restaurar = foto(["sesion"]), se = S.sesion;
       if (v === "bajar") { se.carga = -10; se.recup = "bajar"; conDeshacer(`Carga bajada en el Día ${se.dia}`, restaurar); }

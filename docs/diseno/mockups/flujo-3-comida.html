@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Flujo 3 comida</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Fase 0.5 · flujo 3, registrar una comida: diagrama, guía paso a paso y mockups móvil y web (NUT-02, NUT-03, NUT-09, NUT-10, NUT-12, SUP-02; D-37).">
@@ -611,6 +612,12 @@ mark { background: none; color: inherit; font-weight: 650; }
 }
 .panel-w .busca-cab.sin-atras { margin-left: 0; }
 
+/* en oscuro la hoja va en elevado, igual que el campo: dentro de una hoja el campo va sobre fondo (aprobado el 27-oct-2026) */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hoja .entrada { background: var(--fondo); } }
+:root[data-theme="dark"] .hoja .entrada { background: var(--fondo); }
+/* sin palabras sueltas al final del párrafo ni títulos desbalanceados (detector, 27-oct-2026) */
+p, li { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
