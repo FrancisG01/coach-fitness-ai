@@ -1,0 +1,965 @@
+<meta charset="utf-8">
+<title>Flujo 5 paseo MTB</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Fase 0.5 · flujo 5, registrar paseo MTB: diagrama y guía paso a paso (CAR-01, CAR-02; D-27, D-39).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
+<style>
+/*
+  Fase 0.5 · flujo 5 "Registrar paseo MTB" (CAR-01, CAR-02; D-27, D-39).
+  Piezas 1 y 2: diagrama y guía. CSS base de los flujos 3 y 4 aprobados (mismos tokens de docs/diseno/tokens.json)
+  más el bloque "flujo 5" al final, con el resumen del paseo del flujo 2.
+*/
+:root {
+  /* neutros · claro (tiza) */
+  --fondo: #F3F4F1; --superficie: #FFFFFF; --elevado: #E9EBE7; --borde: #DADDD8;
+  --texto: #1E2228; --texto-2: #5B626B; --error: #C9333A; --dato-gris: #B5BBC2;
+  /* uso del acento · claro */
+  --accion: var(--a4); --accion-alta: var(--a5); --texto-accion: #FFFFFF; --texto-acento: var(--a4); --texto-acento-elevado: var(--a5);
+  --suave: color-mix(in srgb, var(--a3) 13%, var(--superficie));
+  --capa-hover: color-mix(in srgb, var(--texto) 6%, transparent);
+  --capa-pressed: color-mix(in srgb, var(--texto) 10%, transparent);
+  /* superposiciones · claro: velo texto al 40 %, hoja en superficie, aviso invertido con acción A2 */
+  --velo: color-mix(in srgb, #1E2228 40%, transparent);
+  --hoja: var(--superficie);
+  --aviso-accion: var(--a2);
+  /* serie única de datos (Three Series Rule: A5 en claro, A1 en oscuro) */
+  --dato-1: var(--a5);
+  /* acentos A1–A5 (por defecto Caribe) */
+  --a1: #CFE6F5; --a2: #7CC0EA; --a3: #3B95D1; --a4: #1F6FA8; --a5: #154E78;
+  /* tipografía */
+  --familia: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  /* espaciado, radios, trazos */
+  --e1: 4px; --e2: 8px; --e3: 12px; --e4: 16px; --e5: 24px; --e6: 32px; --e7: 48px;
+  --r-casilla: 6px; --r-control: 10px; --r-tarjeta: 16px; --r-pildora: 999px;
+  --t-borde: 1px; --t-sel: 2px;
+  --tactil: 48px; --tactil-gym: 56px; --barra: 64px;
+  --rapido: 120ms; --normal: 200ms; --lento: 320ms;
+  --estandar: cubic-bezier(0.2, 0, 0, 1); --entrar: cubic-bezier(0.05, 0.7, 0.1, 1); --salir: cubic-bezier(0.3, 0, 0.8, 0.15);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+    --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+    --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
+    --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+    --velo: color-mix(in srgb, #1B1E23 72%, transparent);
+    --hoja: var(--elevado);
+    --aviso-accion: var(--a4);
+    --dato-1: var(--a1);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+  --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+  --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
+  --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+  --velo: color-mix(in srgb, #1B1E23 72%, transparent);
+  --hoja: var(--elevado);
+  --aviso-accion: var(--a4);
+  --dato-1: var(--a1);
+  color-scheme: dark;
+}
+:root[data-accent="mar"]       { --a1: #C8EEEA; --a2: #6FD6CC; --a3: #22A99C; --a4: #157A70; --a5: #0F5850; }
+:root[data-accent="palma"]     { --a1: #CDEEDB; --a2: #6FD19B; --a3: #2FA866; --a4: #1E7D4A; --a5: #155A36; }
+:root[data-accent="mango"]     { --a1: #FCE7C2; --a2: #F7C062; --a3: #E89A1E; --a4: #9A5C06; --a5: #6E4307; }
+:root[data-accent="flamboyan"] { --a1: #FBD6CB; --a2: #F79A7E; --a3: #E8603C; --a4: #B6411F; --a5: #7E2C14; }
+:root[data-accent="uva"]       { --a1: #E3DBFA; --a2: #B4A2F2; --a3: #8466DB; --a4: #6446B8; --a5: #45307F; }
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--fondo); color: var(--texto);
+  font-family: var(--familia); font-size: 16px; line-height: 24px;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+:focus-visible { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.i { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.i.s16 { width: 16px; height: 16px; stroke-width: 2; }
+.i.s20 { width: 20px; height: 20px; }
+.i.s32 { width: 32px; height: 32px; }
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* tipografía (escala de tokens.json) */
+.t-pantalla { font-size: 25px; line-height: 30px; font-weight: 700; font-stretch: 85%; margin: 0; text-wrap: balance; }
+.t-seccion { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.t-detalle { font-size: 13px; line-height: 18px; font-weight: 500; }
+.t-boton { font-size: 15px; line-height: 20px; font-weight: 650; }
+.cifra { font-weight: 800; font-stretch: 62%; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.c-metrica { font-size: 32px; line-height: 32px; }
+.c-heroe { font-size: 56px; line-height: 52px; }
+.sec { color: var(--texto-2); }
+.acento { color: var(--texto-acento); }
+p { margin: 0; }
+
+/* ---------- teléfono ---------- */
+.telefono { width: 376px; padding: var(--e2); border-radius: var(--r-tarjeta); background: var(--borde); flex: none; }
+.pantalla { height: 780px; border-radius: var(--r-control); overflow: hidden; background: var(--fondo); display: flex; flex-direction: column; position: relative; }
+.estado { height: 28px; padding-top: var(--e1); flex: none; display: flex; align-items: center; justify-content: space-between; padding-inline: var(--e5); font-size: 13px; font-weight: 600; }
+.cuerpo { flex: 1; min-height: 0; overflow: hidden; padding: 0 var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e3); }
+.cuerpo > * { flex-shrink: 0; }
+.barra { height: var(--barra); flex: none; background: var(--superficie); border-top: var(--t-borde) solid var(--borde); display: grid; grid-template-columns: repeat(5, 1fr); }
+.pestana { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--texto-2); font-size: 13px; line-height: 16px; font-weight: 500; text-decoration: none; }
+.pestana .ovalo { width: 56px; height: 28px; border-radius: var(--r-pildora); display: grid; place-items: center; transition: background var(--rapido) var(--estandar); }
+.pestana:active .ovalo { background: var(--capa-pressed); }
+.pestana[aria-current="page"] { color: var(--texto-acento); font-weight: 650; }
+
+/* piezas comunes */
+.tarjeta { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e2); }
+.tarjeta.destacada { background: var(--suave); }
+.btn { min-height: var(--tactil); border-radius: var(--r-control); padding-inline: var(--e4); display: inline-flex; align-items: center; justify-content: center; gap: var(--e2); font-size: 15px; line-height: 20px; font-weight: 650; text-align: center; transition: background var(--rapido) var(--estandar), transform var(--rapido) var(--estandar), color var(--rapido) var(--estandar); }
+.btn.primario { background: var(--accion); color: var(--texto-accion); }
+.btn.primario:active { background: var(--accion-alta); transform: scale(0.97); }
+.btn.secundario { border: var(--t-borde) solid var(--texto-2); color: var(--texto); }
+.btn.secundario:active { background: var(--capa-pressed); }
+.btn.texto { color: var(--texto-acento); padding-inline: var(--e3); }
+.btn.texto:active { background: var(--capa-pressed); color: var(--accion-alta); }
+@media (hover: hover) and (pointer: fine) {
+  .btn.primario:hover { background: var(--accion-alta); }
+  .btn.secundario:hover { background: var(--capa-hover); }
+  .btn.texto:hover { background: var(--capa-hover); color: var(--accion-alta); }
+}
+.ancho { width: 100%; }
+.par { display: grid; grid-template-columns: 1fr 1fr; gap: var(--e3); }
+.lista { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; overflow: hidden; }
+.lista > * + * { border-top: var(--t-borde) solid var(--borde); }
+.fila { min-height: var(--tactil); padding: var(--e2) var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); width: 100%; }
+.fila .txt { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+button.fila:active { background: var(--capa-pressed); }
+.cabeza { display: flex; align-items: center; justify-content: space-between; gap: var(--e2); }
+.atras { width: 48px; height: 48px; display: grid; place-items: center; margin-left: -12px; border-radius: var(--r-pildora); }
+.atras:active, .icono-btn:active { background: var(--capa-pressed); }
+.icono-btn { width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--r-pildora); flex: none; }
+.carga { font-size: 20px; line-height: 24px; }
+.segmento { display: flex; background: var(--elevado); border-radius: var(--r-control); padding: var(--e1); gap: var(--e1); }
+.segmento button { min-height: 40px; padding-inline: var(--e3); border-radius: var(--r-casilla); color: var(--texto-2); flex: 1; text-align: center; position: relative; }
+/* el área táctil del segmento llega a 48 px con el relleno del contenedor */
+.segmento button::after { content: ""; position: absolute; inset: calc(-1 * var(--e1)) 0; }
+.segmento button[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.pildora { display: inline-flex; align-items: center; gap: var(--e1); min-height: 24px; padding-inline: var(--e2); border-radius: var(--r-pildora); background: var(--elevado); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.nota { display: flex; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.sinc { display: inline-flex; align-items: center; gap: var(--e1); color: var(--texto-2); }
+.error-linea { display: flex; align-items: center; gap: var(--e2); color: var(--error); font-size: 13px; line-height: 18px; font-weight: 500; }
+
+/* pestañas internas de Gym (móvil) */
+.sub-tabs { display: flex; overflow-x: auto; margin-inline: calc(-1 * var(--e4)); padding-inline: var(--e2); border-bottom: var(--t-borde) solid var(--borde); scrollbar-width: none; flex: none; }
+.sub-tab { text-decoration: none; display: inline-flex; align-items: center; min-height: var(--tactil); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; line-height: 20px; font-weight: 500; white-space: nowrap; border-bottom: var(--t-sel) solid transparent; flex: none; }
+.sub-tab:active { background: var(--capa-pressed); }
+.sub-tab[aria-current="page"] { color: var(--texto-acento); font-weight: 650; border-bottom-color: var(--accion); }
+
+/* semana (móvil) */
+.semana-lista > * { min-height: var(--tactil-gym); }
+.fila-dia { display: flex; align-items: center; gap: var(--e3); padding: var(--e1) var(--e4) var(--e1) var(--e3); width: 100%; text-align: left; }
+.fila-dia:active { background: var(--capa-pressed); }
+.fila-dia .dnum { width: 40px; display: flex; flex-direction: column; align-items: center; flex: none; }
+.fila-dia .dnum .n { width: 32px; height: 32px; border-radius: var(--r-pildora); display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.fila-dia.hoy .dnum .n, .fila-dia.hoy .dnum .t-detalle { color: var(--texto-acento); font-weight: 650; }
+.fila-dia[aria-pressed="true"] .dnum .n { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.fila-dia .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.fila-dia .txt .t-detalle { color: var(--texto-2); }
+.fila-dia .fin { display: flex; align-items: center; gap: var(--e2); color: var(--texto-2); }
+
+/* detalle de día */
+.dia-cab { display: flex; flex-direction: column; gap: var(--e1); }
+.dia-cab .volver { display: flex; align-items: center; gap: var(--e1); }
+.estado-dia { display: inline-flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.cifras { display: flex; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e1); }
+.cifras > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--e1); padding-inline: var(--e4); }
+.cifras .cifra { white-space: nowrap; }
+.cifras > div + div { border-left: var(--t-borde) solid var(--borde); }
+.cifras .cifra { font-size: 32px; line-height: 32px; }
+.cifras .unidad-c { font-size: 15px; font-weight: 650; font-stretch: 85%; color: var(--texto-2); }
+.record { flex-direction: row; align-items: center; gap: var(--e3); }
+.record .i { color: var(--texto-acento); }
+.record .txt { display: flex; flex-direction: column; }
+.vacio { display: flex; flex-direction: column; align-items: flex-start; gap: var(--e2); padding-block: var(--e5); color: var(--texto); }
+.vacio > .i { color: var(--texto-2); }
+.acciones { display: flex; flex-direction: column; gap: var(--e2); margin-top: auto; }
+.empuje { margin-top: auto; }
+
+/* asignar pesos */
+.peso-fila { min-height: 64px; padding: var(--e2) var(--e2) var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e2); }
+.peso-fila .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.peso-fila .txt .t-detalle { color: var(--texto-2); }
+.stepper { display: flex; align-items: center; gap: var(--e1); flex: none; }
+.stepper button { width: var(--tactil); height: var(--tactil); border-radius: var(--r-control); background: var(--elevado); display: grid; place-items: center; transition: background var(--rapido) var(--estandar); }
+.stepper button:active { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); }
+.stepper .valor { min-width: var(--barra); text-align: center; display: flex; flex-direction: column; align-items: center; line-height: 1; }
+.stepper .valor .cifra { font-size: 25px; line-height: 24px; }
+.stepper .valor .t-detalle { color: var(--texto-2); }
+.sube { color: var(--texto-acento); }
+
+/* hoja inferior y aviso */
+.velo { position: absolute; inset: 0; background: var(--velo); display: flex; flex-direction: column; justify-content: flex-end; z-index: 2; }
+.hoja { background: var(--hoja); border-top-left-radius: var(--r-tarjeta); border-top-right-radius: var(--r-tarjeta); padding: var(--e5) var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e4); }
+.hoja .mes .celda[aria-disabled="true"] { cursor: default; }
+.opcion-hoy { min-height: var(--tactil-gym); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); border-radius: var(--r-control); background: var(--elevado); border: var(--t-sel) solid transparent; width: 100%; text-align: left; }
+.opcion-hoy[aria-pressed="true"] { border-color: var(--accion); }
+.opcion-hoy .txt { flex: 1; display: flex; flex-direction: column; }
+.aviso { position: absolute; left: var(--e4); right: var(--e4); bottom: calc(var(--barra) + var(--e2)); background: var(--texto); color: var(--fondo); border-radius: var(--r-control); padding: var(--e1) var(--e1) var(--e1) var(--e4); min-height: var(--tactil-gym); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); z-index: 3; }
+.aviso .btn.texto { color: var(--aviso-accion); }
+.aviso .btn.texto:active { background: color-mix(in srgb, var(--fondo) 10%, transparent); }
+
+/* esqueleto */
+.esq { background: var(--elevado); border-radius: var(--r-casilla); }
+.esq.bloque { height: var(--e7); }
+@media (prefers-reduced-motion: no-preference) { .esq.pulso { animation: pulso 1600ms var(--estandar) infinite; } }
+@keyframes pulso { 50% { opacity: 0.5; } }
+
+/* título del calendario con número de semana */
+.cal-titulo { flex: 1; display: flex; flex-direction: column; align-items: center; }
+
+/* ---------- lámina ---------- */
+body { padding-block: var(--e6) var(--e7); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.lamina { max-width: 1560px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--e7); }
+.cabecera { display: flex; flex-wrap: wrap; gap: var(--e5); justify-content: space-between; align-items: end; }
+.cabecera h1 { font-size: 32px; line-height: 32px; font-weight: 800; font-stretch: 75%; margin: 0 0 var(--e2); text-wrap: balance; }
+.cabecera p { margin: 0; max-width: 62ch; color: var(--texto-2); }
+.controles { display: flex; flex-wrap: wrap; gap: var(--e4); }
+.control { display: flex; flex-direction: column; gap: var(--e1); }
+.controles .segmento button { flex: none; }
+.puntos { display: flex; gap: var(--e2); align-items: center; min-height: 48px; }
+.punto { width: 32px; height: 32px; border-radius: var(--r-pildora); background: var(--c); }
+.punto[aria-pressed="true"] { outline: var(--t-sel) solid var(--texto); outline-offset: 2px; }
+.indice { display: flex; flex-wrap: wrap; gap: var(--e2); }
+.indice a { color: var(--texto-acento); font-weight: 650; font-size: 15px; min-height: 48px; display: inline-flex; align-items: center; padding-inline: var(--e3); border-radius: var(--r-control); text-decoration: none; }
+.indice a:active { background: var(--capa-pressed); }
+@media (hover: hover) and (pointer: fine) { .indice a:hover { background: var(--capa-hover); } }
+
+.pagina { display: flex; flex-direction: column; gap: var(--e5); scroll-margin-top: var(--e5); }
+.pagina > header { display: flex; flex-direction: column; gap: var(--e2); border-top: var(--t-borde) solid var(--borde); padding-top: var(--e5); }
+.pagina h2 { font-size: 25px; line-height: 30px; font-weight: 800; font-stretch: 75%; margin: 0; }
+.pagina h3.sub { font-size: 20px; line-height: 26px; font-weight: 650; margin: var(--e3) 0 0; }
+.cambios { margin: 0; padding-left: 1.2em; color: var(--texto-2); max-width: 86ch; display: grid; gap: var(--e1); }
+.cambios strong { color: var(--texto); font-weight: 650; }
+.fila-telefonos { display: flex; flex-wrap: wrap; gap: var(--e6) var(--e4); }
+figure { margin: 0; display: flex; flex-direction: column; gap: var(--e3); width: 376px; }
+figcaption { display: flex; flex-direction: column; gap: 2px; font-size: 13px; line-height: 18px; color: var(--texto-2); max-width: 360px; }
+figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
+@media (max-width: 420px) { figure { zoom: 0.88; } }
+
+/* diagrama */
+.diagrama-envoltura { overflow-x: auto; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); }
+.diagrama { display: block; min-width: 1240px; width: 100%; height: auto; font-family: var(--familia); }
+.diagrama .nodo rect { fill: var(--elevado); stroke: var(--borde); stroke-width: 1; }
+.diagrama .nodo.inicio rect { fill: var(--suave); stroke: var(--accion); stroke-width: 2; }
+.diagrama .nodo.aviso rect { fill: var(--texto); stroke: none; }
+.diagrama .nodo.aviso .t1, .diagrama .nodo.aviso .t2 { fill: var(--fondo); }
+.diagrama .nodo.salud rect { fill: var(--superficie); stroke: var(--texto-2); stroke-dasharray: 4 4; }
+.diagrama .t1 { fill: var(--texto); font-size: 15px; font-weight: 650; }
+.diagrama .t2 { fill: var(--texto-2); font-size: 13px; font-weight: 500; }
+.diagrama .rama { fill: var(--texto-2); font-size: 13px; font-weight: 500; }
+.diagrama .flecha { fill: none; stroke: var(--texto-2); stroke-width: 1.75; }
+.diagrama .punta { fill: var(--texto-2); }
+.diagrama .paso circle { fill: var(--texto); }
+.diagrama .paso text { fill: var(--fondo); font-size: 13px; font-weight: 650; }
+.diagrama .estados rect { fill: var(--fondo); stroke: var(--borde); }
+.diagrama .estados .t1 { font-size: 15px; }
+.diagrama .fuerte { fill: var(--texto); font-weight: 650; }
+
+/* guía */
+.guia { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--e6) var(--e5); }
+.paso-guia { display: flex; flex-direction: column; gap: var(--e3); }
+.paso-guia .mini { zoom: 0.64; align-self: flex-start; }
+.paso-guia h3 { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.paso-guia ol { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--e2); }
+.paso-guia li { display: grid; grid-template-columns: 24px 1fr; gap: var(--e2); font-size: 15px; line-height: 20px; }
+.paso-guia li .num-a { width: 24px; height: 24px; border-radius: var(--r-pildora); background: var(--texto); color: var(--fondo); display: grid; place-items: center; font-size: 13px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.paso-guia .etapa { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.con-anota { position: relative; }
+.mini .lista { overflow: visible; }
+.anota { position: absolute; top: -10px; right: -6px; width: 28px; height: 28px; border-radius: var(--r-pildora); background: var(--texto); color: var(--fondo); border: var(--t-sel) solid var(--fondo); display: grid; place-items: center; font-size: 15px; line-height: 20px; font-weight: 650; font-variant-numeric: tabular-nums; z-index: 4; pointer-events: none; }
+.pestana .anota { top: 2px; right: 4px; }
+.sub-tab .anota { top: 2px; right: -4px; }
+
+
+
+/* series de datos de los macros (Three Series Rule: A5, A3, gris en claro; A1, A3, gris en oscuro) */
+:root { --dato-2: var(--a3); --dato-3: var(--dato-gris); }
+
+/* lámina */
+.cambios, .casos { max-width: 60ch; }
+.casos { display: grid; gap: var(--e2); color: var(--texto-2); margin: 0; padding-left: 1.2em; }
+.casos b { color: var(--texto); font-weight: 650; }
+.diagrama .nodo.pregunta rect { fill: var(--superficie); stroke: var(--texto-2); stroke-dasharray: 4 4; }
+.diagrama .titulo-alt { fill: var(--texto); font-size: 15px; font-weight: 650; }
+.diagrama .nodo.prog rect { fill: var(--fondo); stroke: var(--accion); stroke-width: 2; }
+.anota.izq { right: auto; left: -6px; }
+.anota.abajo { top: auto; bottom: -10px; }
+.anota.dentro { right: 4px; }
+
+/* aviso superpuesto al pie (Never Cover Rule): flota sobre la lista sin moverla ni reservar alto,
+   justo encima de las acciones fijas (el +, las pestañas, la barra del plato, el botón principal), sin taparlas */
+.ranura-aviso { position: absolute; left: var(--e4); right: var(--e4); bottom: calc(var(--barra) + var(--e3)); z-index: 3; display: flex; }
+.ranura-aviso:empty { display: none; }
+.ranura-aviso.sobre-fab { bottom: calc(var(--barra) + var(--e4) + var(--tactil-gym) + var(--e3)); }
+.ranura-aviso.sobre-acciones { bottom: calc(var(--tactil) + var(--e4) + var(--e3)); }
+.ranura-aviso .aviso { position: relative; left: auto; right: auto; bottom: auto; flex: 1; }
+.aviso .txt-av { flex: 1; font-size: 15px; line-height: 20px; }
+.unidad-c { font-size: 15px; line-height: 20px; font-weight: 650; font-stretch: 85%; color: var(--texto-2); }
+
+/* campos tipados y chips (flujo 10) */
+.campo { display: flex; flex-direction: column; gap: var(--e1); }
+.campo > .lbl { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.entrada { min-height: var(--tactil); background: var(--elevado); border-radius: var(--r-control); padding-inline: var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e2); position: relative; }
+.entrada .u { color: var(--texto-2); font-size: 15px; line-height: 20px; }
+.entrada.foco { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.entrada.error { outline: var(--t-sel) solid var(--error); outline-offset: calc(-1 * var(--t-sel)); }
+.entrada.vacia > span:first-child { color: var(--texto-2); }
+.chips { display: flex; flex-wrap: wrap; gap: var(--e3) var(--e2); }
+.chip { min-height: 36px; padding-inline: var(--e3); border-radius: var(--r-pildora); background: var(--elevado); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; display: inline-flex; align-items: center; position: relative; white-space: nowrap; transition: background var(--rapido) var(--estandar); }
+.chip::after { content: ""; position: absolute; inset: calc(-1 * var(--e2) + 2px) 0; }
+.chip:active { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); color: var(--texto); }
+.chip[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.chip .anota { top: -14px; right: -10px; }
+.entrada .anota { right: -10px; }
+
+/* ---------- Comida (flujo 3, D-37) ---------- */
+.desliza { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: var(--e3); overflow-x: visible; overflow-y: clip; padding-top: var(--e1); }
+.desliza > * { flex-shrink: 0; }
+.dia-nav { display: flex; align-items: center; gap: var(--e1); margin-inline: -12px; }
+.dia-nav .txt { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.dia-nav .t-seccion { font-size: 20px; }
+
+/* resumen del día: Total, Objetivo y Restan */
+.resumen { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e4) var(--e4); display: grid; grid-template-columns: minmax(0, 1fr) repeat(3, 70px); column-gap: var(--e2); align-items: baseline; position: relative; }
+.resumen .cab { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; text-align: right; padding-bottom: var(--e1); }
+.resumen .nom { font-size: 15px; line-height: 20px; min-width: 0; }
+.resumen .nom .u, .resumen .grupo-n .u { color: var(--texto-2); font-size: 13px; }
+.resumen .v { text-align: right; white-space: nowrap; display: flex; flex-direction: column; align-items: flex-end; position: relative; }
+.resumen .v .cifra { font-size: 20px; line-height: 24px; }
+.resumen .v .hasta { color: var(--texto-2); font-size: 13px; line-height: 14px; font-weight: 500; }
+.resumen .kcal .cifra { font-size: 25px; line-height: 26px; }
+.resumen .neg { display: inline-flex; align-items: center; gap: 2px; }
+.resumen .neg .i { color: var(--texto-2); }
+.resumen .ok { display: inline-flex; align-items: center; gap: 2px; font-size: 13px; line-height: 24px; font-weight: 650; }
+.resumen .ok .i { color: var(--texto-acento); }
+.resumen .linea { grid-column: 1 / -1; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; margin-top: calc(-1 * var(--e1)); padding-bottom: var(--e2); display: flex; align-items: center; gap: var(--e1); position: relative; }
+.resumen .linea.tope { color: var(--texto); }
+.resumen .linea.tope .i { color: var(--texto-2); }
+.resumen .grupo-n { grid-column: 1 / -1; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 650; padding-top: var(--e3); padding-bottom: var(--e1); border-top: var(--t-borde) solid var(--borde); margin-top: var(--e1); }
+.resumen .grupo-n:first-of-type { border-top: 0; margin-top: 0; padding-top: 0; }
+.resumen .pie-r { grid-column: 1 / -1; display: flex; justify-content: flex-start; margin: var(--e1) 0 calc(-1 * var(--e2)) calc(-1 * var(--e3)); }
+
+/* barra de progreso con tramo programado en contorno y marca de límite */
+.pista-n { grid-column: 1 / -1; position: relative; margin: var(--e1) 0 var(--e3); }
+.pista-n .p { height: var(--e1); border-radius: var(--r-pildora); background: var(--elevado); display: flex; overflow: hidden; }
+.pista-n .p i { display: block; height: 100%; flex: none; width: calc(var(--v) * 1%); background: var(--m, var(--accion)); }
+/* contorno = programado: el tramo pendiente es solo trazo */
+.pista-n .p i.prog { background: transparent; outline: var(--t-borde) solid var(--m, var(--accion)); outline-offset: calc(-1 * var(--t-borde)); border-radius: 0 var(--r-pildora) var(--r-pildora) 0; }
+.pista-n .lim { position: absolute; top: calc(-1 * var(--e1)); bottom: calc(-1 * var(--e1)); left: calc(var(--l) * 1%); width: var(--t-borde); background: var(--texto-2); }
+.pista-n .anota { top: -14px; }
+
+/* comidas del día */
+.comida { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; position: relative; }
+.comida > * + * { border-top: var(--t-borde) solid var(--borde); }
+/* contorno = programado: sin relleno, trazo neutro */
+.comida.programada { background: transparent; outline: var(--t-borde) solid var(--texto-2); outline-offset: calc(-1 * var(--t-borde)); }
+.comida-cab { padding: var(--e3) var(--e4); display: flex; align-items: flex-start; justify-content: space-between; gap: var(--e3); }
+.comida-cab .txt { display: flex; flex-direction: column; min-width: 0; }
+.comida-cab .t-seccion { display: flex; align-items: center; gap: var(--e2); }
+.comida-cab .t-detalle { color: var(--texto-2); display: inline-flex; align-items: center; gap: var(--e1); }
+.comida-cab .kc { text-align: right; white-space: nowrap; display: flex; flex-direction: column; align-items: flex-end; }
+.comida-cab .kc .cifra { font-size: 20px; line-height: 24px; }
+.comida-cab .kc .t-detalle { color: var(--texto-2); }
+.alimento { min-height: var(--tactil); padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); width: 100%; text-align: left; position: relative; }
+.alimento .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.alimento .txt .t-detalle { color: var(--texto-2); }
+.alimento .kc { white-space: nowrap; color: var(--texto); font-size: 15px; line-height: 20px; }
+.alimento.quitable { padding-right: var(--e1); }
+.alimento .icono-btn { margin-left: calc(-1 * var(--e2)); color: var(--texto-2); }
+button.alimento:active { background: var(--capa-pressed); }
+.comida-pie { padding: var(--e1) var(--e1); display: flex; }
+.comida-pie .btn.texto { gap: var(--e1); }
+.comida.vacia-c .comida-cab { padding-bottom: var(--e1); }
+.comida.vacia-c .comida-cab + .comida-pie { border-top: 0; }
+.estado-c { display: inline-flex; align-items: center; gap: var(--e1); }
+.m { width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); flex: none; }
+.m.prog { border: var(--t-sel) solid var(--accion); }
+.acciones-dia { display: grid; grid-template-columns: auto 1fr; gap: var(--e2); flex: none; }
+.ranura-aviso + .acciones-dia { margin-top: var(--e1); }
+.ver-todo { align-self: flex-start; margin-left: calc(-1 * var(--e3)); }
+
+/* botón flotante de Comida (móvil): un + que abre un menú con «Agregar a la comida de la hora» y «Crear alimento».
+   Plano como todo el sistema: relleno de acción y un anillo del color de fondo que lo separa del contenido, sin sombra. */
+.fab { position: absolute; right: var(--e4); bottom: calc(var(--barra) + var(--e4) + env(safe-area-inset-bottom, 0px)); width: var(--tactil-gym); height: var(--tactil-gym); border-radius: var(--r-pildora); background: var(--accion); color: var(--texto-accion); border: var(--t-sel) solid var(--fondo); display: grid; place-items: center; z-index: 4; transition: background var(--rapido) var(--estandar), transform var(--rapido) var(--estandar); }
+.fab:active { background: var(--accion-alta); transform: scale(0.97); }
+.fab .i { transition: transform var(--normal) var(--estandar); }
+.fab[aria-expanded="true"] .i { transform: rotate(45deg); }
+.velo-fab { position: absolute; inset: 0; background: var(--velo); z-index: 3; }
+.menu-fab { position: absolute; right: var(--e4); bottom: calc(var(--barra) + var(--e4) + var(--tactil-gym) + var(--e2) + env(safe-area-inset-bottom, 0px)); z-index: 4; min-width: 240px; background: var(--hoja); border-radius: var(--r-tarjeta); padding: var(--e2); display: flex; flex-direction: column; gap: var(--e1); }
+.menu-fab button { min-height: var(--tactil); padding-inline: var(--e3) var(--e4); border-radius: var(--r-control); display: flex; align-items: center; gap: var(--e3); font-size: 15px; line-height: 20px; font-weight: 650; text-align: left; }
+.menu-fab button .i { color: var(--texto-acento-elevado); }
+.menu-fab button:active { background: var(--capa-pressed); }
+@media (hover: hover) and (pointer: fine) { .fab:hover { background: var(--accion-alta); } .menu-fab button:hover { background: var(--capa-hover); } }
+@media (prefers-reduced-motion: reduce) { .fab, .fab .i { transition: none; } }
+/* lo último de la lista puede subir por encima del + */
+.desliza.con-fab { padding-bottom: calc(var(--tactil-gym) + var(--e3)); }
+
+
+/* buscar y armar el plato */
+.busca-cab { display: flex; align-items: center; gap: var(--e1); margin-inline: -12px calc(-1 * var(--e2)); min-height: var(--tactil); }
+.busca-cab .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.comida-btn { display: inline-flex; align-items: center; gap: var(--e1); font-size: 20px; line-height: 26px; font-weight: 650; min-height: 40px; border-radius: var(--r-control); align-self: flex-start; position: relative; }
+.comida-btn:active, .hora-btn:active { background: var(--capa-pressed); }
+.hora-btn { min-height: var(--tactil); padding-inline: var(--e3); border-radius: var(--r-control); color: var(--texto-acento); font-size: 15px; line-height: 20px; font-weight: 650; display: inline-flex; align-items: center; gap: var(--e1); position: relative; white-space: nowrap; }
+.entrada.buscar { padding-left: var(--e3); justify-content: flex-start; }
+.entrada.buscar > span { flex: 1; }
+.entrada.buscar .i { color: var(--texto-2); }
+.entrada.buscar .borrar { width: 40px; height: 40px; margin-right: calc(-1 * var(--e2)); display: grid; place-items: center; border-radius: var(--r-control); color: var(--texto-2); }
+.fila-crear { display: flex; gap: var(--e2); }
+.fila-crear .btn { flex: 1; }
+.grupo-tit { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 650; display: flex; align-items: center; justify-content: space-between; gap: var(--e2); margin-bottom: calc(-1 * var(--e1)); }
+.resultados { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; }
+.resultados > * + * { border-top: var(--t-borde) solid var(--borde); }
+.resultado { min-height: 56px; padding: var(--e1) var(--e1) var(--e1) var(--e4); display: flex; align-items: center; gap: var(--e2); position: relative; }
+.resultado .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.resultado .txt .t-detalle { color: var(--texto-2); }
+.resultado .txt .pildora { align-self: flex-start; margin-top: var(--e1); }
+.resultado .icono-btn { color: var(--texto-acento); }
+.resultado .icono-btn.hecho { color: var(--texto-acento); }
+.resultado .icono-btn.neutro { color: var(--texto-2); }
+mark { background: none; color: inherit; font-weight: 650; }
+.sinc-linea { display: flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; position: relative; }
+/* barra fija del plato: total de la comida y Listo */
+.barra-plato { flex: none; background: var(--superficie); border-top: var(--t-borde) solid var(--borde); padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); min-height: 72px; position: relative; }
+.barra-plato .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.barra-plato .txt .t-detalle { color: var(--texto-2); }
+.barra-plato .tot { display: flex; align-items: baseline; gap: var(--e1); }
+.barra-plato .tot .cifra { font-size: 25px; line-height: 26px; }
+.barra-plato .btn { min-width: 96px; }
+
+/* hoja de cantidad */
+.hoja .cab-hoja { display: flex; flex-direction: column; gap: 2px; }
+.hoja .cab-hoja .t-detalle { color: var(--texto-2); }
+.agarre { width: 32px; height: var(--e1); border-radius: var(--r-pildora); background: var(--borde); align-self: center; margin: calc(-1 * var(--e3)) 0 calc(-1 * var(--e1)); }
+.cant { display: flex; gap: var(--e2); align-items: center; }
+.cant .entrada { flex: 1; }
+.cant .entrada .cifra { font-size: 25px; line-height: 26px; }
+.fracciones { display: flex; gap: var(--e1); }
+.fracciones .chip { min-height: var(--tactil); min-width: var(--tactil); justify-content: center; font-size: 15px; }
+.fracciones .chip::after { display: none; }
+.vivo { display: flex; background: var(--elevado); border-radius: var(--r-control); padding: var(--e3) 0; position: relative; }
+.vivo > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: 2px; padding-inline: var(--e3); }
+.vivo > div + div { border-left: var(--t-borde) solid var(--borde); }
+.vivo .cifra { font-size: 25px; line-height: 26px; white-space: nowrap; }
+.vivo .t-detalle { color: var(--texto-2); }
+.botones-hoja { display: grid; grid-template-columns: auto 1fr; gap: var(--e2); }
+
+/* formulario de alimento nuevo */
+.form-scroll { gap: var(--e4); }
+.leer { display: flex; gap: var(--e2); }
+.leer .btn.secundario { flex: 1; }
+.leer .icono-btn[aria-disabled="true"] { opacity: 0.4; cursor: default; background: var(--elevado); border-radius: var(--r-control); }
+.leido { display: flex; align-items: center; gap: var(--e2); font-size: 13px; line-height: 18px; font-weight: 500; color: var(--texto); }
+.leido .i { color: var(--texto-acento); }
+.sub-form { font-size: 15px; line-height: 20px; font-weight: 650; display: flex; justify-content: space-between; align-items: baseline; gap: var(--e2); }
+.sub-form .t-detalle { color: var(--texto-2); font-weight: 500; }
+.opcionales { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; }
+.opcionales > div { min-height: 44px; padding: var(--e2) var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); }
+.opcionales > div + div { border-top: var(--t-borde) solid var(--borde); }
+.opcionales .sin { color: var(--texto-2); font-size: 15px; }
+.campo .error-linea { margin-top: 2px; }
+.acciones-form { display: flex; flex-direction: column; gap: var(--e2); flex: none; }
+
+/* suplementos */
+.supl .alimento .txt .t-detalle { display: inline-flex; align-items: center; gap: var(--e1); }
+.supl .alimento .m { margin-right: calc(-1 * var(--e1)); }
+
+@media (hover: hover) and (pointer: fine) {
+  button.alimento:hover, .comida-btn:hover, .hora-btn:hover, .chip:not([aria-pressed="true"]):hover { background: var(--capa-hover); }
+}
+
+/* ajustes de anotaciones y columnas del resumen */
+.resumen { padding: var(--e3) var(--e3) var(--e4); grid-template-columns: minmax(0, 1fr) 48px 58px 76px; column-gap: var(--e1); }
+.resumen .v .anota { top: -14px; right: -14px; }
+.resumen .v.res .anota { right: auto; left: -6px; }
+.resumen .cab .anota { top: -22px; right: 6px; }
+.resumen .linea .anota { position: static; margin-left: var(--e1); }
+.pista-n .anota { right: auto; left: 55%; top: -12px; }
+.dia-nav .txt .anota { right: auto; left: 8%; }
+.supl .alimento { padding-block: var(--e1); }
+.form-scroll.compacto { gap: var(--e3); }
+.resumen .v.res .anota { top: -16px; right: -8px; left: auto; }
+.resumen .v:not(.res) .anota { top: -6px; right: -28px; }
+.supl .comida-cab { padding-block: var(--e2); }
+.supl .comida-pie { padding-block: 0; }
+.desliza.arriba { padding-top: 0; }
+.resumen .v.res .anota { top: -22px; }
+.dia-nav .txt .anota { top: -16px; left: 4%; }
+
+/* ---------- web ---------- */
+.web-envoltura { overflow-x: auto; border-radius: var(--r-tarjeta); }
+.navegador { min-width: 1180px; background: var(--borde); border-radius: var(--r-tarjeta); padding: var(--e1); }
+.navegador .barra-nav { height: 32px; display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e4); }
+.navegador .url { background: var(--fondo); border-radius: var(--r-pildora); padding: 2px var(--e4); font-size: 13px; color: var(--texto-2); }
+.app-web { display: grid; grid-template-columns: 248px 1fr; background: var(--fondo); border-radius: 0 0 var(--r-tarjeta) var(--r-tarjeta); min-height: 820px; }
+.lateral { background: var(--superficie); border-right: var(--t-borde) solid var(--borde); padding: var(--e4) var(--e3); display: flex; flex-direction: column; gap: var(--e1); border-radius: 0 0 0 var(--r-tarjeta); }
+.marca { display: flex; align-items: center; gap: var(--e3); padding: var(--e2) var(--e2) var(--e4); font-weight: 650; font-size: 15px; }
+.logo { width: 32px; height: 32px; border-radius: var(--r-control); background: var(--elevado); color: var(--texto); display: grid; place-items: center; }
+.item { min-height: 44px; border-radius: var(--r-control); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; }
+.item.abierto { color: var(--texto); font-weight: 650; }
+.subitem { min-height: 36px; display: flex; align-items: center; padding-left: 44px; border-radius: var(--r-control); color: var(--texto-2); font-size: 15px; }
+/* texto de acento sobre elevado: A5 en claro, A2 en oscuro (tokens.json · textoAcentoSobreElevado) */
+.subitem[aria-current="page"] { background: var(--elevado); color: var(--texto-acento-elevado); font-weight: 650; }
+.lateral .pie { margin-top: auto; border-top: var(--t-borde) solid var(--borde); padding-top: var(--e3); display: flex; flex-direction: column; gap: var(--e1); }
+.lateral .pie .sinc { padding: var(--e2) var(--e3); }
+.principal { padding: var(--e6); display: flex; flex-direction: column; gap: var(--e5); position: relative; }
+.rejilla { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--e4); align-items: start; }
+.span-12 { grid-column: span 12; } .span-8 { grid-column: span 8; } .span-4 { grid-column: span 4; }
+.tarjeta.web { padding: var(--e5); gap: var(--e4); }
+.web-cab { display: flex; justify-content: space-between; align-items: end; gap: var(--e4); }
+.web-ctl { display: flex; align-items: center; gap: var(--e3); }
+.web-ctl .segmento button { flex: none; min-width: 72px; }
+.cal-nav.web { margin-left: 0; gap: var(--e1); }
+.cal-nav.web .t-seccion { min-width: 180px; text-align: center; }
+
+.cifras-plano { display: flex; }
+.cifras-plano > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--e1); padding-inline: var(--e4); }
+.cifras-plano > div:first-child { padding-left: 0; }
+.cifras-plano > div + div { border-left: var(--t-borde) solid var(--borde); }
+.cifras-plano .cifra { font-size: 32px; line-height: 32px; white-space: nowrap; }
+.record-linea { display: flex; align-items: center; gap: var(--e2); color: var(--texto); }
+.record-linea .i { color: var(--texto-acento); }
+.wfilas > div, .wpesos > * { border-top: var(--t-borde) solid var(--borde); }
+.wfila { min-height: var(--tactil); padding-block: var(--e2); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); }
+.wpesos .peso-fila { padding-left: 0; padding-right: 0; }
+.wpesos .fila { padding-inline: 0; }
+.semana-pie { display: flex; align-items: center; justify-content: space-between; gap: var(--e4); }
+.icono-btn.acento { color: var(--texto-acento); }
+.opcion-rutina .pildora { align-self: flex-start; margin-top: var(--e1); }
+
+
+.radio { width: 24px; height: 24px; border-radius: var(--r-pildora); border: var(--t-sel) solid var(--texto-2); display: grid; place-items: center; flex: none; }
+.radio::after { content: ""; width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); background: transparent; }
+[aria-checked="true"] .radio { border-color: var(--accion); }
+[aria-checked="true"] .radio::after { background: var(--accion); }
+.opcion-rutina { min-height: 64px; padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); width: 100%; text-align: left; }
+.opcion-rutina:active { background: var(--capa-pressed); }
+.opcion-rutina .txt { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.opcion-rutina .txt .t-detalle { color: var(--texto-2); }
+
+/* hover de la lámina (sin rejilla de calendario) */
+@media (hover: hover) and (pointer: fine) { button.fila:hover, .sub-tab:hover, .icono-btn:hover, .atras:hover, .atajos button:hover, .casilla:hover, .carga-btn:hover, .opcion-rutina:hover { background: var(--capa-hover); } }
+.m { width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); flex: none; }
+.m.hecha { background: var(--accion); }
+.m.prog { border: var(--t-sel) solid var(--accion); }
+
+
+
+/* ---------- pieza 3: mockups (flujo 3) ---------- */
+.wvacio { display: flex; flex-direction: column; align-items: flex-start; gap: var(--e2); max-width: 520px; padding-block: var(--e6); }
+.wvacio > .i { color: var(--texto-2); }
+.wvacio p { color: var(--texto-2); max-width: 60ch; }
+.wvacio.falla > .i { color: var(--error); }
+.app-web.corta { min-height: 560px; }
+.esq.linea { height: var(--e4); }
+.esq.alto { height: calc(4 * var(--e7)); }
+.vacio p { max-width: 36ch; }
+.vacio .btn { margin-top: var(--e2); }
+
+/* indicador circular dentro de un botón (20 px), solo si tarda más de 300 ms */
+.indicador { width: 20px; height: 20px; border-radius: var(--r-pildora); border: var(--t-sel) solid var(--borde); border-top-color: var(--texto); flex: none; }
+@media (prefers-reduced-motion: no-preference) { .indicador { animation: giro 800ms linear infinite; } }
+@keyframes giro { to { transform: rotate(1turn); } }
+.btn[aria-busy="true"] { cursor: progress; }
+
+/* esqueleto en el teléfono */
+.esq-tarjeta { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e3); }
+.esq-fila { display: flex; justify-content: space-between; gap: var(--e4); }
+
+/* web: dos columnas de Comida */
+.span-7 { grid-column: span 7; } .span-5 { grid-column: span 5; } .span-6 { grid-column: span 6; }
+.col { display: flex; flex-direction: column; gap: var(--e3); min-width: 0; }
+.col.fija { position: sticky; top: var(--e6); }
+.w-dia { display: flex; align-items: center; gap: var(--e1); margin-left: -12px; }
+.w-dia .t-pantalla { min-width: 300px; text-align: center; }
+.web-ctl .btn { flex: none; }
+/* comida que recibe lo que agregas: borde de acción de 2 px (tarjeta elegida) */
+.comida.elegida { outline: var(--t-sel) solid var(--accion); outline-offset: calc(-1 * var(--t-sel)); }
+.comida.elegida .comida-cab .t-detalle .destino { color: var(--texto); font-weight: 650; }
+.aviso-web { display: flex; justify-content: flex-start; min-height: var(--tactil-gym); }
+.aviso-web .aviso { position: relative; left: auto; right: auto; bottom: auto; width: 100%; max-width: 420px; }
+
+/* web: panel lateral para buscar, elegir la cantidad y crear un alimento */
+.panel-w { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e4) 0; display: flex; flex-direction: column; gap: var(--e3); overflow: hidden; }
+.panel-w.sin-pie { padding-bottom: var(--e4); }
+.panel-w .busca-cab { margin-right: calc(-1 * var(--e2)); }
+.panel-w .resultados { background: transparent; border-radius: 0; margin-inline: calc(-1 * var(--e4)); border-top: var(--t-borde) solid var(--borde); }
+.panel-w .grupo-tit { margin-bottom: calc(-1 * var(--e2)); }
+.panel-w .barra-plato { margin-inline: calc(-1 * var(--e4)); }
+.panel-w .vivo { background: var(--elevado); }
+.panel-w .cab-hoja .t-detalle { color: var(--texto-2); }
+.panel-w .opcionales { background: transparent; border-radius: 0; margin-inline: calc(-1 * var(--e4)); border-top: var(--t-borde) solid var(--borde); }
+.panel-w .vacio { padding-block: var(--e4); }
+.panel-w .acciones-form { padding-bottom: var(--e4); }
+.panel-w .sinc-linea { min-height: 24px; }
+
+/* web: todos los nutrientes en dos columnas */
+.w-nutri .resumen { padding: var(--e4) var(--e5) var(--e5); grid-template-columns: minmax(0, 1fr) 72px 80px 96px; column-gap: var(--e2); }
+.w-nutri .resumen .grupo-n { font-size: 15px; line-height: 20px; }
+.w-faltan { display: flex; align-items: center; gap: var(--e3); }
+.w-faltan .btn.texto { gap: var(--e1); }
+
+/* nota del día sin conexión en el teléfono */
+.dia-sinc { justify-content: center; margin-top: calc(-1 * var(--e2)); }
+
+@media (hover: hover) and (pointer: fine) {
+  .item:hover, .subitem:not([aria-current="page"]):hover { background: var(--capa-hover); }
+}
+.panel-w .busca-cab.sin-atras { margin-left: 0; }
+
+
+/* ===== flujo 4 · crear receta o plan (D-38) ===== */
+/* calendario (mismas piezas que flujo-2-calendario.html) */
+.cal-nav { display: flex; align-items: center; gap: 0; margin-inline: -12px; }
+.cal-nav .cal-titulo .t-seccion { font-size: 20px; }
+.cal-vista { display: flex; align-items: center; gap: var(--e2); }
+.cal-vista .segmento { flex: 1; }
+.mes { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: var(--e2); text-align: center; }
+.mes .sem { font-size: 13px; line-height: 18px; font-weight: 500; color: var(--texto-2); padding-bottom: var(--e2); }
+.celda { min-height: var(--tactil); display: flex; flex-direction: column; align-items: center; gap: 0; border-radius: var(--r-control); text-align: center; position: relative; }
+.celda:active { background: var(--capa-pressed); }
+.celda .n { width: 32px; height: 32px; border-radius: var(--r-pildora); display: grid; place-items: center; font-size: 16px; line-height: 24px; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.celda.hoy .n { color: var(--texto-acento); font-weight: 650; }
+.celda.fuera .n { color: var(--texto-2); }
+.marcas { height: var(--e4); display: flex; align-items: center; justify-content: center; gap: var(--e2); }
+.leyenda { display: flex; flex-wrap: wrap; gap: var(--e2) var(--e4); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.leyenda > span { display: inline-flex; align-items: center; gap: var(--e2); }
+.semana-cab { display: flex; align-items: baseline; justify-content: space-between; gap: var(--e2); }
+.fila-dia .fin .cifra { font-size: 20px; line-height: 24px; color: var(--texto); }
+.semana-acciones { display: flex; flex-direction: column; gap: var(--e2); }
+
+/* casilla de aprobar (objetivo de 48 px) */
+.casilla-btn { width: var(--tactil); height: var(--tactil); display: grid; place-items: center; flex: none; margin: calc(-1 * var(--e3)) 0 calc(-1 * var(--e3)) calc(-1 * var(--e3)); border-radius: var(--r-control); }
+.casilla-btn:active { background: var(--capa-pressed); }
+.casilla { width: var(--e5); height: var(--e5); border-radius: var(--r-casilla); border: var(--t-sel) solid var(--texto-2); display: grid; place-items: center; color: var(--texto-accion); }
+.casilla .i { opacity: 0; }
+.casilla-btn[aria-checked="true"] .casilla { background: var(--accion); border-color: var(--accion); }
+.casilla-btn[aria-checked="true"] .casilla .i { opacity: 1; }
+.comida-cab.con-casilla { justify-content: flex-start; }
+.comida-cab.con-casilla .txt { flex: 1; }
+.comida.descartada .comida-cab .t-seccion, .comida.descartada .comida-cab .kc .cifra { color: var(--texto-2); }
+.buscando { padding: var(--e3) var(--e4); display: flex; flex-direction: column; gap: var(--e2); }
+.buscando .t-detalle { color: var(--texto-2); }
+
+/* revisión de propuesta */
+.tira { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; }
+.tira button { min-height: var(--tactil); border-radius: var(--r-control); display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; position: relative; }
+.tira button .n { font-size: 16px; line-height: 20px; font-variant-numeric: tabular-nums; color: var(--texto); }
+.tira button:active { background: var(--capa-pressed); }
+.tira button[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); }
+.tira button[aria-pressed="true"] .n { color: var(--texto-accion); font-weight: 650; }
+.cuenta-tipo { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.pie-fijo { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; background: var(--fondo); border-top: var(--t-borde) solid var(--borde); padding: var(--e3) var(--e4) var(--e3); display: flex; flex-direction: column-reverse; gap: var(--e2); }
+.desliza.con-pie { padding-bottom: calc(2 * var(--tactil) + var(--e6)); }
+.ranura-aviso.sobre-pie { bottom: calc(2 * var(--tactil) + var(--e6)); }
+.pantalla.apilada .cuerpo { padding-top: 0; }
+
+/* coach */
+.linea-coach { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e4); display: flex; flex-direction: column; gap: var(--e2); position: relative; }
+.linea-coach .cab-c { display: flex; align-items: center; gap: var(--e2); color: var(--texto-acento); font-size: 13px; line-height: 18px; font-weight: 650; }
+.linea-coach p { font-size: 15px; line-height: 20px; }
+.linea-coach .acciones-c { display: flex; flex-wrap: wrap; gap: var(--e2); margin-top: var(--e2); }
+@media (prefers-reduced-motion: no-preference) { .pensando .cab-c .i { animation: pulso 1600ms var(--estandar) infinite; } }
+.pasos-c { display: flex; flex-direction: column; gap: var(--e2); }
+.pasos-c span { display: flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.pasos-c span.ahora { color: var(--texto); }
+.chat { display: flex; flex-direction: column; gap: var(--e3); }
+.burbuja { align-self: flex-end; max-width: 85%; background: var(--elevado); border-radius: var(--r-tarjeta); padding: var(--e2) var(--e3); font-size: 15px; line-height: 20px; }
+.chat-pie { position: absolute; left: 0; right: 0; bottom: var(--barra); z-index: 1; background: var(--fondo); padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e2); }
+.chat-pie .entrada { flex: 1; }
+.desliza.con-chat { padding-bottom: calc(var(--tactil) + var(--e5)); }
+.ranura-aviso.sobre-chat { bottom: calc(var(--barra) + var(--tactil) + var(--e5)); }
+.rango { display: flex; flex-wrap: wrap; gap: var(--e2); align-items: center; }
+
+/* recetas */
+.ing { padding: var(--e2) var(--e4) var(--e3); display: flex; flex-direction: column; gap: var(--e2); position: relative; }
+.ing .linea-i { display: flex; align-items: center; gap: var(--e3); }
+.ing .linea-i .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ing .linea-i .txt .t-detalle { color: var(--texto-2); }
+.ing .linea-i .kc { white-space: nowrap; font-size: 15px; line-height: 20px; }
+.porciones-fila { display: flex; align-items: center; justify-content: space-between; gap: var(--e3); padding: var(--e2) var(--e4); position: relative; }
+.porciones-fila .txt { display: flex; flex-direction: column; }
+.porciones-fila .txt .t-detalle { color: var(--texto-2); }
+.etiqueta-alerta { display: inline-flex; align-items: center; }
+.dos-botones { display: grid; grid-template-columns: 1fr; gap: var(--e2); }
+.diagrama .carril rect { fill: var(--fondo); stroke: none; }
+.diagrama .carril .t2 { font-weight: 650; }
+[role="checkbox"][aria-checked="true"] .casilla { background: var(--accion); border-color: var(--accion); }
+[role="checkbox"][aria-checked="true"] .casilla .i { opacity: 1; }
+.cabeza .t-pantalla { padding-block: var(--e2); }
+.estrecho { max-width: calc(100% - var(--e6)); }
+/* ---------- pieza 3 · web ---------- */
+.mes.web { row-gap: var(--e2); }
+.mes.web .celda { min-height: 72px; justify-content: flex-start; padding-top: var(--e2); }
+.celda[aria-pressed="true"] .n { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.w-semana { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--e3); align-items: start; }
+.w-col { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; min-width: 0; }
+.w-col > * + * { border-top: var(--t-borde) solid var(--borde); }
+.w-col-cab { padding: var(--e3); display: flex; flex-direction: column; gap: var(--e2); }
+.w-col-cab .dia { display: flex; align-items: baseline; gap: var(--e2); }
+.w-col-cab .dia .n { font-size: 20px; line-height: 24px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.w-col-cab .t-detalle { color: var(--texto-2); }
+.w-col-cab .kcal-d .cifra { font-size: 25px; line-height: 26px; }
+.w-com { padding: var(--e2) var(--e3); display: flex; flex-direction: column; min-width: 0; position: relative; }
+.w-com .lin { display: flex; align-items: center; gap: var(--e2); min-width: 0; }
+.w-com .lin > span { min-width: 0; }
+.w-com .t-detalle { color: var(--texto-2); }
+.w-com.con-casilla { padding-left: var(--e1); }
+.w-com.con-casilla .t-detalle { padding-left: 40px; }
+.w-com .casilla-btn { margin: 0; width: 40px; height: 40px; }
+.w-com.descartada .lin > span { color: var(--texto-2); }
+.w-com .btn.texto { align-self: flex-start; min-height: 36px; padding-inline: var(--e2); margin-left: 32px; }
+.w-com.vacia .t-detalle { padding-left: 0; }
+.w-pie-rev { display: flex; justify-content: flex-end; align-items: center; gap: var(--e3); }
+.w-tit { display: flex; flex-direction: column; gap: var(--e2); }
+.w-linea { display: flex; align-items: center; gap: var(--e3); flex-wrap: wrap; }
+.panel-w .ing { padding-inline: 0; }
+.panel-w .porciones-fila { padding-inline: 0; }
+.wfilas .fila { padding-inline: 0; }
+.opcion-rutina.elegida { outline: var(--t-sel) solid var(--accion); outline-offset: calc(-1 * var(--t-sel)); border-radius: var(--r-control); }
+/* ---------- Ajustes › Comidas del día ---------- */
+.slot-fila { display: flex; align-items: center; padding-right: var(--e2); }
+.slot-txt { flex: 1; min-width: 0; min-height: 56px; padding: var(--e2) var(--e4); display: flex; flex-direction: column; justify-content: center; text-align: left; }
+.slot-txt:active { background: var(--capa-pressed); }
+.slot-fila.elegida { outline: var(--t-sel) solid var(--accion); outline-offset: calc(-1 * var(--t-sel)); }
+.hora-campos { display: grid; grid-template-columns: 1fr auto; gap: var(--e2); align-items: end; }
+.hora-campos .segmento { min-height: var(--tactil); }
+.hora-campos .segmento button { white-space: nowrap; }
+
+/* lámina y maquetas: sin palabras sueltas al final del párrafo */
+p, li, .txt-av, .linea-coach p { text-wrap: pretty; }
+.paso-guia h3, .t-pantalla, .t-seccion { text-wrap: balance; }
+/* ===== flujo 5 · registrar paseo MTB (CAR-01, CAR-02; D-27, D-39) ===== */
+/* cifras del paseo (mismas piezas del resumen del flujo 2) */
+.mtb-cifras { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--e3) 0; padding-top: var(--e2); border-top: var(--t-borde) solid var(--borde); }
+.mtb-cifras > div { display: flex; flex-direction: column; }
+.mtb-cifras .cifra { font-size: 25px; line-height: 30px; white-space: nowrap; }
+.zonas { display: flex; flex-direction: column; gap: var(--e2); }
+.zona { display: grid; grid-template-columns: calc(2 * var(--e7) + var(--e4)) 1fr var(--e7); align-items: center; gap: var(--e3); min-height: var(--e5); }
+.zona b { font-weight: 650; font-size: 15px; }
+.z-nom { display: flex; align-items: baseline; gap: var(--e2); }
+.z-val { display: flex; flex-direction: column; align-items: flex-end; line-height: 20px; text-align: right; }
+.z-val .t-detalle { color: var(--texto-2); }
+.z-pista { height: var(--e2); border-radius: var(--r-pildora); background: var(--elevado); overflow: hidden; }
+.z-pista i { display: block; height: 100%; width: calc(var(--v) * 1%); border-radius: var(--r-pildora); background: var(--dato-1); }
+
+/* tarjeta del paseo en el chat: una sola superficie con divisores, cada cifra se toca */
+.paseo { gap: var(--e3); }
+.paseo > .sep { border-top: var(--t-borde) solid var(--borde); padding-top: var(--e3); }
+.fecha-btn { min-height: var(--tactil); display: flex; align-items: center; gap: var(--e3); margin-inline: calc(-1 * var(--e2)); padding-inline: var(--e2); border-radius: var(--r-control); text-align: left; position: relative; }
+.fecha-btn .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.fecha-btn .t-detalle { color: var(--texto-2); }
+.fecha-btn > .i { color: var(--texto-2); }
+.p-heroe { display: flex; flex-direction: column; position: relative; }
+.p-heroe .cifra { font-size: 56px; line-height: 52px; }
+.datos-p { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-inline: calc(-1 * var(--e2)); }
+.dato { min-height: var(--tactil); display: flex; flex-direction: column; align-items: flex-start; padding: var(--e1) var(--e2); border-radius: var(--r-control); text-align: left; position: relative; min-width: 0; }
+button.dato:active, .fecha-btn:active { background: var(--capa-pressed); }
+.dato .t-detalle { color: var(--texto-2); }
+.dato .cifra { font-size: 25px; line-height: 30px; white-space: nowrap; display: inline-flex; align-items: center; gap: var(--e1); }
+.dato .sin-dato { color: var(--texto-2); font-size: 15px; line-height: 30px; }
+.dato .dudoso { color: var(--texto); display: inline-flex; align-items: center; gap: var(--e1); font-size: 13px; line-height: 18px; font-weight: 650; white-space: nowrap; }
+.dato .dudoso .i, .aviso-linea .i { color: var(--texto); }
+.aviso-linea { display: flex; align-items: flex-start; gap: var(--e2); font-size: 13px; line-height: 18px; font-weight: 650; color: var(--texto); position: relative; }
+.aviso-linea.con-anota { padding-right: var(--e5); }
+/* chat desplazado hasta el final: lo de arriba queda fuera de la pantalla */
+.desliza.al-pie { justify-content: flex-end; }
+/* pestaña interna activa a la vista: la fila de pestañas ya desplazada al final */
+.sub-tabs.al-final { justify-content: flex-end; }
+.guardado { display: flex; align-items: center; gap: var(--e2); font-size: 15px; line-height: 20px; font-weight: 650; }
+.guardado .i { color: var(--texto-acento); }
+.paseo .acciones-c { margin-top: 0; }
+.paseo .acciones-c .btn.primario { flex: 1; }
+.tema { color: var(--texto-acento); font-size: 13px; line-height: 18px; font-weight: 650; }
+
+/* capturas: miniaturas de la imagen (en el producto, la imagen real) */
+.capturas { display: flex; gap: var(--e2); position: relative; }
+.mini-cap { width: var(--e7); height: calc(var(--e7) + var(--e5)); flex: none; display: block; }
+.mini-cap .fondo-c { fill: var(--superficie); }
+.mini-cap .linea-c { fill: var(--dato-gris); }
+.tarjeta .mini-cap .fondo-c { fill: var(--elevado); }
+.mini-cap .linea-c.fuerte-c { fill: var(--texto-2); }
+.burbuja.con-capturas { display: flex; flex-direction: column; align-items: flex-end; gap: var(--e2); position: relative; }
+.en-cola { display: flex; align-items: center; gap: var(--e1); align-self: flex-end; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; margin-top: calc(-1 * var(--e1)); position: relative; }
+.chat-pie.con-adjuntos { flex-wrap: wrap; padding-top: var(--e3); border-top: var(--t-borde) solid var(--borde); }
+.chat-pie.con-adjuntos .capturas { width: 100%; }
+.chat-pie.con-adjuntos .mini-cap .fondo-c { fill: var(--elevado); }
+.desliza.con-adjuntos { padding-bottom: calc(var(--tactil) + var(--e7) + var(--e7)); }
+
+/* Cardio y MTB: lista por semana con totales */
+.sem-cab { display: flex; flex-direction: column; gap: 0; margin-bottom: calc(-1 * var(--e1)); position: relative; }
+.sem-cab .t-detalle { color: var(--texto-2); }
+.sem-cab .tot { font-size: 15px; line-height: 20px; font-weight: 650; }
+.paseo-fila .txt .t-detalle { color: var(--texto-2); }
+.paseo-fila .km { font-size: 20px; line-height: 24px; white-space: nowrap; }
+.paseo-fila .km .unidad-c { font-size: 13px; }
+
+/* ruta GPX: línea y perfil de desnivel, sin mapa de calles */
+.ruta svg { display: block; width: 100%; height: auto; }
+.ruta .trazo { fill: none; stroke: var(--dato-1); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.ruta .perfil { fill: none; stroke: var(--dato-1); stroke-width: 2; stroke-linejoin: round; }
+.ruta .eje { stroke: var(--borde); stroke-width: 1; }
+.ruta .ext { fill: var(--superficie); stroke: var(--dato-1); stroke-width: 2; }
+.ruta .ext.fin { fill: var(--dato-1); }
+.ruta .lbl { fill: var(--texto-2); font-family: var(--familia); font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.ruta .cab-r { display: flex; justify-content: space-between; align-items: baseline; gap: var(--e2); }
+
+/* detalle: cabecera con editar y borrar */
+.det-cab { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--e2); }
+.det-cab .dia-cab { flex: 1; min-width: 0; }
+.det-acc { display: flex; margin-right: calc(-1 * var(--e3)); }
+.vacio.en-tarjeta { padding-block: var(--e2); }
+
+/* Hoy: día con la línea del coach de recuperación */
+.hoy-cab { display: flex; flex-direction: column; }
+.hoy-cab .t-detalle { color: var(--texto-2); }
+.sesion-fila .txt .t-detalle { color: var(--texto-2); }
+.diagrama .caja-cifras rect { fill: var(--fondo); stroke: var(--borde); }
+
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- Tabler Icons 3.49.0, outline (MIT, © Paweł Kuna) -->
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/></symbol>
+  <symbol id="i-barbell" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+  <symbol id="i-kitchen" viewBox="0 0 24 24"><path d="M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12m0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c3.255 2.777 3.695 7.266 1.029 10.501c-2.666 3.235 -7.615 4.215 -11.574 2.293l-4.7 1"/></symbol>
+  <symbol id="i-cloud-check" viewBox="0 0 24 24"><path d="M11 18.004h-4.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.393 -1.762 1.794 -3.2 3.675 -3.773c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.388 0 2.585 .82 3.138 2.007"/><path d="M15 19l2 2l4 -4"/></symbol>
+  <symbol id="i-cloud-off" viewBox="0 0 24 24"><path d="M9.58 5.548c.24 -.11 .492 -.207 .752 -.286c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.913 0 3.464 1.56 3.464 3.486c0 .957 -.383 1.824 -1.003 2.454m-2.997 1.033h-11.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.13 -.582 .37 -1.128 .7 -1.62"/><path d="M3 3l18 18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M5 12l14 0"/><path d="M5 12l6 6"/><path d="M5 12l6 -6"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065"/><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 6l-6 6l6 6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></symbol>
+  <symbol id="i-bike" viewBox="0 0 24 24"><path d="M2 18a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M16 18a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M12 19v-4l-3 -3l5 -4l2 3h3"/><path d="M13.007 5a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></symbol>
+  <symbol id="i-test-pipe-2" viewBox="0 0 24 24"><path d="M15 3v15a3 3 0 0 1 -6 0v-15"/><path d="M9 12h6"/><path d="M8 3h8"/></symbol>
+  <symbol id="i-calendar-plus" viewBox="0 0 24 24"><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v5"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/><path d="M16 19h6"/><path d="M19 16v6"/></symbol>
+  <symbol id="i-calendar-repeat" viewBox="0 0 24 24"><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v3"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h12"/><path d="M20 14l2 2h-3"/><path d="M20 18l2 -2"/><path d="M19 16a3 3 0 1 0 2 5.236"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><path d="M7 9.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667l0 -8.666"/><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1"/></symbol>
+  <symbol id="i-arrow-forward-up" viewBox="0 0 24 24"><path d="M15 14l4 -4l-4 -4"/><path d="M19 10h-11a4 4 0 1 0 0 8h1"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21l8 0"/><path d="M12 17l0 4"/><path d="M7 4l10 0"/><path d="M17 4v8a5 5 0 0 1 -10 0v-8"/><path d="M3 9a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M17 9a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 7v5l3 3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5l0 14"/><path d="M5 12l14 0"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12l14 0"/></symbol>
+  <symbol id="i-alert-circle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/></symbol>
+  <symbol id="i-info-circle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 9h.01"/><path d="M11 12h1v4h1"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <symbol id="i-player-play" viewBox="0 0 24 24"><path d="M7 4v16l13 -8l-13 -8"/></symbol>
+  <symbol id="i-player-skip-forward" viewBox="0 0 24 24"><path d="M4 5v14l12 -7l-12 -7"/><path d="M20 5l0 14"/></symbol>
+  <symbol id="i-vibrar" viewBox="0 0 24 24"><path d="M3 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2l0 -14"/><path d="M8 4l2 0"/><path d="M9 17l0 .01"/><path d="M21 6l-2 3l2 3l-2 3l2 3"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1 -7 0a5 5 0 0 0 -7 0v-9"/><path d="M5 21v-7"/></symbol>
+  <symbol id="i-stairs-up" viewBox="0 0 24 24"><path d="M22 6h-5v5h-5v5h-5v5h-5"/><path d="M6 10v-7"/><path d="M3 6l3 -3l3 3"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6l6 -6"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"/><path d="M13.5 6.5l4 4"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M12 8l0 4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></symbol>
+  <symbol id="i-device-mobile" viewBox="0 0 24 24"><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14"/><path d="M11 4h2"/><path d="M12 17v.01"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><path d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/><path d="M21 21l-6 -6"/></symbol>
+  <!-- logo provisional: glifo de packages/brand (barbell) -->
+  <symbol id="logo" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+  <symbol id="i-alert-triangle" viewBox="0 0 24 24"><path d="M12 9v4"/><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2"/><path d="M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></symbol>
+  <symbol id="i-barcode" viewBox="0 0 24 24"><path d="M4 7v-1a2 2 0 0 1 2 -2h2"/><path d="M4 17v1a2 2 0 0 0 2 2h2"/><path d="M16 4h2a2 2 0 0 1 2 2v1"/><path d="M16 20h2a2 2 0 0 0 2 -2v-1"/><path d="M5 11h1v2h-1l0 -2"/><path d="M10 11l0 2"/><path d="M14 11h1v2h-1l0 -2"/><path d="M19 11l0 2"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/></symbol>
+  <symbol id="i-ban" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M5.7 5.7l12.6 12.6"/></symbol>
+  <symbol id="i-check-small" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 9l5 -5l5 5"/><path d="M12 4l0 12"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"/></symbol>
+  <symbol id="i-player-stop" viewBox="0 0 24 24"><path d="M5 7a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z"/></symbol>
+  <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 5l0 14"/><path d="M18 11l-6 -6"/><path d="M6 11l6 -6"/></symbol>
+  <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5l0 14"/><path d="M18 13l-6 6"/><path d="M6 13l6 6"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M10 14l11 -11"/><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/><path d="M11 15h1"/><path d="M12 15v3"/></symbol>
+  <symbol id="i-photo" viewBox="0 0 24 24"><path d="M15 8h.01"/><path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z"/><path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5"/><path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3"/></symbol>
+  <symbol id="i-heartbeat" viewBox="0 0 24 24"><path d="M19.5 13.572l-7.5 7.428l-2.896 -2.868m-6.117 -8.104a5 5 0 0 1 9.013 -3.022a5 5 0 1 1 7.5 6.572"/><path d="M3 13h2l2 3l2 -6l1 3h3"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><path d="M3 19a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/><path d="M19 7a2 2 0 1 0 0 -4a2 2 0 0 0 0 4z"/><path d="M11 19h5.5a3.5 3.5 0 0 0 0 -7h-8a3.5 3.5 0 0 1 0 -7h4.5"/></symbol>
+  <symbol id="i-paperclip" viewBox="0 0 24 24"><path d="M15 7l-6.5 6.5a1.5 1.5 0 0 0 3 3l6.5 -6.5a3 3 0 0 0 -6 -6l-6.5 6.5a4.5 4.5 0 0 0 9 9l6.5 -6.5"/></symbol>
+</svg>
+<main class="lamina">
+  <header class="cabecera">
+    <div>
+      <h1>Flujo 5 · registrar paseo MTB</h1>
+      <p>Chat del coach y Gym › Cardio y MTB en el teléfono (CAR-01, CAR-02; D-27, D-39). Ejemplo con los datos de Francis: objetivo de 2,350 kcal y FC máx. de 190 (las zonas de Strava salen de ella). Paseo del sábado 17 de octubre de 2026, registrado a las 9:40 a. m.: 18.4 km, 240 m de desnivel, 52 min en movimiento y 640 kcal, que suben el objetivo del día a 2,670. Los mockups y el prototipo vienen después.</p>
+    </div>
+    <div class="controles">
+      <div class="control">
+        <span class="t-detalle sec" id="lbl-modo">Modo</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-modo" id="ctl-modo">
+          <button type="button" data-modo="" aria-pressed="true">Sistema</button>
+          <button type="button" data-modo="light" aria-pressed="false">Claro</button>
+          <button type="button" data-modo="dark" aria-pressed="false">Oscuro</button>
+        </div>
+      </div>
+      <div class="control">
+        <span class="t-detalle sec" id="lbl-acento">Acento</span>
+        <div class="puntos" role="group" aria-labelledby="lbl-acento">
+          <button type="button" class="punto" data-a="caribe" style="--c:#3B95D1" aria-label="Caribe" aria-pressed="true"></button>
+          <button type="button" class="punto" data-a="mar" style="--c:#22A99C" aria-label="Mar" aria-pressed="false"></button>
+          <button type="button" class="punto" data-a="palma" style="--c:#2FA866" aria-label="Palma" aria-pressed="false"></button>
+          <button type="button" class="punto" data-a="mango" style="--c:#E89A1E" aria-label="Mango" aria-pressed="false"></button>
+          <button type="button" class="punto" data-a="flamboyan" style="--c:#E8603C" aria-label="Flamboyán" aria-pressed="false"></button>
+          <button type="button" class="punto" data-a="uva" style="--c:#8466DB" aria-label="Uva de playa" aria-pressed="false"></button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <nav class="indice" aria-label="Secciones de la lámina">
+    <a href="#diagrama">Diagrama</a><a href="#guia">Guía paso a paso</a><a href="#por-confirmar">Por confirmar</a>
+  </nav>
+
+  <section class="pagina" id="diagrama" aria-labelledby="h-diagrama">
+    <header>
+      <h2 id="h-diagrama">1 · Diagrama del flujo</h2>
+      <ul class="cambios">
+        <li><strong>Cuatro bloques:</strong> A la ruta feliz en carriles, B lo que puede pasar en la tarjeta, C sin conexión, sin créditos o sin captura, D lo que pasa después.</li>
+        <li><strong>A va en carriles:</strong> lo que ves, lo que hace el coach en el servidor y lo que se guarda.</li>
+        <li><strong>Los números</strong> coinciden con la guía. <strong>Trazo discontinuo:</strong> opcional o alterno. <strong>Borde de acento:</strong> entrada. <strong>Nodo invertido:</strong> aviso.</li>
+        <li><strong>El coach propone, tú decides:</strong> la tarjeta, la comida para cubrir las kcal y la recuperación esperan tu toque.</li>
+      </ul>
+    </header>
+    <div class="diagrama-envoltura"><svg class="diagrama" viewBox="0 0 1510 1586" role="img" aria-labelledby="dg-t dg-d"><title id="dg-t">Diagrama del flujo 5, registrar paseo MTB</title><desc id="dg-d">Cuatro bloques. A: desde el chat, desde Registrar paseo en Gym › Cardio y MTB o desde un día del calendario se eligen una o dos capturas; el coach las lee y muestra la tarjeta del paseo, donde cada cifra se corrige en una hoja; al guardar, el paseo queda en Cardio y MTB y el objetivo del día sube con el 50 % de sus kcal; si el paseo es de hoy y queda una comida, el coach propone cubrirlas; si no, solo avisa la subida. B: falta la captura de zonas, lectura dudosa, sin kcal, otra app, día pasado, duplicado, imagen sin datos y dos paseos el mismo día. C: sin conexión en el teléfono las capturas quedan en cola; en la web sin conexión o sin créditos se registra a mano. D: lista y detalle con ruta GPX y zonas, editar y borrar con Deshacer, y la línea de recuperación cuando un paseo fuerte cae antes de un día de pierna.</desc><text class="titulo-alt" x="20" y="28">A · Registrar desde las capturas</text><g class="carril"><rect x="10" y="40" width="1490" height="240" rx="12"/><text class="t2" x="24" y="58">Teléfono y web</text></g><g class="carril"><rect x="10" y="290" width="1490" height="100" rx="12"/><text class="t2" x="24" y="308">Coach en el servidor</text></g><g class="carril"><rect x="10" y="400" width="1490" height="100" rx="12"/><text class="t2" x="24" y="418">Datos</text></g><g class="nodo inicio"><rect x="20" y="70" width="166" height="56" rx="10"/><text class="t1" x="32" y="94">Chat del coach</text><text class="t2" x="32" y="113">adjuntar o arrastrar</text></g><g class="nodo inicio"><rect x="20" y="140" width="166" height="56" rx="10"/><text class="t1" x="32" y="164">Registrar paseo</text><text class="t2" x="32" y="183">Gym › Cardio y MTB</text></g><g class="paso"><circle cx="184" cy="142" r="12"/><text x="184" y="146.5" text-anchor="middle">1</text></g><g class="nodo inicio"><rect x="20" y="210" width="166" height="56" rx="10"/><text class="t1" x="32" y="234">Día del calendario</text><text class="t2" x="32" y="253">Registrar paseo</text></g><g class="nodo "><rect x="206" y="140" width="166" height="56" rx="10"/><text class="t1" x="218" y="164">Elegir capturas</text><text class="t2" x="218" y="183">selector de imágenes</text></g><g class="paso"><circle cx="370" cy="142" r="12"/><text x="370" y="146.5" text-anchor="middle">2</text></g><g class="nodo "><rect x="392" y="140" width="166" height="56" rx="10"/><text class="t1" x="404" y="164">Mensaje</text><text class="t2" x="404" y="183">actividad y zonas de FC</text></g><g class="nodo "><rect x="578" y="140" width="166" height="56" rx="10"/><text class="t1" x="590" y="164">Tarjeta del paseo</text><text class="t2" x="590" y="183">propuesta del coach</text></g><g class="paso"><circle cx="742" cy="142" r="12"/><text x="742" y="146.5" text-anchor="middle">4</text></g><g class="nodo pregunta"><rect x="578" y="70" width="166" height="56" rx="10"/><text class="t1" x="590" y="94">Tocar una cifra</text><text class="t2" x="590" y="113">hoja con campo tipado</text></g><g class="paso"><circle cx="742" cy="72" r="12"/><text x="742" y="76.5" text-anchor="middle">6</text></g><g class="nodo "><rect x="764" y="140" width="166" height="56" rx="10"/><text class="t1" x="776" y="164">Guardar paseo</text><text class="t2" x="776" y="183">o Descartar · Deshacer</text></g><g class="paso"><circle cx="928" cy="142" r="12"/><text x="928" y="146.5" text-anchor="middle">5</text></g><g class="nodo "><rect x="1136" y="140" width="166" height="56" rx="10"/><text class="t1" x="1148" y="164">Cubrir las kcal</text><text class="t2" x="1148" y="183">Revisar propuesta (flujo 4)</text></g><g class="paso"><circle cx="1300" cy="142" r="12"/><text x="1300" y="146.5" text-anchor="middle">7</text></g><g class="nodo "><rect x="1322" y="140" width="166" height="56" rx="10"/><text class="t1" x="1334" y="164">Solo avisa la subida</text><text class="t2" x="1334" y="183">día pasado o de noche</text></g><g class="paso"><circle cx="1486" cy="142" r="12"/><text x="1486" y="146.5" text-anchor="middle">14</text></g><g class="nodo pregunta"><rect x="206" y="320" width="166" height="56" rx="10"/><text class="t1" x="218" y="344">Pide otra captura</text><text class="t2" x="218" y="363">imagen sin datos</text></g><g class="paso"><circle cx="370" cy="322" r="12"/><text x="370" y="326.5" text-anchor="middle">16</text></g><g class="nodo "><rect x="392" y="320" width="166" height="56" rx="10"/><text class="t1" x="404" y="344">Lee las capturas</text><text class="t2" x="404" y="363">fecha, cifras y zonas</text></g><g class="paso"><circle cx="556" cy="322" r="12"/><text x="556" y="326.5" text-anchor="middle">3</text></g><g class="nodo "><rect x="1136" y="320" width="166" height="56" rx="10"/><text class="t1" x="1148" y="344">¿Queda comida hoy?</text><text class="t2" x="1148" y="363">decide qué decir</text></g><g class="nodo "><rect x="764" y="430" width="166" height="56" rx="10"/><text class="t1" x="776" y="454">Paseo guardado</text><text class="t2" x="776" y="473">en Cardio y MTB</text></g><g class="nodo "><rect x="950" y="430" width="166" height="56" rx="10"/><text class="t1" x="962" y="454">Objetivo del día</text><text class="t2" x="962" y="473">+50 % de sus kcal</text></g><path class="flecha" d="M186 98 L289 98 L289 134"/><path class="punta" d="M289 140 l-4.5 -7 h9 z"/><path class="flecha" d="M186 168 L200 168"/><path class="punta" d="M206 168 l-7 -4.5 v9 z"/><path class="flecha" d="M186 238 L289 238 L289 202"/><path class="punta" d="M289 196 l-4.5 7 h9 z"/><path class="flecha" d="M372 168 L386 168"/><path class="punta" d="M392 168 l-7 -4.5 v9 z"/><path class="flecha" d="M475 196 L475 314"/><path class="punta" d="M475 320 l-4.5 -7 h9 z"/><path class="flecha" d="M558 348 L661 348 L661 202"/><path class="punta" d="M661 196 l-4.5 7 h9 z"/><text class="rama" x="669" y="342" text-anchor="start">lee bien</text><path class="flecha" d="M392 348 L378 348" style="stroke-dasharray:4 4"/><path class="punta" d="M372 348 l7 -4.5 v9 z"/><path class="flecha" d="M259 320 L259 272" style="stroke-dasharray:4 4"/><path class="punta" d="M259 266 l-4.5 7 h9 z"/><text class="rama" x="267" y="310" text-anchor="start">sin datos</text><path class="flecha" d="M641 140 L641 132" style="stroke-dasharray:4 4"/><path class="punta" d="M641 126 l-4.5 7 h9 z"/><path class="flecha" d="M681 126 L681 134" style="stroke-dasharray:4 4"/><path class="punta" d="M681 140 l-4.5 -7 h9 z"/><path class="flecha" d="M744 168 L758 168"/><path class="punta" d="M764 168 l-7 -4.5 v9 z"/><path class="flecha" d="M847 196 L847 424"/><path class="punta" d="M847 430 l-4.5 -7 h9 z"/><path class="flecha" d="M930 458 L944 458"/><path class="punta" d="M950 458 l-7 -4.5 v9 z"/><text class="rama" x="934" y="422" text-anchor="start">sin kcal, no sube</text><path class="flecha" d="M1116 458 L1219 458 L1219 382"/><path class="punta" d="M1219 376 l-4.5 7 h9 z"/><path class="flecha" d="M1219 320 L1219 202"/><path class="punta" d="M1219 196 l-4.5 7 h9 z"/><text class="rama" x="1227" y="290" text-anchor="start">sí</text><path class="flecha" d="M1302 348 L1405 348 L1405 202"/><path class="punta" d="M1405 196 l-4.5 7 h9 z"/><text class="rama" x="1413" y="290" text-anchor="start">no</text><text class="titulo-alt" x="20" y="548">B · Lo que puede pasar en la tarjeta (4)</text><g class="nodo pregunta"><rect x="20" y="570" width="166" height="56" rx="10"/><text class="t1" x="32" y="594">Falta la de zonas</text><text class="t2" x="32" y="613">llega una sola captura</text></g><g class="paso"><circle cx="184" cy="572" r="12"/><text x="184" y="576.5" text-anchor="middle">12</text></g><g class="nodo "><rect x="20" y="660" width="166" height="56" rx="10"/><text class="t1" x="32" y="684">Guarda sin zonas</text><text class="t2" x="32" y="703">el detalle las pide</text></g><g class="paso"><circle cx="184" cy="662" r="12"/><text x="184" y="666.5" text-anchor="middle">13</text></g><path class="flecha" d="M103 626 L103 654"/><path class="punta" d="M103 660 l-4.5 -7 h9 z"/><g class="nodo pregunta"><rect x="206" y="570" width="166" height="56" rx="10"/><text class="t1" x="218" y="594">Lectura dudosa</text><text class="t2" x="218" y="613">Revisa este dato</text></g><g class="paso"><circle cx="370" cy="572" r="12"/><text x="370" y="576.5" text-anchor="middle">6</text></g><g class="nodo "><rect x="206" y="660" width="166" height="56" rx="10"/><text class="t1" x="218" y="684">Hoja con campo</text><text class="t2" x="218" y="703">corriges o Sin dato</text></g><path class="flecha" d="M289 626 L289 654"/><path class="punta" d="M289 660 l-4.5 -7 h9 z"/><g class="nodo pregunta"><rect x="392" y="570" width="166" height="56" rx="10"/><text class="t1" x="404" y="594">Sin kcal</text><text class="t2" x="404" y="613">la captura no las trae</text></g><g class="paso"><circle cx="556" cy="572" r="12"/><text x="556" y="576.5" text-anchor="middle">15</text></g><g class="nodo "><rect x="392" y="660" width="166" height="56" rx="10"/><text class="t1" x="404" y="684">Objetivo igual</text><text class="t2" x="404" y="703">la tarjeta lo dice</text></g><path class="flecha" d="M475 626 L475 654"/><path class="punta" d="M475 660 l-4.5 -7 h9 z"/><g class="nodo pregunta"><rect x="578" y="570" width="166" height="56" rx="10"/><text class="t1" x="590" y="594">Otra app</text><text class="t2" x="590" y="613">Samsung o Garmin</text></g><g class="paso"><circle cx="742" cy="572" r="12"/><text x="742" y="576.5" text-anchor="middle">15</text></g><g class="nodo "><rect x="578" y="660" width="166" height="56" rx="10"/><text class="t1" x="590" y="684">La misma tarjeta</text><text class="t2" x="590" y="703">con lo que traiga</text></g><path class="flecha" d="M661 626 L661 654"/><path class="punta" d="M661 660 l-4.5 -7 h9 z"/><g class="nodo pregunta"><rect x="764" y="570" width="166" height="56" rx="10"/><text class="t1" x="776" y="594">Día pasado</text><text class="t2" x="776" y="613">fecha de la captura</text></g><g class="paso"><circle cx="928" cy="572" r="12"/><text x="928" y="576.5" text-anchor="middle">12</text></g><g class="nodo "><rect x="764" y="660" width="166" height="56" rx="10"/><text class="t1" x="776" y="684">Sube ese día</text><text class="t2" x="776" y="703">sin propuesta</text></g><path class="flecha" d="M847 626 L847 654"/><path class="punta" d="M847 660 l-4.5 -7 h9 z"/><g class="nodo pregunta"><rect x="950" y="570" width="166" height="56" rx="10"/><text class="t1" x="962" y="594">Duplicado</text><text class="t2" x="962" y="613">misma fecha, hora y km</text></g><g class="paso"><circle cx="1114" cy="572" r="12"/><text x="1114" y="576.5" text-anchor="middle">17</text></g><g class="nodo aviso"><rect x="950" y="660" width="166" height="56" rx="10"/><text class="t1" x="962" y="684">Aviso en la tarjeta</text><text class="t2" x="962" y="703">Guardar de todas formas</text></g><path class="flecha" d="M1033 626 L1033 654"/><path class="punta" d="M1033 660 l-4.5 -7 h9 z"/><g class="nodo pregunta"><rect x="1136" y="570" width="166" height="56" rx="10"/><text class="t1" x="1148" y="594">Imagen sin datos</text><text class="t2" x="1148" y="613">no es un paseo</text></g><g class="paso"><circle cx="1300" cy="572" r="12"/><text x="1300" y="576.5" text-anchor="middle">16</text></g><g class="nodo "><rect x="1136" y="660" width="166" height="56" rx="10"/><text class="t1" x="1148" y="684">Pide otra captura</text><text class="t2" x="1148" y="703">o Registrar a mano</text></g><path class="flecha" d="M1219 626 L1219 654"/><path class="punta" d="M1219 660 l-4.5 -7 h9 z"/><g class="nodo pregunta"><rect x="1322" y="570" width="166" height="56" rx="10"/><text class="t1" x="1334" y="594">Dos el mismo día</text><text class="t2" x="1334" y="613">dos tarjetas</text></g><g class="nodo "><rect x="1322" y="660" width="166" height="56" rx="10"/><text class="t1" x="1334" y="684">Un solo objetivo</text><text class="t2" x="1334" y="703">suma las dos mitades</text></g><path class="flecha" d="M1405 626 L1405 654"/><path class="punta" d="M1405 660 l-4.5 -7 h9 z"/><text class="titulo-alt" x="20" y="760">C · Sin conexión, sin créditos o sin captura</text><g class="nodo inicio"><rect x="20" y="782" width="166" height="56" rx="10"/><text class="t1" x="32" y="806">Teléfono sin red</text><text class="t2" x="32" y="825">envías las capturas</text></g><g class="paso"><circle cx="184" cy="784" r="12"/><text x="184" y="788.5" text-anchor="middle">18</text></g><g class="nodo "><rect x="206" y="782" width="166" height="56" rx="10"/><text class="t1" x="218" y="806">En cola</text><text class="t2" x="218" y="825">guardadas en el teléfono</text></g><g class="nodo "><rect x="392" y="782" width="166" height="56" rx="10"/><text class="t1" x="404" y="806">Vuelve la conexión</text><text class="t2" x="404" y="825">el coach las lee</text></g><g class="nodo aviso"><rect x="578" y="782" width="166" height="56" rx="10"/><text class="t1" x="590" y="806">Tu paseo está listo</text><text class="t2" x="590" y="825">aviso para confirmar</text></g><g class="nodo "><rect x="764" y="782" width="166" height="56" rx="10"/><text class="t1" x="776" y="806">Tarjeta del paseo</text><text class="t2" x="776" y="825">sigue en A (4)</text></g><path class="flecha" d="M186 810 L200 810"/><path class="punta" d="M206 810 l-7 -4.5 v9 z"/><path class="flecha" d="M372 810 L386 810"/><path class="punta" d="M392 810 l-7 -4.5 v9 z"/><path class="flecha" d="M558 810 L572 810"/><path class="punta" d="M578 810 l-7 -4.5 v9 z"/><path class="flecha" d="M744 810 L758 810"/><path class="punta" d="M764 810 l-7 -4.5 v9 z"/><g class="nodo inicio"><rect x="20" y="862" width="166" height="56" rx="10"/><text class="t1" x="32" y="886">Web sin conexión</text><text class="t2" x="32" y="905">Registrar paseo</text></g><g class="nodo aviso"><rect x="206" y="862" width="166" height="56" rx="10"/><text class="t1" x="218" y="886">Necesita conexión</text><text class="t2" x="218" y="905">aviso · Registrar a mano</text></g><g class="nodo "><rect x="392" y="862" width="166" height="56" rx="10"/><text class="t1" x="404" y="886">Registrar a mano</text><text class="t2" x="404" y="905">sin coach ni créditos</text></g><g class="paso"><circle cx="556" cy="864" r="12"/><text x="556" y="868.5" text-anchor="middle">19</text></g><g class="nodo "><rect x="578" y="862" width="166" height="56" rx="10"/><text class="t1" x="590" y="886">Formulario</text><text class="t2" x="590" y="905">fecha, km y tiempo</text></g><g class="paso"><circle cx="742" cy="864" r="12"/><text x="742" y="868.5" text-anchor="middle">20</text></g><g class="nodo "><rect x="764" y="862" width="166" height="56" rx="10"/><text class="t1" x="776" y="886">Guardar paseo</text><text class="t2" x="776" y="905">lo demás, sin dato</text></g><g class="nodo "><rect x="950" y="862" width="166" height="56" rx="10"/><text class="t1" x="962" y="886">Objetivo del día</text><text class="t2" x="962" y="905">sube si hay kcal</text></g><path class="flecha" d="M186 890 L200 890"/><path class="punta" d="M206 890 l-7 -4.5 v9 z"/><path class="flecha" d="M372 890 L386 890"/><path class="punta" d="M392 890 l-7 -4.5 v9 z"/><path class="flecha" d="M558 890 L572 890"/><path class="punta" d="M578 890 l-7 -4.5 v9 z"/><path class="flecha" d="M744 890 L758 890"/><path class="punta" d="M764 890 l-7 -4.5 v9 z"/><path class="flecha" d="M930 890 L944 890"/><path class="punta" d="M950 890 l-7 -4.5 v9 z"/><g class="nodo inicio"><rect x="20" y="942" width="166" height="56" rx="10"/><text class="t1" x="32" y="966">Sin créditos</text><text class="t2" x="32" y="985">el coach está en pausa</text></g><g class="nodo aviso"><rect x="206" y="942" width="166" height="56" rx="10"/><text class="t1" x="218" y="966">Aviso en el chat</text><text class="t2" x="218" y="985">vuelve el 1 de noviembre</text></g><g class="nodo inicio"><rect x="578" y="942" width="166" height="56" rx="10"/><text class="t1" x="590" y="966">Sin captura</text><text class="t2" x="590" y="985">Cardio y MTB</text></g><path class="flecha" d="M186 970 L200 970"/><path class="punta" d="M206 970 l-7 -4.5 v9 z"/><path class="flecha" d="M372 970 L475 970 L475 924"/><path class="punta" d="M475 918 l-4.5 7 h9 z"/><path class="flecha" d="M661 942 L661 924"/><path class="punta" d="M661 918 l-4.5 7 h9 z"/><text class="rama" x="669" y="934" text-anchor="start">siempre a mano</text><path class="flecha" d="M847 838 L847 856" style="stroke-dasharray:4 4"/><path class="punta" d="M847 862 l-4.5 -7 h9 z"/><text class="rama" x="855" y="856" text-anchor="start">o a mano</text><text class="titulo-alt" x="20" y="1050">D · Después: Cardio y MTB y recuperación</text><g class="nodo inicio"><rect x="20" y="1072" width="166" height="56" rx="10"/><text class="t1" x="32" y="1096">Cardio y MTB</text><text class="t2" x="32" y="1115">lista por semana</text></g><g class="paso"><circle cx="184" cy="1074" r="12"/><text x="184" y="1078.5" text-anchor="middle">8</text></g><g class="nodo "><rect x="206" y="1072" width="166" height="56" rx="10"/><text class="t1" x="218" y="1096">Detalle del paseo</text><text class="t2" x="218" y="1115">datos, zonas, capturas</text></g><g class="paso"><circle cx="370" cy="1074" r="12"/><text x="370" y="1078.5" text-anchor="middle">9</text></g><g class="nodo "><rect x="392" y="1072" width="166" height="56" rx="10"/><text class="t1" x="404" y="1096">Editar</text><text class="t2" x="404" y="1115">el formulario lleno</text></g><g class="paso"><circle cx="556" cy="1074" r="12"/><text x="556" y="1078.5" text-anchor="middle">11</text></g><g class="nodo "><rect x="578" y="1072" width="166" height="56" rx="10"/><text class="t1" x="590" y="1096">Objetivo recalculado</text><text class="t2" x="590" y="1115">las comidas no cambian</text></g><g class="nodo pregunta"><rect x="20" y="1152" width="166" height="56" rx="10"/><text class="t1" x="32" y="1176">Ruta GPX</text><text class="t2" x="32" y="1195">línea y perfil, sin mapa</text></g><g class="paso"><circle cx="184" cy="1154" r="12"/><text x="184" y="1158.5" text-anchor="middle">10</text></g><g class="nodo pregunta"><rect x="206" y="1152" width="166" height="56" rx="10"/><text class="t1" x="218" y="1176">Agregar zonas</text><text class="t2" x="218" y="1195">captura después</text></g><g class="paso"><circle cx="370" cy="1154" r="12"/><text x="370" y="1158.5" text-anchor="middle">13</text></g><g class="nodo "><rect x="392" y="1152" width="166" height="56" rx="10"/><text class="t1" x="404" y="1176">Borrar</text><text class="t2" x="404" y="1195">sin confirmación</text></g><g class="nodo aviso"><rect x="578" y="1152" width="166" height="56" rx="10"/><text class="t1" x="590" y="1176">Paseo borrado</text><text class="t2" x="590" y="1195">aviso con Deshacer</text></g><path class="flecha" d="M186 1100 L200 1100"/><path class="punta" d="M206 1100 l-7 -4.5 v9 z"/><path class="flecha" d="M372 1092 L386 1092"/><path class="punta" d="M392 1092 l-7 -4.5 v9 z"/><path class="flecha" d="M372 1116 L382 1116 L382 1180 L386 1180"/><path class="punta" d="M392 1180 l-7 -4.5 v9 z"/><path class="flecha" d="M558 1100 L572 1100"/><path class="punta" d="M578 1100 l-7 -4.5 v9 z"/><path class="flecha" d="M558 1180 L572 1180"/><path class="punta" d="M578 1180 l-7 -4.5 v9 z"/><path class="flecha" d="M661 1152 L661 1134"/><path class="punta" d="M661 1128 l-4.5 7 h9 z"/><path class="flecha" d="M289 1128 L289 1146" style="stroke-dasharray:4 4"/><path class="punta" d="M289 1152 l-4.5 -7 h9 z"/><path class="flecha" d="M226 1128 L226 1138 L156 1138 L156 1146" style="stroke-dasharray:4 4"/><path class="punta" d="M156 1152 l-4.5 -7 h9 z"/><g class="nodo inicio"><rect x="20" y="1242" width="166" height="56" rx="10"/><text class="t1" x="32" y="1266">Paseo guardado</text><text class="t2" x="32" y="1285">con tiempo y zonas</text></g><g class="nodo "><rect x="206" y="1242" width="166" height="56" rx="10"/><text class="t1" x="218" y="1266">¿Paseo fuerte?</text><text class="t2" x="218" y="1285">Z4+Z5 &gt;30 % o &gt;90 min</text></g><g class="nodo "><rect x="392" y="1242" width="166" height="56" rx="10"/><text class="t1" x="404" y="1266">¿Pierna en 48 h?</text><text class="t2" x="404" y="1285">sesión programada</text></g><g class="nodo "><rect x="578" y="1242" width="166" height="56" rx="10"/><text class="t1" x="590" y="1266">Línea del coach</text><text class="t2" x="590" y="1285">en Hoy y en Gym</text></g><g class="paso"><circle cx="742" cy="1244" r="12"/><text x="742" y="1248.5" text-anchor="middle">21</text></g><g class="nodo pregunta"><rect x="764" y="1242" width="166" height="56" rx="10"/><text class="t1" x="776" y="1266">Bajar la carga</text><text class="t2" x="776" y="1285">aviso con Deshacer</text></g><g class="nodo pregunta"><rect x="950" y="1242" width="166" height="56" rx="10"/><text class="t1" x="962" y="1266">Mover la sesión</text><text class="t2" x="962" y="1285">aviso con Deshacer</text></g><g class="nodo pregunta"><rect x="1136" y="1242" width="166" height="56" rx="10"/><text class="t1" x="1148" y="1266">Dejar como está</text><text class="t2" x="1148" y="1285">no cambia nada</text></g><path class="flecha" d="M186 1270 L200 1270"/><path class="punta" d="M206 1270 l-7 -4.5 v9 z"/><path class="flecha" d="M372 1270 L386 1270"/><path class="punta" d="M392 1270 l-7 -4.5 v9 z"/><text class="rama" x="374" y="1262" text-anchor="start">sí</text><path class="flecha" d="M558 1270 L572 1270"/><path class="punta" d="M578 1270 l-7 -4.5 v9 z"/><text class="rama" x="560" y="1262" text-anchor="start">sí</text><path class="flecha" d="M744 1270 L758 1270"/><path class="punta" d="M764 1270 l-7 -4.5 v9 z"/><path class="flecha" d="M661 1298 L661 1316 L1033 1316 L1033 1304"/><path class="punta" d="M1033 1298 l-4.5 7 h9 z"/><path class="flecha" d="M1033 1316 L1219 1316 L1219 1304"/><path class="punta" d="M1219 1298 l-4.5 7 h9 z"/><text class="rama" x="206" y="1320">si no, el coach no dice nada</text><g class="estados"><rect x="20" y="1360" width="980" height="216" rx="16"/><text class="t1" x="36" y="1390">Estados</text><text class="t2" x="36" y="1422"><tspan class="fuerte">Sin conexión (18, 19):</tspan> en el teléfono las capturas quedan en cola y luego llega «Tu paseo está listo para confirmar»; en la web, aviso y Registrar a mano.</text><text class="t2" x="36" y="1452"><tspan class="fuerte">Error:</tspan> «No pude leer las capturas. No se guardó nada.» con Reintentar y Registrar a mano.</text><text class="t2" x="36" y="1482"><tspan class="fuerte">Carga:</tspan> la tarjeta del coach dice qué lee («Leyendo las zonas de FC…»); nada de esqueleto antes de 300 ms.</text><text class="t2" x="36" y="1512"><tspan class="fuerte">Nada pide confirmación:</tspan> descartar, borrar, bajar la carga y mover se deshacen desde el aviso.</text><text class="t2" x="36" y="1542"><tspan class="fuerte">Unidades:</tspan> km y m de fábrica; millas y pies si los eliges en Ajustes › Unidades. FC siempre en ppm.</text></g><g class="caja-cifras"><rect x="1020" y="1360" width="470" height="216" rx="16"/><text class="t1" x="1036" y="1390">Cifras del ejemplo</text><text class="t2" x="1036" y="1422"><tspan class="fuerte">Sábado 17 oct.:</tspan> 18.4 km, +240 m, 52 min → 21.2 km/h</text><text class="t2" x="1036" y="1452"><tspan class="fuerte">640 kcal:</tspan> +320 → objetivo 2,670 · FC 158, máx. 181</text><text class="t2" x="1036" y="1482"><tspan class="fuerte">Zonas (FC máx. 190):</tspan> Z4 26 % 14 min · Z3 45 % 23 · Z2 27 % 14 · Z1 2 % 1</text><text class="t2" x="1036" y="1512"><tspan class="fuerte">Sábado 10 oct.:</tspan> 24.1 km, 1 h 10 min, 860 kcal → 2,780</text><text class="t2" x="1036" y="1542"><tspan class="fuerte">Martes 3 nov.:</tspan> 41.8 km, 2 h 05 min, 1,200 kcal → 2,950</text></g></svg></div>
+  </section>
+
+  <section class="pagina" id="guia" aria-labelledby="h-guia">
+    <header>
+      <h2 id="h-guia">2 · Guía paso a paso</h2>
+      <ul class="cambios">
+        <li><strong>Pasos 1 a 7:</strong> registrar el paseo del sábado 17 con dos capturas, corregir un dato y ver la propuesta para cubrir las 320 kcal.</li>
+        <li><strong>Pasos 8 a 11:</strong> Cardio y MTB, el detalle, la ruta GPX, editar y borrar.</li>
+        <li><strong>Pasos 12 a 21:</strong> día pasado, zonas después, de noche, sin kcal, imagen equivocada, duplicado, sin conexión, sin créditos, a mano y recuperación.</li>
+        <li>Los círculos numerados son anotaciones de la lámina, no parte de la interfaz.</li>
+      </ul>
+    </header>
+    <div class="guia"><article class="paso-guia"><span class="etapa">Paso 1 · entrar</span><h3>Abre Cardio y MTB</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>9:38</span></div><div class="cuerpo"><nav class="sub-tabs al-final" aria-label="Gym"><a class="sub-tab" href="#">Sesión</a><a class="sub-tab" href="#">Calendario</a><a class="sub-tab" href="#">Rutinas</a><a class="sub-tab" href="#">Historial</a><a class="sub-tab" href="#" aria-current="page">Cardio y MTB</a></nav><div class="desliza"><div class="dos-botones con-anota"><button type="button" class="btn primario"><svg class="i s20" aria-hidden="true"><use href="#i-photo"/></svg>Registrar paseo</button><button type="button" class="btn secundario"><svg class="i s20" aria-hidden="true"><use href="#i-pencil"/></svg>Registrar a mano</button><span class="anota" aria-hidden="true">1</span></div><div class="sem-cab con-anota"><span class="t-detalle tnum">Semana 2 · 12 – 18 oct.</span><span class="tot tnum">Sin paseos esta semana</span><span class="anota" aria-hidden="true">2</span></div><div class="sem-cab"><span class="t-detalle tnum">Semana 1 · 5 – 11 oct.</span><span class="tot tnum">36.8 km · 1 h 51 min · 430 m</span></div><div class="lista"><button type="button" class="opcion-rutina paseo-fila"><span class="txt"><span>Sábado 10</span><span class="t-detalle tnum">1 h 10 min · 20.7 km/h · 860 kcal</span></span><span class="cifra km">24.1 <span class="unidad-c">km</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></button><button type="button" class="opcion-rutina paseo-fila"><span class="txt"><span>Jueves 8</span><span class="t-detalle tnum">41 min · 18.6 km/h · 470 kcal</span></span><span class="cifra km">12.7 <span class="unidad-c">km</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></button></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span><b>Registrar paseo</b> abre el chat del coach con el selector de imágenes ya abierto. <b>Registrar a mano</b> siempre está, aunque no haya conexión, créditos ni captura.</span></li><li><span class="num-a">2</span><span>La lista va por semana con sus totales: km, tiempo en movimiento y desnivel. Un día del calendario de Gym también ofrece «Registrar paseo».</span></li><li><span class="num-a">3</span><span>En la web: Gym › Cardio y MTB en la barra lateral; «Registrar paseo» abre el panel del coach con el selector de archivos, y las capturas también se pueden arrastrar.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 2 · capturas</span><h3>Elige las dos capturas</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>9:39</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Coach</span></div><div class="desliza con-chat con-adjuntos"><div class="chat"><div class="linea-coach"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><p>Hola, Francis. ¿Qué registramos hoy?</p></div></div></div><div class="chat-pie con-adjuntos"><span class="capturas con-anota"><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="22" height="4" rx="2"/><rect class="linea-c" x="8" y="18" width="32" height="16" rx="3"/><rect class="linea-c fuerte-c" x="8" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="8" y="51" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="51" width="14" height="5" rx="2"/><rect class="linea-c" x="8" y="62" width="32" height="4" rx="2"/></svg><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="26" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="24" width="4" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="32" width="18" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="40" width="26" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="48" width="17" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="56" width="3" height="4" rx="2"/></svg><span class="anota" aria-hidden="true">1</span></span><div class="entrada vacia"><span>Escribe al coach</span></div><button type="button" class="icono-btn" aria-label="Adjuntar capturas"><svg class="i" aria-hidden="true"><use href="#i-paperclip"/></svg></button><button type="button" class="icono-btn acento con-anota" aria-label="Enviar"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg><span class="anota" aria-hidden="true">2</span></button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Eliges en el selector la captura de la actividad y la de las zonas de FC de Strava. Pueden ir juntas o en dos mensajes; también sirven Samsung Health o Garmin.</span></li><li><span class="num-a">2</span><span>Envías sin escribir nada. El GPX de la ruta es opcional y se agrega después, desde el paseo.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 3 · coach</span><h3>El coach lee las capturas</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>9:39</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Coach</span></div><div class="desliza con-chat"><div class="chat"><div class="burbuja con-capturas"><span class="capturas"><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="22" height="4" rx="2"/><rect class="linea-c" x="8" y="18" width="32" height="16" rx="3"/><rect class="linea-c fuerte-c" x="8" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="8" y="51" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="51" width="14" height="5" rx="2"/><rect class="linea-c" x="8" y="62" width="32" height="4" rx="2"/></svg><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="26" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="24" width="4" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="32" width="18" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="40" width="26" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="48" width="17" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="56" width="3" height="4" rx="2"/></svg></span></div><div class="linea-coach pensando con-anota"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><div class="pasos-c tnum"><span><svg class="i s16" aria-hidden="true"><use href="#i-check"/></svg>Leí la captura de la actividad: sábado 17 de octubre</span><span class="ahora"><svg class="i s16" aria-hidden="true"><use href="#i-clock"/></svg>Leyendo las zonas de FC…</span></div><span class="anota" aria-hidden="true">1</span></div></div></div><div class="chat-pie"><div class="entrada vacia"><span>Escribe al coach</span></div><button type="button" class="btn secundario"><svg class="i s20" aria-hidden="true"><use href="#i-player-stop"/></svg>Detener</button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>La tarjeta aparece al instante y dice qué está leyendo, paso a paso. Puedes salir: la tarjeta te espera en el chat.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 4 · tarjeta</span><h3>Revisa la tarjeta del paseo</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>9:40</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Coach</span></div><div class="desliza con-chat"><div class="chat"><div class="burbuja con-capturas"><span class="capturas"><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="22" height="4" rx="2"/><rect class="linea-c" x="8" y="18" width="32" height="16" rx="3"/><rect class="linea-c fuerte-c" x="8" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="8" y="51" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="51" width="14" height="5" rx="2"/><rect class="linea-c" x="8" y="62" width="32" height="4" rx="2"/></svg><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="26" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="24" width="4" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="32" width="18" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="40" width="26" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="48" width="17" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="56" width="3" height="4" rx="2"/></svg></span></div><div class="linea-coach paseo"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><p>Leí tu paseo. Revisa las cifras y guárdalo.</p><button type="button" class="fecha-btn con-anota"><span class="txt"><span class="t-detalle">Fecha · leída de la captura</span><span class="tnum">Sábado 17 de octubre · 7:12&nbsp;a.&nbsp;m.</span></span><svg class="i s20" aria-hidden="true"><use href="#i-pencil"/></svg><span class="anota" aria-hidden="true">1</span></button><div class="p-heroe"><span class="t-detalle sec">Distancia</span><span class="cifra">18.4 <span class="t-seccion sec">km</span></span></div><div class="datos-p sep"><button type="button" class="dato con-anota"><span class="t-detalle">Desnivel +</span><span class="cifra">240 <span class="unidad-c">m</span><svg class="i s16" aria-hidden="true"><use href="#i-alert-triangle"/></svg></span><span class="dudoso">Revisa este dato</span><span class="anota" aria-hidden="true">2</span></button><button type="button" class="dato"><span class="t-detalle">Tiempo en movimiento</span><span class="cifra">52 <span class="unidad-c">min</span></span></button><div class="dato con-anota"><span class="t-detalle">Velocidad</span><span class="cifra">21.2 <span class="unidad-c">km/h</span></span><span class="t-detalle">calculada</span><span class="anota" aria-hidden="true">3</span></div><button type="button" class="dato"><span class="t-detalle">Calorías</span><span class="cifra">640 <span class="unidad-c">kcal</span></span></button><button type="button" class="dato"><span class="t-detalle">FC promedio</span><span class="cifra">158 <span class="unidad-c">ppm</span></span></button><button type="button" class="dato"><span class="t-detalle">FC máx.</span><span class="cifra">181 <span class="unidad-c">ppm</span></span></button><button type="button" class="dato"><span class="t-detalle">Tiempo total</span><span class="cifra">1 h 04 <span class="unidad-c">min</span></span></button></div></div></div></div><div class="chat-pie"><div class="entrada vacia"><span>Escribe al coach</span></div><button type="button" class="icono-btn" aria-label="Adjuntar capturas"><svg class="i" aria-hidden="true"><use href="#i-paperclip"/></svg></button><button type="button" class="icono-btn acento" aria-label="Enviar"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>La fecha sale de la captura (si no trae, hoy) y se cambia con el lápiz: campo dd/mm/aaaa y selector propio. Se aceptan días pasados.</span></li><li><span class="num-a">2</span><span>Una lectura dudosa lleva el ícono y «Revisa este dato», sin rojo. Cada cifra se toca para corregirla (paso 6).</span></li><li><span class="num-a">3</span><span>Velocidad media y minutos por zona son calculados y no se tocan. Obligatorios: fecha, distancia y tiempo en movimiento; lo que falte dice «sin dato», nunca 0.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 5 · tarjeta</span><h3>Mira las zonas y guarda</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>9:41</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Coach</span></div><div class="desliza con-chat"><div class="chat"><div class="linea-coach paseo"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><div class="zonas con-anota" role="table" aria-label="Tiempo en cada zona de frecuencia cardiaca"><span class="t-detalle sec">Zonas de FC · % del tiempo</span><div class="zona"><span class="z-nom"><b>Z5</b><span class="t-detalle sec">185+ ppm</span></span><span class="z-pista"><i style="--v:0"></i></span><span class="z-val tnum"><b>0 %</b><span class="t-detalle">0 min</span></span></div><div class="zona"><span class="z-nom"><b>Z4</b><span class="t-detalle sec">167–184 ppm</span></span><span class="z-pista"><i style="--v:26"></i></span><span class="z-val tnum"><b>26 %</b><span class="t-detalle">14 min</span></span></div><div class="zona"><span class="z-nom"><b>Z3</b><span class="t-detalle sec">149–166 ppm</span></span><span class="z-pista"><i style="--v:45"></i></span><span class="z-val tnum"><b>45 %</b><span class="t-detalle">23 min</span></span></div><div class="zona"><span class="z-nom"><b>Z2</b><span class="t-detalle sec">113–148 ppm</span></span><span class="z-pista"><i style="--v:27"></i></span><span class="z-val tnum"><b>27 %</b><span class="t-detalle">14 min</span></span></div><div class="zona"><span class="z-nom"><b>Z1</b><span class="t-detalle sec">0–112 ppm</span></span><span class="z-pista"><i style="--v:2"></i></span><span class="z-val tnum"><b>2 %</b><span class="t-detalle">1 min</span></span></div><span class="anota" aria-hidden="true">1</span></div><p class="nota con-anota sep"><svg class="i s16" aria-hidden="true"><use href="#i-info-circle"/></svg><span class="tnum">Al guardarlo, tu objetivo de hoy sube a 2,670 kcal: 2,350 + 320, la mitad de las 640 del paseo.</span><span class="anota" aria-hidden="true">2</span></p><div class="acciones-c con-anota"><button type="button" class="btn primario">Guardar paseo</button><button type="button" class="btn texto">Descartar</button><span class="anota" aria-hidden="true">3</span></div></div></div></div><div class="chat-pie"><div class="entrada vacia"><span>Escribe al coach</span></div><button type="button" class="icono-btn" aria-label="Adjuntar capturas"><svg class="i" aria-hidden="true"><use href="#i-paperclip"/></svg></button><button type="button" class="icono-btn acento" aria-label="Enviar"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Zonas Z5 a Z1 con el rango en ppm de la captura (FC máx. 190), el % y los minutos: % × 52 min, redondeados para que sumen 52.</span></li><li><span class="num-a">2</span><span>La tarjeta dice cuánto sube el objetivo antes de guardar. El 50 % no se edita: el coach lo revisa cada 6 semanas.</span></li><li><span class="num-a">3</span><span><b>Guardar paseo</b> o <b>Descartar</b>. Descartar no pregunta: aviso «Paseo descartado» con Deshacer.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 6 · corregir</span><h3>Corrige un dato dudoso</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>9:41</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Coach</span></div><div class="desliza con-chat"><div class="chat"><div class="burbuja con-capturas"><span class="capturas"><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="22" height="4" rx="2"/><rect class="linea-c" x="8" y="18" width="32" height="16" rx="3"/><rect class="linea-c fuerte-c" x="8" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="8" y="51" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="51" width="14" height="5" rx="2"/><rect class="linea-c" x="8" y="62" width="32" height="4" rx="2"/></svg><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="26" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="24" width="4" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="32" width="18" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="40" width="26" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="48" width="17" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="56" width="3" height="4" rx="2"/></svg></span></div><div class="linea-coach paseo"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><p>Leí tu paseo. Revisa las cifras y guárdalo.</p><button type="button" class="fecha-btn con-anota"><span class="txt"><span class="t-detalle">Fecha · leída de la captura</span><span class="tnum">Sábado 17 de octubre · 7:12&nbsp;a.&nbsp;m.</span></span><svg class="i s20" aria-hidden="true"><use href="#i-pencil"/></svg></button><div class="p-heroe"><span class="t-detalle sec">Distancia</span><span class="cifra">18.4 <span class="t-seccion sec">km</span></span></div><div class="datos-p sep"><button type="button" class="dato con-anota"><span class="t-detalle">Desnivel +</span><span class="cifra">240 <span class="unidad-c">m</span><svg class="i s16" aria-hidden="true"><use href="#i-alert-triangle"/></svg></span><span class="dudoso">Revisa este dato</span></button><button type="button" class="dato"><span class="t-detalle">Tiempo en movimiento</span><span class="cifra">52 <span class="unidad-c">min</span></span></button><div class="dato con-anota"><span class="t-detalle">Velocidad</span><span class="cifra">21.2 <span class="unidad-c">km/h</span></span><span class="t-detalle">calculada</span></div><button type="button" class="dato"><span class="t-detalle">Calorías</span><span class="cifra">640 <span class="unidad-c">kcal</span></span></button><button type="button" class="dato"><span class="t-detalle">FC promedio</span><span class="cifra">158 <span class="unidad-c">ppm</span></span></button><button type="button" class="dato"><span class="t-detalle">FC máx.</span><span class="cifra">181 <span class="unidad-c">ppm</span></span></button><button type="button" class="dato"><span class="t-detalle">Tiempo total</span><span class="cifra">1 h 04 <span class="unidad-c">min</span></span></button></div></div></div></div><div class="chat-pie"><div class="entrada vacia"><span>Escribe al coach</span></div><button type="button" class="icono-btn" aria-label="Adjuntar capturas"><svg class="i" aria-hidden="true"><use href="#i-paperclip"/></svg></button><button type="button" class="icono-btn acento" aria-label="Enviar"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav><div class="velo"><div class="hoja" role="dialog" aria-label="Desnivel positivo"><span class="agarre"></span><div class="cab-hoja"><span class="t-seccion">Desnivel positivo</span><span class="t-detalle tnum">Leí 240 m, pero la cifra se ve cortada en la captura.</span></div><div class="campo"><span class="lbl">Desnivel positivo</span><div class="entrada con-anota"><span class="cifra carga tnum">240</span><span class="u">m</span><span class="anota" aria-hidden="true">1</span></div></div><p class="nota"><svg class="i s16" aria-hidden="true"><use href="#i-info-circle"/></svg><span>Solo números enteros, en metros como en Ajustes › Unidades.</span></p><div class="botones-hoja con-anota"><button type="button" class="btn texto">Sin dato</button><button type="button" class="btn primario">Guardar</button><span class="anota" aria-hidden="true">2</span></div></div></div></div></div></div><ol><li><span class="num-a">1</span><span>Tocar una cifra abre una hoja con su campo tipado: solo entra lo que el dato admite, mientras escribes y al pegar. Al tocar el campo, la hoja sube arriba.</span></li><li><span class="num-a">2</span><span><b>Guardar</b> vuelve a la tarjeta sin el aviso. En un dato opcional, <b>Sin dato</b> lo deja vacío; en uno obligatorio ese botón no aparece.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 7 · objetivo</span><h3>El objetivo sube y el coach propone</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>9:41</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Coach</span></div><div class="desliza con-chat"><div class="chat"><div class="linea-coach paseo con-anota"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><span class="guardado"><svg class="i s20" aria-hidden="true"><use href="#i-check"/></svg>Paseo guardado · 18.4 km · 52 min</span><div class="acciones-c"><button type="button" class="btn texto">Ver paseo</button></div><span class="anota" aria-hidden="true">1</span></div><div class="linea-coach con-anota"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><p class="tnum">Tu objetivo de hoy sube a 2,670 kcal. Te propongo cubrir los 320 en lo que queda del día: 1 taza más de arroz en el almuerzo (+205) y 30 g de avena en la merienda (+114).</p><div class="acciones-c"><button type="button" class="btn primario">Revisar propuesta</button></div><span class="anota" aria-hidden="true">2</span></div></div></div><div class="chat-pie"><div class="entrada vacia"><span>Escribe al coach</span></div><button type="button" class="icono-btn" aria-label="Adjuntar capturas"><svg class="i" aria-hidden="true"><use href="#i-paperclip"/></svg></button><button type="button" class="icono-btn acento" aria-label="Enviar"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>La tarjeta queda como constancia y lleva a su detalle. El paseo ya está en Cardio y MTB y en el calendario de Gym.</span></li><li><span class="num-a">2</span><span>Como el paseo es de hoy y quedan comidas por delante, el coach propone cubrir las kcal extra. <b>Revisar propuesta</b> abre la pantalla de revisión del flujo 4; Comida dice «2,350 + 320 del paseo».</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 8 · Cardio y MTB</span><h3>Mira la semana</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>9:45</span></div><div class="cuerpo"><nav class="sub-tabs al-final" aria-label="Gym"><a class="sub-tab" href="#">Sesión</a><a class="sub-tab" href="#">Calendario</a><a class="sub-tab" href="#">Rutinas</a><a class="sub-tab" href="#">Historial</a><a class="sub-tab" href="#" aria-current="page">Cardio y MTB</a></nav><div class="desliza"><div class="dos-botones"><button type="button" class="btn primario"><svg class="i s20" aria-hidden="true"><use href="#i-photo"/></svg>Registrar paseo</button><button type="button" class="btn secundario"><svg class="i s20" aria-hidden="true"><use href="#i-pencil"/></svg>Registrar a mano</button></div><div class="sem-cab con-anota"><span class="t-detalle tnum">Semana 2 · 12 – 18 oct.</span><span class="tot tnum">18.4 km · 52 min · 240 m</span><span class="anota" aria-hidden="true">1</span></div><div class="lista"><button type="button" class="opcion-rutina paseo-fila con-anota"><span class="txt"><span>Sábado 17</span><span class="t-detalle tnum">52 min · 21.2 km/h · 640 kcal</span></span><span class="cifra km">18.4 <span class="unidad-c">km</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg><span class="anota" aria-hidden="true">2</span></button></div><div class="sem-cab"><span class="t-detalle tnum">Semana 1 · 5 – 11 oct.</span><span class="tot tnum">36.8 km · 1 h 51 min · 430 m</span></div><div class="lista"><button type="button" class="opcion-rutina paseo-fila"><span class="txt"><span>Sábado 10</span><span class="t-detalle tnum">1 h 10 min · 20.7 km/h · 860 kcal</span></span><span class="cifra km">24.1 <span class="unidad-c">km</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></button><button type="button" class="opcion-rutina paseo-fila"><span class="txt"><span>Jueves 8</span><span class="t-detalle tnum">41 min · 18.6 km/h · 470 kcal</span></span><span class="cifra km">12.7 <span class="unidad-c">km</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></button></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Cada semana suma km, tiempo en movimiento y desnivel. Dos paseos el mismo día son dos filas, y sus kcal se suman al objetivo de ese día.</span></li><li><span class="num-a">2</span><span>Cada fila dice tiempo, velocidad y kcal, con los km en cifra. En la web, la lista va a la izquierda y el detalle a la derecha.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 9 · detalle</span><h3>Abre el detalle del paseo</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>9:46</span></div><div class="cuerpo"><div class="det-cab"><div class="dia-cab"><div class="volver"><button type="button" class="atras" aria-label="Volver a Cardio y MTB"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><span class="t-detalle sec">Cardio y MTB</span></div><h3 class="t-pantalla">Sábado 17 de octubre</h3><span class="estado-dia tnum"><svg class="i s16" aria-hidden="true"><use href="#i-bike"/></svg>7:12&nbsp;a.&nbsp;m. · 1 h 04 min en total · Strava</span></div><div class="det-acc con-anota"><button type="button" class="icono-btn" aria-label="Editar paseo"><svg class="i" aria-hidden="true"><use href="#i-pencil"/></svg></button><button type="button" class="icono-btn" aria-label="Borrar paseo"><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg></button><span class="anota" aria-hidden="true">2</span></div></div><div class="desliza arriba"><div class="tarjeta con-anota"><span class="t-detalle sec">Distancia</span><span class="cifra c-heroe">18.4 <span class="t-seccion sec">km</span></span><div class="mtb-cifras"><div><span class="t-detalle sec">Desnivel +</span><span class="cifra">240 <span class="unidad-c">m</span></span></div><div><span class="t-detalle sec">En movimiento</span><span class="cifra">52 <span class="unidad-c">min</span></span></div><div><span class="t-detalle sec">Velocidad</span><span class="cifra">21.2 <span class="unidad-c">km/h</span></span></div><div><span class="t-detalle sec">Calorías</span><span class="cifra">640 <span class="unidad-c">kcal</span></span></div><div><span class="t-detalle sec">FC promedio</span><span class="cifra">158 <span class="unidad-c">ppm</span></span></div><div><span class="t-detalle sec">FC máx.</span><span class="cifra">181 <span class="unidad-c">ppm</span></span></div><span class="anota" aria-hidden="true">1</span></div></div><div class="tarjeta"><div class="zonas" role="table" aria-label="Tiempo en cada zona de frecuencia cardiaca"><span class="t-detalle sec">Zonas de FC · % del tiempo</span><div class="zona"><span class="z-nom"><b>Z5</b><span class="t-detalle sec">185+ ppm</span></span><span class="z-pista"><i style="--v:0"></i></span><span class="z-val tnum"><b>0 %</b><span class="t-detalle">0 min</span></span></div><div class="zona"><span class="z-nom"><b>Z4</b><span class="t-detalle sec">167–184 ppm</span></span><span class="z-pista"><i style="--v:26"></i></span><span class="z-val tnum"><b>26 %</b><span class="t-detalle">14 min</span></span></div><div class="zona"><span class="z-nom"><b>Z3</b><span class="t-detalle sec">149–166 ppm</span></span><span class="z-pista"><i style="--v:45"></i></span><span class="z-val tnum"><b>45 %</b><span class="t-detalle">23 min</span></span></div><div class="zona"><span class="z-nom"><b>Z2</b><span class="t-detalle sec">113–148 ppm</span></span><span class="z-pista"><i style="--v:27"></i></span><span class="z-val tnum"><b>27 %</b><span class="t-detalle">14 min</span></span></div><div class="zona"><span class="z-nom"><b>Z1</b><span class="t-detalle sec">0–112 ppm</span></span><span class="z-pista"><i style="--v:2"></i></span><span class="z-val tnum"><b>2 %</b><span class="t-detalle">1 min</span></span></div></div></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Datos, zonas y, más abajo, las capturas y la ruta. Es la misma vista que abre el ícono del paseo en el calendario de Gym (flujo 2).</span></li><li><span class="num-a">2</span><span><b>Editar</b> y <b>Borrar</b> arriba, también en días pasados (paso 11).</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 10 · ruta</span><h3>Agrega la ruta GPX</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>9:48</span></div><div class="cuerpo"><div class="det-cab"><div class="dia-cab"><div class="volver"><button type="button" class="atras" aria-label="Volver a Cardio y MTB"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><span class="t-detalle sec">Cardio y MTB</span></div><h3 class="t-pantalla">Sábado 17 de octubre</h3><span class="estado-dia tnum"><svg class="i s16" aria-hidden="true"><use href="#i-bike"/></svg>7:12&nbsp;a.&nbsp;m. · 1 h 04 min en total · Strava</span></div><div class="det-acc"><button type="button" class="icono-btn" aria-label="Editar paseo"><svg class="i" aria-hidden="true"><use href="#i-pencil"/></svg></button><button type="button" class="icono-btn" aria-label="Borrar paseo"><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg></button></div></div><div class="desliza arriba"><div class="tarjeta ruta con-anota"><div class="cab-r"><span class="t-seccion">Ruta</span><span class="t-detalle sec">sábado17.gpx</span></div><svg viewBox="0 0 312 120" role="img" aria-label="Ruta del paseo, una línea sin mapa"><path class="trazo" d="M28 92 C40 70 30 48 58 40 S96 22 118 30 S150 58 176 50 S214 16 240 22 S286 40 280 66 S250 100 214 96"/><circle class="ext" cx="28" cy="92" r="6"/><circle class="ext fin" cx="214" cy="96" r="5"/><text class="lbl" x="40" y="114">Inicio</text><text class="lbl" x="226" y="114">Fin</text></svg><span class="t-detalle sec">Perfil de desnivel · 240 m de subida</span><svg viewBox="0 0 312 120" role="img" aria-label="Perfil de desnivel: de 32 a 148 m, 240 m de subida acumulada en 18.4 km"><line class="eje" x1="36" y1="92" x2="304" y2="92"/><line class="eje" x1="36" y1="17.3" x2="304" y2="17.3" style="stroke-dasharray:3 3"/><path class="perfil" d="M36.0 85.0 L57.8 66.7 L82.6 40.1 L100.1 57.8 L123.4 31.2 L142.3 17.3 L158.3 41.3 L175.8 55.3 L196.2 35.0 L215.2 22.3 L231.2 50.2 L251.6 66.7 L263.2 52.7 L277.8 74.3 L288.0 54.6 L304.0 90.7"/><text class="lbl" x="0" y="21.3">148 m</text><text class="lbl" x="0" y="96">30 m</text><text class="lbl" x="36" y="112">0</text><text class="lbl" x="304" y="112" text-anchor="end">18.4 km</text></svg><span class="anota abajo" aria-hidden="true">1</span></div><div class="tarjeta"><span class="t-seccion">Capturas</span><span class="capturas con-anota"><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="22" height="4" rx="2"/><rect class="linea-c" x="8" y="18" width="32" height="16" rx="3"/><rect class="linea-c fuerte-c" x="8" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="8" y="51" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="51" width="14" height="5" rx="2"/><rect class="linea-c" x="8" y="62" width="32" height="4" rx="2"/></svg><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="26" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="24" width="4" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="32" width="18" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="40" width="26" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="48" width="17" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="56" width="3" height="4" rx="2"/></svg><span class="anota" aria-hidden="true">2</span></span></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Con un GPX, la ruta se dibuja como una línea con inicio y fin, y debajo el perfil de desnivel en km. Sin mapa de calles. Sin GPX, aquí está «Agregar ruta GPX».</span></li><li><span class="num-a">2</span><span>Las capturas quedan guardadas; tocar una la abre a pantalla completa para comparar con lo leído.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 11 · editar o borrar</span><h3>Edita o borra un paseo</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>9:52</span></div><div class="cuerpo"><nav class="sub-tabs al-final" aria-label="Gym"><a class="sub-tab" href="#">Sesión</a><a class="sub-tab" href="#">Calendario</a><a class="sub-tab" href="#">Rutinas</a><a class="sub-tab" href="#">Historial</a><a class="sub-tab con-anota" href="#" aria-current="page">Cardio y MTB<span class="anota" aria-hidden="true">1</span></a></nav><div class="desliza"><div class="dos-botones"><button type="button" class="btn primario"><svg class="i s20" aria-hidden="true"><use href="#i-photo"/></svg>Registrar paseo</button><button type="button" class="btn secundario"><svg class="i s20" aria-hidden="true"><use href="#i-pencil"/></svg>Registrar a mano</button></div><div class="sem-cab"><span class="t-detalle tnum">Semana 2 · 12 – 18 oct.</span><span class="tot tnum">Sin paseos esta semana</span></div><div class="sem-cab"><span class="t-detalle tnum">Semana 1 · 5 – 11 oct.</span><span class="tot tnum">36.8 km · 1 h 51 min · 430 m</span></div><div class="lista"><button type="button" class="opcion-rutina paseo-fila"><span class="txt"><span>Sábado 10</span><span class="t-detalle tnum">1 h 10 min · 20.7 km/h · 860 kcal</span></span><span class="cifra km">24.1 <span class="unidad-c">km</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></button><button type="button" class="opcion-rutina paseo-fila"><span class="txt"><span>Jueves 8</span><span class="t-detalle tnum">41 min · 18.6 km/h · 470 kcal</span></span><span class="cifra km">12.7 <span class="unidad-c">km</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></button></div></div><div class="ranura-aviso "><div class="aviso con-anota" role="status"><span class="txt-av">Paseo borrado. El sábado 17 vuelve a 2,350 kcal.</span><button type="button" class="btn texto">Deshacer</button><span class="anota" aria-hidden="true">2</span></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span><b>Editar</b> abre el formulario del registro a mano (paso 20) con los datos del paseo; al guardar, el objetivo de ese día se recalcula.</span></li><li><span class="num-a">2</span><span><b>Borrar</b> no pide confirmación: vuelve a la lista con el aviso y Deshacer. El objetivo se recalcula; las comidas registradas no se tocan.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 12 · día pasado</span><h3>Registra un paseo de otro día</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>12:30</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Coach</span></div><div class="desliza con-chat al-pie"><div class="chat"><div class="burbuja con-capturas"><span class="capturas"><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="22" height="4" rx="2"/><rect class="linea-c" x="8" y="18" width="32" height="16" rx="3"/><rect class="linea-c fuerte-c" x="8" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="8" y="51" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="51" width="14" height="5" rx="2"/><rect class="linea-c" x="8" y="62" width="32" height="4" rx="2"/></svg></span></div><div class="linea-coach paseo"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><p>Leí tu paseo. No llegó la captura de zonas.</p><button type="button" class="fecha-btn con-anota"><span class="txt"><span class="t-detalle">Fecha · leída de la captura</span><span class="tnum">Sábado 10 de octubre · 7:05&nbsp;a.&nbsp;m.</span></span><svg class="i s20" aria-hidden="true"><use href="#i-pencil"/></svg><span class="anota" aria-hidden="true">1</span></button><div class="p-heroe"><span class="t-detalle sec">Distancia</span><span class="cifra">24.1 <span class="t-seccion sec">km</span></span></div><div class="datos-p sep"><button type="button" class="dato"><span class="t-detalle">Desnivel +</span><span class="cifra">310 <span class="unidad-c">m</span></span></button><button type="button" class="dato"><span class="t-detalle">Tiempo en movimiento</span><span class="cifra">1 h 10 <span class="unidad-c">min</span></span></button><div class="dato"><span class="t-detalle">Velocidad</span><span class="cifra">20.7 <span class="unidad-c">km/h</span></span><span class="t-detalle">calculada</span></div><button type="button" class="dato"><span class="t-detalle">Calorías</span><span class="cifra">860 <span class="unidad-c">kcal</span></span></button></div><p class="aviso-linea sep con-anota"><svg class="i s16" aria-hidden="true"><use href="#i-info-circle"/></svg><span>Sin captura de zonas se guarda sin zonas. Envíala ahora o agrégala después desde el paseo.</span><span class="anota" aria-hidden="true">2</span></p><p class="nota tnum"><svg class="i s16" aria-hidden="true"><use href="#i-info-circle"/></svg><span>Al guardarlo, tu objetivo del sábado 10 sube a 2,780 kcal: 2,350 + 430.</span></p><div class="acciones-c con-anota"><button type="button" class="btn primario">Guardar paseo</button><button type="button" class="btn texto">Descartar</button><span class="anota" aria-hidden="true">3</span></div></div></div></div><div class="chat-pie"><div class="entrada vacia"><span>Escribe al coach</span></div><button type="button" class="icono-btn" aria-label="Adjuntar capturas"><svg class="i" aria-hidden="true"><use href="#i-paperclip"/></svg></button><button type="button" class="icono-btn acento" aria-label="Enviar"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Lunes 12: la captura dice sábado 10 y la tarjeta lo toma. Un día pasado se registra igual y su objetivo sube igual.</span></li><li><span class="num-a">2</span><span>Con una sola captura no se bloquea nada: se guarda sin zonas.</span></li><li><span class="num-a">3</span><span>Al guardar, el coach solo dice «El objetivo del sábado 10 subió a 2,780 kcal»: un día pasado no lleva propuesta de comida.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 13 · zonas después</span><h3>Agrega la captura de zonas</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>12:34</span></div><div class="cuerpo"><div class="det-cab"><div class="dia-cab"><div class="volver"><button type="button" class="atras" aria-label="Volver a Cardio y MTB"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><span class="t-detalle sec">Cardio y MTB</span></div><h3 class="t-pantalla">Sábado 10 de octubre</h3><span class="estado-dia tnum"><svg class="i s16" aria-hidden="true"><use href="#i-bike"/></svg>7:05&nbsp;a.&nbsp;m. · 1 h 22 min en total · Strava</span></div><div class="det-acc"><button type="button" class="icono-btn" aria-label="Editar paseo"><svg class="i" aria-hidden="true"><use href="#i-pencil"/></svg></button><button type="button" class="icono-btn" aria-label="Borrar paseo"><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg></button></div></div><div class="desliza arriba"><div class="tarjeta"><span class="t-detalle sec">Distancia</span><span class="cifra c-heroe">24.1 <span class="t-seccion sec">km</span></span><div class="mtb-cifras"><div><span class="t-detalle sec">Desnivel +</span><span class="cifra">310 <span class="unidad-c">m</span></span></div><div><span class="t-detalle sec">En movimiento</span><span class="cifra">1 h 10</span></div><div><span class="t-detalle sec">Velocidad</span><span class="cifra">20.7 <span class="unidad-c">km/h</span></span></div><div><span class="t-detalle sec">Calorías</span><span class="cifra">860 <span class="unidad-c">kcal</span></span></div><div><span class="t-detalle sec">FC promedio</span><span class="cifra">155 <span class="unidad-c">ppm</span></span></div><div><span class="t-detalle sec">FC máx.</span><span class="cifra">178 <span class="unidad-c">ppm</span></span></div></div></div><div class="tarjeta"><div class="vacio en-tarjeta con-anota"><svg class="i s32" aria-hidden="true"><use href="#i-heartbeat"/></svg><span class="t-seccion">Sin zonas de FC</span><p>Agrega la captura de zonas de Strava y el coach mide mejor el esfuerzo de este paseo.</p><button type="button" class="btn secundario"><svg class="i s20" aria-hidden="true"><use href="#i-photo"/></svg>Agregar captura de zonas</button><span class="anota" aria-hidden="true">1</span></div></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Donde irían las zonas, un estado vacío con <b>Agregar captura de zonas</b>. Abre el selector; el coach lee solo las zonas y las muestra en una tarjeta corta para guardar.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 14 · de noche</span><h3>Regístralo después de la cena</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>9:40</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Coach</span></div><div class="desliza con-chat"><div class="chat"><div class="linea-coach paseo"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><span class="guardado"><svg class="i s20" aria-hidden="true"><use href="#i-check"/></svg>Paseo guardado · 18.4 km · 52 min</span><div class="acciones-c"><button type="button" class="btn texto">Ver paseo</button></div></div><div class="linea-coach con-anota"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><p class="tnum">Tu objetivo de hoy subió a 2,670 kcal. Ya no te quedan comidas hoy, así que no te propongo cambios; mañana comes como siempre.</p><span class="anota" aria-hidden="true">1</span></div></div></div><div class="chat-pie"><div class="entrada vacia"><span>Escribe al coach</span></div><button type="button" class="icono-btn" aria-label="Adjuntar capturas"><svg class="i" aria-hidden="true"><use href="#i-paperclip"/></svg></button><button type="button" class="icono-btn acento" aria-label="Enviar"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>El mismo paseo, guardado a las 9:40 p. m. después de la cena: el coach solo dice que el objetivo subió. Sin comidas por delante no hay propuesta, y lo que falta no pasa a mañana.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 15 · sin kcal</span><h3>Un paseo sin calorías</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:05</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Coach</span></div><div class="desliza con-chat al-pie"><div class="chat"><div class="burbuja con-capturas"><span class="capturas"><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="22" height="4" rx="2"/><rect class="linea-c" x="8" y="18" width="32" height="16" rx="3"/><rect class="linea-c fuerte-c" x="8" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="8" y="51" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="51" width="14" height="5" rx="2"/><rect class="linea-c" x="8" y="62" width="32" height="4" rx="2"/></svg></span></div><div class="linea-coach paseo"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><p>Leí tu paseo de Samsung Health. No trae calorías ni zonas.</p><button type="button" class="fecha-btn"><span class="txt"><span class="t-detalle">Fecha · leída de la captura</span><span class="tnum">Jueves 22 de octubre · 5:30&nbsp;p.&nbsp;m.</span></span><svg class="i s20" aria-hidden="true"><use href="#i-pencil"/></svg></button><div class="p-heroe"><span class="t-detalle sec">Distancia</span><span class="cifra">14.6 <span class="t-seccion sec">km</span></span></div><div class="datos-p sep"><button type="button" class="dato"><span class="t-detalle">Desnivel +</span><span class="cifra">150 <span class="unidad-c">m</span></span></button><button type="button" class="dato"><span class="t-detalle">Tiempo en movimiento</span><span class="cifra">46 <span class="unidad-c">min</span></span></button><div class="dato"><span class="t-detalle">Velocidad</span><span class="cifra">19.0 <span class="unidad-c">km/h</span></span><span class="t-detalle">calculada</span></div><button type="button" class="dato con-anota"><span class="t-detalle">Calorías</span><span class="sin-dato">sin dato</span><span class="anota" aria-hidden="true">1</span></button><button type="button" class="dato"><span class="t-detalle">FC promedio</span><span class="cifra">141 <span class="unidad-c">ppm</span></span></button><button type="button" class="dato"><span class="t-detalle">FC máx.</span><span class="sin-dato">sin dato</span></button></div><p class="aviso-linea sep con-anota"><svg class="i s16" aria-hidden="true"><use href="#i-info-circle"/></svg><span>Sin calorías, tu objetivo de hoy no sube. Si las sabes, toca Calorías y escríbelas.</span><span class="anota" aria-hidden="true">2</span></p><div class="acciones-c"><button type="button" class="btn primario">Guardar paseo</button><button type="button" class="btn texto">Descartar</button></div></div></div></div><div class="chat-pie"><div class="entrada vacia"><span>Escribe al coach</span></div><button type="button" class="icono-btn" aria-label="Adjuntar capturas"><svg class="i" aria-hidden="true"><use href="#i-paperclip"/></svg></button><button type="button" class="icono-btn acento" aria-label="Enviar"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>La captura de otra app llega a la misma tarjeta con lo que traiga. Lo que falta dice «sin dato», nunca 0.</span></li><li><span class="num-a">2</span><span>Sin kcal el objetivo no sube y la tarjeta lo dice antes de guardar. Tocar «Calorías» abre la hoja del paso 6.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 16 · imagen sin datos</span><h3>Envía una imagen equivocada</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>9:39</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Coach</span></div><div class="desliza con-chat"><div class="chat"><div class="burbuja con-capturas"><span class="capturas"><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><circle class="linea-c" cx="24" cy="28" r="9"/><rect class="linea-c" x="8" y="48" width="32" height="12" rx="3"/></svg></span></div><div class="linea-coach con-anota"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><p>Esta imagen no trae datos de un paseo. Envíame la captura de la actividad, donde se ven la distancia y el tiempo: Strava, Samsung Health o Garmin.</p><div class="acciones-c"><button type="button" class="btn secundario"><svg class="i s20" aria-hidden="true"><use href="#i-photo"/></svg>Elegir otra captura</button><button type="button" class="btn texto">Registrar a mano</button></div><span class="anota" aria-hidden="true">1</span></div></div></div><div class="chat-pie"><div class="entrada vacia"><span>Escribe al coach</span></div><button type="button" class="icono-btn" aria-label="Adjuntar capturas"><svg class="i" aria-hidden="true"><use href="#i-paperclip"/></svg></button><button type="button" class="icono-btn acento" aria-label="Enviar"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Si la imagen no es de un paseo, el coach lo dice y pide la correcta, sin tarjeta vacía. <b>Elegir otra captura</b> abre el selector; <b>Registrar a mano</b>, el formulario.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 17 · duplicado</span><h3>Envía otra vez el mismo paseo</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>6:15</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Coach</span></div><div class="desliza con-chat al-pie"><div class="chat"><div class="burbuja con-capturas"><span class="capturas"><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="22" height="4" rx="2"/><rect class="linea-c" x="8" y="18" width="32" height="16" rx="3"/><rect class="linea-c fuerte-c" x="8" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="8" y="51" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="51" width="14" height="5" rx="2"/><rect class="linea-c" x="8" y="62" width="32" height="4" rx="2"/></svg><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="26" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="24" width="4" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="32" width="18" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="40" width="26" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="48" width="17" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="56" width="3" height="4" rx="2"/></svg></span></div><div class="linea-coach paseo"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><p class="aviso-linea con-anota"><svg class="i s16" aria-hidden="true"><use href="#i-alert-triangle"/></svg><span>Ya registraste este paseo el sábado 17.</span><span class="anota" aria-hidden="true">1</span></p><button type="button" class="fecha-btn"><span class="txt"><span class="t-detalle">Fecha · leída de la captura</span><span class="tnum">Sábado 17 de octubre · 7:12&nbsp;a.&nbsp;m.</span></span><svg class="i s20" aria-hidden="true"><use href="#i-pencil"/></svg></button><div class="p-heroe"><span class="t-detalle sec">Distancia</span><span class="cifra">18.4 <span class="t-seccion sec">km</span></span></div><div class="datos-p sep"><button type="button" class="dato"><span class="t-detalle">Tiempo en movimiento</span><span class="cifra">52 <span class="unidad-c">min</span></span></button><button type="button" class="dato"><span class="t-detalle">Calorías</span><span class="cifra">640 <span class="unidad-c">kcal</span></span></button></div><div class="dos-botones sep con-anota"><button type="button" class="btn primario">Descartar</button><button type="button" class="btn secundario">Guardar de todas formas</button><span class="anota" aria-hidden="true">2</span></div></div></div></div><div class="chat-pie"><div class="entrada vacia"><span>Escribe al coach</span></div><button type="button" class="icono-btn" aria-label="Adjuntar capturas"><svg class="i" aria-hidden="true"><use href="#i-paperclip"/></svg></button><button type="button" class="icono-btn acento" aria-label="Enviar"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Misma fecha, hora de inicio y distancia que un paseo guardado: la tarjeta lo avisa arriba, sin rojo.</span></li><li><span class="num-a">2</span><span>Lo probable es un envío repetido, así que <b>Descartar</b> es el botón principal. <b>Guardar de todas formas</b> lo guarda como segundo paseo y suma sus kcal.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 18 · sin conexión</span><h3>Envía las capturas sin conexión</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>8:50</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Coach</span></div><div class="desliza con-chat"><div class="chat"><div class="sinc-linea con-anota"><svg class="i s16" aria-hidden="true"><use href="#i-cloud-off"/></svg>Sin conexión. Tus capturas quedan en cola.<span class="anota" aria-hidden="true">1</span></div><div class="burbuja con-capturas"><span class="capturas"><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="22" height="4" rx="2"/><rect class="linea-c" x="8" y="18" width="32" height="16" rx="3"/><rect class="linea-c fuerte-c" x="8" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="8" y="51" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="51" width="14" height="5" rx="2"/><rect class="linea-c" x="8" y="62" width="32" height="4" rx="2"/></svg><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="26" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="24" width="4" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="32" width="18" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="40" width="26" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="48" width="17" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="56" width="3" height="4" rx="2"/></svg></span></div><span class="en-cola con-anota"><svg class="i s16" aria-hidden="true"><use href="#i-clock"/></svg>En cola · se leen al volver la conexión<span class="anota" aria-hidden="true">2</span></span></div></div><div class="chat-pie"><div class="entrada vacia"><span>Escribe al coach</span></div><button type="button" class="icono-btn" aria-label="Adjuntar capturas"><svg class="i" aria-hidden="true"><use href="#i-paperclip"/></svg></button><button type="button" class="icono-btn acento" aria-label="Enviar"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>En el teléfono el envío no falla: las capturas se guardan y esperan. No hace falta quedarse en el chat.</span></li><li><span class="num-a">2</span><span>Al volver la conexión, el coach las lee y llega el aviso «Tu paseo está listo para confirmar»; tocarlo abre el chat en la tarjeta.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 19 · sin coach</span><h3>Sin créditos: regístralo a mano</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>9:39</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Coach</span></div><div class="desliza con-chat"><div class="chat"><div class="burbuja con-capturas"><span class="capturas"><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="22" height="4" rx="2"/><rect class="linea-c" x="8" y="18" width="32" height="16" rx="3"/><rect class="linea-c fuerte-c" x="8" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="8" y="51" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="51" width="14" height="5" rx="2"/><rect class="linea-c" x="8" y="62" width="32" height="4" rx="2"/></svg><svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/><rect class="linea-c" x="8" y="10" width="26" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="24" width="4" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="32" width="18" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="40" width="26" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="48" width="17" height="4" rx="2"/><rect class="linea-c fuerte-c" x="8" y="56" width="3" height="4" rx="2"/></svg></span></div><div class="tarjeta con-anota"><span class="t-seccion">El coach está en pausa</span><p class="sec">Se acabaron los créditos del mes; vuelve el 1 de noviembre. Mientras, tu paseo se registra a mano.</p><div class="acciones-c"><button type="button" class="btn primario"><svg class="i s20" aria-hidden="true"><use href="#i-pencil"/></svg>Registrar a mano</button></div><span class="anota" aria-hidden="true">1</span></div></div></div><div class="chat-pie"><div class="entrada vacia"><span>Escribe al coach</span></div><button type="button" class="icono-btn" aria-label="Adjuntar capturas"><svg class="i" aria-hidden="true"><use href="#i-paperclip"/></svg></button><button type="button" class="icono-btn acento" aria-label="Enviar"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Sin créditos de la API el coach no lee capturas. Lo dice la app, no el coach, con <b>Registrar a mano</b>, que no gasta créditos.</span></li><li><span class="num-a">2</span><span>En la web sin conexión, «Registrar paseo» da el aviso «Leer capturas necesita conexión» con <b>Registrar a mano</b>.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 20 · a mano</span><h3>Llena el formulario</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>9:42</span></div><div class="cuerpo"><div class="cabeza"><button type="button" class="atras" aria-label="Volver"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><span class="t-pantalla">Paseo a mano</span><span class="icono-btn" aria-hidden="true"></span></div><div class="desliza form-scroll compacto"><div class="campo con-anota"><span class="lbl">Fecha</span><div class="entrada"><span class="tnum">17/10/2026</span><button type="button" class="icono-btn" aria-label="Elegir fecha"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg></button></div><span class="anota" aria-hidden="true">1</span></div><div class="par"><div class="campo"><span class="lbl">Distancia</span><div class="entrada"><span class="cifra carga">18.4</span><span class="u">km</span></div></div><div class="campo con-anota"><span class="lbl">En movimiento</span><div class="entrada"><span class="cifra carga">0:52</span><span class="u">h:mm</span></div><span class="anota" aria-hidden="true">2</span></div></div><p class="leido tnum"><svg class="i s16" aria-hidden="true"><use href="#i-check"/></svg>Velocidad media: 21.2 km/h</p><div class="sub-form"><span>Opcionales</span><span class="t-detalle">vacío = sin dato</span></div><div class="opcionales con-anota"><div><span>Desnivel +</span><span class="sin">sin dato</span></div><div><span>Calorías</span><span class="sin">sin dato</span></div><div><span>FC promedio</span><span class="sin">sin dato</span></div><div><span>FC máx.</span><span class="sin">sin dato</span></div><div><span>Tiempo total</span><span class="sin">sin dato</span></div><div><span>Zonas Z1 a Z5</span><button type="button" class="btn texto">Agregar</button></div><span class="anota" aria-hidden="true">3</span></div></div><div class="acciones-form"><button type="button" class="btn primario ancho">Guardar paseo</button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Fecha con máscara dd/mm/aaaa y selector propio que abre en el mes. Hoy de fábrica.</span></li><li><span class="num-a">2</span><span>Obligatorios: fecha, distancia y tiempo en movimiento (máscara h:mm). La velocidad se calcula mientras escribes. Km de fábrica; millas si las eliges en Ajustes › Unidades.</span></li><li><span class="num-a">3</span><span>Lo demás es opcional y queda «sin dato». Las zonas piden % y rango en ppm por zona. Sin calorías, el objetivo no sube.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 21 · recuperación</span><h3>Un paseo fuerte antes de pierna</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>6:10</span></div><div class="cuerpo"><div class="hoy-cab"><span class="t-detalle tnum">Martes 3 de noviembre · semana 5</span><span class="t-pantalla">Hoy</span></div><div class="desliza"><div class="linea-coach con-anota"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><span class="tema">Recuperación</span><p class="tnum">Tu paseo de hoy fue largo: 2 h 05 min en movimiento. Mañana a las 8:00&nbsp;a.&nbsp;m. toca Día B, con peso muerto y curl femoral.</p><p class="tnum">Te propongo bajar un 10 % la carga de esos dos ejercicios. Moverlo al jueves dejaría dos días de pierna seguidos.</p><div class="acciones-c con-anota"><button type="button" class="btn primario">Bajar la carga</button><button type="button" class="btn secundario">Mover al jueves</button><button type="button" class="btn texto">Dejar como está</button><span class="anota" aria-hidden="true">2</span></div><span class="anota" aria-hidden="true">1</span></div><div class="lista"><div class="fila sesion-fila"><span class="txt"><span>Paseo MTB · 41.8 km</span><span class="t-detalle tnum">2 h 05 min · 1,200 kcal · objetivo 2,950</span></span><svg class="i s20" aria-hidden="true"><use href="#i-bike"/></svg></div><div class="fila sesion-fila"><span class="txt"><span>Mañana · Día B · Pull + Legs</span><span class="t-detalle tnum">8:00&nbsp;a.&nbsp;m. · programada</span></span><span class="m prog"></span></div></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Paseo fuerte = Z4 + Z5 por encima del 30 % o más de 90 min. Con pierna programada en las 48 h siguientes, el coach lo dice en Hoy y en la sesión de Gym de ese día.</span></li><li><span class="num-a">2</span><span>Propone, nunca cambia solo. <b>Bajar la carga</b> y <b>Mover al jueves</b> se aplican con un aviso con Deshacer; <b>Dejar como está</b> cierra la línea.</span></li></ol></article></div>
+  </section>
+
+  <section class="pagina" id="por-confirmar" aria-labelledby="h-confirmar">
+    <header>
+      <h2 id="h-confirmar">Por confirmar</h2>
+      <p class="sec" style="max-width:60ch">Decisiones de diseño que tomé en el diagrama y la guía. Lo demás sigue D-39 tal cual.</p>
+    </header>
+    <ul class="casos"><li><b>La tarjeta del paseo es una línea del coach con divisores, no una tarjeta dentro de otra:</b> fecha arriba con lápiz, la distancia como cifra héroe y el resto en tres columnas que se tocan. Velocidad lleva «calculada» y no se toca.</li><li><b>«Revisa este dato» con alert-triangle en texto principal:</b> el mismo ícono neutro de Restan en negativo; el rojo queda para errores.</li><li><b>Botones de la tarjeta:</b> «Guardar paseo» principal y «Descartar» de texto al lado; descartar no pregunta y deja un aviso con Deshacer.</li><li><b>La tarjeta dice cuánto sube el objetivo antes de guardar:</b> «Al guardarlo, tu objetivo de hoy sube a 2,670 kcal: 2,350 + 320». Así no hay sorpresa en Comida.</li><li><b>En la hoja de una cifra opcional, «Sin dato» de texto junto a «Guardar»:</b> es la forma de vaciarla; en los obligatorios no aparece.</li><li><b>Duplicado: «Descartar» es el botón principal y «Guardar de todas formas» el secundario,</b> apilados, porque lo probable es un envío repetido.</li><li><b>Sin créditos lo dice la app, no el coach:</b> tarjeta neutra «El coach está en pausa» con la fecha de vuelta y «Registrar a mano».</li><li><b>Tiempo en movimiento con máscara h:mm</b> (0:52, 1:10) en el formulario y «1 h 10» en las cifras.</li><li><b>Recuperación:</b> el coach recomienda primero «Bajar la carga» un 10 % en los ejercicios de pierna cuando moverla dejaría dos días de pierna seguidos; los botones son «Bajar la carga», «Mover al jueves» y «Dejar como está».</li><li><b>Agregar captura de zonas después:</b> estado vacío con el ícono heartbeat en el lugar de las zonas del detalle; el coach lee solo las zonas y muestra una tarjeta corta.</li><li><b>Cardio y MTB arriba lleva los dos botones</b> «Registrar paseo» (principal) y «Registrar a mano» (secundario) en una fila, como «Crear receta» en el flujo 4.</li><li><b>Correcciones al flujo 2:</b> la velocidad del sábado 17 es 21.2 km/h (18.4 km en 52 min), no 21.3; Z5 se escribe «185+ ppm». El flujo 3 dice que el domingo 18 tuvo un paseo con objetivo 2,950: ese día no tiene paseo en el flujo 2; propongo tomarlo como el martes 3 de noviembre del flujo 4.</li></ul>
+  </section>
+</main>
+<script>
+  const raiz = document.documentElement;
+  function ponerAcento(a) {
+    if (a === "caribe") delete raiz.dataset.accent; else raiz.dataset.accent = a;
+    document.querySelectorAll("[data-a]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.a === a)));
+  }
+  function ponerModo(m) {
+    if (m) raiz.dataset.theme = m; else delete raiz.dataset.theme;
+    document.querySelectorAll("#ctl-modo button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.modo === m)));
+  }
+  document.querySelectorAll("[data-a]").forEach((b) => b.addEventListener("click", () => ponerAcento(b.dataset.a)));
+  document.querySelectorAll("#ctl-modo button").forEach((b) => b.addEventListener("click", () => ponerModo(b.dataset.modo)));
+  // Los enlaces de las maquetas no navegan.
+  document.querySelectorAll('.telefono a[href="#"]').forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));
+</script>

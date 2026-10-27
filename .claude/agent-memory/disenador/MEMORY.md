@@ -3,4 +3,5 @@
 - [Flujo 1 gym](flujo-1-gym.md) — 4 piezas aprobadas; ranura de avisos, Sigue destacada, búlgara ×4
 - [Flujo 3 comida](flujo-3-comida.md) — aprobado completo 26-oct (D-37); cifras del día; pollo guisado es alimento
 - [Flujo 4 receta y plan](flujo-4-receta-plan.md) — revisión aprobada (D-38); receta solo en porciones; cifras de ejemplo
+- [Flujo 5 paseo MTB](flujo-5-mtb.md) — diagrama y guía de 21 pasos entregados 27-oct (D-39); cifras del sábado 17 y del martes 3-nov
 - [Flujo 10 bienvenida](flujo-10-bienvenida.md) — piezas 1-3 aprobadas (D-33); prototipo con cálculo real y campos tipados por aprobar
