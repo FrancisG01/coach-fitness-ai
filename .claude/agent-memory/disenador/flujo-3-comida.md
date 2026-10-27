@@ -1,17 +1,15 @@
 ---
 name: flujo-3-comida
-description: Flujo 3 (registrar una comida, D-37): piezas 1-2 aprobadas el 19-oct-2026; pieza 3 (mockups móvil y web) entregada, 12 decisiones nuevas por confirmar
+description: Flujo 3 (registrar una comida, D-37) aprobado completo el 26-oct-2026; cifras del día de ejemplo y patrones que reutiliza el flujo 4
 metadata:
   type: project
 ---
 
-Archivo: `docs/diseno/mockups/flujo-3-comida.html` (diagrama en 4 carriles + guía de 16 pasos + "Por confirmar"). Sin `<!doctype>/<html>/<head>/<body>`: empieza en `<title>` porque se publica como artefacto. Se genera con `gen_flujo3.py` + `f3_extra.css` en el scratchpad (CSS base tomado de flujo-1 hasta "web"); la copia envuelta para probar va en `scratchpad/ver/`.
+Flujo 3 aprobado completo por Francis el 26-oct-2026 (piezas 1-3 y prototipo; D-37, plan v1.16). Archivos: `docs/diseno/mockups/flujo-3-comida.html` y `flujo-3-comida-prototipo.html`. Sin `<!doctype>/<html>/<head>/<body>`: empiezan en `<title>` porque se publican como artefacto. Se generaban con scripts Python en el scratchpad de aquella sesión (`gen_flujo3.py`, `f3_mock.py`); el HTML del repo es la fuente.
 
-Cifras del ejemplo (lunes 19-oct, 1:18 p. m.): antes del almuerzo 862 kcal; almuerzo 677 (habichuelas 152, arroz 205, pollo guisado 150 g 240, aguacate 80); tras el almuerzo 1,539 / P 108 / C 189 / G 41; programado pendiente (merienda 299 + cena 400) 699 → "Con lo programado: 2,238". Suplementos 138 kcal (whey 120 + omega-3 18). Día pasado domingo 18 con paseo: objetivo 2,950 (P 216, C 339, G 82), P −20 g, sodio −120 mg, magnesio "280 de 350 mg".
+Cifras del ejemplo (lunes 19-oct, 1:18 p. m.): desayuno 625 (avena 80 g 303, 3 huevos 215, guineo 105, café 2; P 31 C 82 G 19); media mañana mango 99; almuerzo 677 (habichuelas 152, arroz 205, pollo guisado 150 g 240, aguacate 80; P 51 C 79 G 17); tras el almuerzo 1,539 / P 108 / C 189 / G 41; merienda programada 299 (yogur 118, piña 83, nueces 15 g 98) + cena 400 (tilapia 192, yuca 168, ensalada 40) → "Con lo programado: 2,238". Suplementos 138 kcal (whey 120 + omega-3 18). Día pasado domingo 18 con paseo: objetivo 2,950 (P 216, C 339, G 82). "Pollo guisado" es un ALIMENTO (160 kcal, P 23.9, C 2.4, G 5.4 por 100 g) y es el ejemplo de "Faltan datos" (sin potasio ni zinc); no convertirlo en receta (decisión de Francis, 26-oct).
 
-Resumen Total/Objetivo/Restan: columnas 56/58/80 px con gap 4 y padding 12 para que quepan "Carbohidratos g" y "Cumplido".
+Cambios tras probar el prototipo en Android: botón + flotante con menú en el día del teléfono; hojas con campo se anclan arriba al tocar (no se detecta el teclado); barras de nutrientes de 4 px; Restan con ícono solo si el exceso pasa del 5 %.
 
-Piezas 1-2 aprobadas con sus 12 decisiones (19-oct). Pieza 3: `f3_mock.py` + `f3_mock.css` (ejecutado con exec desde gen_flujo3.py, que ahora también toma el CSS web de flujo-1). Web: buscar/cantidad/crear en un panel en la columna derecha (no diálogo), comida destino con borde de acción. El detector marcó "monotonous-spacing" por una regla `gap: 2px` en el CSS: evitar valores sueltos fuera de la escala.
-
-**Why:** las 12 decisiones nuevas de "Por confirmar" (pieza 3) siguen pendientes de Francis.
-**How to apply:** reutiliza estas cifras en los mockups de alta fidelidad y el prototipo del flujo 3. Ver [[verificacion-mockups]].
+**Why:** el flujo 4 y los demás de Comida reutilizan estas cifras y patrones.
+**How to apply:** no tocar el flujo 3 aprobado; reutiliza sus cifras en mockups nuevos. El detector marcó "monotonous-spacing" por un `gap: 2px` suelto: evita valores fuera de la escala. Ver [[flujo-4-receta-plan]] y [[verificacion-mockups]].
