@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Prototipo flujo 3</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Fase 0.5 · flujo 3, prototipo navegable de registrar una comida: buscar, cantidad, armar el plato, lo programado, suplementos, crear alimento desde la etiqueta, día pasado, sin conexión y desglose de nutrientes (NUT-02, 03, 09, 10, 12, SUP-02; D-37).">
@@ -712,10 +713,14 @@ mark { background: none; color: inherit; font-weight: 650; }
 @keyframes sube { from { transform: translateY(var(--e5)); opacity: 0; } }
 @keyframes sube-poco { from { transform: translateY(var(--e2)); opacity: 0; } }
 @keyframes funde { from { opacity: 0; } }
-/* el + flotante tiene su franja al pie: la lista termina encima, así el botón nunca tapa una cifra (Never Cover);
-   a su izquierda, lo que resta del día */
-.proto .desliza.con-fab { padding-bottom: var(--e2); margin-bottom: calc(var(--tactil-gym) + var(--e2)); }
-.franja-fab { position: absolute; left: var(--e4); right: calc(var(--e4) + var(--tactil-gym) + var(--e3)); bottom: calc(var(--barra) + var(--e4)); height: var(--tactil-gym); display: flex; align-items: center; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+/* el + flota solo abajo a la derecha, sin franja (cambio pedido por Francis al probar el prototipo del flujo 5 en Android,
+   27-oct-2026): durante el scroll puede tapar datos; al final del día, un margen del alto de la antigua franja deja a la vista
+   la última comida y la línea de cierre «Restan…» */
+.proto .desliza.con-fab { padding-bottom: calc(var(--tactil-gym) + var(--e4)); }
+.cierre-dia { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+/* en oscuro la hoja va en elevado, igual que el campo: dentro de una hoja el campo va sobre fondo para que se vea su caja */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hoja .entrada { background: var(--fondo); } }
+:root[data-theme="dark"] .hoja .entrada { background: var(--fondo); }
 @media (max-width: 440px) {
   body { padding-left: 0; padding-right: 0; padding-top: 0; }
   #v-telefono { width: 100%; }
@@ -724,6 +729,9 @@ mark { background: none; color: inherit; font-weight: 650; }
   .guion { padding: 0 max(16px, env(safe-area-inset-right, 0px)) var(--e7) max(16px, env(safe-area-inset-left, 0px)); }
   #v-web { margin: var(--e4) max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px)); width: auto; flex: 1 1 100%; min-width: 0; }
 }
+/* sin palabras sueltas al final del párrafo ni títulos desbalanceados (detector, 27-oct-2026) */
+p, li { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1443,10 +1451,15 @@ function completarWeb() {
 }
 
 // ------------------------------------------------------------ pantallas del teléfono
+// línea de cierre del día: lo que resta, al final de todo, antes del margen del +
+function cierreDia() {
+  const restan = Math.round(objetivo("kcal") - totalesDia().t.kcal);
+  return `<p class="cierre-dia tnum">${restan >= 0 ? `Restan ${nf(restan)} de ${nf(objetivo("kcal"))} kcal` : `${nf(-restan)} kcal sobre ${nf(objetivo("kcal"))}`}</p>`;
+}
 function diaMovil() {
   const [t1, t2] = nombreDia(false), [fa, fs] = flechas();
   const contenido = S.cargando ? esqMovil()
-    : resumen(CORTO) + comidasHtml() + `<button type="button" class="btn texto ver-todo" data-acc="nutrientes">Ver todos los nutrientes${ic("chevron-right", 20)}</button>`;
+    : resumen(CORTO) + comidasHtml() + `<button type="button" class="btn texto ver-todo" data-acc="nutrientes">Ver todos los nutrientes${ic("chevron-right", 20)}</button>` + cierreDia();
   return `${subTabs()}<div class="desliza con-fab" id="scroll"${S.cargando ? ' aria-busy="true" aria-label="Cargando el día"' : ""}><div class="dia-nav">${fa}<div class="txt"><span class="t-seccion" id="h-pant" tabindex="-1">${t1}</span><span class="t-detalle sec">${t2}</span></div>${fs}</div>
     ${S.offline ? `<span class="sinc-linea dia-sinc">${ic("cloud-off", 16)}Sin conexión · lo que registres sube al volver</span>` : ""}${contenido}</div>`;
 }
@@ -1476,9 +1489,7 @@ function fabHtml() {
   if (enWeb() || S.pant !== "dia" || S.hoja) return "";
   const pre = preseleccion(), abierto = !!S.fab;
   const menu = abierto ? `<div class="velo-fab" data-acc="cerrar-fab"></div><div class="menu-fab" id="menu-fab" role="menu" aria-label="Agregar o crear alimento"><button type="button" role="menuitem" data-acc="agregar" data-v="${pre}">${ic("plus", 20)}Agregar ${COMIDAS[pre].art}</button><button type="button" role="menuitem" data-acc="crear">${ic("pencil", 20)}Crear alimento</button></div>` : "";
-  const restan = Math.round(objetivo("kcal") - totalesDia().t.kcal);
-  const franja = `<div class="franja-fab tnum">${restan >= 0 ? `Restan ${nf(restan)} de ${nf(objetivo("kcal"))} kcal` : `${nf(-restan)} kcal sobre ${nf(objetivo("kcal"))}`}</div>`;
-  return `${franja}${menu}<button type="button" class="fab" id="fab" data-acc="fab" aria-label="Agregar o crear alimento" aria-haspopup="menu" aria-expanded="${abierto}"${abierto ? ' aria-controls="menu-fab"' : ""}>${ic("plus")}</button>`;
+  return `${menu}<button type="button" class="fab" id="fab" data-acc="fab" aria-label="Agregar o crear alimento" aria-haspopup="menu" aria-expanded="${abierto}"${abierto ? ' aria-controls="menu-fab"' : ""}>${ic("plus")}</button>`;
 }
 
 // ------------------------------------------------------------ web

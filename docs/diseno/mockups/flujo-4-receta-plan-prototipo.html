@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Prototipo flujo 4</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Fase 0.5 · flujo 4, prototipo navegable de crear receta o plan: recetas en porciones, calendario de comidas, copiar, preferidos y evitar, plan del coach con su revisión, mover un entreno con sus comidas y comidas del día en Ajustes (NUT-02, 04, 05, 10, 11, SUP-01; D-38).">
@@ -830,10 +831,14 @@ mark { background: none; color: inherit; font-weight: 650; }
 @keyframes sube { from { transform: translateY(var(--e5)); opacity: 0; } }
 @keyframes sube-poco { from { transform: translateY(var(--e2)); opacity: 0; } }
 @keyframes funde { from { opacity: 0; } }
-/* el + flotante tiene su franja al pie: la lista termina encima, así el botón nunca tapa una cifra (Never Cover);
-   a su izquierda, lo que resta del día */
-.proto .desliza.con-fab { padding-bottom: var(--e2); margin-bottom: calc(var(--tactil-gym) + var(--e2)); }
-.franja-fab { position: absolute; left: var(--e4); right: calc(var(--e4) + var(--tactil-gym) + var(--e3)); bottom: calc(var(--barra) + var(--e4)); height: var(--tactil-gym); display: flex; align-items: center; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+/* el + flota solo abajo a la derecha, sin franja (cambio pedido por Francis al probar el prototipo del flujo 5 en Android,
+   27-oct-2026): durante el scroll puede tapar datos; al final del día, un margen del alto de la antigua franja deja a la vista
+   la última comida y la línea de cierre «Restan…» */
+.proto .desliza.con-fab { padding-bottom: calc(var(--tactil-gym) + var(--e4)); }
+.cierre-dia { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+/* en oscuro la hoja va en elevado, igual que el campo: dentro de una hoja el campo va sobre fondo para que se vea su caja */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hoja .entrada { background: var(--fondo); } }
+:root[data-theme="dark"] .hoja .entrada { background: var(--fondo); }
 @media (max-width: 440px) {
   body { padding-left: 0; padding-right: 0; padding-top: 0; }
   #v-telefono { width: 100%; }
@@ -863,6 +868,9 @@ mark { background: none; color: inherit; font-weight: 650; }
 .proto .web-envoltura { width: min(100%, 1400px); }
 .w-com .btn.texto { white-space: nowrap; font-size: 13px; line-height: 18px; gap: var(--e1); }
 .w-col-cab .kcal-d { display: flex; flex-direction: column; }
+/* sin palabras sueltas al final del párrafo ni títulos desbalanceados (detector, 27-oct-2026) */
+p, li { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; }
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <!-- Tabler Icons 3.49.0, outline (MIT, © Paweł Kuna) -->
@@ -1215,7 +1223,7 @@ function diaCuerpo() {
 }
 function diaMovil() {
   const [fa, fs] = flechasDia();
-  return `${subTabs()}<div class="desliza con-fab" id="scroll"><div class="dia-nav">${fa}<div class="txt"><span class="t-seccion" id="h-pant" tabindex="-1">${nombreFecha(S.dia, true)}</span><span class="t-detalle sec">${subDia(S.dia)}</span></div>${fs}</div>${diaCuerpo()}</div>`;
+  return `${subTabs()}<div class="desliza con-fab" id="scroll"><div class="dia-nav">${fa}<div class="txt"><span class="t-seccion" id="h-pant" tabindex="-1">${nombreFecha(S.dia, true)}</span><span class="t-detalle sec">${subDia(S.dia)}</span></div>${fs}</div>${diaCuerpo()}${cierreDia()}</div>`;
 }
 
 // ------------------------------------------------------------ Comida › Calendario
@@ -1628,10 +1636,11 @@ function capaMovil() {
     default: return "";
   }
 }
-function franjaFab() {
+// línea de cierre del día: lo que resta, al final de todo, antes del margen del +
+function cierreDia() {
   let t = 0; slotsDe(S.dia).forEach((sl) => { const c = comidaDe(S.dia, sl.k); if (c && c.items.length && (cuentaC(S.dia, sl.k) || S.dia < HOY)) t += sumaItems(c.items).kcal; });
   const r = Math.round(2350 - t);
-  return `<div class="franja-fab tnum">${r >= 0 ? `Restan ${nf(r)} de 2,350 kcal` : `${nf(-r)} kcal sobre 2,350`}</div>`;
+  return `<p class="cierre-dia tnum">${r >= 0 ? `Restan ${nf(r)} de 2,350 kcal` : `${nf(-r)} kcal sobre 2,350`}</p>`;
 }
 const fabVisible = () => !enWeb() && !cima() && S.sec === "comida" && S.sub === "dia" && !S.hoja;
 function render() {
@@ -1649,7 +1658,7 @@ function render() {
     $bajo.innerHTML = cima() === "revision" ? pieRevision() : S.sec === "coach" && !cima() ? chatPie() : "";
     $barra.hidden = !!cima();
     document.querySelectorAll("#barra [data-v]").forEach((b) => { if (b.dataset.v === S.sec) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
-    $("#zona-fab").innerHTML = fabVisible() ? `${franjaFab()}<button type="button" class="fab" id="fab" data-acc="fab" aria-label="Agregar ${artSlot(preseleccion())}">${ic("plus")}</button>` : "";
+    $("#zona-fab").innerHTML = fabVisible() ? `<button type="button" class="fab" id="fab" data-acc="fab" aria-label="Agregar ${artSlot(preseleccion())}">${ic("plus")}</button>` : "";
     $("#zona-aviso").innerHTML = avisoHtml();
     $capa.innerHTML = capaMovil();
     $("#reloj").textContent = horaTxt(S.hora).split(" ")[0];

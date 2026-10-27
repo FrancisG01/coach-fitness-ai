@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Flujo 4 receta y plan</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Fase 0.5 · flujo 4, crear receta o plan: diagrama y guía paso a paso (NUT-04, NUT-05, NUT-10, NUT-11, SUP-01; D-38).">
@@ -729,6 +730,12 @@ mark { background: none; color: inherit; font-weight: 650; }
 .hora-campos { display: grid; grid-template-columns: 1fr auto; gap: var(--e2); align-items: end; }
 .hora-campos .segmento { min-height: var(--tactil); }
 .hora-campos .segmento button { white-space: nowrap; }
+/* en oscuro la hoja va en elevado, igual que el campo: dentro de una hoja el campo va sobre fondo (aprobado el 27-oct-2026) */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hoja .entrada { background: var(--fondo); } }
+:root[data-theme="dark"] .hoja .entrada { background: var(--fondo); }
+/* sin palabras sueltas al final del párrafo ni títulos desbalanceados (detector, 27-oct-2026) */
+p, li { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; }
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <!-- Tabler Icons 3.49.0, outline (MIT, © Paweł Kuna) -->
@@ -872,7 +879,7 @@ mark { background: none; color: inherit; font-weight: 650; }
       <h2 id="h-confirmar-4">Aprobadas con el prototipo</h2>
       <p class="sec" style="max-width:60ch">Decisiones del prototipo y de Ajustes › Comidas del día (pieza 4), aprobadas el 27 de octubre.</p>
     </header>
-    <ul class="casos"><li><b>El + flotante tiene su franja al pie (flujos 3 y 4):</b> La lista termina encima del botón y a su izquierda se lee lo que resta del día («Restan 811 de 2,350 kcal»). Así el + nunca tapa una cifra (Never Cover) y la franja no queda vacía. Corrige el hallazgo del detector en el prototipo del flujo 3.</li><li><b>Comidas del día: orden manual con subir y bajar:</b> Botones de 48 px en vez de arrastrar, que es más accesible. Si el orden deja de seguir las horas, una línea lo dice con «Ordenar por hora»; una comida nueva entra en su lugar por la hora.</li><li><b>Quitar una comida con algo programado:</b> Destino de fábrica: la comida anterior en el orden; lo movido se suma a lo que ya tenga. Hoy y los días pasados conservan la comida quitada con la etiqueta «Quitada».</li><li><b>Límites de las comidas del día:</b> De 1 a 8 comidas; nombre de hasta 24 letras y sin repetir; hora de 1:00 a 12:59 con a. m. o p. m. Con una sola comida, «Quitar» queda inactivo y lo explica.</li><li><b>Otra opción sin conexión o con error:</b> Sin conexión, un aviso dice que necesita conexión; si falla, «No se pudo cambiar la comida. Se queda la anterior.»</li><li><b>Un aviso se cierra al abrir una pantalla apilada:</b> Así el aviso de la pantalla anterior no tapa el Guardar del editor de receta ni la lista de Ajustes.</li><li><b>Guardar como receta nueva con el mismo nombre:</b> La copia se llama «Mi desayuno de avena (variante)» para que no haya dos iguales; se cambia el nombre en el editor.</li></ul>
+    <ul class="casos"><li><b>El + flotante tiene su franja al pie (flujos 3 y 4):</b> La lista termina encima del botón y a su izquierda se lee lo que resta del día («Restan 811 de 2,350 kcal»). Así el + nunca tapa una cifra (Never Cover) y la franja no queda vacía. Corrige el hallazgo del detector en el prototipo del flujo 3. <i>Reemplazada el 27 de octubre al probar el prototipo del flujo 5: el + flota solo, con un margen al final del día, y «Restan…» pasa a una línea de cierre después de todo el día.</i></li><li><b>Comidas del día: orden manual con subir y bajar:</b> Botones de 48 px en vez de arrastrar, que es más accesible. Si el orden deja de seguir las horas, una línea lo dice con «Ordenar por hora»; una comida nueva entra en su lugar por la hora.</li><li><b>Quitar una comida con algo programado:</b> Destino de fábrica: la comida anterior en el orden; lo movido se suma a lo que ya tenga. Hoy y los días pasados conservan la comida quitada con la etiqueta «Quitada».</li><li><b>Límites de las comidas del día:</b> De 1 a 8 comidas; nombre de hasta 24 letras y sin repetir; hora de 1:00 a 12:59 con a. m. o p. m. Con una sola comida, «Quitar» queda inactivo y lo explica.</li><li><b>Otra opción sin conexión o con error:</b> Sin conexión, un aviso dice que necesita conexión; si falla, «No se pudo cambiar la comida. Se queda la anterior.»</li><li><b>Un aviso se cierra al abrir una pantalla apilada:</b> Así el aviso de la pantalla anterior no tapa el Guardar del editor de receta ni la lista de Ajustes.</li><li><b>Guardar como receta nueva con el mismo nombre:</b> La copia se llama «Mi desayuno de avena (variante)» para que no haya dos iguales; se cambia el nombre en el editor.</li></ul>
   </section>
 
   <section class="pagina" id="por-confirmar" aria-labelledby="h-confirmar">
