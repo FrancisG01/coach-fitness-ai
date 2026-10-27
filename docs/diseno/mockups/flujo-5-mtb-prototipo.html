@@ -1,0 +1,1858 @@
+<meta charset="utf-8">
+<title>Prototipo flujo 5</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Fase 0.5 · flujo 5, prototipo navegable de registrar un paseo MTB: capturas, tarjeta de confirmación, objetivo del día, Cardio y MTB, registro a mano y recuperación (CAR-01, CAR-02; D-39).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
+<style>
+/*
+  Fase 0.5 · flujo 5 "Registrar paseo MTB" (CAR-01, CAR-02; D-27, D-39). Pieza 4: prototipo.
+  CSS de flujo-5-mtb.html (tokens de docs/diseno/tokens.json) más las reglas de prototipo de los flujos 3 y 4.
+*/
+:root {
+  /* neutros · claro (tiza) */
+  --fondo: #F3F4F1; --superficie: #FFFFFF; --elevado: #E9EBE7; --borde: #DADDD8;
+  --texto: #1E2228; --texto-2: #5B626B; --error: #C9333A; --dato-gris: #B5BBC2;
+  /* uso del acento · claro */
+  --accion: var(--a4); --accion-alta: var(--a5); --texto-accion: #FFFFFF; --texto-acento: var(--a4); --texto-acento-elevado: var(--a5);
+  --suave: color-mix(in srgb, var(--a3) 13%, var(--superficie));
+  --capa-hover: color-mix(in srgb, var(--texto) 6%, transparent);
+  --capa-pressed: color-mix(in srgb, var(--texto) 10%, transparent);
+  /* superposiciones · claro: velo texto al 40 %, hoja en superficie, aviso invertido con acción A2 */
+  --velo: color-mix(in srgb, #1E2228 40%, transparent);
+  --hoja: var(--superficie);
+  --aviso-accion: var(--a2);
+  /* serie única de datos (Three Series Rule: A5 en claro, A1 en oscuro) */
+  --dato-1: var(--a5);
+  /* acentos A1–A5 (por defecto Caribe) */
+  --a1: #CFE6F5; --a2: #7CC0EA; --a3: #3B95D1; --a4: #1F6FA8; --a5: #154E78;
+  /* tipografía */
+  --familia: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  /* espaciado, radios, trazos */
+  --e1: 4px; --e2: 8px; --e3: 12px; --e4: 16px; --e5: 24px; --e6: 32px; --e7: 48px;
+  --r-casilla: 6px; --r-control: 10px; --r-tarjeta: 16px; --r-pildora: 999px;
+  --t-borde: 1px; --t-sel: 2px;
+  --tactil: 48px; --tactil-gym: 56px; --barra: 64px;
+  --rapido: 120ms; --normal: 200ms; --lento: 320ms;
+  --estandar: cubic-bezier(0.2, 0, 0, 1); --entrar: cubic-bezier(0.05, 0.7, 0.1, 1); --salir: cubic-bezier(0.3, 0, 0.8, 0.15);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+    --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+    --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
+    --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+    --velo: color-mix(in srgb, #1B1E23 72%, transparent);
+    --hoja: var(--elevado);
+    --aviso-accion: var(--a4);
+    --dato-1: var(--a1);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+  --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+  --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
+  --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+  --velo: color-mix(in srgb, #1B1E23 72%, transparent);
+  --hoja: var(--elevado);
+  --aviso-accion: var(--a4);
+  --dato-1: var(--a1);
+  color-scheme: dark;
+}
+:root[data-accent="mar"]       { --a1: #C8EEEA; --a2: #6FD6CC; --a3: #22A99C; --a4: #157A70; --a5: #0F5850; }
+:root[data-accent="palma"]     { --a1: #CDEEDB; --a2: #6FD19B; --a3: #2FA866; --a4: #1E7D4A; --a5: #155A36; }
+:root[data-accent="mango"]     { --a1: #FCE7C2; --a2: #F7C062; --a3: #E89A1E; --a4: #9A5C06; --a5: #6E4307; }
+:root[data-accent="flamboyan"] { --a1: #FBD6CB; --a2: #F79A7E; --a3: #E8603C; --a4: #B6411F; --a5: #7E2C14; }
+:root[data-accent="uva"]       { --a1: #E3DBFA; --a2: #B4A2F2; --a3: #8466DB; --a4: #6446B8; --a5: #45307F; }
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--fondo); color: var(--texto);
+  font-family: var(--familia); font-size: 16px; line-height: 24px;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+:focus-visible { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.i { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.i.s16 { width: 16px; height: 16px; stroke-width: 2; }
+.i.s20 { width: 20px; height: 20px; }
+.i.s32 { width: 32px; height: 32px; }
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* tipografía (escala de tokens.json) */
+.t-pantalla { font-size: 25px; line-height: 30px; font-weight: 700; font-stretch: 85%; margin: 0; text-wrap: balance; }
+.t-seccion { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.t-detalle { font-size: 13px; line-height: 18px; font-weight: 500; }
+.t-boton { font-size: 15px; line-height: 20px; font-weight: 650; }
+.cifra { font-weight: 800; font-stretch: 62%; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.c-metrica { font-size: 32px; line-height: 32px; }
+.c-heroe { font-size: 56px; line-height: 52px; }
+.sec { color: var(--texto-2); }
+.acento { color: var(--texto-acento); }
+p { margin: 0; }
+
+/* ---------- teléfono ---------- */
+.telefono { width: 376px; padding: var(--e2); border-radius: var(--r-tarjeta); background: var(--borde); flex: none; }
+.pantalla { height: 780px; border-radius: var(--r-control); overflow: hidden; background: var(--fondo); display: flex; flex-direction: column; position: relative; }
+.estado { height: 28px; padding-top: var(--e1); flex: none; display: flex; align-items: center; justify-content: space-between; padding-inline: var(--e5); font-size: 13px; font-weight: 600; }
+.cuerpo { flex: 1; min-height: 0; overflow: hidden; padding: 0 var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e3); }
+.cuerpo > * { flex-shrink: 0; }
+.barra { height: var(--barra); flex: none; background: var(--superficie); border-top: var(--t-borde) solid var(--borde); display: grid; grid-template-columns: repeat(5, 1fr); }
+.pestana { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--texto-2); font-size: 13px; line-height: 16px; font-weight: 500; text-decoration: none; }
+.pestana .ovalo { width: 56px; height: 28px; border-radius: var(--r-pildora); display: grid; place-items: center; transition: background var(--rapido) var(--estandar); }
+.pestana:active .ovalo { background: var(--capa-pressed); }
+.pestana[aria-current="page"] { color: var(--texto-acento); font-weight: 650; }
+
+/* piezas comunes */
+.tarjeta { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e2); }
+.tarjeta.destacada { background: var(--suave); }
+.btn { min-height: var(--tactil); border-radius: var(--r-control); padding-inline: var(--e4); display: inline-flex; align-items: center; justify-content: center; gap: var(--e2); font-size: 15px; line-height: 20px; font-weight: 650; text-align: center; transition: background var(--rapido) var(--estandar), transform var(--rapido) var(--estandar), color var(--rapido) var(--estandar); }
+.btn.primario { background: var(--accion); color: var(--texto-accion); }
+.btn.primario:active { background: var(--accion-alta); transform: scale(0.97); }
+.btn.secundario { border: var(--t-borde) solid var(--texto-2); color: var(--texto); }
+.btn.secundario:active { background: var(--capa-pressed); }
+.btn.texto { color: var(--texto-acento); padding-inline: var(--e3); }
+.btn.texto:active { background: var(--capa-pressed); color: var(--accion-alta); }
+@media (hover: hover) and (pointer: fine) {
+  .btn.primario:hover { background: var(--accion-alta); }
+  .btn.secundario:hover { background: var(--capa-hover); }
+  .btn.texto:hover { background: var(--capa-hover); color: var(--accion-alta); }
+}
+.ancho { width: 100%; }
+.par { display: grid; grid-template-columns: 1fr 1fr; gap: var(--e3); }
+.lista { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; overflow: hidden; }
+.lista > * + * { border-top: var(--t-borde) solid var(--borde); }
+.fila { min-height: var(--tactil); padding: var(--e2) var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); width: 100%; }
+.fila .txt { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+button.fila:active { background: var(--capa-pressed); }
+.cabeza { display: flex; align-items: center; justify-content: space-between; gap: var(--e2); }
+.atras { width: 48px; height: 48px; display: grid; place-items: center; margin-left: -12px; border-radius: var(--r-pildora); }
+.atras:active, .icono-btn:active { background: var(--capa-pressed); }
+.icono-btn { width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--r-pildora); flex: none; }
+.carga { font-size: 20px; line-height: 24px; }
+.segmento { display: flex; background: var(--elevado); border-radius: var(--r-control); padding: var(--e1); gap: var(--e1); }
+.segmento button { min-height: 40px; padding-inline: var(--e3); border-radius: var(--r-casilla); color: var(--texto-2); flex: 1; text-align: center; position: relative; }
+/* el área táctil del segmento llega a 48 px con el relleno del contenedor */
+.segmento button::after { content: ""; position: absolute; inset: calc(-1 * var(--e1)) 0; }
+.segmento button[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.pildora { display: inline-flex; align-items: center; gap: var(--e1); min-height: 24px; padding-inline: var(--e2); border-radius: var(--r-pildora); background: var(--elevado); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.nota { display: flex; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.sinc { display: inline-flex; align-items: center; gap: var(--e1); color: var(--texto-2); }
+.error-linea { display: flex; align-items: center; gap: var(--e2); color: var(--error); font-size: 13px; line-height: 18px; font-weight: 500; }
+
+/* pestañas internas de Gym (móvil) */
+.sub-tabs { display: flex; overflow-x: auto; margin-inline: calc(-1 * var(--e4)); padding-inline: var(--e2); border-bottom: var(--t-borde) solid var(--borde); scrollbar-width: none; flex: none; }
+.sub-tab { text-decoration: none; display: inline-flex; align-items: center; min-height: var(--tactil); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; line-height: 20px; font-weight: 500; white-space: nowrap; border-bottom: var(--t-sel) solid transparent; flex: none; }
+.sub-tab:active { background: var(--capa-pressed); }
+.sub-tab[aria-current="page"] { color: var(--texto-acento); font-weight: 650; border-bottom-color: var(--accion); }
+
+/* semana (móvil) */
+.semana-lista > * { min-height: var(--tactil-gym); }
+.fila-dia { display: flex; align-items: center; gap: var(--e3); padding: var(--e1) var(--e4) var(--e1) var(--e3); width: 100%; text-align: left; }
+.fila-dia:active { background: var(--capa-pressed); }
+.fila-dia .dnum { width: 40px; display: flex; flex-direction: column; align-items: center; flex: none; }
+.fila-dia .dnum .n { width: 32px; height: 32px; border-radius: var(--r-pildora); display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.fila-dia.hoy .dnum .n, .fila-dia.hoy .dnum .t-detalle { color: var(--texto-acento); font-weight: 650; }
+.fila-dia[aria-pressed="true"] .dnum .n { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.fila-dia .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.fila-dia .txt .t-detalle { color: var(--texto-2); }
+.fila-dia .fin { display: flex; align-items: center; gap: var(--e2); color: var(--texto-2); }
+
+/* detalle de día */
+.dia-cab { display: flex; flex-direction: column; gap: var(--e1); }
+.dia-cab .volver { display: flex; align-items: center; gap: var(--e1); }
+.estado-dia { display: inline-flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.cifras { display: flex; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e1); }
+.cifras > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--e1); padding-inline: var(--e4); }
+.cifras .cifra { white-space: nowrap; }
+.cifras > div + div { border-left: var(--t-borde) solid var(--borde); }
+.cifras .cifra { font-size: 32px; line-height: 32px; }
+.cifras .unidad-c { font-size: 15px; font-weight: 650; font-stretch: 85%; color: var(--texto-2); }
+.record { flex-direction: row; align-items: center; gap: var(--e3); }
+.record .i { color: var(--texto-acento); }
+.record .txt { display: flex; flex-direction: column; }
+.vacio { display: flex; flex-direction: column; align-items: flex-start; gap: var(--e2); padding-block: var(--e5); color: var(--texto); }
+.vacio > .i { color: var(--texto-2); }
+.acciones { display: flex; flex-direction: column; gap: var(--e2); margin-top: auto; }
+.empuje { margin-top: auto; }
+
+/* asignar pesos */
+.peso-fila { min-height: 64px; padding: var(--e2) var(--e2) var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e2); }
+.peso-fila .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.peso-fila .txt .t-detalle { color: var(--texto-2); }
+.stepper { display: flex; align-items: center; gap: var(--e1); flex: none; }
+.stepper button { width: var(--tactil); height: var(--tactil); border-radius: var(--r-control); background: var(--elevado); display: grid; place-items: center; transition: background var(--rapido) var(--estandar); }
+.stepper button:active { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); }
+.stepper .valor { min-width: var(--barra); text-align: center; display: flex; flex-direction: column; align-items: center; line-height: 1; }
+.stepper .valor .cifra { font-size: 25px; line-height: 24px; }
+.stepper .valor .t-detalle { color: var(--texto-2); }
+.sube { color: var(--texto-acento); }
+
+/* hoja inferior y aviso */
+.velo { position: absolute; inset: 0; background: var(--velo); display: flex; flex-direction: column; justify-content: flex-end; z-index: 2; }
+.hoja { background: var(--hoja); border-top-left-radius: var(--r-tarjeta); border-top-right-radius: var(--r-tarjeta); padding: var(--e5) var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e4); }
+.hoja .mes .celda[aria-disabled="true"] { cursor: default; }
+.opcion-hoy { min-height: var(--tactil-gym); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); border-radius: var(--r-control); background: var(--elevado); border: var(--t-sel) solid transparent; width: 100%; text-align: left; }
+.opcion-hoy[aria-pressed="true"] { border-color: var(--accion); }
+.opcion-hoy .txt { flex: 1; display: flex; flex-direction: column; }
+.aviso { position: absolute; left: var(--e4); right: var(--e4); bottom: calc(var(--barra) + var(--e2)); background: var(--texto); color: var(--fondo); border-radius: var(--r-control); padding: var(--e1) var(--e1) var(--e1) var(--e4); min-height: var(--tactil-gym); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); z-index: 3; }
+.aviso .btn.texto { color: var(--aviso-accion); }
+.aviso .btn.texto:active { background: color-mix(in srgb, var(--fondo) 10%, transparent); }
+
+/* esqueleto */
+.esq { background: var(--elevado); border-radius: var(--r-casilla); }
+.esq.bloque { height: var(--e7); }
+@media (prefers-reduced-motion: no-preference) { .esq.pulso { animation: pulso 1600ms var(--estandar) infinite; } }
+@keyframes pulso { 50% { opacity: 0.5; } }
+
+/* título del calendario con número de semana */
+.cal-titulo { flex: 1; display: flex; flex-direction: column; align-items: center; }
+
+/* ---------- lámina ---------- */
+body { padding-block: var(--e6) var(--e7); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.lamina { max-width: 1560px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--e7); }
+.cabecera { display: flex; flex-wrap: wrap; gap: var(--e5); justify-content: space-between; align-items: end; }
+.cabecera h1 { font-size: 32px; line-height: 32px; font-weight: 800; font-stretch: 75%; margin: 0 0 var(--e2); text-wrap: balance; }
+.cabecera p { margin: 0; max-width: 62ch; color: var(--texto-2); }
+.controles { display: flex; flex-wrap: wrap; gap: var(--e4); }
+.control { display: flex; flex-direction: column; gap: var(--e1); }
+.controles .segmento button { flex: none; }
+.puntos { display: flex; gap: var(--e2); align-items: center; min-height: 48px; }
+.punto { width: 32px; height: 32px; border-radius: var(--r-pildora); background: var(--c); }
+.punto[aria-pressed="true"] { outline: var(--t-sel) solid var(--texto); outline-offset: 2px; }
+.indice { display: flex; flex-wrap: wrap; gap: var(--e2); }
+.indice a { color: var(--texto-acento); font-weight: 650; font-size: 15px; min-height: 48px; display: inline-flex; align-items: center; padding-inline: var(--e3); border-radius: var(--r-control); text-decoration: none; }
+.indice a:active { background: var(--capa-pressed); }
+@media (hover: hover) and (pointer: fine) { .indice a:hover { background: var(--capa-hover); } }
+
+.pagina { display: flex; flex-direction: column; gap: var(--e5); scroll-margin-top: var(--e5); }
+.pagina > header { display: flex; flex-direction: column; gap: var(--e2); border-top: var(--t-borde) solid var(--borde); padding-top: var(--e5); }
+.pagina h2 { font-size: 25px; line-height: 30px; font-weight: 800; font-stretch: 75%; margin: 0; }
+.pagina h3.sub { font-size: 20px; line-height: 26px; font-weight: 650; margin: var(--e3) 0 0; }
+.cambios { margin: 0; padding-left: 1.2em; color: var(--texto-2); max-width: 86ch; display: grid; gap: var(--e1); }
+.cambios strong { color: var(--texto); font-weight: 650; }
+.fila-telefonos { display: flex; flex-wrap: wrap; gap: var(--e6) var(--e4); }
+figure { margin: 0; display: flex; flex-direction: column; gap: var(--e3); width: 376px; }
+figcaption { display: flex; flex-direction: column; gap: 2px; font-size: 13px; line-height: 18px; color: var(--texto-2); max-width: 360px; }
+figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
+@media (max-width: 420px) { figure { zoom: 0.88; } }
+
+/* diagrama */
+.diagrama-envoltura { overflow-x: auto; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); }
+.diagrama { display: block; min-width: 1240px; width: 100%; height: auto; font-family: var(--familia); }
+.diagrama .nodo rect { fill: var(--elevado); stroke: var(--borde); stroke-width: 1; }
+.diagrama .nodo.inicio rect { fill: var(--suave); stroke: var(--accion); stroke-width: 2; }
+.diagrama .nodo.aviso rect { fill: var(--texto); stroke: none; }
+.diagrama .nodo.aviso .t1, .diagrama .nodo.aviso .t2 { fill: var(--fondo); }
+.diagrama .nodo.salud rect { fill: var(--superficie); stroke: var(--texto-2); stroke-dasharray: 4 4; }
+.diagrama .t1 { fill: var(--texto); font-size: 15px; font-weight: 650; }
+.diagrama .t2 { fill: var(--texto-2); font-size: 13px; font-weight: 500; }
+.diagrama .rama { fill: var(--texto-2); font-size: 13px; font-weight: 500; }
+.diagrama .flecha { fill: none; stroke: var(--texto-2); stroke-width: 1.75; }
+.diagrama .punta { fill: var(--texto-2); }
+.diagrama .paso circle { fill: var(--texto); }
+.diagrama .paso text { fill: var(--fondo); font-size: 13px; font-weight: 650; }
+.diagrama .estados rect { fill: var(--fondo); stroke: var(--borde); }
+.diagrama .estados .t1 { font-size: 15px; }
+.diagrama .fuerte { fill: var(--texto); font-weight: 650; }
+
+/* guía */
+.guia { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--e6) var(--e5); }
+.paso-guia { display: flex; flex-direction: column; gap: var(--e3); }
+.paso-guia .mini { zoom: 0.64; align-self: flex-start; }
+.paso-guia h3 { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.paso-guia ol { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--e2); }
+.paso-guia li { display: grid; grid-template-columns: 24px 1fr; gap: var(--e2); font-size: 15px; line-height: 20px; }
+.paso-guia li .num-a { width: 24px; height: 24px; border-radius: var(--r-pildora); background: var(--texto); color: var(--fondo); display: grid; place-items: center; font-size: 13px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.paso-guia .etapa { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.con-anota { position: relative; }
+.mini .lista { overflow: visible; }
+.anota { position: absolute; top: -10px; right: -6px; width: 28px; height: 28px; border-radius: var(--r-pildora); background: var(--texto); color: var(--fondo); border: var(--t-sel) solid var(--fondo); display: grid; place-items: center; font-size: 15px; line-height: 20px; font-weight: 650; font-variant-numeric: tabular-nums; z-index: 4; pointer-events: none; }
+.pestana .anota { top: 2px; right: 4px; }
+.sub-tab .anota { top: 2px; right: -4px; }
+
+
+
+/* series de datos de los macros (Three Series Rule: A5, A3, gris en claro; A1, A3, gris en oscuro) */
+:root { --dato-2: var(--a3); --dato-3: var(--dato-gris); }
+
+/* lámina */
+.cambios, .casos { max-width: 60ch; }
+.casos { display: grid; gap: var(--e2); color: var(--texto-2); margin: 0; padding-left: 1.2em; }
+.casos b { color: var(--texto); font-weight: 650; }
+.diagrama .nodo.pregunta rect { fill: var(--superficie); stroke: var(--texto-2); stroke-dasharray: 4 4; }
+.diagrama .titulo-alt { fill: var(--texto); font-size: 15px; font-weight: 650; }
+.diagrama .nodo.prog rect { fill: var(--fondo); stroke: var(--accion); stroke-width: 2; }
+.anota.izq { right: auto; left: -6px; }
+.anota.abajo { top: auto; bottom: -10px; }
+.anota.dentro { right: 4px; }
+
+/* aviso superpuesto al pie (Never Cover Rule): flota sobre la lista sin moverla ni reservar alto,
+   justo encima de las acciones fijas (el +, las pestañas, la barra del plato, el botón principal), sin taparlas */
+.ranura-aviso { position: absolute; left: var(--e4); right: var(--e4); bottom: calc(var(--barra) + var(--e3)); z-index: 3; display: flex; }
+.ranura-aviso:empty { display: none; }
+.ranura-aviso.sobre-fab { bottom: calc(var(--barra) + var(--e4) + var(--tactil-gym) + var(--e3)); }
+.ranura-aviso.sobre-acciones { bottom: calc(var(--tactil) + var(--e4) + var(--e3)); }
+.ranura-aviso .aviso { position: relative; left: auto; right: auto; bottom: auto; flex: 1; }
+.aviso .txt-av { flex: 1; font-size: 15px; line-height: 20px; }
+.unidad-c { font-size: 15px; line-height: 20px; font-weight: 650; font-stretch: 85%; color: var(--texto-2); }
+
+/* campos tipados y chips (flujo 10) */
+.campo { display: flex; flex-direction: column; gap: var(--e1); }
+.campo > .lbl { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.entrada { min-height: var(--tactil); background: var(--elevado); border-radius: var(--r-control); padding-inline: var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e2); position: relative; }
+.entrada .u { color: var(--texto-2); font-size: 15px; line-height: 20px; }
+.entrada.foco { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.entrada.error { outline: var(--t-sel) solid var(--error); outline-offset: calc(-1 * var(--t-sel)); }
+.entrada.vacia > span:first-child { color: var(--texto-2); }
+.chips { display: flex; flex-wrap: wrap; gap: var(--e3) var(--e2); }
+.chip { min-height: 36px; padding-inline: var(--e3); border-radius: var(--r-pildora); background: var(--elevado); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; display: inline-flex; align-items: center; position: relative; white-space: nowrap; transition: background var(--rapido) var(--estandar); }
+.chip::after { content: ""; position: absolute; inset: calc(-1 * var(--e2) + 2px) 0; }
+.chip:active { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); color: var(--texto); }
+.chip[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.chip .anota { top: -14px; right: -10px; }
+.entrada .anota { right: -10px; }
+
+/* ---------- Comida (flujo 3, D-37) ---------- */
+.desliza { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: var(--e3); overflow-x: visible; overflow-y: clip; padding-top: var(--e1); }
+.desliza > * { flex-shrink: 0; }
+.dia-nav { display: flex; align-items: center; gap: var(--e1); margin-inline: -12px; }
+.dia-nav .txt { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.dia-nav .t-seccion { font-size: 20px; }
+
+/* resumen del día: Total, Objetivo y Restan */
+.resumen { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e4) var(--e4); display: grid; grid-template-columns: minmax(0, 1fr) repeat(3, 70px); column-gap: var(--e2); align-items: baseline; position: relative; }
+.resumen .cab { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; text-align: right; padding-bottom: var(--e1); }
+.resumen .nom { font-size: 15px; line-height: 20px; min-width: 0; }
+.resumen .nom .u, .resumen .grupo-n .u { color: var(--texto-2); font-size: 13px; }
+.resumen .v { text-align: right; white-space: nowrap; display: flex; flex-direction: column; align-items: flex-end; position: relative; }
+.resumen .v .cifra { font-size: 20px; line-height: 24px; }
+.resumen .v .hasta { color: var(--texto-2); font-size: 13px; line-height: 14px; font-weight: 500; }
+.resumen .kcal .cifra { font-size: 25px; line-height: 26px; }
+.resumen .neg { display: inline-flex; align-items: center; gap: 2px; }
+.resumen .neg .i { color: var(--texto-2); }
+.resumen .ok { display: inline-flex; align-items: center; gap: 2px; font-size: 13px; line-height: 24px; font-weight: 650; }
+.resumen .ok .i { color: var(--texto-acento); }
+.resumen .linea { grid-column: 1 / -1; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; margin-top: calc(-1 * var(--e1)); padding-bottom: var(--e2); display: flex; align-items: center; gap: var(--e1); position: relative; }
+.resumen .linea.tope { color: var(--texto); }
+.resumen .linea.tope .i { color: var(--texto-2); }
+.resumen .grupo-n { grid-column: 1 / -1; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 650; padding-top: var(--e3); padding-bottom: var(--e1); border-top: var(--t-borde) solid var(--borde); margin-top: var(--e1); }
+.resumen .grupo-n:first-of-type { border-top: 0; margin-top: 0; padding-top: 0; }
+.resumen .pie-r { grid-column: 1 / -1; display: flex; justify-content: flex-start; margin: var(--e1) 0 calc(-1 * var(--e2)) calc(-1 * var(--e3)); }
+
+/* barra de progreso con tramo programado en contorno y marca de límite */
+.pista-n { grid-column: 1 / -1; position: relative; margin: var(--e1) 0 var(--e3); }
+.pista-n .p { height: var(--e1); border-radius: var(--r-pildora); background: var(--elevado); display: flex; overflow: hidden; }
+.pista-n .p i { display: block; height: 100%; flex: none; width: calc(var(--v) * 1%); background: var(--m, var(--accion)); }
+/* contorno = programado: el tramo pendiente es solo trazo */
+.pista-n .p i.prog { background: transparent; outline: var(--t-borde) solid var(--m, var(--accion)); outline-offset: calc(-1 * var(--t-borde)); border-radius: 0 var(--r-pildora) var(--r-pildora) 0; }
+.pista-n .lim { position: absolute; top: calc(-1 * var(--e1)); bottom: calc(-1 * var(--e1)); left: calc(var(--l) * 1%); width: var(--t-borde); background: var(--texto-2); }
+.pista-n .anota { top: -14px; }
+
+/* comidas del día */
+.comida { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; position: relative; }
+.comida > * + * { border-top: var(--t-borde) solid var(--borde); }
+/* contorno = programado: sin relleno, trazo neutro */
+.comida.programada { background: transparent; outline: var(--t-borde) solid var(--texto-2); outline-offset: calc(-1 * var(--t-borde)); }
+.comida-cab { padding: var(--e3) var(--e4); display: flex; align-items: flex-start; justify-content: space-between; gap: var(--e3); }
+.comida-cab .txt { display: flex; flex-direction: column; min-width: 0; }
+.comida-cab .t-seccion { display: flex; align-items: center; gap: var(--e2); }
+.comida-cab .t-detalle { color: var(--texto-2); display: inline-flex; align-items: center; gap: var(--e1); }
+.comida-cab .kc { text-align: right; white-space: nowrap; display: flex; flex-direction: column; align-items: flex-end; }
+.comida-cab .kc .cifra { font-size: 20px; line-height: 24px; }
+.comida-cab .kc .t-detalle { color: var(--texto-2); }
+.alimento { min-height: var(--tactil); padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); width: 100%; text-align: left; position: relative; }
+.alimento .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.alimento .txt .t-detalle { color: var(--texto-2); }
+.alimento .kc { white-space: nowrap; color: var(--texto); font-size: 15px; line-height: 20px; }
+.alimento.quitable { padding-right: var(--e1); }
+.alimento .icono-btn { margin-left: calc(-1 * var(--e2)); color: var(--texto-2); }
+button.alimento:active { background: var(--capa-pressed); }
+.comida-pie { padding: var(--e1) var(--e1); display: flex; }
+.comida-pie .btn.texto { gap: var(--e1); }
+.comida.vacia-c .comida-cab { padding-bottom: var(--e1); }
+.comida.vacia-c .comida-cab + .comida-pie { border-top: 0; }
+.estado-c { display: inline-flex; align-items: center; gap: var(--e1); }
+.m { width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); flex: none; }
+.m.prog { border: var(--t-sel) solid var(--accion); }
+.acciones-dia { display: grid; grid-template-columns: auto 1fr; gap: var(--e2); flex: none; }
+.ranura-aviso + .acciones-dia { margin-top: var(--e1); }
+.ver-todo { align-self: flex-start; margin-left: calc(-1 * var(--e3)); }
+
+/* botón flotante de Comida (móvil): un + que abre un menú con «Agregar a la comida de la hora» y «Crear alimento».
+   Plano como todo el sistema: relleno de acción y un anillo del color de fondo que lo separa del contenido, sin sombra. */
+.fab { position: absolute; right: var(--e4); bottom: calc(var(--barra) + var(--e4) + env(safe-area-inset-bottom, 0px)); width: var(--tactil-gym); height: var(--tactil-gym); border-radius: var(--r-pildora); background: var(--accion); color: var(--texto-accion); border: var(--t-sel) solid var(--fondo); display: grid; place-items: center; z-index: 4; transition: background var(--rapido) var(--estandar), transform var(--rapido) var(--estandar); }
+.fab:active { background: var(--accion-alta); transform: scale(0.97); }
+.fab .i { transition: transform var(--normal) var(--estandar); }
+.fab[aria-expanded="true"] .i { transform: rotate(45deg); }
+.velo-fab { position: absolute; inset: 0; background: var(--velo); z-index: 3; }
+.menu-fab { position: absolute; right: var(--e4); bottom: calc(var(--barra) + var(--e4) + var(--tactil-gym) + var(--e2) + env(safe-area-inset-bottom, 0px)); z-index: 4; min-width: 240px; background: var(--hoja); border-radius: var(--r-tarjeta); padding: var(--e2); display: flex; flex-direction: column; gap: var(--e1); }
+.menu-fab button { min-height: var(--tactil); padding-inline: var(--e3) var(--e4); border-radius: var(--r-control); display: flex; align-items: center; gap: var(--e3); font-size: 15px; line-height: 20px; font-weight: 650; text-align: left; }
+.menu-fab button .i { color: var(--texto-acento-elevado); }
+.menu-fab button:active { background: var(--capa-pressed); }
+@media (hover: hover) and (pointer: fine) { .fab:hover { background: var(--accion-alta); } .menu-fab button:hover { background: var(--capa-hover); } }
+@media (prefers-reduced-motion: reduce) { .fab, .fab .i { transition: none; } }
+/* lo último de la lista puede subir por encima del + */
+.desliza.con-fab { padding-bottom: calc(var(--tactil-gym) + var(--e3)); }
+
+
+/* buscar y armar el plato */
+.busca-cab { display: flex; align-items: center; gap: var(--e1); margin-inline: -12px calc(-1 * var(--e2)); min-height: var(--tactil); }
+.busca-cab .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.comida-btn { display: inline-flex; align-items: center; gap: var(--e1); font-size: 20px; line-height: 26px; font-weight: 650; min-height: 40px; border-radius: var(--r-control); align-self: flex-start; position: relative; }
+.comida-btn:active, .hora-btn:active { background: var(--capa-pressed); }
+.hora-btn { min-height: var(--tactil); padding-inline: var(--e3); border-radius: var(--r-control); color: var(--texto-acento); font-size: 15px; line-height: 20px; font-weight: 650; display: inline-flex; align-items: center; gap: var(--e1); position: relative; white-space: nowrap; }
+.entrada.buscar { padding-left: var(--e3); justify-content: flex-start; }
+.entrada.buscar > span { flex: 1; }
+.entrada.buscar .i { color: var(--texto-2); }
+.entrada.buscar .borrar { width: 40px; height: 40px; margin-right: calc(-1 * var(--e2)); display: grid; place-items: center; border-radius: var(--r-control); color: var(--texto-2); }
+.fila-crear { display: flex; gap: var(--e2); }
+.fila-crear .btn { flex: 1; }
+.grupo-tit { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 650; display: flex; align-items: center; justify-content: space-between; gap: var(--e2); margin-bottom: calc(-1 * var(--e1)); }
+.resultados { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; }
+.resultados > * + * { border-top: var(--t-borde) solid var(--borde); }
+.resultado { min-height: 56px; padding: var(--e1) var(--e1) var(--e1) var(--e4); display: flex; align-items: center; gap: var(--e2); position: relative; }
+.resultado .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.resultado .txt .t-detalle { color: var(--texto-2); }
+.resultado .txt .pildora { align-self: flex-start; margin-top: var(--e1); }
+.resultado .icono-btn { color: var(--texto-acento); }
+.resultado .icono-btn.hecho { color: var(--texto-acento); }
+.resultado .icono-btn.neutro { color: var(--texto-2); }
+mark { background: none; color: inherit; font-weight: 650; }
+.sinc-linea { display: flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; position: relative; }
+/* barra fija del plato: total de la comida y Listo */
+.barra-plato { flex: none; background: var(--superficie); border-top: var(--t-borde) solid var(--borde); padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); min-height: 72px; position: relative; }
+.barra-plato .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.barra-plato .txt .t-detalle { color: var(--texto-2); }
+.barra-plato .tot { display: flex; align-items: baseline; gap: var(--e1); }
+.barra-plato .tot .cifra { font-size: 25px; line-height: 26px; }
+.barra-plato .btn { min-width: 96px; }
+
+/* hoja de cantidad */
+.hoja .cab-hoja { display: flex; flex-direction: column; gap: 2px; }
+.hoja .cab-hoja .t-detalle { color: var(--texto-2); }
+.agarre { width: 32px; height: var(--e1); border-radius: var(--r-pildora); background: var(--borde); align-self: center; margin: calc(-1 * var(--e3)) 0 calc(-1 * var(--e1)); }
+.cant { display: flex; gap: var(--e2); align-items: center; }
+.cant .entrada { flex: 1; }
+.cant .entrada .cifra { font-size: 25px; line-height: 26px; }
+.fracciones { display: flex; gap: var(--e1); }
+.fracciones .chip { min-height: var(--tactil); min-width: var(--tactil); justify-content: center; font-size: 15px; }
+.fracciones .chip::after { display: none; }
+.vivo { display: flex; background: var(--elevado); border-radius: var(--r-control); padding: var(--e3) 0; position: relative; }
+.vivo > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: 2px; padding-inline: var(--e3); }
+.vivo > div + div { border-left: var(--t-borde) solid var(--borde); }
+.vivo .cifra { font-size: 25px; line-height: 26px; white-space: nowrap; }
+.vivo .t-detalle { color: var(--texto-2); }
+.botones-hoja { display: grid; grid-template-columns: auto 1fr; gap: var(--e2); }
+
+/* formulario de alimento nuevo */
+.form-scroll { gap: var(--e4); }
+.leer { display: flex; gap: var(--e2); }
+.leer .btn.secundario { flex: 1; }
+.leer .icono-btn[aria-disabled="true"] { opacity: 0.4; cursor: default; background: var(--elevado); border-radius: var(--r-control); }
+.leido { display: flex; align-items: center; gap: var(--e2); font-size: 13px; line-height: 18px; font-weight: 500; color: var(--texto); }
+.leido .i { color: var(--texto-acento); }
+.sub-form { font-size: 15px; line-height: 20px; font-weight: 650; display: flex; justify-content: space-between; align-items: baseline; gap: var(--e2); }
+.sub-form .t-detalle { color: var(--texto-2); font-weight: 500; }
+.opcionales { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; }
+.opcionales > div { min-height: 44px; padding: var(--e2) var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); }
+.opcionales > div + div { border-top: var(--t-borde) solid var(--borde); }
+.opcionales .sin { color: var(--texto-2); font-size: 15px; }
+.campo .error-linea { margin-top: 2px; }
+.acciones-form { display: flex; flex-direction: column; gap: var(--e2); flex: none; }
+
+/* suplementos */
+.supl .alimento .txt .t-detalle { display: inline-flex; align-items: center; gap: var(--e1); }
+.supl .alimento .m { margin-right: calc(-1 * var(--e1)); }
+
+@media (hover: hover) and (pointer: fine) {
+  button.alimento:hover, .comida-btn:hover, .hora-btn:hover, .chip:not([aria-pressed="true"]):hover { background: var(--capa-hover); }
+}
+
+/* ajustes de anotaciones y columnas del resumen */
+.resumen { padding: var(--e3) var(--e3) var(--e4); grid-template-columns: minmax(0, 1fr) 48px 58px 76px; column-gap: var(--e1); }
+.resumen .v .anota { top: -14px; right: -14px; }
+.resumen .v.res .anota { right: auto; left: -6px; }
+.resumen .cab .anota { top: -22px; right: 6px; }
+.resumen .linea .anota { position: static; margin-left: var(--e1); }
+.pista-n .anota { right: auto; left: 55%; top: -12px; }
+.dia-nav .txt .anota { right: auto; left: 8%; }
+.supl .alimento { padding-block: var(--e1); }
+.form-scroll.compacto { gap: var(--e3); }
+.resumen .v.res .anota { top: -16px; right: -8px; left: auto; }
+.resumen .v:not(.res) .anota { top: -6px; right: -28px; }
+.supl .comida-cab { padding-block: var(--e2); }
+.supl .comida-pie { padding-block: 0; }
+.desliza.arriba { padding-top: 0; }
+.resumen .v.res .anota { top: -22px; }
+.dia-nav .txt .anota { top: -16px; left: 4%; }
+
+/* ---------- web ---------- */
+.web-envoltura { overflow-x: auto; border-radius: var(--r-tarjeta); }
+.navegador { min-width: 1180px; background: var(--borde); border-radius: var(--r-tarjeta); padding: var(--e1); }
+.navegador .barra-nav { height: 32px; display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e4); }
+.navegador .url { background: var(--fondo); border-radius: var(--r-pildora); padding: 2px var(--e4); font-size: 13px; color: var(--texto-2); }
+.app-web { display: grid; grid-template-columns: 248px 1fr; background: var(--fondo); border-radius: 0 0 var(--r-tarjeta) var(--r-tarjeta); min-height: 820px; }
+.lateral { background: var(--superficie); border-right: var(--t-borde) solid var(--borde); padding: var(--e4) var(--e3); display: flex; flex-direction: column; gap: var(--e1); border-radius: 0 0 0 var(--r-tarjeta); }
+.marca { display: flex; align-items: center; gap: var(--e3); padding: var(--e2) var(--e2) var(--e4); font-weight: 650; font-size: 15px; }
+.logo { width: 32px; height: 32px; border-radius: var(--r-control); background: var(--elevado); color: var(--texto); display: grid; place-items: center; }
+.item { min-height: 44px; border-radius: var(--r-control); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; }
+.item.abierto { color: var(--texto); font-weight: 650; }
+.subitem { min-height: 36px; display: flex; align-items: center; padding-left: 44px; border-radius: var(--r-control); color: var(--texto-2); font-size: 15px; }
+/* texto de acento sobre elevado: A5 en claro, A2 en oscuro (tokens.json · textoAcentoSobreElevado) */
+.subitem[aria-current="page"] { background: var(--elevado); color: var(--texto-acento-elevado); font-weight: 650; }
+.lateral .pie { margin-top: auto; border-top: var(--t-borde) solid var(--borde); padding-top: var(--e3); display: flex; flex-direction: column; gap: var(--e1); }
+.lateral .pie .sinc { padding: var(--e2) var(--e3); }
+.principal { padding: var(--e6); display: flex; flex-direction: column; gap: var(--e5); position: relative; }
+.rejilla { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--e4); align-items: start; }
+.span-12 { grid-column: span 12; } .span-8 { grid-column: span 8; } .span-4 { grid-column: span 4; }
+.tarjeta.web { padding: var(--e5); gap: var(--e4); }
+.web-cab { display: flex; justify-content: space-between; align-items: end; gap: var(--e4); }
+.web-ctl { display: flex; align-items: center; gap: var(--e3); }
+.web-ctl .segmento button { flex: none; min-width: 72px; }
+.cal-nav.web { margin-left: 0; gap: var(--e1); }
+.cal-nav.web .t-seccion { min-width: 180px; text-align: center; }
+
+.cifras-plano { display: flex; }
+.cifras-plano > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--e1); padding-inline: var(--e4); }
+.cifras-plano > div:first-child { padding-left: 0; }
+.cifras-plano > div + div { border-left: var(--t-borde) solid var(--borde); }
+.cifras-plano .cifra { font-size: 32px; line-height: 32px; white-space: nowrap; }
+.record-linea { display: flex; align-items: center; gap: var(--e2); color: var(--texto); }
+.record-linea .i { color: var(--texto-acento); }
+.wfilas > div, .wpesos > * { border-top: var(--t-borde) solid var(--borde); }
+.wfila { min-height: var(--tactil); padding-block: var(--e2); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); }
+.wpesos .peso-fila { padding-left: 0; padding-right: 0; }
+.wpesos .fila { padding-inline: 0; }
+.semana-pie { display: flex; align-items: center; justify-content: space-between; gap: var(--e4); }
+.icono-btn.acento { color: var(--texto-acento); }
+.opcion-rutina .pildora { align-self: flex-start; margin-top: var(--e1); }
+
+
+.radio { width: 24px; height: 24px; border-radius: var(--r-pildora); border: var(--t-sel) solid var(--texto-2); display: grid; place-items: center; flex: none; }
+.radio::after { content: ""; width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); background: transparent; }
+[aria-checked="true"] .radio { border-color: var(--accion); }
+[aria-checked="true"] .radio::after { background: var(--accion); }
+.opcion-rutina { min-height: 64px; padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); width: 100%; text-align: left; }
+.opcion-rutina:active { background: var(--capa-pressed); }
+.opcion-rutina .txt { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.opcion-rutina .txt .t-detalle { color: var(--texto-2); }
+
+/* hover de la lámina (sin rejilla de calendario) */
+@media (hover: hover) and (pointer: fine) { button.fila:hover, .sub-tab:hover, .icono-btn:hover, .atras:hover, .atajos button:hover, .casilla:hover, .carga-btn:hover, .opcion-rutina:hover { background: var(--capa-hover); } }
+.m { width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); flex: none; }
+.m.hecha { background: var(--accion); }
+.m.prog { border: var(--t-sel) solid var(--accion); }
+
+
+
+/* ---------- pieza 3: mockups (flujo 3) ---------- */
+.wvacio { display: flex; flex-direction: column; align-items: flex-start; gap: var(--e2); max-width: 520px; padding-block: var(--e6); }
+.wvacio > .i { color: var(--texto-2); }
+.wvacio p { color: var(--texto-2); max-width: 60ch; }
+.wvacio.falla > .i { color: var(--error); }
+.app-web.corta { min-height: 560px; }
+.esq.linea { height: var(--e4); }
+.esq.alto { height: calc(4 * var(--e7)); }
+.vacio p { max-width: 36ch; }
+.vacio .btn { margin-top: var(--e2); }
+
+/* indicador circular dentro de un botón (20 px), solo si tarda más de 300 ms */
+.indicador { width: 20px; height: 20px; border-radius: var(--r-pildora); border: var(--t-sel) solid var(--borde); border-top-color: var(--texto); flex: none; }
+@media (prefers-reduced-motion: no-preference) { .indicador { animation: giro 800ms linear infinite; } }
+@keyframes giro { to { transform: rotate(1turn); } }
+.btn[aria-busy="true"] { cursor: progress; }
+
+/* esqueleto en el teléfono */
+.esq-tarjeta { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e3); }
+.esq-fila { display: flex; justify-content: space-between; gap: var(--e4); }
+
+/* web: dos columnas de Comida */
+.span-7 { grid-column: span 7; } .span-5 { grid-column: span 5; } .span-6 { grid-column: span 6; }
+.col { display: flex; flex-direction: column; gap: var(--e3); min-width: 0; }
+.col.fija { position: sticky; top: var(--e6); }
+.w-dia { display: flex; align-items: center; gap: var(--e1); margin-left: -12px; }
+.w-dia .t-pantalla { min-width: 300px; text-align: center; }
+.web-ctl .btn { flex: none; }
+/* comida que recibe lo que agregas: borde de acción de 2 px (tarjeta elegida) */
+.comida.elegida { outline: var(--t-sel) solid var(--accion); outline-offset: calc(-1 * var(--t-sel)); }
+.comida.elegida .comida-cab .t-detalle .destino { color: var(--texto); font-weight: 650; }
+.aviso-web { display: flex; justify-content: flex-start; min-height: var(--tactil-gym); }
+.aviso-web .aviso { position: relative; left: auto; right: auto; bottom: auto; width: 100%; max-width: 420px; }
+
+/* web: panel lateral para buscar, elegir la cantidad y crear un alimento */
+.panel-w { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e4) 0; display: flex; flex-direction: column; gap: var(--e3); overflow: hidden; }
+.panel-w.sin-pie { padding-bottom: var(--e4); }
+.panel-w .busca-cab { margin-right: calc(-1 * var(--e2)); }
+.panel-w .resultados { background: transparent; border-radius: 0; margin-inline: calc(-1 * var(--e4)); border-top: var(--t-borde) solid var(--borde); }
+.panel-w .grupo-tit { margin-bottom: calc(-1 * var(--e2)); }
+.panel-w .barra-plato { margin-inline: calc(-1 * var(--e4)); }
+.panel-w .vivo { background: var(--elevado); }
+.panel-w .cab-hoja .t-detalle { color: var(--texto-2); }
+.panel-w .opcionales { background: transparent; border-radius: 0; margin-inline: calc(-1 * var(--e4)); border-top: var(--t-borde) solid var(--borde); }
+.panel-w .vacio { padding-block: var(--e4); }
+.panel-w .acciones-form { padding-bottom: var(--e4); }
+.panel-w .sinc-linea { min-height: 24px; }
+
+/* web: todos los nutrientes en dos columnas */
+.w-nutri .resumen { padding: var(--e4) var(--e5) var(--e5); grid-template-columns: minmax(0, 1fr) 72px 80px 96px; column-gap: var(--e2); }
+.w-nutri .resumen .grupo-n { font-size: 15px; line-height: 20px; }
+.w-faltan { display: flex; align-items: center; gap: var(--e3); }
+.w-faltan .btn.texto { gap: var(--e1); }
+
+/* nota del día sin conexión en el teléfono */
+.dia-sinc { justify-content: center; margin-top: calc(-1 * var(--e2)); }
+
+@media (hover: hover) and (pointer: fine) {
+  .item:hover, .subitem:not([aria-current="page"]):hover { background: var(--capa-hover); }
+}
+.panel-w .busca-cab.sin-atras { margin-left: 0; }
+
+
+/* ===== flujo 4 · crear receta o plan (D-38) ===== */
+/* calendario (mismas piezas que flujo-2-calendario.html) */
+.cal-nav { display: flex; align-items: center; gap: 0; margin-inline: -12px; }
+.cal-nav .cal-titulo .t-seccion { font-size: 20px; }
+.cal-vista { display: flex; align-items: center; gap: var(--e2); }
+.cal-vista .segmento { flex: 1; }
+.mes { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: var(--e2); text-align: center; }
+.mes .sem { font-size: 13px; line-height: 18px; font-weight: 500; color: var(--texto-2); padding-bottom: var(--e2); }
+.celda { min-height: var(--tactil); display: flex; flex-direction: column; align-items: center; gap: 0; border-radius: var(--r-control); text-align: center; position: relative; }
+.celda:active { background: var(--capa-pressed); }
+.celda .n { width: 32px; height: 32px; border-radius: var(--r-pildora); display: grid; place-items: center; font-size: 16px; line-height: 24px; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.celda.hoy .n { color: var(--texto-acento); font-weight: 650; }
+.celda.fuera .n { color: var(--texto-2); }
+.marcas { height: var(--e4); display: flex; align-items: center; justify-content: center; gap: var(--e2); }
+.leyenda { display: flex; flex-wrap: wrap; gap: var(--e2) var(--e4); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.leyenda > span { display: inline-flex; align-items: center; gap: var(--e2); }
+.semana-cab { display: flex; align-items: baseline; justify-content: space-between; gap: var(--e2); }
+.fila-dia .fin .cifra { font-size: 20px; line-height: 24px; color: var(--texto); }
+.semana-acciones { display: flex; flex-direction: column; gap: var(--e2); }
+
+/* casilla de aprobar (objetivo de 48 px) */
+.casilla-btn { width: var(--tactil); height: var(--tactil); display: grid; place-items: center; flex: none; margin: calc(-1 * var(--e3)) 0 calc(-1 * var(--e3)) calc(-1 * var(--e3)); border-radius: var(--r-control); }
+.casilla-btn:active { background: var(--capa-pressed); }
+.casilla { width: var(--e5); height: var(--e5); border-radius: var(--r-casilla); border: var(--t-sel) solid var(--texto-2); display: grid; place-items: center; color: var(--texto-accion); }
+.casilla .i { opacity: 0; }
+.casilla-btn[aria-checked="true"] .casilla { background: var(--accion); border-color: var(--accion); }
+.casilla-btn[aria-checked="true"] .casilla .i { opacity: 1; }
+.comida-cab.con-casilla { justify-content: flex-start; }
+.comida-cab.con-casilla .txt { flex: 1; }
+.comida.descartada .comida-cab .t-seccion, .comida.descartada .comida-cab .kc .cifra { color: var(--texto-2); }
+.buscando { padding: var(--e3) var(--e4); display: flex; flex-direction: column; gap: var(--e2); }
+.buscando .t-detalle { color: var(--texto-2); }
+
+/* revisión de propuesta */
+.tira { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; }
+.tira button { min-height: var(--tactil); border-radius: var(--r-control); display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; position: relative; }
+.tira button .n { font-size: 16px; line-height: 20px; font-variant-numeric: tabular-nums; color: var(--texto); }
+.tira button:active { background: var(--capa-pressed); }
+.tira button[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); }
+.tira button[aria-pressed="true"] .n { color: var(--texto-accion); font-weight: 650; }
+.cuenta-tipo { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.pie-fijo { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; background: var(--fondo); border-top: var(--t-borde) solid var(--borde); padding: var(--e3) var(--e4) var(--e3); display: flex; flex-direction: column-reverse; gap: var(--e2); }
+.desliza.con-pie { padding-bottom: calc(2 * var(--tactil) + var(--e6)); }
+.ranura-aviso.sobre-pie { bottom: calc(2 * var(--tactil) + var(--e6)); }
+.pantalla.apilada .cuerpo { padding-top: 0; }
+
+/* coach */
+.linea-coach { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e4); display: flex; flex-direction: column; gap: var(--e2); position: relative; }
+.linea-coach .cab-c { display: flex; align-items: center; gap: var(--e2); color: var(--texto-acento); font-size: 13px; line-height: 18px; font-weight: 650; }
+.linea-coach p { font-size: 15px; line-height: 20px; }
+.linea-coach .acciones-c { display: flex; flex-wrap: wrap; gap: var(--e2); margin-top: var(--e2); }
+@media (prefers-reduced-motion: no-preference) { .pensando .cab-c .i { animation: pulso 1600ms var(--estandar) infinite; } }
+.pasos-c { display: flex; flex-direction: column; gap: var(--e2); }
+.pasos-c span { display: flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.pasos-c span.ahora { color: var(--texto); }
+.chat { display: flex; flex-direction: column; gap: var(--e3); }
+.burbuja { align-self: flex-end; max-width: 85%; background: var(--elevado); border-radius: var(--r-tarjeta); padding: var(--e2) var(--e3); font-size: 15px; line-height: 20px; }
+.chat-pie { position: absolute; left: 0; right: 0; bottom: var(--barra); z-index: 1; background: var(--fondo); padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e2); }
+.chat-pie .entrada { flex: 1; }
+.desliza.con-chat { padding-bottom: calc(var(--tactil) + var(--e5)); }
+.ranura-aviso.sobre-chat { bottom: calc(var(--barra) + var(--tactil) + var(--e5)); }
+.rango { display: flex; flex-wrap: wrap; gap: var(--e2); align-items: center; }
+
+/* recetas */
+.ing { padding: var(--e2) var(--e4) var(--e3); display: flex; flex-direction: column; gap: var(--e2); position: relative; }
+.ing .linea-i { display: flex; align-items: center; gap: var(--e3); }
+.ing .linea-i .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ing .linea-i .txt .t-detalle { color: var(--texto-2); }
+.ing .linea-i .kc { white-space: nowrap; font-size: 15px; line-height: 20px; }
+.porciones-fila { display: flex; align-items: center; justify-content: space-between; gap: var(--e3); padding: var(--e2) var(--e4); position: relative; }
+.porciones-fila .txt { display: flex; flex-direction: column; }
+.porciones-fila .txt .t-detalle { color: var(--texto-2); }
+.etiqueta-alerta { display: inline-flex; align-items: center; }
+.dos-botones { display: grid; grid-template-columns: 1fr; gap: var(--e2); }
+.diagrama .carril rect { fill: var(--fondo); stroke: none; }
+.diagrama .carril .t2 { font-weight: 650; }
+[role="checkbox"][aria-checked="true"] .casilla { background: var(--accion); border-color: var(--accion); }
+[role="checkbox"][aria-checked="true"] .casilla .i { opacity: 1; }
+.cabeza .t-pantalla { padding-block: var(--e2); }
+.estrecho { max-width: calc(100% - var(--e6)); }
+/* ---------- pieza 3 · web ---------- */
+.mes.web { row-gap: var(--e2); }
+.mes.web .celda { min-height: 72px; justify-content: flex-start; padding-top: var(--e2); }
+.celda[aria-pressed="true"] .n { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.w-semana { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--e3); align-items: start; }
+.w-col { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; min-width: 0; }
+.w-col > * + * { border-top: var(--t-borde) solid var(--borde); }
+.w-col-cab { padding: var(--e3); display: flex; flex-direction: column; gap: var(--e2); }
+.w-col-cab .dia { display: flex; align-items: baseline; gap: var(--e2); }
+.w-col-cab .dia .n { font-size: 20px; line-height: 24px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.w-col-cab .t-detalle { color: var(--texto-2); }
+.w-col-cab .kcal-d .cifra { font-size: 25px; line-height: 26px; }
+.w-com { padding: var(--e2) var(--e3); display: flex; flex-direction: column; min-width: 0; position: relative; }
+.w-com .lin { display: flex; align-items: center; gap: var(--e2); min-width: 0; }
+.w-com .lin > span { min-width: 0; }
+.w-com .t-detalle { color: var(--texto-2); }
+.w-com.con-casilla { padding-left: var(--e1); }
+.w-com.con-casilla .t-detalle { padding-left: 40px; }
+.w-com .casilla-btn { margin: 0; width: 40px; height: 40px; }
+.w-com.descartada .lin > span { color: var(--texto-2); }
+.w-com .btn.texto { align-self: flex-start; min-height: 36px; padding-inline: var(--e2); margin-left: 32px; }
+.w-com.vacia .t-detalle { padding-left: 0; }
+.w-pie-rev { display: flex; justify-content: flex-end; align-items: center; gap: var(--e3); }
+.w-tit { display: flex; flex-direction: column; gap: var(--e2); }
+.w-linea { display: flex; align-items: center; gap: var(--e3); flex-wrap: wrap; }
+.panel-w .ing { padding-inline: 0; }
+.panel-w .porciones-fila { padding-inline: 0; }
+.wfilas .fila { padding-inline: 0; }
+.opcion-rutina.elegida { outline: var(--t-sel) solid var(--accion); outline-offset: calc(-1 * var(--t-sel)); border-radius: var(--r-control); }
+/* ---------- Ajustes › Comidas del día ---------- */
+.slot-fila { display: flex; align-items: center; padding-right: var(--e2); }
+.slot-txt { flex: 1; min-width: 0; min-height: 56px; padding: var(--e2) var(--e4); display: flex; flex-direction: column; justify-content: center; text-align: left; }
+.slot-txt:active { background: var(--capa-pressed); }
+.slot-fila.elegida { outline: var(--t-sel) solid var(--accion); outline-offset: calc(-1 * var(--t-sel)); }
+.hora-campos { display: grid; grid-template-columns: 1fr auto; gap: var(--e2); align-items: end; }
+.hora-campos .segmento { min-height: var(--tactil); }
+.hora-campos .segmento button { white-space: nowrap; }
+
+/* lámina y maquetas: sin palabras sueltas al final del párrafo */
+p, li, .txt-av, .linea-coach p { text-wrap: pretty; }
+.paso-guia h3, .t-pantalla, .t-seccion { text-wrap: balance; }
+/* ===== flujo 5 · registrar paseo MTB (CAR-01, CAR-02; D-27, D-39) ===== */
+/* cifras del paseo (mismas piezas del resumen del flujo 2) */
+.mtb-cifras { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--e3) 0; padding-top: var(--e2); border-top: var(--t-borde) solid var(--borde); }
+.mtb-cifras > div { display: flex; flex-direction: column; }
+.mtb-cifras .cifra { font-size: 25px; line-height: 30px; white-space: nowrap; }
+.zonas { display: flex; flex-direction: column; gap: var(--e2); }
+.zona { display: grid; grid-template-columns: calc(2 * var(--e7) + var(--e4)) 1fr var(--e7); align-items: center; gap: var(--e3); min-height: var(--e5); }
+.zona b { font-weight: 650; font-size: 15px; }
+.z-nom { display: flex; align-items: baseline; gap: var(--e2); }
+.z-val { display: flex; flex-direction: column; align-items: flex-end; line-height: 20px; text-align: right; }
+.z-val .t-detalle { color: var(--texto-2); }
+.z-pista { height: var(--e2); border-radius: var(--r-pildora); background: var(--elevado); overflow: hidden; }
+.z-pista i { display: block; height: 100%; width: calc(var(--v) * 1%); border-radius: var(--r-pildora); background: var(--dato-1); }
+
+/* tarjeta del paseo en el chat: una sola superficie con divisores, cada cifra se toca */
+.paseo { gap: var(--e3); }
+.paseo > .sep { border-top: var(--t-borde) solid var(--borde); padding-top: var(--e3); }
+.fecha-btn { min-height: var(--tactil); display: flex; align-items: center; gap: var(--e3); margin-inline: calc(-1 * var(--e2)); padding-inline: var(--e2); border-radius: var(--r-control); text-align: left; position: relative; }
+.fecha-btn .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.fecha-btn .t-detalle { color: var(--texto-2); }
+.fecha-btn > .i { color: var(--texto-2); }
+.p-heroe { display: flex; flex-direction: column; position: relative; }
+.p-heroe .cifra { font-size: 56px; line-height: 52px; }
+.datos-p { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-inline: calc(-1 * var(--e2)); }
+.dato { min-height: var(--tactil); display: flex; flex-direction: column; align-items: flex-start; padding: var(--e1) var(--e2); border-radius: var(--r-control); text-align: left; position: relative; min-width: 0; }
+button.dato:active, .fecha-btn:active { background: var(--capa-pressed); }
+.dato .t-detalle { color: var(--texto-2); }
+.dato .cifra { font-size: 25px; line-height: 30px; white-space: nowrap; display: inline-flex; align-items: center; gap: var(--e1); }
+.dato .sin-dato { color: var(--texto-2); font-size: 15px; line-height: 30px; }
+.dato .dudoso { color: var(--texto); display: inline-flex; align-items: center; gap: var(--e1); font-size: 13px; line-height: 18px; font-weight: 650; white-space: nowrap; }
+.dato .dudoso .i, .aviso-linea .i { color: var(--texto); }
+.aviso-linea { display: flex; align-items: flex-start; gap: var(--e2); font-size: 13px; line-height: 18px; font-weight: 650; color: var(--texto); position: relative; }
+.aviso-linea.con-anota { padding-right: var(--e5); }
+/* chat desplazado hasta el final: lo de arriba queda fuera de la pantalla */
+.desliza.al-pie { justify-content: flex-end; }
+/* pestaña interna activa a la vista: la fila de pestañas ya desplazada al final */
+.sub-tabs.al-final { justify-content: flex-end; }
+.guardado { display: flex; align-items: center; gap: var(--e2); font-size: 15px; line-height: 20px; font-weight: 650; }
+.guardado .i { color: var(--texto-acento); }
+.paseo .acciones-c { margin-top: 0; }
+.paseo .acciones-c .btn.primario { flex: 1; }
+.tema { color: var(--texto-acento); font-size: 13px; line-height: 18px; font-weight: 650; }
+
+/* capturas: miniaturas de la imagen (en el producto, la imagen real) */
+.capturas { display: flex; gap: var(--e2); position: relative; }
+.mini-cap { width: var(--e7); height: calc(var(--e7) + var(--e5)); flex: none; display: block; }
+.mini-cap .fondo-c { fill: var(--superficie); }
+.mini-cap .linea-c { fill: var(--dato-gris); }
+.tarjeta .mini-cap .fondo-c { fill: var(--elevado); }
+.mini-cap .linea-c.fuerte-c { fill: var(--texto-2); }
+.burbuja.con-capturas { display: flex; flex-direction: column; align-items: flex-end; gap: var(--e2); position: relative; }
+.en-cola { display: flex; align-items: center; gap: var(--e1); align-self: flex-end; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; margin-top: calc(-1 * var(--e1)); position: relative; }
+.chat-pie.con-adjuntos { flex-wrap: wrap; padding-top: var(--e3); border-top: var(--t-borde) solid var(--borde); }
+.chat-pie.con-adjuntos .capturas { width: 100%; }
+.chat-pie.con-adjuntos .mini-cap .fondo-c { fill: var(--elevado); }
+.desliza.con-adjuntos { padding-bottom: calc(var(--tactil) + var(--e7) + var(--e7)); }
+
+/* Cardio y MTB: lista por semana con totales */
+.sem-cab { display: flex; flex-direction: column; gap: 0; margin-bottom: calc(-1 * var(--e1)); position: relative; }
+.sem-cab .t-detalle { color: var(--texto-2); }
+.sem-cab .tot { font-size: 15px; line-height: 20px; font-weight: 650; }
+.paseo-fila .txt .t-detalle { color: var(--texto-2); }
+.paseo-fila .km { font-size: 20px; line-height: 24px; white-space: nowrap; }
+.paseo-fila .km .unidad-c { font-size: 13px; }
+
+/* ruta GPX: línea y perfil de desnivel, sin mapa de calles */
+.ruta svg { display: block; width: 100%; height: auto; }
+.ruta .trazo { fill: none; stroke: var(--dato-1); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.ruta .perfil { fill: none; stroke: var(--dato-1); stroke-width: 2; stroke-linejoin: round; }
+.ruta .eje { stroke: var(--borde); stroke-width: 1; }
+.ruta .ext { fill: var(--superficie); stroke: var(--dato-1); stroke-width: 2; }
+.ruta .ext.fin { fill: var(--dato-1); }
+.ruta .lbl { fill: var(--texto-2); font-family: var(--familia); font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.ruta .cab-r { display: flex; justify-content: space-between; align-items: baseline; gap: var(--e2); }
+
+/* detalle: cabecera con editar y borrar */
+.det-cab { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--e2); }
+.det-cab .dia-cab { flex: 1; min-width: 0; }
+.det-acc { display: flex; margin-right: calc(-1 * var(--e3)); }
+.vacio.en-tarjeta { padding-block: var(--e2); }
+
+/* Hoy: día con la línea del coach de recuperación */
+.hoy-cab { display: flex; flex-direction: column; }
+.hoy-cab .t-detalle { color: var(--texto-2); }
+.sesion-fila .txt .t-detalle { color: var(--texto-2); }
+.diagrama .caja-cifras rect { fill: var(--fondo); stroke: var(--borde); }
+
+/* ---------- pieza 3 · mockups del flujo 5 ---------- */
+.pagina h3.sub { text-wrap: balance; }
+.error-linea .i { color: var(--error); }
+.entrada.error.vacia > span:first-child { color: var(--texto-2); }
+/* Comida: el + con su franja al pie (aprobado con el prototipo del flujo 4) */
+.desliza.con-franja { padding-bottom: var(--e2); margin-bottom: calc(var(--tactil-gym) + var(--e2)); }
+.franja-fab { position: absolute; left: var(--e4); right: calc(var(--e4) + var(--tactil-gym) + var(--e3)); bottom: calc(var(--barra) + var(--e4)); height: var(--tactil-gym); display: flex; align-items: center; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.ejercicio .txt .t-detalle { color: var(--texto-2); }
+.ejercicio .baja { color: var(--texto); font-size: 13px; line-height: 18px; font-weight: 650; white-space: nowrap; }
+
+/* web: chat del coach en una columna, zona para soltar capturas */
+.chat-web { max-width: 760px; width: 100%; display: flex; flex-direction: column; gap: var(--e3); }
+.chat-web .burbuja { max-width: 60%; }
+.pie-chat-web { display: flex; align-items: center; gap: var(--e2); max-width: 760px; width: 100%; }
+.pie-chat-web .entrada { flex: 1; }
+.soltar { min-height: calc(5 * var(--e7)); border-radius: var(--r-tarjeta); background: var(--suave); outline: var(--t-sel) dashed var(--accion); outline-offset: calc(-1 * var(--t-sel)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--e2); text-align: center; padding: var(--e5); }
+.soltar > .i { color: var(--texto-acento); }
+/* sobre el fondo suave, el detalle va en texto principal: el secundario baja a 4.44:1 en oscuro con Mango */
+.soltar .t-detalle { color: var(--texto); max-width: 44ch; }
+.paseo-ancho { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--e5); align-items: start; }
+.paseo-ancho > div { display: flex; flex-direction: column; gap: var(--e3); min-width: 0; }
+.datos-p.tres { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.lista.sin-fondo .opcion-rutina { min-height: 56px; }
+.w-det { display: flex; flex-direction: column; gap: var(--e4); }
+.w-det .mtb-cifras { border-top: 0; padding-top: 0; }
+.w-ruta { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--e5); }
+.w-ruta > div { display: flex; flex-direction: column; gap: var(--e2); min-width: 0; }
+.panel-w .form-scroll { display: flex; flex-direction: column; gap: var(--e3); }
+.w-col-hoy { display: flex; flex-direction: column; gap: var(--e3); }
+
+
+/* ---------- prototipo (mismas reglas que el del flujo 3) ---------- */
+/* mismas piezas que flujo-3-comida.html; aquí solo lo que hace falta para que se pueda tocar */
+.proto { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: var(--e6); }
+.vista[hidden] { display: none !important; }
+#v-telefono { width: 376px; max-width: 100%; flex: none; }
+.guion { max-width: 600px; display: flex; flex-direction: column; gap: var(--e4); }
+.guion .titulo { font-size: 32px; line-height: 32px; font-weight: 800; font-stretch: 75%; margin: 0; }
+.guion h2 { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.guion ol { margin: 0; padding-left: 1.4em; display: grid; gap: var(--e2); color: var(--texto-2); }
+.guion ol b { color: var(--texto); font-weight: 650; }
+.guion .controles { display: flex; flex-wrap: wrap; gap: var(--e4); }
+.guion .control { display: flex; flex-direction: column; gap: var(--e1); }
+.guion .segmento { flex-wrap: wrap; }
+.guion .segmento button { flex: none; }
+.proto .pantalla { position: relative; }
+.proto .cuerpo { overflow: hidden; }
+/* el contenido largo se desplaza dentro del teléfono; el margen negativo deja ver los botones de 48 px de las orillas */
+.proto .desliza { overflow-y: auto; overflow-x: hidden; margin-inline: calc(-1 * var(--e4)); padding-inline: var(--e4); padding-bottom: var(--e2); scrollbar-width: none; }
+.proto .desliza::-webkit-scrollbar { display: none; }
+.proto .resultados { overflow: hidden; }
+.proto .desliza.con-fab { padding-bottom: calc(var(--tactil-gym) + var(--e3)); }
+.proto .desliza.hueco-teclado { padding-bottom: calc(var(--e2) + var(--hueco-teclado, 0px)); }
+.aviso-web:empty { display: none; }
+/* teclado: la pantalla se queda con lo visible; las hojas suben y su acción principal no se pierde */
+.pantalla.con-teclado { padding-bottom: var(--tapado-abajo, 0px); padding-top: var(--tapado-arriba, 0px); }
+.pantalla.con-teclado .estado, .pantalla.con-teclado #barra { display: none; }
+.pantalla.con-teclado .velo { top: var(--tapado-arriba, 0px); bottom: var(--tapado-abajo, 0px); }
+.pantalla.con-teclado .hoja { max-height: 100%; }
+.hoja > .btn, .hoja > .botones-hoja { flex-shrink: 0; }
+/* hoja con un campo enfocado: se ancla arriba a pantalla completa (bajo la barra de estado, de 28 px como .estado),
+   así el teclado, se informe o no, solo tapa la parte baja; se queda así hasta cerrarse, sin huecos ni saltos */
+.pantalla.hoja-arriba .velo { top: 28px; justify-content: flex-start; }
+.pantalla.hoja-arriba .hoja { flex: 1; max-height: none; border-radius: 0; padding-top: var(--e4); }
+.pantalla.hoja-arriba .hoja .agarre { display: none; }
+.pantalla.con-teclado.hoja-arriba .velo { top: var(--tapado-arriba, 0px); }
+@media (prefers-reduced-motion: no-preference) { .pantalla.hoja-arriba .hoja { animation: crece var(--normal) var(--entrar); } }
+@keyframes crece { from { transform: translateY(var(--e6)); } }
+#res-zona { display: contents; }
+
+/* campos de verdad (Typed Field Rule), como en el prototipo del flujo 10 */
+.entrada { border: var(--t-sel) solid transparent; }
+.entrada.error { outline: none; border-color: var(--error); }
+.entrada:focus-within { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.entrada input { flex: 1; min-width: 0; width: 100%; border: 0; background: none; font: inherit; color: inherit; padding: 0; height: 40px; outline: none; appearance: none; -webkit-appearance: none; }
+.entrada input::placeholder { color: var(--texto-2); opacity: 1; }
+.entrada input::-webkit-search-cancel-button { display: none; }
+.cant .entrada input.cifra { font-weight: 800; font-stretch: 62%; font-size: 25px; line-height: 26px; }
+.entrada.buscar .borrar[hidden] { display: none; }
+.par > * { min-width: 0; }
+.opcionales label { flex: 1; }
+.opcionales .opc { display: inline-flex; align-items: center; gap: var(--e1); }
+.opcionales input { width: 80px; min-height: 32px; border: 0; background: none; font: inherit; color: inherit; padding: 0; text-align: right; border-radius: var(--r-casilla); }
+.opcionales input::placeholder { color: var(--texto-2); opacity: 1; }
+.opcionales input:focus-visible { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.opcionales input:placeholder-shown + .u { display: none; }
+.opcionales .u { color: var(--texto-2); }
+
+/* filas que se tocan */
+.alimento button.txt { text-align: left; min-height: 40px; justify-content: center; border-radius: var(--r-casilla); }
+.resultado[data-acc] { cursor: pointer; }
+.resultado[data-acc]:active { background: var(--capa-pressed); }
+.icono-btn[aria-disabled="true"] { opacity: 0.4; cursor: default; }
+.icono-btn[aria-disabled="true"]:active { background: none; }
+.btn[aria-disabled="true"] { cursor: default; }
+@media (hover: hover) and (pointer: fine) {
+  .resultado[data-acc]:hover, .alimento button.txt:hover, .opcion-hoy:hover { background: var(--capa-hover); }
+  .icono-btn[aria-disabled="true"]:hover { background: none; }
+}
+.opcion-hoy:active { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); }
+.opciones { display: flex; flex-direction: column; gap: var(--e2); }
+.hoja p.sec { margin-top: calc(-1 * var(--e2)); }
+.lista .fila > .i:first-child { color: var(--texto-2); }
+
+/* hoja inferior y avisos */
+.hoja { max-height: 92%; overflow-y: auto; }
+.hoja .campo, .hoja .vivo, .hoja .cab-hoja { flex-shrink: 0; }
+.ranura-aviso .aviso { z-index: auto; }
+.aviso[hidden] { display: none; }
+#barra[hidden] { display: none; }
+.pestana { font: inherit; font-size: 13px; line-height: 16px; }
+.hora-campos { display: grid; grid-template-columns: 1fr auto; gap: var(--e2); align-items: end; }
+.hora-campos .segmento { min-height: var(--tactil); }
+
+/* web */
+.proto .web-envoltura { width: min(100%, 1180px); }
+.app-web { position: relative; }
+.panel-w .vacio { padding-bottom: var(--e4); }
+.panel-w .desliza { overflow: visible; margin: 0; padding: 0; }
+.w-nutri .resumen { height: 100%; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .hoja { animation: sube var(--lento) var(--entrar); }
+  .velo { animation: funde var(--normal) var(--entrar); }
+  .aviso.entra { animation: sube-poco var(--normal) var(--entrar); }
+  .panel-w.entra { animation: sube-poco var(--normal) var(--entrar); }
+}
+@media (prefers-reduced-motion: reduce) { .hoja, .velo, .aviso.entra, .panel-w.entra { animation: funde var(--rapido) var(--estandar); } }
+@keyframes sube { from { transform: translateY(var(--e5)); opacity: 0; } }
+@keyframes sube-poco { from { transform: translateY(var(--e2)); opacity: 0; } }
+@keyframes funde { from { opacity: 0; } }
+/* el + flotante tiene su franja al pie: la lista termina encima, así el botón nunca tapa una cifra (Never Cover);
+   a su izquierda, lo que resta del día */
+.proto .desliza.con-fab { padding-bottom: var(--e2); margin-bottom: calc(var(--tactil-gym) + var(--e2)); }
+.franja-fab { position: absolute; left: var(--e4); right: calc(var(--e4) + var(--tactil-gym) + var(--e3)); bottom: calc(var(--barra) + var(--e4)); height: var(--tactil-gym); display: flex; align-items: center; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+@media (max-width: 440px) {
+  body { padding-left: 0; padding-right: 0; padding-top: 0; }
+  #v-telefono { width: 100%; }
+  .proto .telefono { width: 100%; padding: 0; border-radius: 0; background: none; }
+  .proto .pantalla { height: 100dvh; border-radius: 0; }
+  .guion { padding: 0 max(16px, env(safe-area-inset-right, 0px)) var(--e7) max(16px, env(safe-area-inset-left, 0px)); }
+  #v-web { margin: var(--e4) max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px)); width: auto; flex: 1 1 100%; min-width: 0; }
+}
+
+
+/* ---------- prototipo (flujo 4) ---------- */
+.cabeza { min-height: var(--tactil); }
+.cuenta-btn { width: var(--tactil); height: var(--tactil); display: grid; place-items: center; border-radius: var(--r-pildora); margin-right: calc(-1 * var(--e1)); }
+.cuenta-btn span { width: 40px; height: 40px; border-radius: var(--r-pildora); background: var(--elevado); display: grid; place-items: center; font-weight: 650; }
+.cuenta-btn:active span { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); }
+.w-chat { max-width: 720px; display: flex; flex-direction: column; gap: var(--e4); }
+.chat-pie.web { position: static; padding: 0; background: none; }
+.w-col-btn { text-align: left; cursor: pointer; width: 100%; }
+.w-col-btn:active { background: color-mix(in srgb, var(--texto) 6%, var(--superficie)); }
+.w-col-btn .w-com { display: flex; }
+.semana-lista .fila-dia { min-height: var(--tactil-gym); }
+.porciones-wrap { flex-shrink: 0; }
+.nota .btn.texto { margin-left: auto; min-height: 40px; }
+.stepper button[aria-disabled="true"] { opacity: 0.4; cursor: default; }
+@media (hover: hover) and (pointer: fine) {
+  .slot-txt:hover, .w-col-btn:hover, .fila-dia[data-acc]:hover { background: var(--capa-hover); }
+}
+.proto .web-envoltura { width: min(100%, 1400px); }
+.w-com .btn.texto { white-space: nowrap; font-size: 13px; line-height: 18px; gap: var(--e1); }
+.w-col-cab .kcal-d { display: flex; flex-direction: column; }
+
+
+/* ---------- prototipo (flujo 5) ---------- */
+.dato.p-heroe .cifra { font-size: 56px; line-height: 52px; }
+.dato.p-heroe { padding-block: 0; }
+.mtb-cifras .sin { color: var(--texto-2); font-size: 15px; line-height: 30px; }
+.sel-caps .opcion-rutina { gap: var(--e3); min-height: 64px; }
+.sel-caps .mini-cap { width: var(--e6); height: var(--e7); }
+.sel-caps .mini-cap .fondo-c { fill: var(--elevado); }
+.celda[aria-disabled="true"] { opacity: 0.4; cursor: default; }
+.celda[aria-disabled="true"]:active { background: none; }
+.hoja .mes { row-gap: var(--e1); }
+.hoja .cal-nav { margin-block: calc(-1 * var(--e2)); }
+.zonas-form label { display: flex; align-items: baseline; gap: var(--e2); }
+.zonas-form b { font-weight: 650; }
+.chat .sinc-linea { justify-content: center; }
+.proto .desliza.con-chat { padding-bottom: calc(var(--tactil) + var(--e5)); }
+.proto .desliza.con-pie { padding-bottom: calc(2 * var(--tactil) + var(--e6)); }
+.guion .nota-g { color: var(--texto-2); }
+/* en oscuro la hoja va en elevado, igual que el campo: el campo baja a fondo para que se vea su caja */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hoja .entrada { background: var(--fondo); } }
+:root[data-theme="dark"] .hoja .entrada { background: var(--fondo); }
+@media (hover: hover) and (pointer: fine) { button.dato:hover, .fecha-btn:hover, .sel-caps .opcion-rutina:hover { background: var(--capa-hover); } }
+
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- Tabler Icons 3.49.0, outline (MIT, © Paweł Kuna) -->
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/></symbol>
+  <symbol id="i-barbell" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+  <symbol id="i-kitchen" viewBox="0 0 24 24"><path d="M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12m0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c3.255 2.777 3.695 7.266 1.029 10.501c-2.666 3.235 -7.615 4.215 -11.574 2.293l-4.7 1"/></symbol>
+  <symbol id="i-cloud-check" viewBox="0 0 24 24"><path d="M11 18.004h-4.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.393 -1.762 1.794 -3.2 3.675 -3.773c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.388 0 2.585 .82 3.138 2.007"/><path d="M15 19l2 2l4 -4"/></symbol>
+  <symbol id="i-cloud-off" viewBox="0 0 24 24"><path d="M9.58 5.548c.24 -.11 .492 -.207 .752 -.286c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.913 0 3.464 1.56 3.464 3.486c0 .957 -.383 1.824 -1.003 2.454m-2.997 1.033h-11.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.13 -.582 .37 -1.128 .7 -1.62"/><path d="M3 3l18 18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M5 12l14 0"/><path d="M5 12l6 6"/><path d="M5 12l6 -6"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065"/><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 6l-6 6l6 6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></symbol>
+  <symbol id="i-bike" viewBox="0 0 24 24"><path d="M2 18a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M16 18a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M12 19v-4l-3 -3l5 -4l2 3h3"/><path d="M13.007 5a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></symbol>
+  <symbol id="i-test-pipe-2" viewBox="0 0 24 24"><path d="M15 3v15a3 3 0 0 1 -6 0v-15"/><path d="M9 12h6"/><path d="M8 3h8"/></symbol>
+  <symbol id="i-calendar-plus" viewBox="0 0 24 24"><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v5"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/><path d="M16 19h6"/><path d="M19 16v6"/></symbol>
+  <symbol id="i-calendar-repeat" viewBox="0 0 24 24"><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v3"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h12"/><path d="M20 14l2 2h-3"/><path d="M20 18l2 -2"/><path d="M19 16a3 3 0 1 0 2 5.236"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><path d="M7 9.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667l0 -8.666"/><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1"/></symbol>
+  <symbol id="i-arrow-forward-up" viewBox="0 0 24 24"><path d="M15 14l4 -4l-4 -4"/><path d="M19 10h-11a4 4 0 1 0 0 8h1"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21l8 0"/><path d="M12 17l0 4"/><path d="M7 4l10 0"/><path d="M17 4v8a5 5 0 0 1 -10 0v-8"/><path d="M3 9a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M17 9a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 7v5l3 3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5l0 14"/><path d="M5 12l14 0"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12l14 0"/></symbol>
+  <symbol id="i-alert-circle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/></symbol>
+  <symbol id="i-info-circle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 9h.01"/><path d="M11 12h1v4h1"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <symbol id="i-player-play" viewBox="0 0 24 24"><path d="M7 4v16l13 -8l-13 -8"/></symbol>
+  <symbol id="i-player-skip-forward" viewBox="0 0 24 24"><path d="M4 5v14l12 -7l-12 -7"/><path d="M20 5l0 14"/></symbol>
+  <symbol id="i-vibrar" viewBox="0 0 24 24"><path d="M3 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2l0 -14"/><path d="M8 4l2 0"/><path d="M9 17l0 .01"/><path d="M21 6l-2 3l2 3l-2 3l2 3"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1 -7 0a5 5 0 0 0 -7 0v-9"/><path d="M5 21v-7"/></symbol>
+  <symbol id="i-stairs-up" viewBox="0 0 24 24"><path d="M22 6h-5v5h-5v5h-5v5h-5"/><path d="M6 10v-7"/><path d="M3 6l3 -3l3 3"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6l6 -6"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"/><path d="M13.5 6.5l4 4"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M12 8l0 4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></symbol>
+  <symbol id="i-device-mobile" viewBox="0 0 24 24"><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14"/><path d="M11 4h2"/><path d="M12 17v.01"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><path d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/><path d="M21 21l-6 -6"/></symbol>
+  <!-- logo provisional: glifo de packages/brand (barbell) -->
+  <symbol id="logo" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+  <symbol id="i-alert-triangle" viewBox="0 0 24 24"><path d="M12 9v4"/><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2"/><path d="M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></symbol>
+  <symbol id="i-barcode" viewBox="0 0 24 24"><path d="M4 7v-1a2 2 0 0 1 2 -2h2"/><path d="M4 17v1a2 2 0 0 0 2 2h2"/><path d="M16 4h2a2 2 0 0 1 2 2v1"/><path d="M16 20h2a2 2 0 0 0 2 -2v-1"/><path d="M5 11h1v2h-1l0 -2"/><path d="M10 11l0 2"/><path d="M14 11h1v2h-1l0 -2"/><path d="M19 11l0 2"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/></symbol>
+  <symbol id="i-ban" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M5.7 5.7l12.6 12.6"/></symbol>
+  <symbol id="i-check-small" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 9l5 -5l5 5"/><path d="M12 4l0 12"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"/></symbol>
+  <symbol id="i-player-stop" viewBox="0 0 24 24"><path d="M5 7a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z"/></symbol>
+  <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 5l0 14"/><path d="M18 11l-6 -6"/><path d="M6 11l6 -6"/></symbol>
+  <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5l0 14"/><path d="M18 13l-6 6"/><path d="M6 13l6 6"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M10 14l11 -11"/><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/><path d="M11 15h1"/><path d="M12 15v3"/></symbol>
+  <symbol id="i-photo" viewBox="0 0 24 24"><path d="M15 8h.01"/><path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z"/><path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5"/><path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3"/></symbol>
+  <symbol id="i-heartbeat" viewBox="0 0 24 24"><path d="M19.5 13.572l-7.5 7.428l-2.896 -2.868m-6.117 -8.104a5 5 0 0 1 9.013 -3.022a5 5 0 1 1 7.5 6.572"/><path d="M3 13h2l2 3l2 -6l1 3h3"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><path d="M3 19a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/><path d="M19 7a2 2 0 1 0 0 -4a2 2 0 0 0 0 4z"/><path d="M11 19h5.5a3.5 3.5 0 0 0 0 -7h-8a3.5 3.5 0 0 1 0 -7h4.5"/></symbol>
+  <symbol id="i-paperclip" viewBox="0 0 24 24"><path d="M15 7l-6.5 6.5a1.5 1.5 0 0 0 3 3l6.5 -6.5a3 3 0 0 0 -6 -6l-6.5 6.5a4.5 4.5 0 0 0 9 9l6.5 -6.5"/></symbol>
+</svg>
+<div class="proto">
+  <div class="vista" id="v-telefono"><div class="telefono"><div class="pantalla" id="pantalla">
+    <div class="estado tnum" aria-hidden="true"><span id="reloj">9:40</span></div>
+    <div class="cuerpo" id="cuerpo"></div>
+    <div id="bajo"></div>
+    <nav class="barra" id="barra" aria-label="Secciones"><button type="button" class="pestana" data-acc="tab" data-v="hoy"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</button><button type="button" class="pestana" data-acc="tab" data-v="gym"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</button><button type="button" class="pestana" data-acc="tab" data-v="comida"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</button><button type="button" class="pestana" data-acc="tab" data-v="salud"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</button><button type="button" class="pestana" data-acc="tab" data-v="coach"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</button></nav>
+    <div id="zona-fab"></div>
+    <div class="ranura-aviso" id="zona-aviso"></div>
+    <div id="capa"></div>
+  </div></div></div>
+  <aside class="guion" aria-label="Guion de prueba">
+    <p class="titulo">Prototipo · flujo 5</p>
+    <p class="sec">Sábado 17 de octubre de 2026; objetivo base 2,350 kcal. Las capturas son simuladas. Lo que haces se recuerda en este navegador.</p>
+    <h2>Qué puedes probar</h2>
+    <ol>
+      <li><b>Registrar:</b> Gym › Cardio y MTB › Registrar paseo, con actividad y zonas del sábado 17. Corrige el desnivel o déjalo sin dato, cambia la fecha y guarda: 2,350 + 320 y la propuesta para cubrirlas.</li>
+      <li><b>Variantes:</b> Descartar con Deshacer, el mismo paseo otra vez, la foto del almuerzo, o solo la actividad y luego «Agregar captura de zonas».</li>
+      <li><b>Sin conexión:</b> envía, cambia de pestaña y vuelve a En línea.</li>
+      <li><b>Sin créditos:</b> Registrar a mano; Guardar vacío y luego 18.4 km en 0:52.</li>
+      <li><b>Cardio y MTB:</b> totales por semana, ruta GPX, Editar y Borrar con Deshacer.</li>
+      <li><b>De noche:</b> 9:40 p.&nbsp;m.: sin propuesta. <b>Recuperación:</b> Martes 3 nov., en Hoy y en Gym › Sesión. <b>Comida:</b> el objetivo del día y la franja del +.</li>
+    </ol>
+    <div class="controles"><div class="control"><span class="t-detalle sec" id="lbl-escena">Día y hora</span><div class="segmento" role="group" aria-labelledby="lbl-escena" id="ctl-escena"><button type="button" data-v="sab-am" aria-pressed="true">Sábado 17, 9:40&nbsp;a.&nbsp;m.</button><button type="button" data-v="sab-pm" aria-pressed="false">Sábado 17, 9:40&nbsp;p.&nbsp;m.</button><button type="button" data-v="mar" aria-pressed="false">Martes 3 nov., 6:10&nbsp;p.&nbsp;m.</button></div></div><div class="control"><span class="t-detalle sec" id="lbl-red">Conexión</span><div class="segmento" role="group" aria-labelledby="lbl-red" id="ctl-red"><button type="button" data-v="on" aria-pressed="true">En línea</button><button type="button" data-v="off" aria-pressed="false">Sin conexión</button></div></div><div class="control"><span class="t-detalle sec" id="lbl-creditos">Créditos del coach</span><div class="segmento" role="group" aria-labelledby="lbl-creditos" id="ctl-creditos"><button type="button" data-v="con" aria-pressed="true">Con créditos</button><button type="button" data-v="sin" aria-pressed="false">Sin créditos</button></div></div><div class="control"><span class="t-detalle sec" id="lbl-modo">Modo</span><div class="segmento" role="group" aria-labelledby="lbl-modo" id="ctl-modo"><button type="button" data-modo="" aria-pressed="true">Sistema</button><button type="button" data-modo="light" aria-pressed="false">Claro</button><button type="button" data-modo="dark" aria-pressed="false">Oscuro</button></div></div><div class="control"><span class="t-detalle sec" id="lbl-acento">Acento</span><div class="segmento" role="group" aria-labelledby="lbl-acento" id="ctl-acento"><button type="button" data-a="caribe" aria-pressed="true">Caribe</button><button type="button" data-a="mar" aria-pressed="false">Mar</button><button type="button" data-a="palma" aria-pressed="false">Palma</button><button type="button" data-a="mango" aria-pressed="false">Mango</button><button type="button" data-a="flamboyan" aria-pressed="false">Flamboyán</button><button type="button" data-a="uva" aria-pressed="false">Uva</button></div></div></div>
+    <div><button type="button" class="btn secundario" id="reiniciar"><svg class="i s20" aria-hidden="true"><use href="#i-refresh"/></svg>Reiniciar</button></div>
+  </aside>
+</div>
+<script>
+// Prototipo navegable del flujo 5, registrar paseo MTB (CAR-01, CAR-02; D-27, D-39).
+// El estado vive en memoria; localStorage solo lo recuerda como comodidad (si falla, todo sigue igual).
+"use strict";
+
+// ------------------------------------------------------------ utilidades
+const $ = (s, r = document) => r.querySelector(s);
+const ic = (n, s = "", c = "") => `<svg class="i${s ? " s" + s : ""}${c ? " " + c : ""}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const nf = (x, d = 0) => Number(x).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const clon = (o) => JSON.parse(JSON.stringify(o));
+const NB = " ";
+function horaTxt(min) { let h = Math.floor(min / 60) % 24; const m = min % 60, pm = h >= 12; h = h % 12 || 12; return `${h}:${String(m).padStart(2, "0")}${NB}${pm ? "p." : "a."}${NB}m.`; }
+const durTxt = (m) => (m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, "0")} min`);
+const durCorta = (m) => (m < 60 ? [String(m), "min"] : [`${Math.floor(m / 60)} h ${String(m % 60).padStart(2, "0")}`, "min"]);
+const hmm = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, "0")}`;
+const CLAVE = "coach-proto-flujo-5-v1";
+
+// ------------------------------------------------------------ fechas
+const fecha = (s) => { const [a, m, d] = s.split("-").map(Number); return new Date(Date.UTC(a, m - 1, d)); };
+const iso = (dt) => dt.toISOString().slice(0, 10);
+const masDias = (s, n) => { const d = fecha(s); d.setUTCDate(d.getUTCDate() + n); return iso(d); };
+const entre = (a, b) => Math.round((fecha(b) - fecha(a)) / 86400000);
+const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+const MES_C = ["ene.", "feb.", "mar.", "abr.", "may.", "jun.", "jul.", "ago.", "sept.", "oct.", "nov.", "dic."];
+const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+const DIAS_C = ["L", "M", "M", "J", "V", "S", "D"];
+const dow = (s) => fecha(s).getUTCDay();
+const dnum = (s) => fecha(s).getUTCDate();
+const lunesDe = (s) => masDias(s, -((dow(s) + 6) % 7));
+const cap1 = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+const diaLargo = (s) => `${cap1(DIAS[dow(s)])} ${dnum(s)} de ${MESES[fecha(s).getUTCMonth()]}`;
+const diaCorto = (s) => `${DIAS[dow(s)]} ${dnum(s)}`;
+const PRIMER_REG = "2026-10-05"; // semana 1 (D-26)
+const semanaN = (s) => Math.floor(entre(PRIMER_REG, lunesDe(s)) / 7) + 1;
+const ddmm = (s) => { const [a, m, d] = s.split("-"); return `${d}/${m}/${a}`; };
+
+// ------------------------------------------------------------ datos de ejemplo (cifras aprobadas)
+const BASE = 2350, MAC = { p: 172, c: 270, g: 65 };
+const FCMAX = 190;
+const RANGOS = ["0–112 ppm", "113–148 ppm", "149–166 ppm", "167–184 ppm", "185+ ppm"]; // Z1 a Z5
+const P17 = { fecha: "2026-10-17", ini: 432, km: 18.4, mov: 52, total: 64, des: 240, kcal: 640, fc: 158, fcmax: 181, app: "Strava" };
+const Z17 = [2, 27, 45, 26, 0];
+const Z10 = [4, 36, 42, 18, 0];
+const PASEOS_0 = [
+  { id: "p8", fecha: "2026-10-08", ini: 1050, km: 12.7, mov: 38, total: 44, des: 150, kcal: 410, fc: 151, fcmax: 176, zonas: [4, 44, 40, 12, 0], gpx: false, caps: 2, app: "Strava" },
+  { id: "p10", fecha: "2026-10-10", ini: 425, km: 24.1, mov: 72, total: 85, des: 310, kcal: 830, fc: 154, fcmax: 178, zonas: null, gpx: false, caps: 1, app: "Strava" },
+];
+const PASEOS_MAR = [
+  { id: "p17", ...P17, zonas: Z17, gpx: true, caps: 2 },
+  { id: "p18", fecha: "2026-10-18", ini: 420, km: 40.6, mov: 121, total: 138, des: 580, kcal: 1200, fc: 151, fcmax: 182, zonas: null, gpx: false, caps: 1, app: "Strava" },
+  { id: "p3", fecha: "2026-11-03", ini: 690, km: 41.8, mov: 125, total: 140, des: 620, kcal: 1200, fc: 152, fcmax: 183, zonas: [4, 36, 44, 16, 0], gpx: false, caps: 2, app: "Strava" },
+];
+// capturas que ofrece el selector simulado
+const CAPS = {
+  a17: { n: "Strava · actividad", d: "Sábado 17 de octubre", v: 0 },
+  z17: { n: "Strava · zonas de FC", d: "Sábado 17 de octubre", v: 1 },
+  z10: { n: "Strava · zonas de FC", d: "Sábado 10 de octubre", v: 1 },
+  foto: { n: "Foto del almuerzo", d: "Ayer", v: 2 },
+};
+const ESCENAS = {
+  "sab-am": { hoy: "2026-10-17", hora: 580, txt: `Sábado 17, 9:40${NB}a.${NB}m.` },
+  "sab-pm": { hoy: "2026-10-17", hora: 1300, txt: `Sábado 17, 9:40${NB}p.${NB}m.` },
+  "mar": { hoy: "2026-11-03", hora: 1090, txt: `Martes 3 nov., 6:10${NB}p.${NB}m.` },
+};
+// comidas del día (Anexo A.7): hora habitual en minutos
+const SLOTS = [["desayuno", "Desayuno", 420], ["media", "Media mañana", 600], ["almuerzo", "Almuerzo", 780], ["merienda", "Merienda", 990], ["cena", "Cena", 1170]];
+const EJ_B = [["Peso muerto convencional", "3 × 8 · rampa", true], ["Remo con barra", "3 × 10 · rampa", false], ["Jalón al pecho", "3 × 8-12 · rampa", false], ["Curl bíceps", "3 × 12", false], ["Curl femoral tumbado", "3 × 12", true], ["Hiperextensiones", "3 × 12-15", false]];
+const EJ_A = [["Sentadilla con barra", "3 × 10-12 · rampa", true], ["Press banca plano", "3 × 8-10 · rampa", false], ["Press militar mancuernas", "3 × 10-12 · rampa", false], ["Extensión tríceps polea", "3 × 12-15", false], ["Elevación lateral", "3 × 12-15", false]];
+
+// ------------------------------------------------------------ estado
+let S;
+function estadoInicial(escena = "sab-am") {
+  const e = ESCENAS[escena], mar = escena === "mar";
+  return {
+    v: 1, escena, hoy: e.hoy, hora: e.hora, offline: false, sinCreditos: false,
+    sec: mar ? "hoy" : "gym", gsub: "cardio", pila: [], hoja: null, form: null, hojaArriba: false,
+    paseos: clon(mar ? [...PASEOS_0, ...PASEOS_MAR] : PASEOS_0),
+    sig: 1, chat: [], cola: [], prop: {}, dia: e.hoy,
+    // sesión de pierna programada después del paseo
+    sesion: mar ? { fecha: "2026-11-04", dia: "B", nom: "Pull + Legs", h: 480, carga: 0, recup: null } : { fecha: "2026-10-19", dia: "A", nom: "Push + Legs", h: 480, carga: 0, recup: null },
+    aviso: null, deshacer: null, scrollFin: false,
+  };
+}
+const PERSISTE = ["v", "escena", "hoy", "hora", "offline", "sinCreditos", "sec", "gsub", "pila", "paseos", "sig", "chat", "cola", "prop", "dia", "sesion"];
+function guardar() { try { const o = {}; PERSISTE.forEach((k) => (o[k] = S[k])); localStorage.setItem(CLAVE, JSON.stringify(o)); } catch (_) { /* sin almacenamiento: no pasa nada */ } }
+function cargar() {
+  S = estadoInicial();
+  try {
+    const o = JSON.parse(localStorage.getItem(CLAVE) || "null");
+    if (o && o.v === 1 && Array.isArray(o.paseos) && ESCENAS[o.escena]) PERSISTE.forEach((k) => { if (o[k] !== undefined) S[k] = o[k]; });
+    S.chat = S.chat.filter((m) => m.t !== "leyendo");
+  } catch (_) { /* datos viejos: se empieza de cero */ }
+}
+
+// ------------------------------------------------------------ cálculo
+const vel = (km, mov) => (mov ? Math.round((km / (mov / 60)) * 10) / 10 : 0);
+function minutosZonas(z, mov) {
+  // % × minutos, redondeados por el mayor resto para que sumen el tiempo en movimiento
+  const crudo = z.map((p) => (p * mov) / 100), base = crudo.map(Math.floor);
+  let falta = mov - base.reduce((a, b) => a + b, 0);
+  crudo.map((x, i) => [x - Math.floor(x), i]).sort((a, b) => b[0] - a[0]).forEach(([, i]) => { if (falta > 0 && z[i] > 0) { base[i]++; falta--; } });
+  return base;
+}
+const paseosDe = (s) => S.paseos.filter((p) => p.fecha === s);
+const extraDe = (s) => paseosDe(s).reduce((a, p) => a + (p.kcal ? Math.round(p.kcal / 2) : 0), 0);
+const objetivo = (s) => BASE + extraDe(s);
+const macrosObj = (s) => { const f = objetivo(s) / BASE; return { p: Math.round(MAC.p * f), c: Math.round(MAC.c * f), g: Math.round(MAC.g * f) }; };
+const paseo = (id) => S.paseos.find((p) => p.id === id);
+const esFuerte = (p) => (p.zonas && p.zonas[3] + p.zonas[4] > 30) || p.mov > 90;
+function paseoRecup() {
+  // paseo fuerte con la sesión de pierna en las 48 h siguientes (CAR-02)
+  const se = S.sesion;
+  return S.paseos.find((p) => { const fin = entre(p.fecha, se.fecha) * 1440 + se.h - (p.ini + (p.total || p.mov)); return esFuerte(p) && fin > 0 && fin <= 48 * 60; });
+}
+const comidasPorDelante = () => SLOTS.some(([, , h]) => h > S.hora);
+function propuesta(extra) {
+  const items = [];
+  let r = extra;
+  if (r >= 250) { items.push({ k: "almuerzo", n: "Arroz blanco", d: "1 taza más", kcal: 205 }); r -= 205; }
+  const g = Math.max(10, Math.round(r / 3.79 / 5) * 5);
+  if (r > 20) items.push({ k: "merienda", n: "Avena en hojuelas", d: `${g} g`, kcal: Math.round(g * 3.79) });
+  return items.filter((x) => SLOTS.find(([k]) => k === x.k)[2] > S.hora);
+}
+const COMIDA_HOY = [{ n: "Avena en hojuelas", d: "80 g", kcal: 303 }, { n: "Huevo hervido", d: "3 unidades · 150 g", kcal: 215 }, { n: "Guineo", d: "1 unidad · 118 g", kcal: 105 }, { n: "Café", d: "1 taza", kcal: 2 }];
+const DESAYUNO = { kcal: 625, p: 31, c: 82, g: 19 };
+
+// ------------------------------------------------------------ piezas comunes
+const cima = () => S.pila[S.pila.length - 1];
+const cabeza = (titulo, extra = "") => `<div class="cabeza"><span class="t-pantalla" id="h-pant" tabindex="-1">${titulo}</span>${extra}</div>`;
+const cabApilada = (titulo, sub = "") => `<div class="busca-cab"><button type="button" class="atras" data-acc="atras" aria-label="Volver">${ic("arrow-left")}</button><div class="txt"><span class="t-seccion" id="h-pant" tabindex="-1">${titulo}</span>${sub ? `<span class="t-detalle sec">${sub}</span>` : ""}</div></div>`;
+const coachLinea = (cont, extra = "") => `<div class="linea-coach${extra}"><span class="cab-c">${ic("message", 16)}Coach</span>${cont}</div>`;
+const errLinea = (id, t) => `<span class="error-linea" id="${id}">${ic("alert-circle", 16)}${t}</span>`;
+function avisoHtml() { const a = S.aviso; return a ? `<div class="aviso${a.nuevo ? " entra" : ""}" role="status"><span class="txt-av">${a.texto}</span>${a.accion ? `<button type="button" class="btn texto" data-acc="${a.accion[1]}"${a.accion[2] ? ` data-v="${a.accion[2]}"` : ""}>${a.accion[0]}</button>` : ""}</div>` : ""; }
+function hojaSimple(titulo, cuerpo, sub = "") {
+  return `<div class="velo" data-acc="cerrar-hoja"><div class="hoja" role="dialog" aria-modal="true" aria-labelledby="hoja-t"><span class="agarre" aria-hidden="true"></span><div class="cab-hoja"><h4 class="t-seccion" style="margin:0" id="hoja-t" tabindex="-1">${titulo}</h4>${sub ? `<span class="t-detalle">${sub}</span>` : ""}</div>${cuerpo}</div></div>`;
+}
+function cap(v) {
+  let c;
+  if (v === 1) c = '<rect class="linea-c" x="8" y="10" width="26" height="4" rx="2"/>' + [4, 18, 26, 17, 3].map((w, i) => `<rect class="linea-c fuerte-c" x="8" y="${24 + i * 8}" width="${w}" height="4" rx="2"/>`).join("");
+  else if (v === 2) c = '<circle class="linea-c" cx="24" cy="28" r="9"/><rect class="linea-c" x="8" y="48" width="32" height="12" rx="3"/>';
+  else c = '<rect class="linea-c" x="8" y="10" width="22" height="4" rx="2"/><rect class="linea-c" x="8" y="18" width="32" height="16" rx="3"/><rect class="linea-c fuerte-c" x="8" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="40" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="8" y="51" width="14" height="5" rx="2"/><rect class="linea-c fuerte-c" x="26" y="51" width="14" height="5" rx="2"/><rect class="linea-c" x="8" y="62" width="32" height="4" rx="2"/>';
+  return `<svg class="mini-cap" viewBox="0 0 48 72" aria-hidden="true"><rect class="fondo-c" x="0" y="0" width="48" height="72" rx="6"/>${c}</svg>`;
+}
+function zonasHtml(z, mov) {
+  const m = minutosZonas(z, mov);
+  return `<div class="zonas" role="table" aria-label="Tiempo en cada zona de frecuencia cardiaca"><span class="t-detalle sec">Zonas de FC · % del tiempo</span>${[4, 3, 2, 1, 0].map((i) => `<div class="zona" role="row"><span class="z-nom" role="rowheader"><b>Z${i + 1}</b><span class="t-detalle sec">${RANGOS[i]}</span></span><span class="z-pista" aria-hidden="true"><i style="--v:${z[i]}"></i></span><span class="z-val tnum" role="cell"><b>${z[i]} %</b><span class="t-detalle">${m[i]} min</span></span></div>`).join("")}</div>`;
+}
+const RUTA = '<svg viewBox="0 0 312 120" role="img" aria-label="Ruta del paseo, una línea sin mapa"><path class="trazo" d="M28 92 C40 70 30 48 58 40 S96 22 118 30 S150 58 176 50 S214 16 240 22 S286 40 280 66 S250 100 214 96"/><circle class="ext" cx="28" cy="92" r="6"/><circle class="ext fin" cx="214" cy="96" r="5"/><text class="lbl" x="40" y="114">Inicio</text><text class="lbl" x="226" y="114">Fin</text></svg>';
+const PERFIL_PTS = [[0, 41], [1.5, 70], [3.2, 112], [4.4, 84], [6.0, 126], [7.3, 148], [8.4, 110], [9.6, 88], [11.0, 120], [12.3, 140], [13.4, 96], [14.8, 70], [15.6, 92], [16.6, 58], [17.3, 89], [18.4, 32]];
+function perfilHtml(p) {
+  // el perfil de ejemplo (240 m de subida) se escala a la distancia y al desnivel de cada paseo
+  const fy = (p.des || 240) / 240, top = Math.round(30 + 118 * fy), px = (k) => 36 + (k / 18.4) * 268, py = (m) => 92 - ((m - 30) / 118) * 76;
+  const d = "M" + PERFIL_PTS.map(([k, m]) => `${px(k).toFixed(1)} ${py(m).toFixed(1)}`).join(" L");
+  return `<svg viewBox="0 0 312 120" role="img" aria-label="Perfil de desnivel: de 30 a ${top} m en ${nf(p.km, 1)} km"><line class="eje" x1="36" y1="92" x2="304" y2="92"/><line class="eje" x1="36" y1="16" x2="304" y2="16" style="stroke-dasharray:3 3"/><path class="perfil" d="${d}"/><text class="lbl" x="0" y="20">${top} m</text><text class="lbl" x="0" y="96">30 m</text><text class="lbl" x="36" y="112">0</text><text class="lbl" x="304" y="112" text-anchor="end">${nf(p.km, 1)} km</text></svg>`;
+}
+const BARRA_TABS = [["hoy", "home", "Hoy"], ["gym", "barbell", "Gym"], ["comida", "kitchen", "Comida"], ["salud", "heart", "Salud"], ["coach", "message", "Coach"]];
+const GSUBS = [["sesion", "Sesión"], ["calendario", "Calendario"], ["rutinas", "Rutinas"], ["historial", "Historial"], ["cardio", "Cardio y MTB"]];
+const gymTabs = () => `<nav class="sub-tabs${S.gsub === "cardio" ? " al-final" : ""}" aria-label="Gym">${GSUBS.map(([k, n]) => `<a class="sub-tab" href="#" data-acc="gsub" data-v="${k}"${S.gsub === k ? ' aria-current="page"' : ""}>${n}</a>`).join("")}</nav>`;
+
+// ------------------------------------------------------------ Gym › Cardio y MTB
+function semanas() {
+  const out = [], hasta = lunesDe(S.hoy);
+  for (let l = hasta; l >= lunesDe(PRIMER_REG); l = masDias(l, -7)) {
+    const ps = S.paseos.filter((p) => p.fecha >= l && p.fecha <= masDias(l, 6)).sort((a, b) => (b.fecha + b.ini).localeCompare(a.fecha + a.ini));
+    out.push({ l, ps });
+  }
+  return out;
+}
+const totTxt = (ps) => { const km = ps.reduce((a, p) => a + p.km, 0), m = ps.reduce((a, p) => a + p.mov, 0), d = ps.reduce((a, p) => a + (p.des || 0), 0); return `${nf(km, 1)} km · ${durTxt(m)} · ${nf(d)} m`; };
+function filaPaseo(p) {
+  const det = [durTxt(p.mov), `${nf(vel(p.km, p.mov), 1)} km/h`, p.kcal ? `${nf(p.kcal)} kcal` : "sin kcal"].join(" · ");
+  return `<button type="button" class="opcion-rutina paseo-fila" data-acc="abrir-paseo" data-v="${p.id}"><span class="txt"><span>${cap1(diaCorto(p.fecha))}</span><span class="t-detalle tnum">${det}</span></span><span class="cifra km">${nf(p.km, 1)} <span class="unidad-c">km</span></span>${ic("chevron-right", 20)}</button>`;
+}
+function cardioMovil() {
+  const botones = `<div class="dos-botones"><button type="button" class="btn primario" data-acc="registrar">${ic("photo", 20)}Registrar paseo</button><button type="button" class="btn secundario" data-acc="a-mano">${ic("pencil", 20)}Registrar a mano</button></div>`;
+  if (!S.paseos.length) return `${gymTabs()}<div class="desliza" id="scroll"><div class="vacio">${ic("bike", 32)}<span class="t-seccion" id="h-pant" tabindex="-1">Todavía no registras paseos</span><p>Envía al coach las capturas de Strava y aquí verás tus km, tiempo y desnivel de cada semana.</p><button type="button" class="btn primario" data-acc="registrar">${ic("photo", 20)}Registrar paseo</button><button type="button" class="btn texto" data-acc="a-mano">Registrar a mano</button></div></div>`;
+  const sem = semanas().map(({ l, ps }) => `<div class="sem-cab"><span class="t-detalle tnum">Semana ${semanaN(l)} · ${dnum(l)} ${dnum(l) > dnum(masDias(l, 6)) ? MES_C[fecha(l).getUTCMonth()] + " " : ""}– ${dnum(masDias(l, 6))} ${MES_C[fecha(masDias(l, 6)).getUTCMonth()]}</span><span class="tot tnum">${ps.length ? totTxt(ps) : "Sin paseos esta semana"}</span></div>${ps.length ? `<div class="lista">${ps.map(filaPaseo).join("")}</div>` : ""}`).join("");
+  return `${gymTabs()}<span class="oculto" id="h-pant" tabindex="-1">Cardio y MTB</span><div class="desliza" id="scroll">${botones}${sem}</div>`;
+}
+function cifrasDet(p) {
+  const c = (l, v, u) => `<div><span class="t-detalle sec">${l}</span>${v == null ? '<span class="sin">sin dato</span>' : `<span class="cifra">${v}${u ? ` <span class="unidad-c">${u}</span>` : ""}</span>`}</div>`;
+  const [mv, mu] = durCorta(p.mov);
+  return `<div class="tarjeta"><span class="t-detalle sec">Distancia</span><span class="cifra c-heroe">${nf(p.km, 1)} <span class="t-seccion sec">km</span></span><div class="mtb-cifras">${c("Desnivel +", p.des == null ? null : nf(p.des), "m")}${c("En movimiento", mv, mu)}${c("Velocidad", nf(vel(p.km, p.mov), 1), "km/h")}${c("Calorías", p.kcal == null ? null : nf(p.kcal), "kcal")}${c("FC promedio", p.fc, "ppm")}${c("FC máx.", p.fcmax, "ppm")}</div></div>`;
+}
+function detalleMovil() {
+  const p = paseo(S.det);
+  if (!p) return cardioMovil();
+  const sub = [horaTxt(p.ini), p.total ? `${durTxt(p.total)} en total` : null, p.app].filter(Boolean).join(" · ");
+  const zonas = p.zonas ? `<div class="tarjeta">${zonasHtml(p.zonas, p.mov)}</div>` : `<div class="tarjeta"><div class="vacio en-tarjeta">${ic("heartbeat", 32)}<span class="t-seccion">Sin zonas de FC</span><p>Agrega la captura de zonas de Strava y el coach mide mejor el esfuerzo de este paseo.</p><button type="button" class="btn secundario" data-acc="agregar-zonas" data-v="${p.id}">${ic("photo", 20)}Agregar captura de zonas</button></div></div>`;
+  const ruta = p.gpx ? `<div class="tarjeta ruta"><div class="cab-r"><span class="t-seccion">Ruta</span><span class="t-detalle sec">${DIAS[dow(p.fecha)]}${dnum(p.fecha)}.gpx</span></div>${RUTA}<span class="t-detalle sec">Perfil de desnivel · ${p.des == null ? "sin desnivel" : nf(p.des) + " m de subida"}</span>${perfilHtml(p)}</div>`
+    : `<div class="tarjeta"><span class="t-seccion">Ruta</span><div class="vacio en-tarjeta">${ic("route", 32)}<span class="t-seccion">Sin ruta</span><p>Agrega el GPX que exporta Strava para ver la línea del paseo y su perfil de desnivel.</p><button type="button" class="btn secundario" data-acc="agregar-gpx" data-v="${p.id}">${ic("route", 20)}Agregar ruta GPX</button></div></div>`;
+  const caps = p.caps ? `<div class="tarjeta"><span class="t-seccion">Capturas</span><span class="capturas">${[0, 1].slice(0, p.caps).map((v) => cap(p.zonas && v === 1 ? 1 : 0)).join("")}</span></div>` : `<div class="tarjeta"><span class="t-seccion">Capturas</span><p class="sec">Registrado a mano, sin capturas.</p></div>`;
+  return `<div class="det-cab"><div class="dia-cab"><div class="volver"><button type="button" class="atras" data-acc="atras" aria-label="Volver a Cardio y MTB">${ic("arrow-left")}</button><span class="t-detalle sec">Cardio y MTB</span></div><h3 class="t-pantalla" id="h-pant" tabindex="-1">${diaLargo(p.fecha)}</h3><span class="estado-dia tnum">${ic("bike", 16)}${sub}</span></div><div class="det-acc"><button type="button" class="icono-btn" data-acc="editar" data-v="${p.id}" aria-label="Editar paseo">${ic("pencil")}</button><button type="button" class="icono-btn" data-acc="borrar" data-v="${p.id}" aria-label="Borrar paseo">${ic("trash")}</button></div></div><div class="desliza arriba" id="scroll">${cifrasDet(p)}${zonas}${ruta}${caps}</div>`;
+}
+
+// ------------------------------------------------------------ Coach: chat, lectura y tarjeta
+function datoBtn(m, k, lbl, val, unidad, opts = {}) {
+  const d = m.d, dud = d.dudoso && d.dudoso.includes(k), sin = val == null;
+  const v = sin ? '<span class="sin-dato">sin dato</span>' : `<span class="cifra">${val}${unidad ? ` <span class="unidad-c">${unidad}</span>` : ""}${dud ? ic("alert-triangle", 16) : ""}</span>`;
+  const extra = (dud ? '<span class="dudoso">Revisa este dato</span>' : "") + (opts.nota ? `<span class="t-detalle">${opts.nota}</span>` : "");
+  if (opts.fijo || m.estado !== "abierta") return `<div class="dato"><span class="t-detalle">${lbl}</span>${v}${extra}</div>`;
+  return `<button type="button" class="dato" data-acc="dato" data-v="${m.id}|${k}" aria-label="${lbl}: ${sin ? "sin dato" : esc(String(val).replace(/<[^>]+>/g, ""))} ${unidad}${dud ? ", revisa este dato" : ""}. Tocar para corregir">${`<span class="t-detalle">${lbl}</span>`}${v}${extra}</button>`;
+}
+function notaObjetivo(m) {
+  const d = m.d, mismo = d.fecha === S.hoy, quien = mismo ? "tu objetivo de hoy" : `tu objetivo del ${diaCorto(d.fecha)}`;
+  if (d.kcal == null) return `<p class="aviso-linea sep">${ic("info-circle", 16)}<span>Sin calorías, ${quien} no sube. Si las sabes, toca Calorías y escríbelas.</span></p>`;
+  const extra = Math.round(d.kcal / 2), antes = objetivo(d.fecha);
+  return `<p class="nota tnum sep">${ic("info-circle", 16)}<span>Al guardarlo, ${quien} sube a ${nf(antes + extra)} kcal: ${nf(antes)} + ${nf(extra)}, la mitad de las ${nf(d.kcal)} del paseo.</span></p>`;
+}
+function tarjetaHtml(m) {
+  const d = m.d;
+  if (m.estado === "guardada") return coachLinea(`<span class="guardado">${ic("check", 20)}Paseo guardado · ${nf(d.km, 1)} km · ${durTxt(d.mov)}</span><div class="acciones-c"><button type="button" class="btn texto" data-acc="abrir-paseo" data-v="${m.pid}">Ver paseo</button></div>`, " paseo");
+  if (m.estado === "descartada") return coachLinea(`<p class="sec">Paseo descartado.</p>`, " paseo");
+  const [mv, mu] = durCorta(d.mov), tot = d.total == null ? null : durCorta(d.total);
+  const dup = m.dup ? `<p class="aviso-linea">${ic("alert-triangle", 16)}<span>Ya registraste este paseo el ${diaCorto(m.dup)}.</span></p>` : "";
+  const sinZ = !d.zonas ? `<p class="aviso-linea sep">${ic("info-circle", 16)}<span>Sin captura de zonas se guarda sin zonas. Envíala ahora o agrégala después desde el paseo.</span></p>` : "";
+  const botones = m.dup ? `<div class="dos-botones sep"><button type="button" class="btn primario" data-acc="descartar" data-v="${m.id}">Descartar</button><button type="button" class="btn secundario" data-acc="guardar-paseo" data-v="${m.id}">Guardar de todas formas</button></div>`
+    : `<div class="acciones-c"><button type="button" class="btn primario" data-acc="guardar-paseo" data-v="${m.id}">Guardar paseo</button><button type="button" class="btn texto" data-acc="descartar" data-v="${m.id}">Descartar</button></div>`;
+  return coachLinea(`${dup}<p>${m.dup ? "" : "Leí tu paseo. Revisa las cifras y guárdalo."}</p>`.replace("<p></p>", "")
+    + `<button type="button" class="fecha-btn" data-acc="fecha" data-v="${m.id}"><span class="txt"><span class="t-detalle">Fecha · ${d.fechaLeida ? "leída de la captura" : "elegida por ti"}</span><span class="tnum">${diaLargo(d.fecha)} · ${horaTxt(d.ini)}</span></span>${ic("pencil", 20)}</button>`
+    + `<button type="button" class="dato p-heroe" data-acc="dato" data-v="${m.id}|km" aria-label="Distancia: ${nf(d.km, 1)} km. Tocar para corregir"><span class="t-detalle sec">Distancia</span><span class="cifra">${nf(d.km, 1)} <span class="t-seccion sec">km</span></span></button>`
+    + `<div class="datos-p sep">${datoBtn(m, "des", "Desnivel +", d.des == null ? null : nf(d.des), "m")}${datoBtn(m, "mov", "Tiempo en movimiento", mv, mu)}${datoBtn(m, "vel", "Velocidad", nf(vel(d.km, d.mov), 1), "km/h", { fijo: true, nota: "calculada" })}${datoBtn(m, "kcal", "Calorías", d.kcal == null ? null : nf(d.kcal), "kcal")}${datoBtn(m, "fc", "FC promedio", d.fc, "ppm")}${datoBtn(m, "fcmax", "FC máx.", d.fcmax, "ppm")}${datoBtn(m, "total", "Tiempo total", tot && tot[0], tot && tot[1])}</div>`
+    + (d.zonas ? `<div class="sep">${zonasHtml(d.zonas, d.mov)}</div>` : sinZ)
+    + notaObjetivo(m) + botones, " paseo");
+}
+function chatHtml() {
+  if (!S.chat.length) return coachLinea("<p>Hola, Francis. ¿Qué registramos hoy? Envíame las capturas de Strava de tu paseo.</p>");
+  return S.chat.map((m) => {
+    switch (m.t) {
+      case "yo": return `<div class="burbuja con-capturas"><span class="capturas">${m.caps.map((k) => cap(CAPS[k].v)).join("")}</span><span class="oculto">${m.caps.length} ${m.caps.length === 1 ? "captura" : "capturas"}</span></div>${m.cola ? `<span class="en-cola">${ic("clock", 16)}En cola · se leen al volver la conexión</span>` : ""}`;
+      case "leyendo": return coachLinea(`<div class="pasos-c tnum">${m.pasos.map((t, i) => `<span${i === m.paso ? ' class="ahora"' : ""}>${ic(i < m.paso ? "check" : "clock", 16)}${t}${i === m.paso ? "…" : ""}</span>`).slice(0, m.paso + 1).join("")}</div>`, " pensando");
+      case "tarjeta": return tarjetaHtml(m);
+      case "zonas": return m.estado === "abierta"
+        ? coachLinea(`<p>Leí las zonas del paseo del ${diaCorto(paseo(m.pid).fecha)}.</p>${zonasHtml(m.z, paseo(m.pid).mov)}<div class="acciones-c"><button type="button" class="btn primario" data-acc="guardar-zonas" data-v="${m.id}">Guardar zonas</button><button type="button" class="btn texto" data-acc="descartar-zonas" data-v="${m.id}">Descartar</button></div>`, " paseo")
+        : coachLinea(`<span class="guardado">${ic("check", 20)}${m.estado === "guardada" ? "Zonas guardadas" : "Zonas descartadas"}</span>`, " paseo");
+      case "coach": return coachLinea(`<p class="tnum">${m.txt}</p>${m.acc ? `<div class="acciones-c">${m.acc.map(([t, a, v, cls]) => `<button type="button" class="btn ${cls || "primario"}" data-acc="${a}"${v ? ` data-v="${v}"` : ""}>${t}</button>`).join("")}</div>` : ""}`);
+      case "pausa": return `<div class="tarjeta"><span class="t-seccion">El coach está en pausa</span><p class="sec">Se acabaron los créditos del mes; vuelve el 1 de ${fecha(S.hoy).getUTCMonth() === 9 ? "noviembre" : "diciembre"}. Mientras, tu paseo se registra a mano.</p><div class="acciones-c"><button type="button" class="btn primario" data-acc="a-mano">${ic("pencil", 20)}Registrar a mano</button></div></div>`;
+      default: return "";
+    }
+  }).join("");
+}
+function coachMovil() {
+  const off = S.offline ? `<div class="sinc-linea">${ic("cloud-off", 16)}Sin conexión. Tus capturas quedan en cola.</div>` : "";
+  return `${cabeza("Coach")}<div class="desliza con-chat" id="scroll"><div class="chat">${off}${chatHtml()}</div></div>`;
+}
+function chatPie() {
+  const leyendo = S.chat.some((m) => m.t === "leyendo");
+  return `<div class="chat-pie"><div class="entrada"><input id="f-chat" aria-label="Escribe al coach" placeholder="Escribe al coach" autocomplete="off"></div><button type="button" class="icono-btn" data-acc="registrar" aria-label="Adjuntar capturas">${ic("paperclip")}</button>${leyendo ? `<button type="button" class="btn secundario" data-acc="detener">${ic("player-stop", 20)}Detener</button>` : `<button type="button" class="icono-btn acento" data-acc="nada" aria-label="Enviar">${ic("send")}</button>`}</div>`;
+}
+// selector de imágenes simulado
+function hojaSelector() {
+  const f = S.form, n = f.sel.length;
+  const filas = Object.entries(CAPS).map(([k, c]) => `<button type="button" class="opcion-rutina" role="checkbox" aria-checked="${f.sel.includes(k)}" data-acc="sel-cap" data-v="${k}"><span class="casilla" aria-hidden="true">${ic("check", 16)}</span>${cap(c.v)}<span class="txt"><span>${c.n}</span><span class="t-detalle">${c.d}</span></span></button>`).join("");
+  return `<div class="lista sel-caps">${filas}</div><p class="nota">${ic("info-circle", 16)}<span>Simula el selector de imágenes del teléfono. Puedes enviar una o dos capturas juntas o por separado.</span></p><div class="botones-hoja"><button type="button" class="btn texto" data-acc="cerrar-hoja-btn">Cancelar</button><button type="button" class="btn primario" data-acc="enviar-caps"${n ? "" : ' aria-disabled="true"'}>${n ? `Enviar ${n} ${n === 1 ? "captura" : "capturas"}` : "Elige una captura"}</button></div>`;
+}
+// hoja de una cifra
+const CAMPOS = {
+  km: { t: "Distancia", u: "km", dec: 1, ent: 3, req: true, min: 0.1, max: 300 },
+  mov: { t: "Tiempo en movimiento", u: "h:mm", hora: true, req: true, min: 1, max: 1440 },
+  total: { t: "Tiempo total", u: "h:mm", hora: true, min: 1, max: 1440 },
+  des: { t: "Desnivel positivo", u: "m", dec: 0, ent: 4, min: 0, max: 9000 },
+  kcal: { t: "Calorías", u: "kcal", dec: 0, ent: 4, min: 1, max: 9999 },
+  fc: { t: "FC promedio", u: "ppm", dec: 0, ent: 3, min: 30, max: 230 },
+  fcmax: { t: "FC máx.", u: "ppm", dec: 0, ent: 3, min: 30, max: 230 },
+};
+const valTxt = (k, v) => (v == null ? "" : CAMPOS[k].hora ? hmm(v) : CAMPOS[k].dec ? nf(v, 1) : String(v));
+function leerCampo(k, txt) {
+  const c = CAMPOS[k]; txt = (txt || "").trim();
+  if (!txt) return { vacio: true };
+  let v;
+  if (c.hora) { const m = /^(\d{1,2}):(\d{2})$/.exec(txt); if (/^\d{1,2}$/.test(txt)) v = +txt; else if (!m || +m[2] > 59) return { err: "Escribe horas y minutos, como 0:52." }; else v = +m[1] * 60 + +m[2]; }
+  else v = parseFloat(txt.replace(",", "."));
+  if (!(v >= c.min && v <= c.max)) return { err: c.hora ? "Revisa el tiempo." : `Escribe de ${nf(c.min, c.dec ? 1 : 0)} a ${nf(c.max)} ${c.u}.` };
+  return { v };
+}
+function inputCampo(k, id, txt, err, opts = {}) {
+  const c = CAMPOS[k];
+  return `<div class="entrada${err ? " error" : ""}"><input id="${id}" class="cifra tnum" data-campo="${k}" inputmode="${c.hora ? "numeric" : c.dec ? "decimal" : "numeric"}" value="${esc(txt)}" placeholder="${opts.ph || (c.hora ? "0:00" : "")}" autocomplete="off"${err ? ` aria-invalid="true" aria-describedby="e-${id}"` : ""}><span class="u">${c.u}</span></div>${err ? errLinea("e-" + id, err) : ""}`;
+}
+function hojaDato() {
+  const f = S.form, c = CAMPOS[f.k], m = S.chat.find((x) => x.id === f.m), leido = m.d0[f.k];
+  const sub = m.d.dudoso && m.d.dudoso.includes(f.k) ? `Leí ${valTxt(f.k, leido)} ${c.u}, pero la cifra se ve cortada en la captura.` : leido == null ? "La captura no lo trae." : `Leído de la captura: ${valTxt(f.k, leido)} ${c.u}.`;
+  return `<p class="t-detalle sec">${sub}</p><div class="campo"><label class="lbl" for="f-dato">${c.t}</label>${inputCampo(f.k, "f-dato", f.txt, f.err)}</div><p class="nota">${ic("info-circle", 16)}<span>${c.hora ? "Horas y minutos: los dos puntos se ponen solos." : c.dec ? "Un decimal, con punto o coma." : "Solo números enteros."}</span></p><div class="botones-hoja">${c.req ? '<button type="button" class="btn texto" data-acc="cerrar-hoja-btn">Cancelar</button>' : '<button type="button" class="btn texto" data-acc="dato-sin">Sin dato</button>'}<button type="button" class="btn primario" data-acc="dato-ok">Guardar</button></div>`;
+}
+// hoja de fecha con máscara y selector propio
+function mesGrid(mes, sel, max) {
+  const d0 = fecha(mes), dias = new Date(Date.UTC(d0.getUTCFullYear(), d0.getUTCMonth() + 1, 0)).getUTCDate(), off = (dow(mes) + 6) % 7;
+  let h = DIAS_C.map((t) => `<span class="sem" aria-hidden="true">${t}</span>`).join("") + '<span class="celda" aria-hidden="true"></span>'.repeat(off);
+  for (let i = 1; i <= dias; i++) {
+    const s = masDias(mes, i - 1), fut = s > max;
+    h += `<button type="button" class="celda${s === S.hoy ? " hoy" : ""}" data-acc="fecha-dia" data-v="${s}" aria-label="${DIAS[dow(s)]} ${i}"${fut ? ' aria-disabled="true"' : ""} aria-pressed="${s === sel}"><span class="n">${i}</span></button>`;
+  }
+  return `<div class="mes" role="group" aria-label="${cap1(MESES[d0.getUTCMonth()])} ${d0.getUTCFullYear()}">${h}</div>`;
+}
+function hojaFecha() {
+  const f = S.form, sel = parseFecha(f.txt);
+  const cal = f.cal ? `<div class="cal-nav"><button type="button" class="icono-btn" data-acc="fecha-mes" data-v="-1" aria-label="Mes anterior">${ic("chevron-left")}</button><div class="cal-titulo"><span class="t-seccion">${cap1(MESES[fecha(f.mes).getUTCMonth()])} ${fecha(f.mes).getUTCFullYear()}</span></div><button type="button" class="icono-btn" data-acc="fecha-mes" data-v="1" aria-label="Mes siguiente"${f.mes >= S.hoy.slice(0, 8) + "01" ? ' aria-disabled="true"' : ""}>${ic("chevron-right")}</button></div>${mesGrid(f.mes, sel, S.hoy)}` : "";
+  return `<div class="campo"><label class="lbl" for="f-fecha">Fecha</label><div class="entrada${f.err ? " error" : ""}"><input id="f-fecha" class="tnum" data-campo="fecha" inputmode="numeric" value="${esc(f.txt)}" placeholder="dd/mm/aaaa" autocomplete="off"${f.err ? ' aria-invalid="true" aria-describedby="e-fecha"' : ""}><button type="button" class="icono-btn" data-acc="fecha-cal" aria-label="Elegir fecha en el calendario" aria-expanded="${!!f.cal}">${ic("calendar")}</button></div>${f.err ? errLinea("e-fecha", f.err) : ""}</div>${cal}<div class="botones-hoja"><button type="button" class="btn texto" data-acc="cerrar-hoja-btn">Cancelar</button><button type="button" class="btn primario" data-acc="fecha-ok">Guardar</button></div>`;
+}
+function parseFecha(t) {
+  const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(t || ""); if (!m) return null;
+  const s = `${m[3]}-${m[2]}-${m[1]}`, d = fecha(s);
+  return iso(d) === s ? s : null;
+}
+
+// ------------------------------------------------------------ registro a mano (también editar)
+function formMovil() {
+  const f = S.form, e = f.err || {};
+  const v = leerCampo("km", f.km).v, t = leerCampo("mov", f.mov).v;
+  const velo = v && t ? `<p class="leido tnum">${ic("check", 16)}Velocidad media: ${nf(vel(v, t), 1)} km/h</p>` : `<p class="nota">${ic("info-circle", 16)}<span>La velocidad sale al escribir la distancia y el tiempo.</span></p>`;
+  const opc = [["des", "Desnivel +"], ["kcal", "Calorías"], ["fc", "FC promedio"], ["fcmax", "FC máx."], ["total", "Tiempo total"]].map(([k, n]) => `<div><label for="f-${k}">${n}</label><span class="opc"><input id="f-${k}" class="tnum" data-campo="${k}" inputmode="numeric" value="${esc(f[k])}" placeholder="sin dato" autocomplete="off"${e[k] ? ` aria-invalid="true" aria-describedby="e-f-${k}"` : ""}><span class="u">${CAMPOS[k].u}</span></span></div>${e[k] ? `<div class="opc-err">${errLinea("e-f-" + k, e[k])}</div>` : ""}`).join("");
+  const z = f.zonasAbiertas ? `<div class="opcionales zonas-form">${[4, 3, 2, 1, 0].map((i) => `<div><label for="f-z${i}"><b>Z${i + 1}</b> <span class="t-detalle sec">${RANGOS[i]}</span></label><span class="opc"><input id="f-z${i}" class="tnum" data-campo="z${i}" inputmode="numeric" value="${esc(f.z[i])}" placeholder="0" autocomplete="off"><span class="u">%</span></span></div>`).join("")}<div><span class="t-detalle sec tnum" id="z-suma">${zSuma(f)}</span></div>${e.z ? `<div>${errLinea("e-z", e.z)}</div>` : ""}</div>` : "";
+  return `${cabApilada(f.edit ? "Editar paseo" : "Paseo a mano", f.edit ? diaLargo(paseo(f.edit).fecha) : "Sin coach ni créditos")}<div class="desliza form-scroll compacto" id="scroll">
+<div class="campo"><label class="lbl" for="f-fecha">Fecha</label><div class="entrada${e.fecha ? " error" : ""}"><input id="f-fecha" class="tnum" data-campo="ffecha" inputmode="numeric" value="${esc(f.fecha)}" placeholder="dd/mm/aaaa" autocomplete="off"${e.fecha ? ' aria-invalid="true" aria-describedby="e-ffecha"' : ""}><button type="button" class="icono-btn" data-acc="form-cal" aria-label="Elegir fecha en el calendario">${ic("calendar")}</button></div>${e.fecha ? errLinea("e-ffecha", e.fecha) : ""}</div>
+<div class="par"><div class="campo"><label class="lbl" for="f-km">Distancia</label>${inputCampo("km", "f-km", f.km, e.km, { ph: "0.0" })}</div><div class="campo"><label class="lbl" for="f-mov">En movimiento</label>${inputCampo("mov", "f-mov", f.mov, e.mov)}</div></div>
+<div id="vel-linea">${velo}</div>
+<div class="sub-form"><span>Opcionales</span><span class="t-detalle">vacío = sin dato</span></div>
+<div class="opcionales">${opc}<div><span>Zonas Z1 a Z5</span><button type="button" class="btn texto" data-acc="form-zonas" aria-expanded="${!!f.zonasAbiertas}">${f.zonasAbiertas ? "Quitar" : "Agregar"}</button></div></div>${z}
+</div><div class="acciones-form"><button type="button" class="btn primario ancho" data-acc="form-guardar">${f.edit ? "Guardar cambios" : "Guardar paseo"}</button></div>`;
+}
+const zSuma = (f) => { const s = f.z.reduce((a, x) => a + (parseInt(x, 10) || 0), 0); return `Suma ${s} % de 100 %`; };
+
+// ------------------------------------------------------------ revisión simplificada de la propuesta (pantalla del flujo 4)
+function revisionMovil() {
+  const r = S.rev;
+  const filas = r.items.map((x, i) => `<section class="comida${r.marc[i] ? "" : " descartada"}"><div class="comida-cab con-casilla"><button type="button" class="casilla-btn" role="checkbox" aria-checked="${r.marc[i]}" data-acc="rev-marcar" data-v="${i}" aria-label="Aprobar ${x.n} en ${SLOTS.find(([k]) => k === x.k)[1].toLowerCase()}"><span class="casilla">${ic("check", 16)}</span></button><div class="txt"><span class="t-seccion">${SLOTS.find(([k]) => k === x.k)[1]}</span><span class="t-detalle tnum">${horaTxt(SLOTS.find(([k]) => k === x.k)[2])}${r.marc[i] ? "" : " · No se guarda"}</span></div><span class="kc"><span><span class="cifra">+${x.kcal}</span> <span class="unidad-c">kcal</span></span></span></div><div class="alimento"><span class="txt"><span>${x.n}</span><span class="t-detalle tnum">${x.d}</span></span><span class="kc tnum">${x.kcal} kcal</span></div></section>`).join("");
+  const n = r.marc.filter(Boolean).length, tot = r.items.reduce((a, x, i) => a + (r.marc[i] ? x.kcal : 0), 0);
+  return `${cabApilada("Cubrir las kcal del paseo", `${diaLargo(S.hoy)} · objetivo ${nf(objetivo(S.hoy))}`)}<div class="desliza con-pie" id="scroll">${coachLinea(`<p class="tnum">Agrego ${nf(tot)} de las ${nf(r.extra)} kcal extra en lo que queda del día, en la proporción de tus macros.</p>`)}${filas}<p class="nota">${ic("info-circle", 16)}<span>Es la pantalla de revisión del flujo 4, reducida a lo que toca este paseo.</span></p></div><div class="pie-fijo"><button type="button" class="btn texto" data-acc="rev-descartar">Descartar</button><button type="button" class="btn primario" data-acc="rev-aprobar"${n ? "" : ' aria-disabled="true"'} aria-live="polite">${n === r.items.length ? "Aprobar todo" : `Aprobar ${n} de ${r.items.length}`}</button></div>`;
+}
+
+// ------------------------------------------------------------ Comida, Hoy y Gym › Sesión
+function filaR(nom, u, total, obj, cls, v, linea = "") {
+  const res = Math.max(0, obj - total);
+  return `<span class="nom${cls === "kcal" ? " kcal" : ""}">${nom} <span class="u">${u}</span></span><span style="display:contents"><span class="v"><span class="cifra">${nf(total)}</span></span><span class="v"><span class="cifra">${nf(obj)}</span></span><span class="v res"><span class="cifra">${nf(res)}</span></span></span><div class="pista-n"${cls && cls !== "kcal" ? ` style="--m:var(${cls})"` : ""} aria-hidden="true"><div class="p"><i style="--v:${Math.min(100, (total / obj) * 100).toFixed(1)}"></i></div></div>${linea}`;
+}
+const comidaHoy = (s) => s === S.hoy && S.hora >= 420;
+function comidaMovil() {
+  const s = S.dia, o = objetivo(s), m = macrosObj(s), come = comidaHoy(s), t = come ? DESAYUNO : { kcal: 0, p: 0, c: 0, g: 0 }, ex = extraDe(s);
+  const linea = ex ? `<span class="linea">${ic("bike", 16)}${nf(BASE)} + ${nf(ex)} del paseo</span>` : "";
+  const resumen = `<section class="resumen tnum" aria-label="Resumen del día"><span></span><span class="cab">Total</span><span class="cab">Objetivo</span><span class="cab">Restan</span>${filaR("Calorías", "kcal", t.kcal, o, "kcal", 0, linea)}${filaR("Proteína", "g", t.p, m.p, "--dato-1")}${filaR("Carbohidratos", "g", t.c, m.c, "--dato-2")}${filaR("Grasa", "g", t.g, m.g, "--dato-3")}</section>`;
+  const desayuno = come ? `<section class="comida" aria-label="Desayuno"><div class="comida-cab"><div class="txt"><h4 class="t-seccion" style="margin:0">Desayuno</h4><span class="t-detalle tnum">${horaTxt(400)}</span></div><span class="kc"><span><span class="cifra">625</span> <span class="unidad-c">kcal</span></span><span class="t-detalle tnum">P 31 · C 82 · G 19</span></span></div>${COMIDA_HOY.map((x) => `<div class="alimento"><span class="txt"><span>${x.n}</span><span class="t-detalle tnum">${x.d}</span></span><span class="kc tnum">${x.kcal} kcal</span></div>`).join("")}</section>` : "";
+  const prog = (S.prop[s] || []).map((x) => `<section class="comida programada" aria-label="${SLOTS.find(([k]) => k === x.k)[1]}"><div class="comida-cab"><div class="txt"><h4 class="t-seccion" style="margin:0">${SLOTS.find(([k]) => k === x.k)[1]}</h4><span class="t-detalle tnum"><span class="m prog" aria-hidden="true"></span>Programada · ${horaTxt(SLOTS.find(([k]) => k === x.k)[2])}</span></div></div><div class="alimento"><span class="txt"><span>${x.n}</span><span class="t-detalle tnum">${x.d} · del plan del paseo</span></span><span class="kc tnum">${x.kcal} kcal</span></div></section>`).join("");
+  const vacio = !come && !prog ? `<div class="vacio">${ic("kitchen", 32)}<span class="t-seccion">${s === S.hoy ? "Todavía no registras comidas hoy" : "Este día no tiene comidas en el prototipo"}</span><p>Registrar comidas es el flujo 3; aquí se ve cómo cambia el objetivo con el paseo.</p></div>` : "";
+  const subs = `<nav class="sub-tabs" aria-label="Comida"><a class="sub-tab" href="#" data-acc="nada" aria-current="page">Día</a><a class="sub-tab" href="#" data-acc="nada">Calendario</a><a class="sub-tab" href="#" data-acc="nada">Recetas</a><a class="sub-tab" href="#" data-acc="nada">Alimentos</a><a class="sub-tab" href="#" data-acc="nada">Suplementos</a></nav>`;
+  const nav = `<div class="dia-nav"><button type="button" class="icono-btn" data-acc="dia-mover" data-v="-1" aria-label="Día anterior">${ic("chevron-left")}</button><div class="txt"><span class="t-seccion" id="h-pant" tabindex="-1">${diaLargo(s)}</span><span class="t-detalle sec">${s === S.hoy ? "hoy" : entre(s, S.hoy) === 1 ? "ayer" : ""}</span></div><button type="button" class="icono-btn" data-acc="dia-mover" data-v="1" aria-label="Día siguiente"${s >= S.hoy ? ' aria-disabled="true"' : ""}>${ic("chevron-right")}</button></div>`;
+  return `${subs}<div class="desliza con-fab" id="scroll">${nav}${resumen}${desayuno}${prog}${vacio}</div>`;
+}
+function lineaRecup(enGym) {
+  const se = S.sesion, p = paseoRecup();
+  if (!p || se.recup) return "";
+  const piernas = (se.dia === "B" ? EJ_B : EJ_A).filter((x) => x[2]).map((x) => x[0].toLowerCase().replace(" convencional", "").replace(" tumbado", "").replace(" con barra", "")).join(" y ");
+  const cuando = entre(S.hoy, se.fecha) === 1 ? "Mañana" : cap1(diaCorto(se.fecha));
+  const quePaso = esFuerte(p) && p.mov > 90 ? `fue largo: ${durTxt(p.mov)} en movimiento` : `fue intenso: ${p.zonas[3] + p.zonas[4]} % en Z4 y Z5`;
+  const cuando2 = p.fecha === S.hoy ? "de hoy" : entre(p.fecha, S.hoy) === 1 ? "de ayer" : `del ${diaCorto(p.fecha)}`;
+  const juev = masDias(se.fecha, 1);
+  const mover = !enGym ? `<button type="button" class="btn secundario" data-acc="recup" data-v="mover">Mover al ${DIAS[dow(juev)]}</button>` : "";
+  return coachLinea(`<span class="tema">Recuperación</span><p class="tnum">Tu paseo ${cuando2} ${quePaso}. ${enGym ? "Hoy" : cuando} a las ${horaTxt(se.h)} toca Día ${se.dia}, con ${piernas}.</p><p class="tnum">Te propongo bajar un 10 % la carga de esos ejercicios.${enGym ? "" : ` Moverlo al ${DIAS[dow(juev)]} dejaría dos días de pierna seguidos.`}</p><div class="acciones-c"><button type="button" class="btn primario" data-acc="recup" data-v="bajar">Bajar la carga</button>${mover}<button type="button" class="btn texto" data-acc="recup" data-v="dejar">Dejar como está</button></div>`);
+}
+function hoyMovil() {
+  const s = S.hoy, ps = paseosDe(s), se = S.sesion;
+  const conf = se.recup === "bajar" ? coachLinea(`<span class="tema">Recuperación</span><p class="tnum">Listo: el Día ${se.dia} del ${diaCorto(se.fecha)} va con la pierna un 10 % más ligera. Duerme bien y come lo que te falta de hoy.</p>`)
+    : se.recup === "mover" ? coachLinea(`<span class="tema">Recuperación</span><p class="tnum">Listo: el Día ${se.dia} pasó al ${diaCorto(se.fecha)}.</p>`) : "";
+  const filas = ps.map((p) => `<button type="button" class="fila sesion-fila" data-acc="abrir-paseo" data-v="${p.id}"><span class="txt"><span>Paseo MTB · ${nf(p.km, 1)} km</span><span class="t-detalle tnum">${durTxt(p.mov)} · ${p.kcal ? nf(p.kcal) + " kcal" : "sin kcal"} · objetivo ${nf(objetivo(s))}</span></span>${ic("bike", 20)}</button>`).join("")
+    + `<button type="button" class="fila sesion-fila" data-acc="ir-comida"><span class="txt"><span>Comida de hoy</span><span class="t-detalle tnum">Restan ${nf(objetivo(s) - (comidaHoy(s) ? DESAYUNO.kcal : 0))} de ${nf(objetivo(s))} kcal</span></span>${ic("chevron-right", 20)}</button>`
+    + `<button type="button" class="fila sesion-fila" data-acc="ir-sesion"><span class="txt"><span>${entre(s, se.fecha) === 1 ? "Mañana" : cap1(diaCorto(se.fecha))} · Día ${se.dia} · ${se.nom}</span><span class="t-detalle tnum">${horaTxt(se.h)} · programada${se.carga ? " · pierna −10 %" : ""}</span></span><span class="m prog" aria-hidden="true"></span></button>`;
+  return `<div class="hoy-cab"><span class="t-detalle tnum">${diaLargo(s)} · semana ${semanaN(s)}</span><span class="t-pantalla" id="h-pant" tabindex="-1">Hoy</span></div><div class="desliza" id="scroll">${lineaRecup(false)}${conf}<div class="lista">${filas}</div></div>`;
+}
+function sesionMovil() {
+  const se = S.sesion, ej = se.dia === "B" ? EJ_B : EJ_A;
+  const filas = ej.map(([n, d, p]) => `<div class="fila ejercicio"><span class="txt"><span>${n}</span><span class="t-detalle tnum">${d}${p && se.carga ? " · −10 % de carga" : ""}</span></span>${p ? '<span class="baja">pierna</span>' : ""}</div>`).join("");
+  return `${gymTabs()}<div class="desliza" id="scroll"><div class="dia-cab"><span class="t-detalle sec tnum">${diaLargo(se.fecha)} · semana ${semanaN(se.fecha)}</span><h3 class="t-pantalla" id="h-pant" tabindex="-1">Día ${se.dia} · ${se.nom}</h3><span class="estado-dia tnum"><span class="m prog"></span>Programada · ${horaTxt(se.h)}</span></div>${lineaRecup(true)}<div class="lista">${filas}</div></div>`;
+}
+function gymMovil() {
+  if (S.gsub === "cardio") return cardioMovil();
+  if (S.gsub === "sesion") return sesionMovil();
+  return `${gymTabs()}<div class="desliza" id="scroll"><p class="sec" id="h-pant" tabindex="-1">Esta parte de Gym es de los flujos 1 y 2.</p></div>`;
+}
+
+// ------------------------------------------------------------ pintar
+const $cuerpo = $("#cuerpo"), $bajo = $("#bajo"), $capa = $("#capa"), $barra = $("#barra");
+let foco = null;
+function pantallaMovil() {
+  switch (cima()) {
+    case "detalle": return detalleMovil();
+    case "form": return formMovil();
+    case "revision": return revisionMovil();
+  }
+  if (S.sec === "coach") return coachMovil();
+  if (S.sec === "gym") return gymMovil();
+  if (S.sec === "comida") return comidaMovil();
+  if (S.sec === "salud") return `${cabeza("Salud")}<div class="desliza" id="scroll"><p class="sec">Salud no es parte de este flujo.</p></div>`;
+  return hoyMovil();
+}
+function capaMovil() {
+  switch (S.hoja) {
+    case "selector": return hojaSimple(S.form.zonasDe ? "Captura de zonas" : "Elige las capturas", hojaSelector(), S.form.zonasDe ? `Para el paseo del ${diaCorto(paseo(S.form.zonasDe).fecha)}` : "Actividad y zonas de FC");
+    case "dato": return hojaSimple(CAMPOS[S.form.k].t, hojaDato());
+    case "fecha": return hojaSimple("Fecha del paseo", hojaFecha(), "Puede ser un día pasado; su objetivo sube igual.");
+    default: return "";
+  }
+}
+const clavePant = () => `${S.sec}|${S.gsub}|${cima()}|${S.dia}|${S.det}`;
+function render() {
+  const sc = $("#scroll"), arriba = sc ? sc.scrollTop : 0, misma = render.clave === clavePant();
+  $cuerpo.innerHTML = pantallaMovil();
+  const pie = cima() === "revision" ? "" : S.sec === "coach" && !cima() ? chatPie() : "";
+  $bajo.innerHTML = pie;
+  $barra.hidden = !!cima();
+  document.querySelectorAll("#barra [data-v]").forEach((b) => { if (b.dataset.v === S.sec) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+  const fab = !cima() && S.sec === "comida" && !S.hoja;
+  $("#zona-fab").innerHTML = fab ? `<div class="franja-fab tnum">Restan ${nf(objetivo(S.dia) - (comidaHoy(S.dia) ? DESAYUNO.kcal : 0))} de ${nf(objetivo(S.dia))} kcal</div><button type="button" class="fab" id="fab" data-acc="fab" aria-label="Agregar al ${SLOTS.find(([, , h]) => h > S.hora) ? SLOTS.find(([, , h]) => h > S.hora)[1].toLowerCase() : "día"}">${ic("plus")}</button>` : "";
+  $("#zona-aviso").innerHTML = avisoHtml();
+  $capa.innerHTML = capaMovil();
+  $("#reloj").textContent = horaTxt(S.hora).split(NB)[0];
+  if (!S.hoja) S.hojaArriba = false;
+  $("#pantalla").classList.toggle("hoja-arriba", !!S.hojaArriba);
+  const n = $("#scroll");
+  if (n) { if (S.sec === "coach" && !cima() && (S.scrollFin || !misma)) n.scrollTop = n.scrollHeight; else if (misma) n.scrollTop = arriba; else n.scrollTop = 0; }
+  S.scrollFin = false;
+  render.clave = clavePant();
+  if (S.aviso) S.aviso.nuevo = false;
+  if (foco) { const f = typeof foco === "string" ? document.querySelector(foco) : foco; foco = null; if (f) f.focus({ preventScroll: true }); }
+  actualizarControles(); guardar(); posicionarAviso();
+}
+
+// ------------------------------------------------------------ avisos (4 s sin acción, 8 s con acción)
+let tAviso = null;
+function aviso(texto, accion = null) {
+  S.aviso = { texto, accion, nuevo: true };
+  clearTimeout(tAviso);
+  const fin = () => {
+    const el = document.querySelector(".aviso");
+    if (el && (el.matches(":hover") || el.contains(document.activeElement))) { tAviso = setTimeout(fin, 1000); return; }
+    S.aviso = null; S.deshacer = null;
+    document.querySelectorAll(".ranura-aviso").forEach((x) => (x.innerHTML = ""));
+  };
+  tAviso = setTimeout(fin, accion ? 8000 : 4000);
+}
+function limpiarAviso() { clearTimeout(tAviso); S.aviso = null; S.deshacer = null; }
+function conDeshacer(texto, restaurar) { S.deshacer = restaurar; aviso(texto, ["Deshacer", "deshacer"]); }
+function foto(claves) { const o = {}; claves.forEach((k) => (o[k] = clon(S[k]))); return () => claves.forEach((k) => (S[k] = o[k])); }
+
+// ------------------------------------------------------------ acciones
+const nuevoId = () => "m" + S.sig++;
+function cerrarHoja() { S.hoja = null; S.hojaArriba = false; S.form = S.formGuardado || (cima() === "form" && S.form && S.form.tipo === "form" ? S.form : null); S.formGuardado = null; foco = S.volverFoco || "#h-pant"; S.volverFoco = null; render(); }
+function irA(sec) { S.sec = sec; S.pila = []; S.hoja = null; S.form = null; if (sec === "comida") S.dia = S.hoy; foco = "#h-pant"; render(); }
+function abrirSelector(zonasDe = null) {
+  limpiarAviso();
+  S.sec = "coach"; S.pila = []; S.hoja = "selector"; S.form = { tipo: "selector", sel: zonasDe ? [] : [], zonasDe };
+  foco = "#hoja-t"; render();
+}
+let tLeer = null;
+function enviarCaps(sel, zonasDe) {
+  const msg = { id: nuevoId(), t: "yo", caps: sel, cola: S.offline, zonasDe };
+  S.chat.push(msg); S.scrollFin = true;
+  if (S.offline) { S.cola.push(msg.id); return; }
+  procesar(msg);
+}
+function procesar(msg) {
+  if (S.sinCreditos) { S.chat.push({ id: nuevoId(), t: "pausa" }); S.scrollFin = true; return; }
+  const sel = msg.caps;
+  const pasos = [];
+  if (sel.includes("a17")) pasos.push("Leyendo la captura de la actividad");
+  if (sel.some((k) => k[0] === "z")) pasos.push("Leyendo las zonas de FC");
+  if (!pasos.length) pasos.push("Leyendo la imagen");
+  const lee = { id: nuevoId(), t: "leyendo", pasos, paso: 0, de: msg.id };
+  S.chat.push(lee); S.scrollFin = true;
+  const paso = () => {
+    const l = S.chat.find((m) => m.id === lee.id); if (!l) return;
+    if (l.paso < l.pasos.length - 1) { l.paso++; S.scrollFin = true; render(); tLeer = setTimeout(paso, 900); return; }
+    S.chat = S.chat.filter((m) => m.id !== lee.id);
+    resultado(msg);
+    S.scrollFin = true;
+    if (S.sec !== "coach") aviso("Tu paseo está listo para confirmar", ["Revisar", "ir-coach"]);
+    render();
+  };
+  tLeer = setTimeout(paso, 900);
+}
+function resultado(msg) {
+  const sel = msg.caps;
+  if (sel.includes("a17")) {
+    const d = { ...clon(P17), zonas: sel.includes("z17") ? clon(Z17) : null, dudoso: ["des"], fechaLeida: true, caps: sel.filter((k) => k !== "foto").length };
+    const dup = S.paseos.find((p) => p.fecha === d.fecha && p.ini === d.ini && p.km === d.km);
+    S.chat.push({ id: nuevoId(), t: "tarjeta", d, d0: clon(d), estado: "abierta", dup: dup ? dup.fecha : null });
+    return;
+  }
+  const z = sel.find((k) => k[0] === "z");
+  if (z) {
+    const f = z === "z17" ? "2026-10-17" : "2026-10-10", p = msg.zonasDe ? paseo(msg.zonasDe) : S.paseos.find((x) => x.fecha === f);
+    if (p && p.fecha === f) { S.chat.push({ id: nuevoId(), t: "zonas", pid: p.id, z: z === "z17" ? clon(Z17) : clon(Z10), estado: "abierta" }); return; }
+    if (p) { S.chat.push({ id: nuevoId(), t: "coach", txt: `Esta captura es de las zonas del ${diaCorto(f)}, pero el paseo es del ${diaCorto(p.fecha)}. Envíame la de ese día.`, acc: [["Elegir otra captura", "agregar-zonas", p.id, "secundario"]] }); return; }
+    S.chat.push({ id: nuevoId(), t: "coach", txt: `Leí solo las zonas de FC del ${diaCorto(f)}. Envíame también la captura de la actividad, donde se ven la distancia y el tiempo.`, acc: [["Elegir la captura", "registrar", null, "secundario"]] });
+    return;
+  }
+  S.chat.push({ id: nuevoId(), t: "coach", txt: "Esta imagen no trae datos de un paseo. Envíame la captura de la actividad, donde se ven la distancia y el tiempo: Strava, Samsung Health o Garmin.", acc: [["Elegir otra captura", "registrar", null, "secundario"], ["Registrar a mano", "a-mano", null, "texto"]] });
+}
+function reconectar() {
+  const pend = S.cola.slice(); S.cola = [];
+  pend.forEach((id) => { const m = S.chat.find((x) => x.id === id); if (m) { m.cola = false; procesar(m); } });
+}
+const frase = (x) => (x.k === "almuerzo" ? `${x.d} de arroz en el almuerzo (+${x.kcal})` : `${x.d} de avena en la merienda (+${x.kcal})`);
+function mensajeTrasGuardar(p) {
+  const s = p.fecha, mismo = s === S.hoy;
+  if (!p.kcal) return { t: "coach", txt: `Guardé tu paseo. Sin calorías, el objetivo ${mismo ? "de hoy" : "del " + diaCorto(s)} se queda en ${nf(objetivo(s))} kcal.` };
+  if (!mismo) return { t: "coach", txt: `El objetivo del ${diaCorto(s)} subió a ${nf(objetivo(s))} kcal: ${nf(BASE)} + ${nf(extraDe(s))} del paseo.` };
+  const extra = Math.round(p.kcal / 2), items = comidasPorDelante() ? propuesta(extra) : [];
+  if (!items.length) return { t: "coach", txt: `Tu objetivo de hoy subió a ${nf(objetivo(s))} kcal. Ya no te quedan comidas hoy, así que no te propongo cambios; mañana comes como siempre.` };
+  return { t: "coach", txt: `Tu objetivo de hoy sube a ${nf(objetivo(s))} kcal. Te propongo cubrir los ${nf(extra)} en lo que queda del día: ${items.map(frase).join(" y ")}.`, acc: [["Revisar propuesta", "revisar-prop", null, "primario"]], extra, items };
+}
+function guardarPaseo(mid) {
+  const m = S.chat.find((x) => x.id === mid), d = m.d;
+  const p = { id: "p" + S.sig++, fecha: d.fecha, ini: d.ini, km: d.km, mov: d.mov, total: d.total, des: d.des, kcal: d.kcal, fc: d.fc, fcmax: d.fcmax, zonas: d.zonas, gpx: false, caps: d.caps, app: d.app || "Strava" };
+  S.paseos.push(p); m.estado = "guardada"; m.pid = p.id;
+  const r = mensajeTrasGuardar(p);
+  S.chat.push({ id: nuevoId(), ...r }); S.scrollFin = true;
+  limpiarAviso(); foco = '[data-acc="abrir-paseo"]'; render();
+}
+function abrirDato(mid, k) {
+  const m = S.chat.find((x) => x.id === mid);
+  S.volverFoco = `[data-acc="dato"][data-v="${mid}|${k}"]`;
+  S.hoja = "dato"; S.form = { tipo: "dato", m: mid, k, txt: valTxt(k, m.d[k]), err: "" }; foco = "#hoja-t"; render();
+}
+function datoOk(sin) {
+  const f = S.form, m = S.chat.find((x) => x.id === f.m), c = CAMPOS[f.k];
+  if (!sin) {
+    const r = leerCampo(f.k, f.txt);
+    if (r.vacio && c.req) { f.err = "Falta este dato"; foco = "#f-dato"; render(); return; }
+    if (r.err) { f.err = r.err; foco = "#f-dato"; render(); return; }
+    m.d[f.k] = r.vacio ? null : r.v;
+  } else m.d[f.k] = null;
+  if (m.d.dudoso) m.d.dudoso = m.d.dudoso.filter((x) => x !== f.k);
+  const k = f.k; S.hoja = null; S.form = null; S.hojaArriba = false;
+  foco = `[data-acc="dato"][data-v="${m.id}|${k}"]`; render();
+}
+function abrirForm(editId) {
+  limpiarAviso();
+  const p = editId && paseo(editId);
+  S.form = p ? { tipo: "form", edit: editId, fecha: ddmm(p.fecha), km: nf(p.km, 1), mov: hmm(p.mov), des: p.des == null ? "" : String(p.des), kcal: p.kcal == null ? "" : String(p.kcal), fc: p.fc == null ? "" : String(p.fc), fcmax: p.fcmax == null ? "" : String(p.fcmax), total: p.total == null ? "" : hmm(p.total), zonasAbiertas: !!p.zonas, z: p.zonas ? p.zonas.map(String) : ["", "", "", "", ""], err: {} }
+    : { tipo: "form", edit: null, fecha: ddmm(S.hoy), km: "", mov: "", des: "", kcal: "", fc: "", fcmax: "", total: "", zonasAbiertas: false, z: ["", "", "", "", ""], err: {} };
+  if (!editId) S.sec = "gym", S.gsub = "cardio";
+  S.pila.push("form"); S.hoja = null; foco = "#h-pant"; render();
+}
+function guardarForm() {
+  const f = S.form, e = {};
+  const fe = parseFecha(f.fecha);
+  if (!f.fecha) e.fecha = "Falta este dato"; else if (!fe) e.fecha = "Esa fecha no existe."; else if (fe > S.hoy) e.fecha = "Todavía no llega ese día."; else if (fe < PRIMER_REG) e.fecha = "Antes de tu semana 1 no se registran paseos.";
+  const km = leerCampo("km", f.km), mov = leerCampo("mov", f.mov);
+  if (km.vacio) e.km = "Falta este dato"; else if (km.err) e.km = km.err;
+  if (mov.vacio) e.mov = "Falta este dato"; else if (mov.err) e.mov = mov.err;
+  const opc = {};
+  ["des", "kcal", "fc", "fcmax", "total"].forEach((k) => { const r = leerCampo(k, f[k]); if (r.err) e[k] = r.err; else opc[k] = r.vacio ? null : r.v; });
+  let zonas = null;
+  if (f.zonasAbiertas && f.z.some((x) => x !== "")) { zonas = f.z.map((x) => parseInt(x, 10) || 0); if (zonas.reduce((a, b) => a + b, 0) !== 100) e.z = "Las cinco zonas tienen que sumar 100 %."; }
+  f.err = e;
+  const orden = ["fecha", "km", "mov", "des", "kcal", "fc", "fcmax", "total", "z"], primero = orden.find((k) => e[k]);
+  if (primero) { foco = primero === "z" ? "#f-z4" : primero === "fecha" ? "#f-fecha" : `#f-${primero}`; render(); return; }
+  if (f.edit) {
+    const p = paseo(f.edit), restaurar = foto(["paseos"]), antes = p.fecha;
+    Object.assign(p, { fecha: fe, km: km.v, mov: mov.v, ...opc, zonas });
+    S.pila.pop(); S.form = null; S.det = p.id;
+    conDeshacer(`Paseo guardado. ${fe === S.hoy ? "Hoy" : cap1(diaCorto(fe))}: ${nf(objetivo(fe))} kcal${antes !== fe ? `; el ${diaCorto(antes)} vuelve a ${nf(objetivo(antes))}` : ""}.`, restaurar);
+    foco = "#h-pant"; render(); return;
+  }
+  const p = { id: "p" + S.sig++, fecha: fe, ini: Math.min(S.hora, 600), km: km.v, mov: mov.v, ...opc, zonas, gpx: false, caps: 0, app: "a mano" };
+  const restaurar = foto(["paseos"]);
+  S.paseos.push(p); S.pila.pop(); S.form = null; S.sec = "gym"; S.gsub = "cardio";
+  conDeshacer(p.kcal ? `Paseo guardado. ${fe === S.hoy ? "Tu objetivo de hoy" : `El objetivo del ${diaCorto(fe)}`} sube a ${nf(objetivo(fe))} kcal.` : "Paseo guardado. Sin calorías, el objetivo no cambia.", restaurar);
+  foco = "#h-pant"; render();
+}
+function borrarPaseo(id) {
+  const p = paseo(id), restaurar = foto(["paseos", "pila"]), s = p.fecha;
+  S.paseos = S.paseos.filter((x) => x.id !== id); if (cima() === "detalle") S.pila.pop();
+  conDeshacer(`Paseo borrado. ${s === S.hoy ? "Hoy" : `El ${diaCorto(s)}`} vuelve a ${nf(objetivo(s))} kcal.`, () => { restaurar(); S.det = id; });
+  foco = "#h-pant"; render();
+}
+
+document.addEventListener("click", (ev) => {
+  const b = ev.target.closest("[data-acc]");
+  if (!b || !b.closest(".proto")) return;
+  const acc = b.dataset.acc, v = b.dataset.v;
+  if (b.tagName === "A") ev.preventDefault();
+  if (b.getAttribute("aria-disabled") === "true") return;
+  if (acc === "cerrar-hoja") { if (ev.target === b) cerrarHoja(); return; }
+  const f = S.form;
+  switch (acc) {
+    case "nada": break;
+    case "tab": irA(v); break;
+    case "gsub": S.gsub = v; S.pila = []; foco = "#h-pant"; render(); break;
+    case "atras": S.pila.pop(); S.form = null; S.hoja = null; foco = "#h-pant"; render(); break;
+    case "registrar": abrirSelector(); break;
+    case "agregar-zonas": abrirSelector(v); break;
+    case "a-mano": abrirForm(null); break;
+    case "sel-cap": { const i = f.sel.indexOf(v); if (i >= 0) f.sel.splice(i, 1); else f.sel.push(v); foco = `[data-acc="sel-cap"][data-v="${v}"]`; render(); break; }
+    case "cerrar-hoja-btn": cerrarHoja(); break;
+    case "enviar-caps": { const sel = f.sel.slice(), z = f.zonasDe; S.hoja = null; S.form = null; enviarCaps(sel, z); foco = "#f-chat"; render(); break; }
+    case "detener": clearTimeout(tLeer); S.chat = S.chat.filter((m) => m.t !== "leyendo"); S.chat.push({ id: nuevoId(), t: "coach", txt: "Dejé de leer las capturas. No se guardó nada.", acc: [["Leer otra vez", "registrar", null, "secundario"]] }); render(); break;
+    case "ir-coach": S.sec = "coach"; S.pila = []; limpiarAviso(); S.scrollFin = true; foco = "#h-pant"; render(); break;
+    case "dato": { const [mid, k] = v.split("|"); abrirDato(mid, k); break; }
+    case "dato-ok": datoOk(false); break;
+    case "dato-sin": datoOk(true); break;
+    case "fecha": { const m = S.chat.find((x) => x.id === v); S.volverFoco = `[data-acc="fecha"][data-v="${v}"]`; S.hoja = "fecha"; S.form = { tipo: "fecha", m: v, txt: ddmm(m.d.fecha), cal: false, mes: m.d.fecha.slice(0, 8) + "01", err: "" }; foco = "#hoja-t"; render(); break; }
+    case "fecha-cal": f.cal = !f.cal; foco = '[data-acc="fecha-cal"]'; render(); break;
+    case "form-cal": { S.formGuardado = f; S.volverFoco = '[data-acc="form-cal"]'; const sel = parseFecha(f.fecha) || S.hoy; S.hoja = "fecha"; S.form = { tipo: "fecha", deForm: true, txt: ddmm(sel), cal: true, mes: sel.slice(0, 8) + "01", err: "" }; foco = "#hoja-t"; render(); break; }
+    case "fecha-mes": { const d = fecha(f.mes); d.setUTCMonth(d.getUTCMonth() + +v); const n = iso(d); if (n > S.hoy || n < "2026-10-01") break; f.mes = n; foco = `[data-acc="fecha-mes"][data-v="${v}"]`; render(); break; }
+    case "fecha-dia": f.txt = ddmm(v); f.err = ""; foco = `[data-acc="fecha-dia"][data-v="${v}"]`; render(); break;
+    case "fecha-ok": {
+      const s = parseFecha(f.txt);
+      f.err = !f.txt ? "Falta este dato" : !s ? "Esa fecha no existe." : s > S.hoy ? "Todavía no llega ese día." : s < PRIMER_REG ? "Antes de tu semana 1 no se registran paseos." : "";
+      if (f.err) { foco = "#f-fecha"; render(); break; }
+      if (f.deForm) { const fm = S.formGuardado; fm.fecha = ddmm(s); if (fm.err) delete fm.err.fecha; S.form = fm; S.formGuardado = null; S.hoja = null; S.hojaArriba = false; foco = "#f-fecha"; render(); break; }
+      const m = S.chat.find((x) => x.id === f.m); m.d.fecha = s; m.d.fechaLeida = false;
+      const dup = S.paseos.find((p) => p.fecha === s && p.ini === m.d.ini && p.km === m.d.km); m.dup = dup ? dup.fecha : null;
+      S.hoja = null; S.form = null; S.hojaArriba = false; foco = `[data-acc="fecha"][data-v="${m.id}"]`; render(); break;
+    }
+    case "guardar-paseo": guardarPaseo(v); break;
+    case "descartar": { const m = S.chat.find((x) => x.id === v); m.estado = "descartada"; conDeshacer("Paseo descartado", () => { m.estado = "abierta"; const mm = S.chat.find((x) => x.id === v); if (mm) mm.estado = "abierta"; }); render(); break; }
+    case "guardar-zonas": { const m = S.chat.find((x) => x.id === v), p = paseo(m.pid); p.zonas = m.z; p.caps = Math.max(p.caps, 2); m.estado = "guardada"; aviso(`Zonas guardadas en el paseo del ${diaCorto(p.fecha)}`, ["Ver paseo", "abrir-paseo", p.id]); render(); break; }
+    case "descartar-zonas": { const m = S.chat.find((x) => x.id === v); m.estado = "descartada"; render(); break; }
+    case "abrir-paseo": if (!paseo(v)) break; limpiarAviso(); S.det = v; S.sec = "gym"; S.gsub = "cardio"; S.pila = ["detalle"]; S.hoja = null; S.form = null; foco = "#h-pant"; render(); break;
+    case "agregar-gpx": { const p = paseo(v), restaurar = foto(["paseos"]); p.gpx = true; conDeshacer("Ruta agregada", restaurar); render(); break; }
+    case "editar": abrirForm(v); break;
+    case "borrar": borrarPaseo(v); break;
+    case "form-zonas": f.zonasAbiertas = !f.zonasAbiertas; if (!f.zonasAbiertas) { f.z = ["", "", "", "", ""]; delete f.err.z; } foco = f.zonasAbiertas ? "#f-z4" : '[data-acc="form-zonas"]'; render(); break;
+    case "form-guardar": guardarForm(); break;
+    case "revisar-prop": {
+      const m = S.chat.slice().reverse().find((x) => x.acc && x.items);
+      if (!m) break;
+      S.rev = { items: m.items, marc: m.items.map(() => true), extra: m.extra };
+      S.pila = ["revision"]; foco = "#h-pant"; render(); break;
+    }
+    case "rev-marcar": S.rev.marc[+v] = !S.rev.marc[+v]; foco = `[data-acc="rev-marcar"][data-v="${v}"]`; render(); break;
+    case "rev-aprobar": {
+      const items = S.rev.items.filter((_, i) => S.rev.marc[i]), restaurar = foto(["prop"]);
+      S.prop[S.hoy] = [...(S.prop[S.hoy] || []), ...items]; S.pila = []; S.rev = null; S.sec = "comida"; S.dia = S.hoy;
+      S.chat.forEach((m) => { if (m.items) m.acc = null; });
+      conDeshacer(`Propuesta guardada: ${items.length} ${items.length === 1 ? "cambio" : "cambios"}`, restaurar); foco = "#h-pant"; render(); break;
+    }
+    case "rev-descartar": { const rev = S.rev; S.pila = []; S.rev = null; conDeshacer("Propuesta descartada", () => { S.rev = rev; S.sec = "coach"; S.pila = ["revision"]; }); foco = "#h-pant"; render(); break; }
+    case "ir-comida": irA("comida"); break;
+    case "ir-sesion": S.sec = "gym"; S.gsub = "sesion"; S.pila = []; foco = "#h-pant"; render(); break;
+    case "dia-mover": { const n = masDias(S.dia, +v); if (n > S.hoy || n < PRIMER_REG) break; S.dia = n; foco = `[data-acc="dia-mover"][data-v="${v}"]`; render(); break; }
+    case "fab": aviso("Agregar comida es del flujo 3."); render(); break;
+    case "recup": {
+      const restaurar = foto(["sesion"]), se = S.sesion;
+      if (v === "bajar") { se.carga = -10; se.recup = "bajar"; conDeshacer(`Carga bajada en el Día ${se.dia}`, restaurar); }
+      else if (v === "mover") { se.fecha = masDias(se.fecha, 1); se.recup = "mover"; conDeshacer(`Día ${se.dia} movido al ${diaCorto(se.fecha)}`, restaurar); }
+      else { se.recup = "dejar"; conDeshacer(`Día ${se.dia} sin cambios`, restaurar); }
+      foco = "#h-pant"; render(); break;
+    }
+    case "deshacer": { const d = S.deshacer; if (!d) break; d(); limpiarAviso(); foco = "#h-pant"; render(); break; }
+  }
+});
+
+// campos: solo entra lo que el dato admite (Typed Field Rule)
+function filtrarNum(el, dec, ent) {
+  const v = el.value, c = el.selectionStart ?? v.length;
+  let out = "", sep = false, nd = 0, ne = 0, pos = 0;
+  for (let i = 0; i < v.length; i++) {
+    const ch = v[i];
+    if (/\d/.test(ch)) { if (!sep && ne < ent) { out += ch; ne++; } else if (sep && nd < dec) { out += ch; nd++; } }
+    else if ((ch === "." || ch === ",") && !sep && dec > 0) { out += out === "" ? "0." : "."; sep = true; }
+    if (i < c) pos = out.length;
+  }
+  if (out !== v) { el.value = out; try { el.setSelectionRange(pos, pos); } catch (_) { /* sin cursor */ } }
+}
+function mascaraDur(el) { const d = el.value.replace(/\D/g, "").slice(0, 4); el.value = d.length <= 2 ? d : `${d.slice(0, d.length - 2)}:${d.slice(-2)}`; }
+function mascaraFecha(el, ev) {
+  let d = el.value.replace(/\D/g, "").slice(0, 8);
+  // borrar sobre una barra borra el dígito anterior
+  if (ev && ev.inputType === "deleteContentBackward" && /\/$/.test(el.dataset.prev || "") && el.value.length < (el.dataset.prev || "").length) d = d.slice(0, -1);
+  el.value = d.length > 4 ? `${d.slice(0, 2)}/${d.slice(2, 4)}/${d.slice(4)}` : d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d;
+  el.dataset.prev = el.value;
+}
+function limpiarError(el) { const c = el.closest(".campo"); if (!c) return; const e = c.querySelector(".entrada"); if (e) e.classList.remove("error"); const l = c.querySelector(".error-linea"); if (l) l.remove(); el.removeAttribute("aria-invalid"); el.removeAttribute("aria-describedby"); }
+function velVivo() { const f = S.form, v = leerCampo("km", f.km).v, t = leerCampo("mov", f.mov).v, el = $("#vel-linea"); if (el) el.innerHTML = v && t ? `<p class="leido tnum">${ic("check", 16)}Velocidad media: ${nf(vel(v, t), 1)} km/h</p>` : `<p class="nota">${ic("info-circle", 16)}<span>La velocidad sale al escribir la distancia y el tiempo.</span></p>`; }
+document.addEventListener("input", (ev) => {
+  const el = ev.target, k = el.dataset && el.dataset.campo; if (!k || !S.form) return;
+  const f = S.form;
+  if (k === "fecha" || k === "ffecha") { mascaraFecha(el, ev); if (k === "fecha") { f.txt = el.value; f.err = ""; } else { f.fecha = el.value; if (f.err) delete f.err.fecha; } limpiarError(el); return; }
+  if (k[0] === "z" && k.length === 2) { filtrarNum(el, 0, 3); f.z[+k[1]] = el.value; delete f.err.z; const s = $("#z-suma"); if (s) s.textContent = zSuma(f); return; }
+  const c = CAMPOS[k]; if (!c) return;
+  if (c.hora) mascaraDur(el); else filtrarNum(el, c.dec, c.ent);
+  if (f.tipo === "dato") { f.txt = el.value; f.err = ""; limpiarError(el); return; }
+  f[k] = el.value; if (f.err) delete f.err[k];
+  limpiarError(el);
+  const oe = el.closest(".opcionales"); if (oe) { const e2 = document.getElementById("e-f-" + k); if (e2) e2.parentElement.remove(); }
+  if (k === "km" || k === "mov") velVivo();
+});
+document.addEventListener("keydown", (ev) => {
+  if (ev.key === "Escape" && S.hoja) { ev.preventDefault(); cerrarHoja(); return; }
+  if (ev.key === "Enter" && ev.target.tagName === "INPUT") {
+    const mapa = { dato: "dato-ok", fecha: "fecha-ok" };
+    const destino = S.hoja ? mapa[S.hoja] : cima() === "form" ? "form-guardar" : null;
+    if (destino) { ev.preventDefault(); const b = $(`[data-acc="${destino}"]`); if (b) b.click(); }
+  }
+  if (ev.key === "Tab" && S.hoja) {
+    const h = $(".hoja"); if (!h) return;
+    const f = [...h.querySelectorAll("button, input, [tabindex='-1']")].filter((x) => !x.disabled && x.getAttribute("aria-disabled") !== "true" && x.offsetParent !== null);
+    const i = f.indexOf(document.activeElement);
+    if (ev.shiftKey && i <= 0) { ev.preventDefault(); f[f.length - 1].focus(); }
+    else if (!ev.shiftKey && i === f.length - 1) { ev.preventDefault(); f[0].focus(); }
+  }
+});
+
+// ------------------------------------------------------------ aviso superpuesto y teclado (teléfono), como en los flujos 3 y 4
+function posicionarAviso() {
+  const z = $("#zona-aviso"), pan = $("#pantalla");
+  if (!z || !z.firstElementChild) return;
+  const pr = pan.getBoundingClientRect();
+  let tope = pr.bottom;
+  for (const sel of ["#fab", "#cuerpo .pie-fijo", "#bajo .chat-pie", "#cuerpo .acciones-form", "#barra"]) {
+    const e = $(sel);
+    if (e && !e.closest("[hidden]") && e.offsetParent !== null) tope = Math.min(tope, e.getBoundingClientRect().top);
+  }
+  z.style.bottom = Math.round(pr.bottom - tope + 12) + "px";
+}
+const tactil = () => window.matchMedia("(pointer: coarse)").matches;
+document.addEventListener("focusin", (ev) => {
+  const a = ev.target;
+  if (!(a && a.tagName === "INPUT" && a.closest("#pantalla"))) return;
+  if (a.closest(".hoja") && tactil() && !S.hojaArriba) { S.hojaArriba = true; $("#pantalla").classList.add("hoja-arriba"); }
+  // en un formulario a pantalla completa, el campo enfocado sube a la mitad de arriba
+  if (!a.closest(".hoja") && tactil()) { const sc = $("#scroll"); if (sc) { const r = a.getBoundingClientRect(), rs = sc.getBoundingClientRect(); sc.scrollTop += r.top - rs.top - 48; } }
+});
+window.addEventListener("resize", posicionarAviso);
+
+// ------------------------------------------------------------ controles del prototipo
+const raiz = document.documentElement;
+function marcarSeg(sel, fn) { document.querySelectorAll(`${sel} button`).forEach((b) => b.setAttribute("aria-pressed", String(fn(b)))); }
+function actualizarControles() {
+  marcarSeg("#ctl-escena", (b) => b.dataset.v === S.escena);
+  marcarSeg("#ctl-red", (b) => (b.dataset.v === "off") === S.offline);
+  marcarSeg("#ctl-creditos", (b) => (b.dataset.v === "sin") === S.sinCreditos);
+}
+document.querySelectorAll("#ctl-modo button").forEach((b) => b.addEventListener("click", () => {
+  if (b.dataset.modo) raiz.dataset.theme = b.dataset.modo; else delete raiz.dataset.theme;
+  document.querySelectorAll("#ctl-modo button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+}));
+document.querySelectorAll("#ctl-acento button").forEach((b) => b.addEventListener("click", () => {
+  if (b.dataset.a === "caribe") delete raiz.dataset.accent; else raiz.dataset.accent = b.dataset.a;
+  document.querySelectorAll("#ctl-acento button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+}));
+document.querySelectorAll("#ctl-escena button").forEach((b) => b.addEventListener("click", () => {
+  const e = b.dataset.v;
+  // la mañana y la noche del sábado comparten lo registrado; el martes es otro escenario
+  if (e !== "mar" && S.escena !== "mar") { S.escena = e; S.hora = ESCENAS[e].hora; render(); return; }
+  clearTimeout(tLeer); limpiarAviso(); S = estadoInicial(e); foco = "#h-pant"; render();
+}));
+document.querySelectorAll("#ctl-red button").forEach((b) => b.addEventListener("click", () => {
+  const off = b.dataset.v === "off"; if (off === S.offline) return;
+  S.offline = off; if (!off && S.cola.length) reconectar(); render();
+}));
+document.querySelectorAll("#ctl-creditos button").forEach((b) => b.addEventListener("click", () => { S.sinCreditos = b.dataset.v === "sin"; render(); }));
+$("#reiniciar").addEventListener("click", () => { clearTimeout(tLeer); limpiarAviso(); S = estadoInicial(S.escena); foco = "#h-pant"; render(); });
+
+cargar();
+render();
+
+</script>
