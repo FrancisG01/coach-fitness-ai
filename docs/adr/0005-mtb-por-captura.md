@@ -29,3 +29,14 @@ Opcional: archivo GPX o FIT si se quiere la ruta en mapa.
 - Registrar un paseo exige un paso manual (subir la captura) y conexión a internet; sin señal, queda en cola (sección 10).
 - Riesgo de lectura errónea de la captura (sección 17), mitigado con la tarjeta de confirmación obligatoria.
 - Si la app se abre al público, hay que confirmar que el registro por captura de cada usuario cumple los términos de Strava (sección 11).
+
+## Actualización (27-oct-2026, D-39)
+
+La revisión del flujo 5 (registrar paseo MTB) precisa la decisión sin cambiar su fondo (sigue sin API de Strava):
+
+- **Son dos capturas**, no una: la de la actividad (distancia, desnivel, tiempo, kcal, FC) y la de las zonas de FC (Z1 a Z5), como ya fijó D-27. La de zonas es opcional: sin ella el paseo se guarda sin zonas.
+- **Solo GPX en la v1.0** para la ruta (Strava lo exporta desde la web). FIT pasa al backlog.
+- Se aceptan capturas de otras apps (Samsung Health, Garmin) con la misma fuente "captura", y existe "Registrar a mano" (fuente "manual") para cuando no hay captura, créditos de API o conexión en la web.
+- La tarjeta de confirmación es una propuesta del coach en el chat ("Guardar paseo" o "Descartar"). Sin conexión, en el teléfono las capturas quedan en cola y al reconectar llega el aviso "Tu paseo está listo para confirmar".
+
+Detalle en el plan maestro (sección 5, CAR-01 y CAR-02; sección 20, D-39) y en los criterios de aceptación del PRD.

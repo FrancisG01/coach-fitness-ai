@@ -2,12 +2,12 @@
 
 | Campo | Valor |
 | --- | --- |
-| Versión | 1.2 |
-| Fecha | 26-oct-2026 (1.0 del 18-oct-2026; 1.1 con D-37 y 1.2 con D-38, sección 14) |
+| Versión | 1.3 |
+| Fecha | 27-oct-2026 (1.0 del 18-oct-2026; 1.1 con D-37, 1.2 con D-38 y 1.3 con D-39, sección 14) |
 | Estado | Aprobado por Francis el 19-oct-2026 (D-36, [ADR 0025](../adr/0025-modelo-conceptual-de-la-base-de-datos.md)) |
 | Fase | 0.5 (ADR 0010, nivel 1 de 3) |
 | Redacta | Arquitecto (Fable 5.1) |
-| Fuentes | [`plan-maestro.md`](../plan-maestro.md) v1.17 (§5, §8, §10, Anexo A), [`prd.md`](../prd.md) v1.13, ADR [0004](../adr/0004-base-de-alimentos-y-unidades.md), [0005](../adr/0005-mtb-por-captura.md), [0006](../adr/0006-coach-con-herramientas-y-memoria.md), [0010](../adr/0010-diseno-de-base-de-datos-en-tres-niveles.md), [0012](../adr/0012-acceso-privado-y-multiusuario.md), [0013](../adr/0013-samsung-health-via-health-connect.md), [0018](../adr/0018-app-galaxy-watch-nativa.md), [0021](../adr/0021-embeddings-locales-en-el-servidor.md), [0023](../adr/0023-unidades-preferidas.md); mockups de los flujos 1, 2, 3 y 10 y revisión del flujo 4 |
+| Fuentes | [`plan-maestro.md`](../plan-maestro.md) v1.18 (§5, §8, §10, Anexo A), [`prd.md`](../prd.md) v1.14, ADR [0004](../adr/0004-base-de-alimentos-y-unidades.md), [0005](../adr/0005-mtb-por-captura.md), [0006](../adr/0006-coach-con-herramientas-y-memoria.md), [0010](../adr/0010-diseno-de-base-de-datos-en-tres-niveles.md), [0012](../adr/0012-acceso-privado-y-multiusuario.md), [0013](../adr/0013-samsung-health-via-health-connect.md), [0018](../adr/0018-app-galaxy-watch-nativa.md), [0021](../adr/0021-embeddings-locales-en-el-servidor.md), [0023](../adr/0023-unidades-preferidas.md); mockups de los flujos 1, 2, 3, 4 y 10 y revisión del flujo 5 |
 
 Este documento dice **qué cosas guarda el sistema y cómo se relacionan**. No dice todavía con qué columnas, tipos ni índices: eso es el modelo lógico y físico de la Fase 1, que se escribe en `schema.dbml` y en el diccionario de datos a partir de lo que se apruebe aquí.
 
@@ -162,8 +162,8 @@ erDiagram
 | Conexión externa | `connections` | personal | Proveedor (Renpho, Health Connect, reloj), credenciales cifradas cuando aplica, estado (activa, con error, desconectada), último sync correcto. | SAL-01, SAL-06, WAT, SIS-08 paso 5 |
 | Ejecución de sincronización | `sync_runs` | personal | Cada corrida de un sync externo: cuándo, resultado, cuántos registros, error. Sirve para avisar si Renpho falla 2 días. | SAL-01, PRD §8 |
 | Dispositivo | `devices` | personal | Teléfono, reloj o navegador: identificador, nombre, plataforma, versión de la app, token de notificaciones, cursor de la última sincronización. Todo registro sincronizable apunta al dispositivo que lo creó. | GYM-10, WAT-05, WAT-06, plan §10 |
-| Archivo adjunto | `attachments` | personal | Tipo (captura de Strava, foto de etiqueta, PDF de informe, GPX), ruta en almacenamiento privado, tamaño, fecha. Lo referencian el paseo, el alimento, el informe y el mensaje del chat. | CAR-01, NUT-12, DSH-02 |
-| Aviso | `notifications` | personal | Lo que la app muestra en Hoy y en el panel web: origen (coach o sistema), tipo (consejo diario, alerta de tendencia, hito, récord, recordatorio de toma, stock bajo, sync fallido, sesión cerrada sola, re-pregunta pendiente), texto, severidad, fecha, estado (nuevo, visto, descartado), referencia a lo que lo generó. | COA-03, OBJ-04, SUP-03, DSH-01 |
+| Archivo adjunto | `attachments` | personal | Tipo (captura de actividad, captura de zonas de FC, GPX, foto de etiqueta, PDF de informe), ruta en almacenamiento privado, tamaño, fecha. Lo referencian el paseo, el alimento, el informe y el mensaje del chat. | CAR-01, NUT-12, DSH-02 |
+| Aviso | `notifications` | personal | Lo que la app muestra en Hoy y en el panel web: origen (coach o sistema), tipo (consejo diario, alerta de tendencia, hito, récord, recordatorio de toma, stock bajo, sync fallido, sesión cerrada sola, re-pregunta pendiente, paseo listo para confirmar), texto, severidad, fecha, estado (nuevo, visto, descartado), referencia a lo que lo generó. | COA-03, OBJ-04, SUP-03, DSH-01, CAR-01 |
 | Historial de cambios | `change_log` | personal | Auditoría de conflictos de sincronización y de ediciones sensibles: entidad, registro, campo, valor anterior, valor nuevo, dispositivo, fecha. | Plan §10, RNF-04 |
 
 **Calculado, no guardado:** la semana en curso de cada usuario (desde la fecha de la primera actividad), la próxima revisión del plan (6 semanas), la edad.
@@ -551,6 +551,7 @@ erDiagram
     numero tiempo_mov_s
     numero kcal
     numero fc_media
+    enum fuente
   }
   ZONA["Tiempo en zona de FC"] {
     numero zona
@@ -562,16 +563,16 @@ erDiagram
     enum tipo
   }
 
-  PASEO ||--o{ ZONA : "reparte en"
+  PASEO ||--o{ ZONA : "reparte en (0 o 5)"
   PASEO ||--o{ ARCHIVO : "capturas y GPX"
 ```
 
 | Entidad | Nombre técnico | Tipo | Qué guarda | Requisitos |
 | --- | --- | --- | --- | --- |
-| Paseo | `cardio_activities` | personal | Tipo (MTB de fábrica; caminata u otro para después), inicio, fecha local, distancia en m, desnivel positivo en m, tiempo en movimiento y total, kcal, FC media y máxima, unidad escrita de la distancia, fuente (captura de Strava, manual), propuesta de la que salió, confirmado, notas. | CAR-01, D-27 |
-| Tiempo en zona de FC | `cardio_hr_zones` | personal | Paseo × zona (1 a 5): % del tiempo y rango en ppm. Cinco filas por paseo. | CAR-01, D-27 |
+| Paseo | `cardio_activities` | personal | Tipo (MTB de fábrica; caminata u otro para después), inicio, fecha local, distancia en m, tiempo en movimiento, desnivel positivo en m, tiempo total, kcal, FC media y máxima, unidad escrita de la distancia, fuente (captura de cualquier app, manual), propuesta de la que salió (vacía si es manual), confirmado, notas. Obligatorios: fecha, distancia y tiempo en movimiento; lo demás es opcional y sin dato queda vacío, nunca 0 (D-39). Se edita y se borra con lápida también en días pasados. | CAR-01, D-27, D-39 |
+| Tiempo en zona de FC | `cardio_hr_zones` | personal | Paseo × zona (1 a 5): % del tiempo y rango en ppm. Cero o cinco filas por paseo: sin captura de zonas no hay ninguna (D-39). | CAR-01, D-27, D-39 |
 
-**Calculado, no guardado:** velocidad media (distancia / tiempo en movimiento), kcal que suben el objetivo del día (porcentaje del objetivo nutricional), carga combinada gym + MTB y su efecto en recuperación (lo juzga el coach con las herramientas).
+**Calculado, no guardado:** velocidad media (distancia / tiempo en movimiento) y minutos por zona (% × tiempo en movimiento), que no se copian de la captura (D-39); kcal que suben el objetivo del día (porcentaje del objetivo nutricional, sumando cada paseo del día); totales por semana de Gym › Cardio y MTB (km, tiempo, desnivel); posible duplicado (misma fecha, hora de inicio y distancia); paseo fuerte (Z4 + Z5 > 30 % del tiempo o más de 90 min) para el aviso de recuperación; carga combinada gym + MTB y su efecto en recuperación (lo juzga el coach con las herramientas).
 
 ## 9. Objetivos (OBJ)
 
@@ -700,7 +701,7 @@ erDiagram
 | Conversación | `conversations` | personal | Título, inicio, última actividad, estado (abierta, archivada), modelo con el que empezó, tokens y costo acumulados. | COA-01 |
 | Mensaje | `messages` | personal | Rol (usuario, coach, sistema), contenido, instante, modelo, tokens, estado (enviado, en cola sin conexión, fallido), embedding para la búsqueda semántica (ADR 0021). | COA-01, COA-02 |
 | Llamada a herramienta | `tool_calls` | personal | Mensaje, nombre de la herramienta, argumentos, resultado resumido y qué datos usó (rango de fechas, entidades), duración. Es lo que permite al coach "decir qué datos usó" y a la tarjeta decir "Revisando tus sesiones…". | COA-01, O3 |
-| Propuesta | `proposals` | personal | Toda escritura del coach: tipo (rutina, sesión, plan de comidas, comida, receta, objetivo nutricional, paseo desde captura, alimento desde etiqueta, cambio de perfil o de medidas por re-pregunta), borrador estructurado, mensaje de origen, estado (pendiente, aprobada, aprobada en parte, rechazada, caducada), fecha de decisión, registros creados al aprobar. En un plan de comidas, el borrador guarda las semanas tipo y cada comida con su decisión (aprobada o descartada); "Otra opción" reemplaza una sola comida del borrador (D-38). | COA-04, NUT-05, NUT-12, CAR-01, COA-05 |
+| Propuesta | `proposals` | personal | Toda escritura del coach: tipo (rutina, sesión, plan de comidas, comida, receta, objetivo nutricional, paseo desde captura, alimento desde etiqueta, cambio de perfil o de medidas por re-pregunta), borrador estructurado, mensaje de origen, estado (pendiente, aprobada, aprobada en parte, rechazada, caducada), fecha de decisión, registros creados al aprobar. En un plan de comidas, el borrador guarda las semanas tipo y cada comida con su decisión (aprobada o descartada); "Otra opción" reemplaza una sola comida del borrador (D-38). En un paseo desde captura, el borrador marca los campos de lectura dudosa (baja confianza) para mostrar "Revisa este dato" (D-39). | COA-04, NUT-05, NUT-12, CAR-01, COA-05 |
 | Memoria del coach | `coach_memories` | personal | Tipo (decisión, preferencia, hecho, resumen semanal), texto ("mantener face pull"), fecha, origen (mensaje, revisión, manual), vigente, embedding. | COA-02, ADR 0006, ADR 0021 |
 | Revisión semanal | `weekly_reviews` | personal | Semana, resumen, hallazgos, métricas de la semana en el momento de la revisión, estado, avisos y memorias que generó. La corre el job semanal. | COA-03 |
 | Re-pregunta periódica | `periodic_questions` | personal | Tema (cinta, actividad, salud y lesiones), cada cuántos días (28 o 90), última respuesta, próxima fecha, activa. La respuesta llega como propuesta que actualiza perfil, condiciones o mediciones. | COA-05 |
@@ -724,14 +725,14 @@ El panel del día no guarda nada propio: lee sesión de hoy, comidas, tomas pend
 | Objetivo principal y meta por medida (OBJ) | Tipo de medida (SAL) | La meta se mide en un tipo de medida; su progreso se lee en los valores medidos |
 | Meta por fuerza (OBJ) | Ejercicio (GYM) | La meta apunta a un ejercicio; el récord personal la cumple |
 | Hito (OBJ) | Récord personal (GYM) | Un récord nuevo genera un hito |
-| Paseo (CAR) | Objetivo nutricional (NUT) | El día del paseo, el objetivo de kcal sube con el porcentaje configurado |
+| Paseo (CAR) | Objetivo nutricional (NUT) | El día del paseo, el objetivo de kcal sube con el porcentaje configurado; dos paseos el mismo día se suman y editar o borrar un paseo recalcula ese día (D-39) |
 | Sesión programada (GYM) | Plan de comidas (NUT) | El coach reparte carbohidratos alrededor de los entrenos programados; al mover un entreno, la hoja de Gym puede intercambiar las comidas del plan entre los dos días (D-38) |
 | Plan de comidas (NUT) | Toma (SUP) | Al aprobar un plan, las tomas de las pautas existentes se ubican en cada día y apuntan al plan (D-38) |
 | Toma (SUP) | Desglose del día (NUT) | El aporte por dosis se suma en una fila propia "Suplementos", fuera de las comidas |
 | Objetivo principal (OBJ) y perfil (SIS) | Objetivo nutricional (NUT) | Tipo de objetivo, % de grasa, peso y actividad fijan kcal y proteína (paso 7 de la bienvenida y cada revisión) |
 | Preferencia de alimento (NUT) | Bienvenida (SIS) | Las alergias del paso 4 se guardan como preferencias "evitar" sobre un grupo |
 | Propuesta (COA) | Rutina, sesión, comida, plan, receta, paseo, alimento, perfil, medición | Al aprobar, se crean los registros reales con origen "propuesta" y la propuesta guarda sus identificadores |
-| Aviso (SIS) | Revisión semanal, re-pregunta, hito, récord, pauta, conexión, sesión | Cada aviso apunta a lo que lo generó |
+| Aviso (SIS) | Revisión semanal, re-pregunta, hito, récord, pauta, conexión, sesión, paseo | Cada aviso apunta a lo que lo generó |
 | Archivo adjunto (SIS) | Paseo, alimento, mensaje, análisis, informe | Un archivo pertenece a un solo registro |
 | Dispositivo (SIS) | Todo registro sincronizable | Dispositivo que lo creó o cambió por última vez |
 | Análisis de sangre (SAL) y paseo (CAR) | Calendario de Gym | Se muestran por fecha; no hay entidad "calendario" |
@@ -763,7 +764,7 @@ El panel del día no guarda nada propio: lee sesión de hoy, comidas, tomas pend
 | NUT-11 | Preferencia de alimento, Grupo de alimentos |
 | NUT-12 | Alimento (fuente etiqueta), Porción casera, Archivo adjunto, Propuesta, Llamada al modelo |
 | SUP-01, 02, 03 | Suplemento, Aporte por dosis, Pauta de suplemento, Toma, Compra, Aviso |
-| CAR-01, CAR-02 | Paseo, Tiempo en zona de FC, Archivo adjunto, Propuesta, Objetivo nutricional |
+| CAR-01, CAR-02 | Paseo, Tiempo en zona de FC, Archivo adjunto, Propuesta, Objetivo nutricional, Aviso |
 | COA-01 | Conversación, Mensaje, Llamada a herramienta, Llamada al modelo |
 | COA-02 | Memoria del coach, Mensaje (embedding) |
 | COA-03 | Revisión semanal, Aviso |
@@ -783,7 +784,7 @@ El panel del día no guarda nada propio: lee sesión de hoy, comidas, tomas pend
 | RNF-03, RNF-04 | UUID de cliente, Dispositivo, Evento de sesión, Historial de cambios, lápidas |
 | RNF-11 | Llamada al modelo, Presupuesto de IA |
 
-Total: 76 entidades (10 de catálogo, 8 de catálogo con propios, 58 personales). La versión 1.0 aprobada con D-36 tenía 73; D-37 suma Copia de lo programado y Tope máximo seguro (UL); D-38 suma Versión de receta.
+Total: 76 entidades (10 de catálogo, 8 de catálogo con propios, 58 personales). La versión 1.0 aprobada con D-36 tenía 73; D-37 suma Copia de lo programado y Tope máximo seguro (UL); D-38 suma Versión de receta; D-39 no suma entidades.
 
 ## 14. Decisiones de modelado (aprobadas por Francis el 19-oct-2026)
 
@@ -799,7 +800,7 @@ Las 18 se propusieron como iniciativas del arquitecto y Francis las aprobó toda
 8. **Cita y análisis de sangre son la misma entidad con estado.** La cita del calendario es un análisis "programado" con su preparación y recordatorio; al cargar los resultados pasa a "hecho". No hay dos registros para una misma extracción.
 9. **Suplementos con su propio aporte por dosis, separados de los alimentos.** Comparten el catálogo de nutrientes, y la toma suma al día en una fila "Suplementos" del desglose, fuera de las comidas. Regla (D-37): lo artificial o en pote (whey, creatina, vitaminas) es suplemento y se registra como toma; sus nutrientes suman al día y el coach cuenta la proteína del whey al repartir las tomas. El café es alimento. Como el whey ya no está en la despensa de preferidos (Anexo A.7) ni se programa dentro de una comida, se quita el aviso de producto duplicado.
 10. **Crudo y cocido como dos versiones enlazadas del mismo alimento** (cambiado por D-37). Cada versión es su propio registro con sus valores medidos (USDA e INCAP traen los dos), y el alimento apunta a su otra versión. La búsqueda muestra uno solo con el selector "Crudo · Cocido", así el catálogo no se ve doble. Las recetas tampoco usan factor: cada ingrediente elige su versión cruda o cocida (D-38). La propuesta original (un factor por alimento y una marca por registro) se descartó porque un factor estima y el registro medido es exacto.
-11. **Objetivo nutricional con vigencia y el porcentaje del paseo dentro.** Cada revisión de 6 semanas (o propuesta del coach aprobada) abre una fila nueva; así el desglose de un día pasado usa el objetivo que regía ese día. El 50 % de las kcal del paseo es un parámetro de esa fila, que el coach revisa.
+11. **Objetivo nutricional con vigencia y el porcentaje del paseo dentro.** Cada revisión de 6 semanas (o propuesta del coach aprobada) abre una fila nueva; así el desglose de un día pasado usa el objetivo que regía ese día. El 50 % de las kcal del paseo es un parámetro de esa fila, que el coach revisa y el usuario no edita a mano (D-39).
 12. **Metas intermedias, por medida y por fuerza en una sola entidad "meta"** con clase, y los hitos apuntan a una meta o a un récord. Evita tres tablas casi iguales y un hito con tres orígenes distintos.
 13. **Avisos del coach y del sistema en una sola entidad.** Consejos diarios, alertas de tendencia, hitos, recordatorio de toma, stock bajo, sync fallido y sesión cerrada sola son avisos con origen y tipo; el panel del día los lee de un solo sitio.
 14. **Costo de IA por llamada y presupuesto por mes.** Cada uso de la API deja una fila con tokens y costo; el presupuesto del mes guarda los topes y el modo (normal, Sonnet al 80 %, detenido). El panel de costos (RNF-11) sale de ahí.
@@ -826,10 +827,20 @@ Cambios con D-38 (revisión del flujo 4, 26-oct-2026):
 - La pauta suma un momento alterno para los días sin entreno. La toma pierde el estado tomada o saltada y gana origen y plan: quitarla la borra con lápida.
 - Evitar por alergia o intolerancia es un bloqueo duro para el coach; por gusto, cede si el pedido lo nombra.
 
+Cambios con D-39 (revisión del flujo 5, 27-oct-2026):
+
+- El paseo guarda su fuente: "captura" (de Strava o de otra app, como Samsung Health o Garmin) o "manual" ("Registrar a mano", sin propuesta). Obligatorios: fecha, distancia y tiempo en movimiento; FC máxima y tiempo total entran como opcionales y nada opcional se guarda como 0.
+- Velocidad media y minutos por zona se calculan, no se guardan ni se copian de la captura.
+- Tiempo en zona de FC: cero o cinco filas por paseo (restricción para la Fase 1).
+- El archivo adjunto distingue captura de actividad, captura de zonas de FC y GPX (solo GPX en la v1.0; FIT al backlog).
+- Aviso nuevo de tipo "paseo listo para confirmar": llega cuando el coach lee las capturas que quedaron en cola sin conexión.
+- La propuesta "paseo desde captura" marca en su borrador los campos de baja confianza ("Revisa este dato").
+- Editar y borrar un paseo vale también en días pasados (lápida) y recalcula el objetivo de ese día; las comidas no se tocan.
+
 ## 15. Lo que queda para la Fase 1 (modelo lógico y físico)
 
 - Columnas, tipos y escalas de cada entidad (por ejemplo, la precisión de kg para que 45 lb → kg → 45.0 lb no cambie, ADR 0023).
-- Claves primarias (UUID), foráneas y restricciones (una sola preferencia por usuario, un objetivo activo por usuario, cinco zonas por paseo).
+- Claves primarias (UUID), foráneas y restricciones (una sola preferencia por usuario, un objetivo activo por usuario, cero o cinco zonas por paseo).
 - Normalización de las relaciones "alimento o versión de receta" y "alimento o grupo" (dos claves opcionales con restricción, o una tabla por caso).
 - Políticas RLS por tabla, roles de Postgres y usuario de la aplicación con permisos mínimos.
 - Índices para las consultas del coach y de los gráficos (por usuario y fecha; por usuario, tipo de medida y fecha; por usuario, ejercicio y fecha).
