@@ -307,6 +307,9 @@ button.fila:active { background: var(--capa-pressed); }
   .guion { padding: 0 var(--e4) var(--e7); }
 }
 
+/* sin palabras sueltas al final del párrafo ni títulos desbalanceados (detector, 27-oct-2026) */
+p, li { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; }
 </style>
 </head>
 <body>
@@ -438,10 +441,10 @@ let sesiones = {
 let PASEOS = {
   "2026-10-08": { km: 12.7, tiempo: "38 min", vel: 20.1, desnivel: 150, kcal: 410, fc: 151, zonas: [0, 12, 40, 44, 4] },
   "2026-10-10": { km: 24.1, tiempo: "1 h 12 min", vel: 20.1, desnivel: 310, kcal: 830, fc: 154, zonas: [0, 18, 42, 36, 4] },
-  "2026-10-17": { km: 18.4, tiempo: "52 min", vel: 21.3, desnivel: 240, kcal: 640, fc: 158, zonas: [0, 26, 45, 27, 2] },
+  "2026-10-17": { km: 18.4, tiempo: "52 min", vel: 21.2, desnivel: 240, kcal: 640, fc: 158, zonas: [0, 26, 45, 27, 2] },
 };
 // Zonas de FC de Strava, de Z5 a Z1.
-const ZONAS = [["Z5", ">185 ppm"], ["Z4", "167–184 ppm"], ["Z3", "149–166 ppm"], ["Z2", "113–148 ppm"], ["Z1", "0–112 ppm"]];
+const ZONAS = [["Z5", "185+ ppm"], ["Z4", "167–184 ppm"], ["Z3", "149–166 ppm"], ["Z2", "113–148 ppm"], ["Z1", "0–112 ppm"]];
 let CITAS = { "2026-10-29": { hora: "7:30 a. m.", prep: "En ayunas" } };
 
 // ------------------------------------------------------------ estado de la interfaz
