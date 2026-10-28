@@ -674,7 +674,8 @@ Un borrador grande del coach (plan de comidas de día, semana o mes; rutina o bl
 
 ### Estados vacíos
 - **Anatomía:** ícono de Tabler de 32 px en texto secundario, título de sección, una frase que explica qué aparecerá aquí y para qué sirve, y una acción. Sin ilustraciones, emojis ni mascotas.
-- **Única excepción, la bienvenida (SIS-08):** cada uno de sus 7 pasos lleva una ilustración SVG de trazo lineal, coherente con Tabler outline, con colores solo de tokens (`currentColor` y variables, cambian con el modo y el acento). Fuera de la bienvenida, incluidos los estados vacíos, la regla no cambia (ADR 0024).
+- **Primera excepción, la bienvenida (SIS-08):** cada uno de sus 7 pasos lleva una ilustración SVG de trazo lineal, coherente con Tabler outline, con colores solo de tokens (`currentColor` y variables, cambian con el modo y el acento) (ADR 0024).
+- **Segunda excepción, "Cómo medir" (SAL-02, D-40):** la hoja que abre el ícono de información de cada medida con cinta lleva un dibujo del cuerpo con el mismo estilo: figura neutra sin rasgos en texto secundario y la cinta o el punto del pliegue en acento, con una instrucción de una línea y texto alternativo igual a ella (ADR 0026). Fuera de estas dos, incluidos los estados vacíos, la regla no cambia.
 - **Tres tipos:** primera vez ("Todavía no registras comidas hoy" · "Registra el desayuno para ver tus macros del día" · "Registrar comida"); sin resultados ("No hay alimentos con «yuca frita»" · "Prueba con otra palabra o créalo" · "Crear alimento"); faltan datos para un gráfico ("Faltan pesajes para la tendencia" · "Pésate en la Renpho dos veces más y aparece aquí").
 - **En el reloj:** una línea de texto y un botón ("Sin sesión para hoy" · "Abrir en el teléfono").
 

@@ -33,3 +33,4 @@ Formato de cada ADR: contexto, decisión, alternativas consideradas, consecuenci
 | [0023](0023-unidades-preferidas.md) | Unidades preferidas por usuario y almacenamiento en kg, cm y m |
 | [0024](0024-ilustraciones-en-la-bienvenida.md) | Ilustraciones solo en la bienvenida, con colores de tokens |
 | [0025](0025-modelo-conceptual-de-la-base-de-datos.md) | Modelo conceptual de la base de datos (D-36) |
+| [0026](0026-dibujos-de-como-medir.md) | Dibujos de cómo medir con la cinta, segunda excepción al ADR 0024 (D-40) |
