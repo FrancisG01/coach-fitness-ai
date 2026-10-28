@@ -2,8 +2,8 @@
 
 | Campo | Valor |
 | --- | --- |
-| Versión | 1.3 |
-| Fecha | 27-oct-2026 (1.0 del 18-oct-2026; 1.1 con D-37, 1.2 con D-38 y 1.3 con D-39, sección 14) |
+| Versión | 1.4 |
+| Fecha | 28-oct-2026 (1.0 del 18-oct-2026; 1.1 con D-37, 1.2 con D-38, 1.3 con D-39 y 1.4 con D-40, sección 14) |
 | Estado | Aprobado por Francis el 19-oct-2026 (D-36, [ADR 0025](../adr/0025-modelo-conceptual-de-la-base-de-datos.md)) |
 | Fase | 0.5 (ADR 0010, nivel 1 de 3) |
 | Redacta | Arquitecto (Fable 5.1) |
@@ -298,6 +298,7 @@ erDiagram
     fecha instante
     fecha fecha_local
     enum fuente
+    si_no no_contar
   }
   VALOR["Valor medido"] {
     numero valor
@@ -345,8 +346,8 @@ erDiagram
 
 | Entidad | Nombre técnico | Tipo | Qué guarda | Requisitos |
 | --- | --- | --- | --- | --- |
-| Tipo de medida | `measurement_types` | catálogo + propios | Cada cosa que se puede medir del cuerpo: peso, % de grasa, grasa subcutánea, grasa visceral, músculo esquelético, masa muscular, agua, proteína, masa ósea, TMB, edad metabólica, peso sin grasa (todo lo de Renpho); estatura, cintura, cuello, hombros, pecho, cadera, brazo relajado, brazo contraído, muslo, pantorrilla, antebrazo, muñeca, tobillo, abdomen bajo; pliegues (7 sitios); FC en reposo; presión sistólica y diastólica; y los calculados (IMC, cintura/estatura, cintura/cadera, hombros/cintura, % de grasa Marina). Magnitud (masa, longitud, porcentaje, índice, presión, frecuencia, kcal, años), unidad canónica, grupo (obligatoria, recomendada, opcional, automática, calculada), si es bilateral, frecuencia sugerida, propio del usuario si lo creó él. | SAL-01, SAL-02, SAL-07, D-24 |
-| Medición | `measurements` | personal | Un momento de medir: instante real, fecha local, fuente (Renpho, manual, Health Connect, bienvenida, re-pregunta del coach, calculada), conexión que la trajo, notas. Una lectura de Renpho es una medición con una docena de valores; una sesión de cinta es otra. | SAL-01, SAL-02, SIS-08 paso 6 |
+| Tipo de medida | `measurement_types` | catálogo + propios | Cada cosa que se puede medir del cuerpo: peso, % de grasa, grasa subcutánea, grasa visceral, músculo esquelético, masa muscular, agua, proteína, masa ósea, TMB, edad metabólica, peso sin grasa (todo lo de Renpho); estatura, cintura, cuello, hombros, pecho, cadera, brazo relajado, brazo contraído, muslo, pantorrilla, antebrazo, muñeca, tobillo, abdomen bajo; pliegues (7 sitios); FC en reposo; presión sistólica y diastólica; y los calculados (IMC, cintura/estatura, cintura/cadera, hombros/cintura, % de grasa Marina). Magnitud (masa, longitud, porcentaje, índice, presión, frecuencia, kcal, años), unidad canónica, grupo (obligatoria, recomendada, opcional, automática, calculada), si es bilateral, frecuencia sugerida, instrucción de cómo medir y su dibujo (D-40), propio del usuario si lo creó él. | SAL-01, SAL-02, SAL-07, D-24 |
+| Medición | `measurements` | personal | Un momento de medir: instante real, fecha local, fuente (Renpho, manual, Health Connect, bienvenida, re-pregunta del coach, importación, calculada), conexión que la trajo, no contar (sí o no, solo Renpho, D-40), notas. Una lectura de Renpho es una medición con una docena de valores; una sesión de cinta es otra. | SAL-01, SAL-02, SIS-08 paso 6 |
 | Valor medido | `measurement_values` | personal | Medición × tipo de medida: valor en unidad canónica, unidad escrita, lado (derecho, izquierdo, ninguno), estimado sí o no. | SAL-02, ADR 0023 |
 | Marcador de sangre | `blood_markers` | catálogo | Glucosa, HbA1c, colesterol total, HDL, LDL, triglicéridos, testosterona, TSH, ferritina, vitamina D, hemograma básico, etc.: nombre, unidad, descripción en lenguaje claro. | SAL-04 |
 | Rango de referencia | `marker_reference_ranges` | catálogo | Por marcador, sexo y rango de edad: mínimo y máximo de referencia. El laboratorio puede traer el suyo en el resultado. | SAL-04 |
@@ -355,7 +356,7 @@ erDiagram
 | Resumen diario de salud | `daily_health_summaries` | personal | Por fecha local, lo que trae Health Connect: pasos, FC en reposo, FC media, mínima y máxima, origen. Una fila por día; se actualiza cuando la app sincroniza. | SAL-06 |
 | Sesión de sueño | `sleep_sessions` | personal | Inicio, fin, duración, fases si Health Connect las da, origen. | SAL-06 |
 
-**Calculado, no guardado:** las medidas calculadas de SAL-07 se recalculan al guardar una medición y se escriben como una medición de fuente "calculada" (ver decisión 2), así tienen tendencia y pueden ser meta; la media de 7 días y la tendencia de 4 semanas del peso; qué dato falta para cada medida calculada.
+**Calculado, no guardado:** las medidas calculadas de SAL-07 se recalculan al guardar una medición y se escriben como una medición de fuente "calculada" (ver decisión 2), así tienen tendencia y pueden ser meta; el peso del día (primer pesaje de la mañana que cuenta, D-40), la media de 7 días y la tendencia de 4 semanas del peso; qué dato falta para cada medida calculada.
 
 ## 6. Nutrición (NUT)
 
@@ -784,7 +785,7 @@ El panel del día no guarda nada propio: lee sesión de hoy, comidas, tomas pend
 | RNF-03, RNF-04 | UUID de cliente, Dispositivo, Evento de sesión, Historial de cambios, lápidas |
 | RNF-11 | Llamada al modelo, Presupuesto de IA |
 
-Total: 76 entidades (10 de catálogo, 8 de catálogo con propios, 58 personales). La versión 1.0 aprobada con D-36 tenía 73; D-37 suma Copia de lo programado y Tope máximo seguro (UL); D-38 suma Versión de receta; D-39 no suma entidades.
+Total: 76 entidades (10 de catálogo, 8 de catálogo con propios, 58 personales). La versión 1.0 aprobada con D-36 tenía 73; D-37 suma Copia de lo programado y Tope máximo seguro (UL); D-38 suma Versión de receta; D-39 y D-40 no suman entidades.
 
 ## 14. Decisiones de modelado (aprobadas por Francis el 19-oct-2026)
 
@@ -836,6 +837,15 @@ Cambios con D-39 (revisión del flujo 5, 27-oct-2026):
 - Aviso nuevo de tipo "paseo listo para confirmar": llega cuando el coach lee las capturas que quedaron en cola sin conexión.
 - La propuesta "paseo desde captura" marca en su borrador los campos de baja confianza ("Revisa este dato").
 - Editar y borrar un paseo vale también en días pasados (lápida) y recalcula el objetivo de ese día; las comidas no se tocan.
+
+Cambios con D-40 (revisión del flujo 6, 28-oct-2026):
+
+- La medición gana "no contar" (sí o no): solo aplica a las de Renpho, que no se editan; la saca de la tendencia del peso y de las medidas calculadas y se puede revertir.
+- El peso del día es el primer pesaje de la mañana que cuenta; los demás del mismo día se guardan y se ven, pero no alimentan la media de 7 días ni la tendencia de 4 semanas. Es un cálculo, no una columna.
+- El tipo de medida gana la instrucción de "Cómo medir" y la referencia a su dibujo (perímetros y pliegues, ADR 0026).
+- La medición acepta cualquier fecha pasada (sirve de punto de partida) y nunca una futura; las manuales se borran con lápida y recalculan las medidas calculadas.
+- La propuesta "cambio de medidas por re-pregunta" (COA-05) se muestra como tarjeta con "Guardar medición"; al aprobarla crea una medición de fuente "re-pregunta del coach".
+- La ejecución de sincronización sirve también para "Sincronizar ahora" y para importar el historial al conectar; el aviso de fallo a los 2 días ofrece la importación CSV, que crea mediciones de fuente "importación".
 
 ## 15. Lo que queda para la Fase 1 (modelo lógico y físico)
 

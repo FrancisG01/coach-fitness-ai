@@ -5,3 +5,4 @@
 - [Flujo 4 receta y plan](flujo-4-receta-plan.md) — revisión aprobada (D-38); receta solo en porciones; cifras de ejemplo
 - [Flujo 5 paseo MTB](flujo-5-mtb.md) — guía, mockups y prototipo aprobados 27-oct (D-39); + sin franja; cifras del sábado 17 y del martes 3-nov
 - [Flujo 10 bienvenida](flujo-10-bienvenida.md) — piezas 1-3 aprobadas (D-33); prototipo con cálculo real y campos tipados por aprobar
+- [Flujo 6 medición](flujo-6-medicion.md) — piezas 1-2 entregadas 28-oct (D-40); Salud con 4 pestañas; cifras del 28-oct y de abril

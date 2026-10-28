@@ -32,3 +32,7 @@ Hay que decidir si la regla se rompe, dónde y con qué límites para que las il
 - El flujo 10 de la Fase 0.5 incluye las 7 ilustraciones en sus mockups, en claro y oscuro y con al menos dos acentos.
 - El detector de diseño y la revisión visual comprueban que las ilustraciones solo usan variables de tokens y que no aparecen fuera de la bienvenida.
 - Si más adelante se quiere una ilustración en otra pantalla, hace falta una decisión nueva.
+
+## Actualización (28-oct-2026)
+
+Primera decisión nueva de ese tipo: los dibujos de "Cómo medir" en las medidas con cinta (D-40, [ADR 0026](0026-dibujos-de-como-medir.md)). Esta decisión no cambia.
