@@ -1,0 +1,1106 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Flujo 6 medición</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Fase 0.5 · flujo 6, registrar medición: diagrama y guía paso a paso (SAL-01, SAL-02, SAL-07; D-40, ADR 0026).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
+<style>
+/*
+  Fase 0.5 · flujo 6 "Registrar medición" (SAL-01, SAL-02, SAL-07; D-40, ADR 0026).
+  Piezas 1 y 2: diagrama y guía. CSS base del flujo 5 aprobado (mismos tokens de docs/diseno/tokens.json)
+  más el bloque "flujo 6" al final.
+*/
+:root {
+  /* neutros · claro (tiza) */
+  --fondo: #F3F4F1; --superficie: #FFFFFF; --elevado: #E9EBE7; --borde: #DADDD8;
+  --texto: #1E2228; --texto-2: #5B626B; --error: #C9333A; --dato-gris: #B5BBC2;
+  /* uso del acento · claro */
+  --accion: var(--a4); --accion-alta: var(--a5); --texto-accion: #FFFFFF; --texto-acento: var(--a4); --texto-acento-elevado: var(--a5);
+  --suave: color-mix(in srgb, var(--a3) 13%, var(--superficie));
+  --capa-hover: color-mix(in srgb, var(--texto) 6%, transparent);
+  --capa-pressed: color-mix(in srgb, var(--texto) 10%, transparent);
+  /* superposiciones · claro: velo texto al 40 %, hoja en superficie, aviso invertido con acción A2 */
+  --velo: color-mix(in srgb, #1E2228 40%, transparent);
+  --hoja: var(--superficie);
+  --aviso-accion: var(--a2);
+  /* serie única de datos (Three Series Rule: A5 en claro, A1 en oscuro) */
+  --dato-1: var(--a5);
+  /* acentos A1–A5 (por defecto Caribe) */
+  --a1: #CFE6F5; --a2: #7CC0EA; --a3: #3B95D1; --a4: #1F6FA8; --a5: #154E78;
+  /* tipografía */
+  --familia: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  /* espaciado, radios, trazos */
+  --e1: 4px; --e2: 8px; --e3: 12px; --e4: 16px; --e5: 24px; --e6: 32px; --e7: 48px;
+  --r-casilla: 6px; --r-control: 10px; --r-tarjeta: 16px; --r-pildora: 999px;
+  --t-borde: 1px; --t-sel: 2px;
+  --tactil: 48px; --tactil-gym: 56px; --barra: 64px;
+  --rapido: 120ms; --normal: 200ms; --lento: 320ms;
+  --estandar: cubic-bezier(0.2, 0, 0, 1); --entrar: cubic-bezier(0.05, 0.7, 0.1, 1); --salir: cubic-bezier(0.3, 0, 0.8, 0.15);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+    --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+    --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
+    --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+    --velo: color-mix(in srgb, #1B1E23 72%, transparent);
+    --hoja: var(--elevado);
+    --aviso-accion: var(--a4);
+    --dato-1: var(--a1);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --fondo: #1B1E23; --superficie: #23272D; --elevado: #2D3239; --borde: #3A4048;
+  --texto: #F3F4F1; --texto-2: #A3AAB3; --error: #FF6B6B; --dato-gris: #6B737D;
+  --accion: var(--a2); --accion-alta: var(--a1); --texto-accion: #1B1E23; --texto-acento: var(--a2); --texto-acento-elevado: var(--a2);
+  --suave: color-mix(in srgb, var(--a3) 20%, var(--superficie));
+  --velo: color-mix(in srgb, #1B1E23 72%, transparent);
+  --hoja: var(--elevado);
+  --aviso-accion: var(--a4);
+  --dato-1: var(--a1);
+  color-scheme: dark;
+}
+:root[data-accent="mar"]       { --a1: #C8EEEA; --a2: #6FD6CC; --a3: #22A99C; --a4: #157A70; --a5: #0F5850; }
+:root[data-accent="palma"]     { --a1: #CDEEDB; --a2: #6FD19B; --a3: #2FA866; --a4: #1E7D4A; --a5: #155A36; }
+:root[data-accent="mango"]     { --a1: #FCE7C2; --a2: #F7C062; --a3: #E89A1E; --a4: #9A5C06; --a5: #6E4307; }
+:root[data-accent="flamboyan"] { --a1: #FBD6CB; --a2: #F79A7E; --a3: #E8603C; --a4: #B6411F; --a5: #7E2C14; }
+:root[data-accent="uva"]       { --a1: #E3DBFA; --a2: #B4A2F2; --a3: #8466DB; --a4: #6446B8; --a5: #45307F; }
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--fondo); color: var(--texto);
+  font-family: var(--familia); font-size: 16px; line-height: 24px;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+:focus-visible { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.i { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.i.s16 { width: 16px; height: 16px; stroke-width: 2; }
+.i.s20 { width: 20px; height: 20px; }
+.i.s32 { width: 32px; height: 32px; }
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* tipografía (escala de tokens.json) */
+.t-pantalla { font-size: 25px; line-height: 30px; font-weight: 700; font-stretch: 85%; margin: 0; text-wrap: balance; }
+.t-seccion { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.t-detalle { font-size: 13px; line-height: 18px; font-weight: 500; }
+.t-boton { font-size: 15px; line-height: 20px; font-weight: 650; }
+.cifra { font-weight: 800; font-stretch: 62%; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.c-metrica { font-size: 32px; line-height: 32px; }
+.c-heroe { font-size: 56px; line-height: 52px; }
+.sec { color: var(--texto-2); }
+.acento { color: var(--texto-acento); }
+p { margin: 0; }
+
+/* ---------- teléfono ---------- */
+.telefono { width: 376px; padding: var(--e2); border-radius: var(--r-tarjeta); background: var(--borde); flex: none; }
+.pantalla { height: 780px; border-radius: var(--r-control); overflow: hidden; background: var(--fondo); display: flex; flex-direction: column; position: relative; }
+.estado { height: 28px; padding-top: var(--e1); flex: none; display: flex; align-items: center; justify-content: space-between; padding-inline: var(--e5); font-size: 13px; font-weight: 600; }
+.cuerpo { flex: 1; min-height: 0; overflow: hidden; padding: 0 var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e3); }
+.cuerpo > * { flex-shrink: 0; }
+.barra { height: var(--barra); flex: none; background: var(--superficie); border-top: var(--t-borde) solid var(--borde); display: grid; grid-template-columns: repeat(5, 1fr); }
+.pestana { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--texto-2); font-size: 13px; line-height: 16px; font-weight: 500; text-decoration: none; }
+.pestana .ovalo { width: 56px; height: 28px; border-radius: var(--r-pildora); display: grid; place-items: center; transition: background var(--rapido) var(--estandar); }
+.pestana:active .ovalo { background: var(--capa-pressed); }
+.pestana[aria-current="page"] { color: var(--texto-acento); font-weight: 650; }
+
+/* piezas comunes */
+.tarjeta { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e2); }
+.tarjeta.destacada { background: var(--suave); }
+.btn { min-height: var(--tactil); border-radius: var(--r-control); padding-inline: var(--e4); display: inline-flex; align-items: center; justify-content: center; gap: var(--e2); font-size: 15px; line-height: 20px; font-weight: 650; text-align: center; transition: background var(--rapido) var(--estandar), transform var(--rapido) var(--estandar), color var(--rapido) var(--estandar); }
+.btn.primario { background: var(--accion); color: var(--texto-accion); }
+.btn.primario:active { background: var(--accion-alta); transform: scale(0.97); }
+.btn.secundario { border: var(--t-borde) solid var(--texto-2); color: var(--texto); }
+.btn.secundario:active { background: var(--capa-pressed); }
+.btn.texto { color: var(--texto-acento); padding-inline: var(--e3); }
+.btn.texto:active { background: var(--capa-pressed); color: var(--accion-alta); }
+@media (hover: hover) and (pointer: fine) {
+  .btn.primario:hover { background: var(--accion-alta); }
+  .btn.secundario:hover { background: var(--capa-hover); }
+  .btn.texto:hover { background: var(--capa-hover); color: var(--accion-alta); }
+}
+.ancho { width: 100%; }
+.par { display: grid; grid-template-columns: 1fr 1fr; gap: var(--e3); }
+.lista { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; overflow: hidden; }
+.lista > * + * { border-top: var(--t-borde) solid var(--borde); }
+.fila { min-height: var(--tactil); padding: var(--e2) var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); width: 100%; }
+.fila .txt { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+button.fila:active { background: var(--capa-pressed); }
+.cabeza { display: flex; align-items: center; justify-content: space-between; gap: var(--e2); }
+.atras { width: 48px; height: 48px; display: grid; place-items: center; margin-left: -12px; border-radius: var(--r-pildora); }
+.atras:active, .icono-btn:active { background: var(--capa-pressed); }
+.icono-btn { width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--r-pildora); flex: none; }
+.carga { font-size: 20px; line-height: 24px; }
+.segmento { display: flex; background: var(--elevado); border-radius: var(--r-control); padding: var(--e1); gap: var(--e1); }
+.segmento button { min-height: 40px; padding-inline: var(--e3); border-radius: var(--r-casilla); color: var(--texto-2); flex: 1; text-align: center; position: relative; }
+/* el área táctil del segmento llega a 48 px con el relleno del contenedor */
+.segmento button::after { content: ""; position: absolute; inset: calc(-1 * var(--e1)) 0; }
+.segmento button[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.pildora { display: inline-flex; align-items: center; gap: var(--e1); min-height: 24px; padding-inline: var(--e2); border-radius: var(--r-pildora); background: var(--elevado); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.nota { display: flex; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.sinc { display: inline-flex; align-items: center; gap: var(--e1); color: var(--texto-2); }
+.error-linea { display: flex; align-items: center; gap: var(--e2); color: var(--error); font-size: 13px; line-height: 18px; font-weight: 500; }
+
+/* pestañas internas de Gym (móvil) */
+.sub-tabs { display: flex; overflow-x: auto; margin-inline: calc(-1 * var(--e4)); padding-inline: var(--e2); border-bottom: var(--t-borde) solid var(--borde); scrollbar-width: none; flex: none; }
+.sub-tab { text-decoration: none; display: inline-flex; align-items: center; min-height: var(--tactil); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; line-height: 20px; font-weight: 500; white-space: nowrap; border-bottom: var(--t-sel) solid transparent; flex: none; }
+.sub-tab:active { background: var(--capa-pressed); }
+.sub-tab[aria-current="page"] { color: var(--texto-acento); font-weight: 650; border-bottom-color: var(--accion); }
+
+/* semana (móvil) */
+.semana-lista > * { min-height: var(--tactil-gym); }
+.fila-dia { display: flex; align-items: center; gap: var(--e3); padding: var(--e1) var(--e4) var(--e1) var(--e3); width: 100%; text-align: left; }
+.fila-dia:active { background: var(--capa-pressed); }
+.fila-dia .dnum { width: 40px; display: flex; flex-direction: column; align-items: center; flex: none; }
+.fila-dia .dnum .n { width: 32px; height: 32px; border-radius: var(--r-pildora); display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.fila-dia.hoy .dnum .n, .fila-dia.hoy .dnum .t-detalle { color: var(--texto-acento); font-weight: 650; }
+.fila-dia[aria-pressed="true"] .dnum .n { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.fila-dia .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.fila-dia .txt .t-detalle { color: var(--texto-2); }
+.fila-dia .fin { display: flex; align-items: center; gap: var(--e2); color: var(--texto-2); }
+
+/* detalle de día */
+.dia-cab { display: flex; flex-direction: column; gap: var(--e1); }
+.dia-cab .volver { display: flex; align-items: center; gap: var(--e1); }
+.estado-dia { display: inline-flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.cifras { display: flex; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e1); }
+.cifras > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--e1); padding-inline: var(--e4); }
+.cifras .cifra { white-space: nowrap; }
+.cifras > div + div { border-left: var(--t-borde) solid var(--borde); }
+.cifras .cifra { font-size: 32px; line-height: 32px; }
+.cifras .unidad-c { font-size: 15px; font-weight: 650; font-stretch: 85%; color: var(--texto-2); }
+.record { flex-direction: row; align-items: center; gap: var(--e3); }
+.record .i { color: var(--texto-acento); }
+.record .txt { display: flex; flex-direction: column; }
+.vacio { display: flex; flex-direction: column; align-items: flex-start; gap: var(--e2); padding-block: var(--e5); color: var(--texto); }
+.vacio > .i { color: var(--texto-2); }
+.acciones { display: flex; flex-direction: column; gap: var(--e2); margin-top: auto; }
+.empuje { margin-top: auto; }
+
+/* asignar pesos */
+.peso-fila { min-height: 64px; padding: var(--e2) var(--e2) var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e2); }
+.peso-fila .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.peso-fila .txt .t-detalle { color: var(--texto-2); }
+.stepper { display: flex; align-items: center; gap: var(--e1); flex: none; }
+.stepper button { width: var(--tactil); height: var(--tactil); border-radius: var(--r-control); background: var(--elevado); display: grid; place-items: center; transition: background var(--rapido) var(--estandar); }
+.stepper button:active { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); }
+.stepper .valor { min-width: var(--barra); text-align: center; display: flex; flex-direction: column; align-items: center; line-height: 1; }
+.stepper .valor .cifra { font-size: 25px; line-height: 24px; }
+.stepper .valor .t-detalle { color: var(--texto-2); }
+.sube { color: var(--texto-acento); }
+
+/* hoja inferior y aviso */
+.velo { position: absolute; inset: 0; background: var(--velo); display: flex; flex-direction: column; justify-content: flex-end; z-index: 2; }
+.hoja { background: var(--hoja); border-top-left-radius: var(--r-tarjeta); border-top-right-radius: var(--r-tarjeta); padding: var(--e5) var(--e4) var(--e4); display: flex; flex-direction: column; gap: var(--e4); }
+.hoja .mes .celda[aria-disabled="true"] { cursor: default; }
+.opcion-hoy { min-height: var(--tactil-gym); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); border-radius: var(--r-control); background: var(--elevado); border: var(--t-sel) solid transparent; width: 100%; text-align: left; }
+.opcion-hoy[aria-pressed="true"] { border-color: var(--accion); }
+.opcion-hoy .txt { flex: 1; display: flex; flex-direction: column; }
+.aviso { position: absolute; left: var(--e4); right: var(--e4); bottom: calc(var(--barra) + var(--e2)); background: var(--texto); color: var(--fondo); border-radius: var(--r-control); padding: var(--e1) var(--e1) var(--e1) var(--e4); min-height: var(--tactil-gym); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); z-index: 3; }
+.aviso .btn.texto { color: var(--aviso-accion); }
+.aviso .btn.texto:active { background: color-mix(in srgb, var(--fondo) 10%, transparent); }
+
+/* esqueleto */
+.esq { background: var(--elevado); border-radius: var(--r-casilla); }
+.esq.bloque { height: var(--e7); }
+@media (prefers-reduced-motion: no-preference) { .esq.pulso { animation: pulso 1600ms var(--estandar) infinite; } }
+@keyframes pulso { 50% { opacity: 0.5; } }
+
+/* título del calendario con número de semana */
+.cal-titulo { flex: 1; display: flex; flex-direction: column; align-items: center; }
+
+/* ---------- lámina ---------- */
+body { padding-block: var(--e6) var(--e7); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.lamina { max-width: 1560px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--e7); }
+.cabecera { display: flex; flex-wrap: wrap; gap: var(--e5); justify-content: space-between; align-items: end; }
+.cabecera h1 { font-size: 32px; line-height: 32px; font-weight: 800; font-stretch: 75%; margin: 0 0 var(--e2); text-wrap: balance; }
+.cabecera p { margin: 0; max-width: 62ch; color: var(--texto-2); }
+.controles { display: flex; flex-wrap: wrap; gap: var(--e4); }
+.control { display: flex; flex-direction: column; gap: var(--e1); }
+.controles .segmento button { flex: none; }
+.puntos { display: flex; gap: var(--e2); align-items: center; min-height: 48px; }
+.punto { width: 32px; height: 32px; border-radius: var(--r-pildora); background: var(--c); }
+.punto[aria-pressed="true"] { outline: var(--t-sel) solid var(--texto); outline-offset: 2px; }
+.indice { display: flex; flex-wrap: wrap; gap: var(--e2); }
+.indice a { color: var(--texto-acento); font-weight: 650; font-size: 15px; min-height: 48px; display: inline-flex; align-items: center; padding-inline: var(--e3); border-radius: var(--r-control); text-decoration: none; }
+.indice a:active { background: var(--capa-pressed); }
+@media (hover: hover) and (pointer: fine) { .indice a:hover { background: var(--capa-hover); } }
+
+.pagina { display: flex; flex-direction: column; gap: var(--e5); scroll-margin-top: var(--e5); }
+.pagina > header { display: flex; flex-direction: column; gap: var(--e2); border-top: var(--t-borde) solid var(--borde); padding-top: var(--e5); }
+.pagina h2 { font-size: 25px; line-height: 30px; font-weight: 800; font-stretch: 75%; margin: 0; }
+.pagina h3.sub { font-size: 20px; line-height: 26px; font-weight: 650; margin: var(--e3) 0 0; }
+.cambios { margin: 0; padding-left: 1.2em; color: var(--texto-2); max-width: 86ch; display: grid; gap: var(--e1); }
+.cambios strong { color: var(--texto); font-weight: 650; }
+.fila-telefonos { display: flex; flex-wrap: wrap; gap: var(--e6) var(--e4); }
+figure { margin: 0; display: flex; flex-direction: column; gap: var(--e3); width: 376px; }
+figcaption { display: flex; flex-direction: column; gap: 2px; font-size: 13px; line-height: 18px; color: var(--texto-2); max-width: 360px; }
+figcaption b { color: var(--texto); font-weight: 650; font-size: 16px; }
+@media (max-width: 420px) { figure { zoom: 0.88; } }
+
+/* diagrama */
+.diagrama-envoltura { overflow-x: auto; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); }
+.diagrama { display: block; min-width: 1240px; width: 100%; height: auto; font-family: var(--familia); }
+.diagrama .nodo rect { fill: var(--elevado); stroke: var(--borde); stroke-width: 1; }
+.diagrama .nodo.inicio rect { fill: var(--suave); stroke: var(--accion); stroke-width: 2; }
+.diagrama .nodo.aviso rect { fill: var(--texto); stroke: none; }
+.diagrama .nodo.aviso .t1, .diagrama .nodo.aviso .t2 { fill: var(--fondo); }
+.diagrama .nodo.salud rect { fill: var(--superficie); stroke: var(--texto-2); stroke-dasharray: 4 4; }
+.diagrama .t1 { fill: var(--texto); font-size: 15px; font-weight: 650; }
+.diagrama .t2 { fill: var(--texto-2); font-size: 13px; font-weight: 500; }
+.diagrama .rama { fill: var(--texto-2); font-size: 13px; font-weight: 500; }
+.diagrama .flecha { fill: none; stroke: var(--texto-2); stroke-width: 1.75; }
+.diagrama .punta { fill: var(--texto-2); }
+.diagrama .paso circle { fill: var(--texto); }
+.diagrama .paso text { fill: var(--fondo); font-size: 13px; font-weight: 650; }
+.diagrama .estados rect { fill: var(--fondo); stroke: var(--borde); }
+.diagrama .estados .t1 { font-size: 15px; }
+.diagrama .fuerte { fill: var(--texto); font-weight: 650; }
+
+/* guía */
+.guia { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--e6) var(--e5); }
+.paso-guia { display: flex; flex-direction: column; gap: var(--e3); }
+.paso-guia .mini { zoom: 0.64; align-self: flex-start; }
+.paso-guia h3 { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0; }
+.paso-guia ol { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--e2); }
+.paso-guia li { display: grid; grid-template-columns: 24px 1fr; gap: var(--e2); font-size: 15px; line-height: 20px; }
+.paso-guia li .num-a { width: 24px; height: 24px; border-radius: var(--r-pildora); background: var(--texto); color: var(--fondo); display: grid; place-items: center; font-size: 13px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.paso-guia .etapa { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.con-anota { position: relative; }
+.mini .lista { overflow: visible; }
+.anota { position: absolute; top: -10px; right: -6px; width: 28px; height: 28px; border-radius: var(--r-pildora); background: var(--texto); color: var(--fondo); border: var(--t-sel) solid var(--fondo); display: grid; place-items: center; font-size: 15px; line-height: 20px; font-weight: 650; font-variant-numeric: tabular-nums; z-index: 4; pointer-events: none; }
+.pestana .anota { top: 2px; right: 4px; }
+.sub-tab .anota { top: 2px; right: -4px; }
+
+
+
+/* series de datos de los macros (Three Series Rule: A5, A3, gris en claro; A1, A3, gris en oscuro) */
+:root { --dato-2: var(--a3); --dato-3: var(--dato-gris); }
+
+/* lámina */
+.cambios, .casos { max-width: 60ch; }
+.casos { display: grid; gap: var(--e2); color: var(--texto-2); margin: 0; padding-left: 1.2em; }
+.casos b { color: var(--texto); font-weight: 650; }
+.diagrama .nodo.pregunta rect { fill: var(--superficie); stroke: var(--texto-2); stroke-dasharray: 4 4; }
+.diagrama .titulo-alt { fill: var(--texto); font-size: 15px; font-weight: 650; }
+.diagrama .nodo.prog rect { fill: var(--fondo); stroke: var(--accion); stroke-width: 2; }
+.anota.izq { right: auto; left: -6px; }
+.anota.abajo { top: auto; bottom: -10px; }
+.anota.dentro { right: 4px; }
+
+/* aviso superpuesto al pie (Never Cover Rule): flota sobre la lista sin moverla ni reservar alto,
+   justo encima de las acciones fijas (el +, las pestañas, la barra del plato, el botón principal), sin taparlas */
+.ranura-aviso { position: absolute; left: var(--e4); right: var(--e4); bottom: calc(var(--barra) + var(--e3)); z-index: 3; display: flex; }
+.ranura-aviso:empty { display: none; }
+.ranura-aviso.sobre-fab { bottom: calc(var(--barra) + var(--e4) + var(--tactil-gym) + var(--e3)); }
+.ranura-aviso.sobre-acciones { bottom: calc(var(--tactil) + var(--e4) + var(--e3)); }
+.ranura-aviso .aviso { position: relative; left: auto; right: auto; bottom: auto; flex: 1; }
+.aviso .txt-av { flex: 1; font-size: 15px; line-height: 20px; }
+.unidad-c { font-size: 15px; line-height: 20px; font-weight: 650; font-stretch: 85%; color: var(--texto-2); }
+
+/* campos tipados y chips (flujo 10) */
+.campo { display: flex; flex-direction: column; gap: var(--e1); }
+.campo > .lbl { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.entrada { min-height: var(--tactil); background: var(--elevado); border-radius: var(--r-control); padding-inline: var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e2); position: relative; }
+.entrada .u { color: var(--texto-2); font-size: 15px; line-height: 20px; }
+.entrada.foco { outline: var(--t-sel) solid var(--texto-acento); outline-offset: 2px; }
+.entrada.error { outline: var(--t-sel) solid var(--error); outline-offset: calc(-1 * var(--t-sel)); }
+.entrada.vacia > span:first-child { color: var(--texto-2); }
+.chips { display: flex; flex-wrap: wrap; gap: var(--e3) var(--e2); }
+.chip { min-height: 36px; padding-inline: var(--e3); border-radius: var(--r-pildora); background: var(--elevado); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; display: inline-flex; align-items: center; position: relative; white-space: nowrap; transition: background var(--rapido) var(--estandar); }
+.chip::after { content: ""; position: absolute; inset: calc(-1 * var(--e2) + 2px) 0; }
+.chip:active { background: color-mix(in srgb, var(--texto) 10%, var(--elevado)); color: var(--texto); }
+.chip[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.chip .anota { top: -14px; right: -10px; }
+.entrada .anota { right: -10px; }
+
+/* ---------- Comida (flujo 3, D-37) ---------- */
+.desliza { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: var(--e3); overflow-x: visible; overflow-y: clip; padding-top: var(--e1); }
+.desliza > * { flex-shrink: 0; }
+.dia-nav { display: flex; align-items: center; gap: var(--e1); margin-inline: -12px; }
+.dia-nav .txt { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.dia-nav .t-seccion { font-size: 20px; }
+
+/* resumen del día: Total, Objetivo y Restan */
+.resumen { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e4) var(--e4); display: grid; grid-template-columns: minmax(0, 1fr) repeat(3, 70px); column-gap: var(--e2); align-items: baseline; position: relative; }
+.resumen .cab { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; text-align: right; padding-bottom: var(--e1); }
+.resumen .nom { font-size: 15px; line-height: 20px; min-width: 0; }
+.resumen .nom .u, .resumen .grupo-n .u { color: var(--texto-2); font-size: 13px; }
+.resumen .v { text-align: right; white-space: nowrap; display: flex; flex-direction: column; align-items: flex-end; position: relative; }
+.resumen .v .cifra { font-size: 20px; line-height: 24px; }
+.resumen .v .hasta { color: var(--texto-2); font-size: 13px; line-height: 14px; font-weight: 500; }
+.resumen .kcal .cifra { font-size: 25px; line-height: 26px; }
+.resumen .neg { display: inline-flex; align-items: center; gap: 2px; }
+.resumen .neg .i { color: var(--texto-2); }
+.resumen .ok { display: inline-flex; align-items: center; gap: 2px; font-size: 13px; line-height: 24px; font-weight: 650; }
+.resumen .ok .i { color: var(--texto-acento); }
+.resumen .linea { grid-column: 1 / -1; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; margin-top: calc(-1 * var(--e1)); padding-bottom: var(--e2); display: flex; align-items: center; gap: var(--e1); position: relative; }
+.resumen .linea.tope { color: var(--texto); }
+.resumen .linea.tope .i { color: var(--texto-2); }
+.resumen .grupo-n { grid-column: 1 / -1; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 650; padding-top: var(--e3); padding-bottom: var(--e1); border-top: var(--t-borde) solid var(--borde); margin-top: var(--e1); }
+.resumen .grupo-n:first-of-type { border-top: 0; margin-top: 0; padding-top: 0; }
+.resumen .pie-r { grid-column: 1 / -1; display: flex; justify-content: flex-start; margin: var(--e1) 0 calc(-1 * var(--e2)) calc(-1 * var(--e3)); }
+
+/* barra de progreso con tramo programado en contorno y marca de límite */
+.pista-n { grid-column: 1 / -1; position: relative; margin: var(--e1) 0 var(--e3); }
+.pista-n .p { height: var(--e1); border-radius: var(--r-pildora); background: var(--elevado); display: flex; overflow: hidden; }
+.pista-n .p i { display: block; height: 100%; flex: none; width: calc(var(--v) * 1%); background: var(--m, var(--accion)); }
+/* contorno = programado: el tramo pendiente es solo trazo */
+.pista-n .p i.prog { background: transparent; outline: var(--t-borde) solid var(--m, var(--accion)); outline-offset: calc(-1 * var(--t-borde)); border-radius: 0 var(--r-pildora) var(--r-pildora) 0; }
+.pista-n .lim { position: absolute; top: calc(-1 * var(--e1)); bottom: calc(-1 * var(--e1)); left: calc(var(--l) * 1%); width: var(--t-borde); background: var(--texto-2); }
+.pista-n .anota { top: -14px; }
+
+/* comidas del día */
+.comida { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; position: relative; }
+.comida > * + * { border-top: var(--t-borde) solid var(--borde); }
+/* contorno = programado: sin relleno, trazo neutro */
+.comida.programada { background: transparent; outline: var(--t-borde) solid var(--texto-2); outline-offset: calc(-1 * var(--t-borde)); }
+.comida-cab { padding: var(--e3) var(--e4); display: flex; align-items: flex-start; justify-content: space-between; gap: var(--e3); }
+.comida-cab .txt { display: flex; flex-direction: column; min-width: 0; }
+.comida-cab .t-seccion { display: flex; align-items: center; gap: var(--e2); }
+.comida-cab .t-detalle { color: var(--texto-2); display: inline-flex; align-items: center; gap: var(--e1); }
+.comida-cab .kc { text-align: right; white-space: nowrap; display: flex; flex-direction: column; align-items: flex-end; }
+.comida-cab .kc .cifra { font-size: 20px; line-height: 24px; }
+.comida-cab .kc .t-detalle { color: var(--texto-2); }
+.alimento { min-height: var(--tactil); padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); width: 100%; text-align: left; position: relative; }
+.alimento .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.alimento .txt .t-detalle { color: var(--texto-2); }
+.alimento .kc { white-space: nowrap; color: var(--texto); font-size: 15px; line-height: 20px; }
+.alimento.quitable { padding-right: var(--e1); }
+.alimento .icono-btn { margin-left: calc(-1 * var(--e2)); color: var(--texto-2); }
+button.alimento:active { background: var(--capa-pressed); }
+.comida-pie { padding: var(--e1) var(--e1); display: flex; }
+.comida-pie .btn.texto { gap: var(--e1); }
+.comida.vacia-c .comida-cab { padding-bottom: var(--e1); }
+.comida.vacia-c .comida-cab + .comida-pie { border-top: 0; }
+.estado-c { display: inline-flex; align-items: center; gap: var(--e1); }
+.m { width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); flex: none; }
+.m.prog { border: var(--t-sel) solid var(--accion); }
+.acciones-dia { display: grid; grid-template-columns: auto 1fr; gap: var(--e2); flex: none; }
+.ranura-aviso + .acciones-dia { margin-top: var(--e1); }
+.ver-todo { align-self: flex-start; margin-left: calc(-1 * var(--e3)); }
+
+/* botón flotante de Comida (móvil): un + que abre un menú con «Agregar a la comida de la hora» y «Crear alimento».
+   Plano como todo el sistema: relleno de acción y un anillo del color de fondo que lo separa del contenido, sin sombra. */
+.fab { position: absolute; right: var(--e4); bottom: calc(var(--barra) + var(--e4) + env(safe-area-inset-bottom, 0px)); width: var(--tactil-gym); height: var(--tactil-gym); border-radius: var(--r-pildora); background: var(--accion); color: var(--texto-accion); border: var(--t-sel) solid var(--fondo); display: grid; place-items: center; z-index: 4; transition: background var(--rapido) var(--estandar), transform var(--rapido) var(--estandar); }
+.fab:active { background: var(--accion-alta); transform: scale(0.97); }
+.fab .i { transition: transform var(--normal) var(--estandar); }
+.fab[aria-expanded="true"] .i { transform: rotate(45deg); }
+.velo-fab { position: absolute; inset: 0; background: var(--velo); z-index: 3; }
+.menu-fab { position: absolute; right: var(--e4); bottom: calc(var(--barra) + var(--e4) + var(--tactil-gym) + var(--e2) + env(safe-area-inset-bottom, 0px)); z-index: 4; min-width: 240px; background: var(--hoja); border-radius: var(--r-tarjeta); padding: var(--e2); display: flex; flex-direction: column; gap: var(--e1); }
+.menu-fab button { min-height: var(--tactil); padding-inline: var(--e3) var(--e4); border-radius: var(--r-control); display: flex; align-items: center; gap: var(--e3); font-size: 15px; line-height: 20px; font-weight: 650; text-align: left; }
+.menu-fab button .i { color: var(--texto-acento-elevado); }
+.menu-fab button:active { background: var(--capa-pressed); }
+@media (hover: hover) and (pointer: fine) { .fab:hover { background: var(--accion-alta); } .menu-fab button:hover { background: var(--capa-hover); } }
+@media (prefers-reduced-motion: reduce) { .fab, .fab .i { transition: none; } }
+/* lo último de la lista puede subir por encima del + */
+.desliza.con-fab { padding-bottom: calc(var(--tactil-gym) + var(--e3)); }
+
+
+/* buscar y armar el plato */
+.busca-cab { display: flex; align-items: center; gap: var(--e1); margin-inline: -12px calc(-1 * var(--e2)); min-height: var(--tactil); }
+.busca-cab .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.comida-btn { display: inline-flex; align-items: center; gap: var(--e1); font-size: 20px; line-height: 26px; font-weight: 650; min-height: 40px; border-radius: var(--r-control); align-self: flex-start; position: relative; }
+.comida-btn:active, .hora-btn:active { background: var(--capa-pressed); }
+.hora-btn { min-height: var(--tactil); padding-inline: var(--e3); border-radius: var(--r-control); color: var(--texto-acento); font-size: 15px; line-height: 20px; font-weight: 650; display: inline-flex; align-items: center; gap: var(--e1); position: relative; white-space: nowrap; }
+.entrada.buscar { padding-left: var(--e3); justify-content: flex-start; }
+.entrada.buscar > span { flex: 1; }
+.entrada.buscar .i { color: var(--texto-2); }
+.entrada.buscar .borrar { width: 40px; height: 40px; margin-right: calc(-1 * var(--e2)); display: grid; place-items: center; border-radius: var(--r-control); color: var(--texto-2); }
+.fila-crear { display: flex; gap: var(--e2); }
+.fila-crear .btn { flex: 1; }
+.grupo-tit { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 650; display: flex; align-items: center; justify-content: space-between; gap: var(--e2); margin-bottom: calc(-1 * var(--e1)); }
+.resultados { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; }
+.resultados > * + * { border-top: var(--t-borde) solid var(--borde); }
+.resultado { min-height: 56px; padding: var(--e1) var(--e1) var(--e1) var(--e4); display: flex; align-items: center; gap: var(--e2); position: relative; }
+.resultado .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.resultado .txt .t-detalle { color: var(--texto-2); }
+.resultado .txt .pildora { align-self: flex-start; margin-top: var(--e1); }
+.resultado .icono-btn { color: var(--texto-acento); }
+.resultado .icono-btn.hecho { color: var(--texto-acento); }
+.resultado .icono-btn.neutro { color: var(--texto-2); }
+mark { background: none; color: inherit; font-weight: 650; }
+.sinc-linea { display: flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; position: relative; }
+/* barra fija del plato: total de la comida y Listo */
+.barra-plato { flex: none; background: var(--superficie); border-top: var(--t-borde) solid var(--borde); padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); min-height: 72px; position: relative; }
+.barra-plato .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.barra-plato .txt .t-detalle { color: var(--texto-2); }
+.barra-plato .tot { display: flex; align-items: baseline; gap: var(--e1); }
+.barra-plato .tot .cifra { font-size: 25px; line-height: 26px; }
+.barra-plato .btn { min-width: 96px; }
+
+/* hoja de cantidad */
+.hoja .cab-hoja { display: flex; flex-direction: column; gap: 2px; }
+.hoja .cab-hoja .t-detalle { color: var(--texto-2); }
+.agarre { width: 32px; height: var(--e1); border-radius: var(--r-pildora); background: var(--borde); align-self: center; margin: calc(-1 * var(--e3)) 0 calc(-1 * var(--e1)); }
+.cant { display: flex; gap: var(--e2); align-items: center; }
+.cant .entrada { flex: 1; }
+.cant .entrada .cifra { font-size: 25px; line-height: 26px; }
+.fracciones { display: flex; gap: var(--e1); }
+.fracciones .chip { min-height: var(--tactil); min-width: var(--tactil); justify-content: center; font-size: 15px; }
+.fracciones .chip::after { display: none; }
+.vivo { display: flex; background: var(--elevado); border-radius: var(--r-control); padding: var(--e3) 0; position: relative; }
+.vivo > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: 2px; padding-inline: var(--e3); }
+.vivo > div + div { border-left: var(--t-borde) solid var(--borde); }
+.vivo .cifra { font-size: 25px; line-height: 26px; white-space: nowrap; }
+.vivo .t-detalle { color: var(--texto-2); }
+.botones-hoja { display: grid; grid-template-columns: auto 1fr; gap: var(--e2); }
+
+/* formulario de alimento nuevo */
+.form-scroll { gap: var(--e4); }
+.leer { display: flex; gap: var(--e2); }
+.leer .btn.secundario { flex: 1; }
+.leer .icono-btn[aria-disabled="true"] { opacity: 0.4; cursor: default; background: var(--elevado); border-radius: var(--r-control); }
+.leido { display: flex; align-items: center; gap: var(--e2); font-size: 13px; line-height: 18px; font-weight: 500; color: var(--texto); }
+.leido .i { color: var(--texto-acento); }
+.sub-form { font-size: 15px; line-height: 20px; font-weight: 650; display: flex; justify-content: space-between; align-items: baseline; gap: var(--e2); }
+.sub-form .t-detalle { color: var(--texto-2); font-weight: 500; }
+.opcionales { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; }
+.opcionales > div { min-height: 44px; padding: var(--e2) var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); }
+.opcionales > div + div { border-top: var(--t-borde) solid var(--borde); }
+.opcionales .sin { color: var(--texto-2); font-size: 15px; }
+.campo .error-linea { margin-top: 2px; }
+.acciones-form { display: flex; flex-direction: column; gap: var(--e2); flex: none; }
+
+/* suplementos */
+.supl .alimento .txt .t-detalle { display: inline-flex; align-items: center; gap: var(--e1); }
+.supl .alimento .m { margin-right: calc(-1 * var(--e1)); }
+
+@media (hover: hover) and (pointer: fine) {
+  button.alimento:hover, .comida-btn:hover, .hora-btn:hover, .chip:not([aria-pressed="true"]):hover { background: var(--capa-hover); }
+}
+
+/* ajustes de anotaciones y columnas del resumen */
+.resumen { padding: var(--e3) var(--e3) var(--e4); grid-template-columns: minmax(0, 1fr) 48px 58px 76px; column-gap: var(--e1); }
+.resumen .v .anota { top: -14px; right: -14px; }
+.resumen .v.res .anota { right: auto; left: -6px; }
+.resumen .cab .anota { top: -22px; right: 6px; }
+.resumen .linea .anota { position: static; margin-left: var(--e1); }
+.pista-n .anota { right: auto; left: 55%; top: -12px; }
+.dia-nav .txt .anota { right: auto; left: 8%; }
+.supl .alimento { padding-block: var(--e1); }
+.form-scroll.compacto { gap: var(--e3); }
+.resumen .v.res .anota { top: -16px; right: -8px; left: auto; }
+.resumen .v:not(.res) .anota { top: -6px; right: -28px; }
+.supl .comida-cab { padding-block: var(--e2); }
+.supl .comida-pie { padding-block: 0; }
+.desliza.arriba { padding-top: 0; }
+.resumen .v.res .anota { top: -22px; }
+.dia-nav .txt .anota { top: -16px; left: 4%; }
+
+/* ---------- web ---------- */
+.web-envoltura { overflow-x: auto; border-radius: var(--r-tarjeta); }
+.navegador { min-width: 1180px; background: var(--borde); border-radius: var(--r-tarjeta); padding: var(--e1); }
+.navegador .barra-nav { height: 32px; display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e4); }
+.navegador .url { background: var(--fondo); border-radius: var(--r-pildora); padding: 2px var(--e4); font-size: 13px; color: var(--texto-2); }
+.app-web { display: grid; grid-template-columns: 248px 1fr; background: var(--fondo); border-radius: 0 0 var(--r-tarjeta) var(--r-tarjeta); min-height: 820px; }
+.lateral { background: var(--superficie); border-right: var(--t-borde) solid var(--borde); padding: var(--e4) var(--e3); display: flex; flex-direction: column; gap: var(--e1); border-radius: 0 0 0 var(--r-tarjeta); }
+.marca { display: flex; align-items: center; gap: var(--e3); padding: var(--e2) var(--e2) var(--e4); font-weight: 650; font-size: 15px; }
+.logo { width: 32px; height: 32px; border-radius: var(--r-control); background: var(--elevado); color: var(--texto); display: grid; place-items: center; }
+.item { min-height: 44px; border-radius: var(--r-control); display: flex; align-items: center; gap: var(--e3); padding-inline: var(--e3); color: var(--texto-2); font-size: 15px; }
+.item.abierto { color: var(--texto); font-weight: 650; }
+.subitem { min-height: 36px; display: flex; align-items: center; padding-left: 44px; border-radius: var(--r-control); color: var(--texto-2); font-size: 15px; }
+/* texto de acento sobre elevado: A5 en claro, A2 en oscuro (tokens.json · textoAcentoSobreElevado) */
+.subitem[aria-current="page"] { background: var(--elevado); color: var(--texto-acento-elevado); font-weight: 650; }
+.lateral .pie { margin-top: auto; border-top: var(--t-borde) solid var(--borde); padding-top: var(--e3); display: flex; flex-direction: column; gap: var(--e1); }
+.lateral .pie .sinc { padding: var(--e2) var(--e3); }
+.principal { padding: var(--e6); display: flex; flex-direction: column; gap: var(--e5); position: relative; }
+.rejilla { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--e4); align-items: start; }
+.span-12 { grid-column: span 12; } .span-8 { grid-column: span 8; } .span-4 { grid-column: span 4; }
+.tarjeta.web { padding: var(--e5); gap: var(--e4); }
+.web-cab { display: flex; justify-content: space-between; align-items: end; gap: var(--e4); }
+.web-ctl { display: flex; align-items: center; gap: var(--e3); }
+.web-ctl .segmento button { flex: none; min-width: 72px; }
+.cal-nav.web { margin-left: 0; gap: var(--e1); }
+.cal-nav.web .t-seccion { min-width: 180px; text-align: center; }
+
+.cifras-plano { display: flex; }
+.cifras-plano > div { flex: 1 1 auto; display: flex; flex-direction: column; gap: var(--e1); padding-inline: var(--e4); }
+.cifras-plano > div:first-child { padding-left: 0; }
+.cifras-plano > div + div { border-left: var(--t-borde) solid var(--borde); }
+.cifras-plano .cifra { font-size: 32px; line-height: 32px; white-space: nowrap; }
+.record-linea { display: flex; align-items: center; gap: var(--e2); color: var(--texto); }
+.record-linea .i { color: var(--texto-acento); }
+.wfilas > div, .wpesos > * { border-top: var(--t-borde) solid var(--borde); }
+.wfila { min-height: var(--tactil); padding-block: var(--e2); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); }
+.wpesos .peso-fila { padding-left: 0; padding-right: 0; }
+.wpesos .fila { padding-inline: 0; }
+.semana-pie { display: flex; align-items: center; justify-content: space-between; gap: var(--e4); }
+.icono-btn.acento { color: var(--texto-acento); }
+.opcion-rutina .pildora { align-self: flex-start; margin-top: var(--e1); }
+
+
+.radio { width: 24px; height: 24px; border-radius: var(--r-pildora); border: var(--t-sel) solid var(--texto-2); display: grid; place-items: center; flex: none; }
+.radio::after { content: ""; width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); background: transparent; }
+[aria-checked="true"] .radio { border-color: var(--accion); }
+[aria-checked="true"] .radio::after { background: var(--accion); }
+.opcion-rutina { min-height: 64px; padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); width: 100%; text-align: left; }
+.opcion-rutina:active { background: var(--capa-pressed); }
+.opcion-rutina .txt { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.opcion-rutina .txt .t-detalle { color: var(--texto-2); }
+
+/* hover de la lámina (sin rejilla de calendario) */
+@media (hover: hover) and (pointer: fine) { button.fila:hover, .sub-tab:hover, .icono-btn:hover, .atras:hover, .atajos button:hover, .casilla:hover, .carga-btn:hover, .opcion-rutina:hover { background: var(--capa-hover); } }
+.m { width: var(--e3); height: var(--e3); border-radius: var(--r-pildora); flex: none; }
+.m.hecha { background: var(--accion); }
+.m.prog { border: var(--t-sel) solid var(--accion); }
+
+
+
+/* ---------- pieza 3: mockups (flujo 3) ---------- */
+.wvacio { display: flex; flex-direction: column; align-items: flex-start; gap: var(--e2); max-width: 520px; padding-block: var(--e6); }
+.wvacio > .i { color: var(--texto-2); }
+.wvacio p { color: var(--texto-2); max-width: 60ch; }
+.wvacio.falla > .i { color: var(--error); }
+.app-web.corta { min-height: 560px; }
+.esq.linea { height: var(--e4); }
+.esq.alto { height: calc(4 * var(--e7)); }
+.vacio p { max-width: 36ch; }
+.vacio .btn { margin-top: var(--e2); }
+
+/* indicador circular dentro de un botón (20 px), solo si tarda más de 300 ms */
+.indicador { width: 20px; height: 20px; border-radius: var(--r-pildora); border: var(--t-sel) solid var(--borde); border-top-color: var(--texto); flex: none; }
+@media (prefers-reduced-motion: no-preference) { .indicador { animation: giro 800ms linear infinite; } }
+@keyframes giro { to { transform: rotate(1turn); } }
+.btn[aria-busy="true"] { cursor: progress; }
+
+/* esqueleto en el teléfono */
+.esq-tarjeta { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e4); display: flex; flex-direction: column; gap: var(--e3); }
+.esq-fila { display: flex; justify-content: space-between; gap: var(--e4); }
+
+/* web: dos columnas de Comida */
+.span-7 { grid-column: span 7; } .span-5 { grid-column: span 5; } .span-6 { grid-column: span 6; }
+.col { display: flex; flex-direction: column; gap: var(--e3); min-width: 0; }
+.col.fija { position: sticky; top: var(--e6); }
+.w-dia { display: flex; align-items: center; gap: var(--e1); margin-left: -12px; }
+.w-dia .t-pantalla { min-width: 300px; text-align: center; }
+.web-ctl .btn { flex: none; }
+/* comida que recibe lo que agregas: borde de acción de 2 px (tarjeta elegida) */
+.comida.elegida { outline: var(--t-sel) solid var(--accion); outline-offset: calc(-1 * var(--t-sel)); }
+.comida.elegida .comida-cab .t-detalle .destino { color: var(--texto); font-weight: 650; }
+.aviso-web { display: flex; justify-content: flex-start; min-height: var(--tactil-gym); }
+.aviso-web .aviso { position: relative; left: auto; right: auto; bottom: auto; width: 100%; max-width: 420px; }
+
+/* web: panel lateral para buscar, elegir la cantidad y crear un alimento */
+.panel-w { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e4) 0; display: flex; flex-direction: column; gap: var(--e3); overflow: hidden; }
+.panel-w.sin-pie { padding-bottom: var(--e4); }
+.panel-w .busca-cab { margin-right: calc(-1 * var(--e2)); }
+.panel-w .resultados { background: transparent; border-radius: 0; margin-inline: calc(-1 * var(--e4)); border-top: var(--t-borde) solid var(--borde); }
+.panel-w .grupo-tit { margin-bottom: calc(-1 * var(--e2)); }
+.panel-w .barra-plato { margin-inline: calc(-1 * var(--e4)); }
+.panel-w .vivo { background: var(--elevado); }
+.panel-w .cab-hoja .t-detalle { color: var(--texto-2); }
+.panel-w .opcionales { background: transparent; border-radius: 0; margin-inline: calc(-1 * var(--e4)); border-top: var(--t-borde) solid var(--borde); }
+.panel-w .vacio { padding-block: var(--e4); }
+.panel-w .acciones-form { padding-bottom: var(--e4); }
+.panel-w .sinc-linea { min-height: 24px; }
+
+/* web: todos los nutrientes en dos columnas */
+.w-nutri .resumen { padding: var(--e4) var(--e5) var(--e5); grid-template-columns: minmax(0, 1fr) 72px 80px 96px; column-gap: var(--e2); }
+.w-nutri .resumen .grupo-n { font-size: 15px; line-height: 20px; }
+.w-faltan { display: flex; align-items: center; gap: var(--e3); }
+.w-faltan .btn.texto { gap: var(--e1); }
+
+/* nota del día sin conexión en el teléfono */
+.dia-sinc { justify-content: center; margin-top: calc(-1 * var(--e2)); }
+
+@media (hover: hover) and (pointer: fine) {
+  .item:hover, .subitem:not([aria-current="page"]):hover { background: var(--capa-hover); }
+}
+.panel-w .busca-cab.sin-atras { margin-left: 0; }
+
+
+/* ===== flujo 4 · crear receta o plan (D-38) ===== */
+/* calendario (mismas piezas que flujo-2-calendario.html) */
+.cal-nav { display: flex; align-items: center; gap: 0; margin-inline: -12px; }
+.cal-nav .cal-titulo .t-seccion { font-size: 20px; }
+.cal-vista { display: flex; align-items: center; gap: var(--e2); }
+.cal-vista .segmento { flex: 1; }
+.mes { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: var(--e2); text-align: center; }
+.mes .sem { font-size: 13px; line-height: 18px; font-weight: 500; color: var(--texto-2); padding-bottom: var(--e2); }
+.celda { min-height: var(--tactil); display: flex; flex-direction: column; align-items: center; gap: 0; border-radius: var(--r-control); text-align: center; position: relative; }
+.celda:active { background: var(--capa-pressed); }
+.celda .n { width: 32px; height: 32px; border-radius: var(--r-pildora); display: grid; place-items: center; font-size: 16px; line-height: 24px; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.celda.hoy .n { color: var(--texto-acento); font-weight: 650; }
+.celda.fuera .n { color: var(--texto-2); }
+.marcas { height: var(--e4); display: flex; align-items: center; justify-content: center; gap: var(--e2); }
+.leyenda { display: flex; flex-wrap: wrap; gap: var(--e2) var(--e4); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.leyenda > span { display: inline-flex; align-items: center; gap: var(--e2); }
+.semana-cab { display: flex; align-items: baseline; justify-content: space-between; gap: var(--e2); }
+.fila-dia .fin .cifra { font-size: 20px; line-height: 24px; color: var(--texto); }
+.semana-acciones { display: flex; flex-direction: column; gap: var(--e2); }
+
+/* casilla de aprobar (objetivo de 48 px) */
+.casilla-btn { width: var(--tactil); height: var(--tactil); display: grid; place-items: center; flex: none; margin: calc(-1 * var(--e3)) 0 calc(-1 * var(--e3)) calc(-1 * var(--e3)); border-radius: var(--r-control); }
+.casilla-btn:active { background: var(--capa-pressed); }
+.casilla { width: var(--e5); height: var(--e5); border-radius: var(--r-casilla); border: var(--t-sel) solid var(--texto-2); display: grid; place-items: center; color: var(--texto-accion); }
+.casilla .i { opacity: 0; }
+.casilla-btn[aria-checked="true"] .casilla { background: var(--accion); border-color: var(--accion); }
+.casilla-btn[aria-checked="true"] .casilla .i { opacity: 1; }
+.comida-cab.con-casilla { justify-content: flex-start; }
+.comida-cab.con-casilla .txt { flex: 1; }
+.comida.descartada .comida-cab .t-seccion, .comida.descartada .comida-cab .kc .cifra { color: var(--texto-2); }
+.buscando { padding: var(--e3) var(--e4); display: flex; flex-direction: column; gap: var(--e2); }
+.buscando .t-detalle { color: var(--texto-2); }
+
+/* revisión de propuesta */
+.tira { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; }
+.tira button { min-height: var(--tactil); border-radius: var(--r-control); display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; position: relative; }
+.tira button .n { font-size: 16px; line-height: 20px; font-variant-numeric: tabular-nums; color: var(--texto); }
+.tira button:active { background: var(--capa-pressed); }
+.tira button[aria-pressed="true"] { background: var(--accion); color: var(--texto-accion); }
+.tira button[aria-pressed="true"] .n { color: var(--texto-accion); font-weight: 650; }
+.cuenta-tipo { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.pie-fijo { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; background: var(--fondo); border-top: var(--t-borde) solid var(--borde); padding: var(--e3) var(--e4) var(--e3); display: flex; flex-direction: column-reverse; gap: var(--e2); }
+.desliza.con-pie { padding-bottom: calc(2 * var(--tactil) + var(--e6)); }
+.ranura-aviso.sobre-pie { bottom: calc(2 * var(--tactil) + var(--e6)); }
+.pantalla.apilada .cuerpo { padding-top: 0; }
+
+/* coach */
+.linea-coach { background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e4); display: flex; flex-direction: column; gap: var(--e2); position: relative; }
+.linea-coach .cab-c { display: flex; align-items: center; gap: var(--e2); color: var(--texto-acento); font-size: 13px; line-height: 18px; font-weight: 650; }
+.linea-coach p { font-size: 15px; line-height: 20px; }
+.linea-coach .acciones-c { display: flex; flex-wrap: wrap; gap: var(--e2); margin-top: var(--e2); }
+@media (prefers-reduced-motion: no-preference) { .pensando .cab-c .i { animation: pulso 1600ms var(--estandar) infinite; } }
+.pasos-c { display: flex; flex-direction: column; gap: var(--e2); }
+.pasos-c span { display: flex; align-items: center; gap: var(--e2); color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+.pasos-c span.ahora { color: var(--texto); }
+.chat { display: flex; flex-direction: column; gap: var(--e3); }
+.burbuja { align-self: flex-end; max-width: 85%; background: var(--elevado); border-radius: var(--r-tarjeta); padding: var(--e2) var(--e3); font-size: 15px; line-height: 20px; }
+.chat-pie { position: absolute; left: 0; right: 0; bottom: var(--barra); z-index: 1; background: var(--fondo); padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e2); }
+.chat-pie .entrada { flex: 1; }
+.desliza.con-chat { padding-bottom: calc(var(--tactil) + var(--e5)); }
+.ranura-aviso.sobre-chat { bottom: calc(var(--barra) + var(--tactil) + var(--e5)); }
+.rango { display: flex; flex-wrap: wrap; gap: var(--e2); align-items: center; }
+
+/* recetas */
+.ing { padding: var(--e2) var(--e4) var(--e3); display: flex; flex-direction: column; gap: var(--e2); position: relative; }
+.ing .linea-i { display: flex; align-items: center; gap: var(--e3); }
+.ing .linea-i .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ing .linea-i .txt .t-detalle { color: var(--texto-2); }
+.ing .linea-i .kc { white-space: nowrap; font-size: 15px; line-height: 20px; }
+.porciones-fila { display: flex; align-items: center; justify-content: space-between; gap: var(--e3); padding: var(--e2) var(--e4); position: relative; }
+.porciones-fila .txt { display: flex; flex-direction: column; }
+.porciones-fila .txt .t-detalle { color: var(--texto-2); }
+.etiqueta-alerta { display: inline-flex; align-items: center; }
+.dos-botones { display: grid; grid-template-columns: 1fr; gap: var(--e2); }
+.diagrama .carril rect { fill: var(--fondo); stroke: none; }
+.diagrama .carril .t2 { font-weight: 650; }
+[role="checkbox"][aria-checked="true"] .casilla { background: var(--accion); border-color: var(--accion); }
+[role="checkbox"][aria-checked="true"] .casilla .i { opacity: 1; }
+.cabeza .t-pantalla { padding-block: var(--e2); }
+.estrecho { max-width: calc(100% - var(--e6)); }
+/* ---------- pieza 3 · web ---------- */
+.mes.web { row-gap: var(--e2); }
+.mes.web .celda { min-height: 72px; justify-content: flex-start; padding-top: var(--e2); }
+.celda[aria-pressed="true"] .n { background: var(--accion); color: var(--texto-accion); font-weight: 650; }
+.w-semana { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--e3); align-items: start; }
+.w-col { background: var(--superficie); border-radius: var(--r-tarjeta); display: flex; flex-direction: column; min-width: 0; }
+.w-col > * + * { border-top: var(--t-borde) solid var(--borde); }
+.w-col-cab { padding: var(--e3); display: flex; flex-direction: column; gap: var(--e2); }
+.w-col-cab .dia { display: flex; align-items: baseline; gap: var(--e2); }
+.w-col-cab .dia .n { font-size: 20px; line-height: 24px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.w-col-cab .t-detalle { color: var(--texto-2); }
+.w-col-cab .kcal-d .cifra { font-size: 25px; line-height: 26px; }
+.w-com { padding: var(--e2) var(--e3); display: flex; flex-direction: column; min-width: 0; position: relative; }
+.w-com .lin { display: flex; align-items: center; gap: var(--e2); min-width: 0; }
+.w-com .lin > span { min-width: 0; }
+.w-com .t-detalle { color: var(--texto-2); }
+.w-com.con-casilla { padding-left: var(--e1); }
+.w-com.con-casilla .t-detalle { padding-left: 40px; }
+.w-com .casilla-btn { margin: 0; width: 40px; height: 40px; }
+.w-com.descartada .lin > span { color: var(--texto-2); }
+.w-com .btn.texto { align-self: flex-start; min-height: 36px; padding-inline: var(--e2); margin-left: 32px; }
+.w-com.vacia .t-detalle { padding-left: 0; }
+.w-pie-rev { display: flex; justify-content: flex-end; align-items: center; gap: var(--e3); }
+.w-tit { display: flex; flex-direction: column; gap: var(--e2); }
+.w-linea { display: flex; align-items: center; gap: var(--e3); flex-wrap: wrap; }
+.panel-w .ing { padding-inline: 0; }
+.panel-w .porciones-fila { padding-inline: 0; }
+.wfilas .fila { padding-inline: 0; }
+.opcion-rutina.elegida { outline: var(--t-sel) solid var(--accion); outline-offset: calc(-1 * var(--t-sel)); border-radius: var(--r-control); }
+/* ---------- Ajustes › Comidas del día ---------- */
+.slot-fila { display: flex; align-items: center; padding-right: var(--e2); }
+.slot-txt { flex: 1; min-width: 0; min-height: 56px; padding: var(--e2) var(--e4); display: flex; flex-direction: column; justify-content: center; text-align: left; }
+.slot-txt:active { background: var(--capa-pressed); }
+.slot-fila.elegida { outline: var(--t-sel) solid var(--accion); outline-offset: calc(-1 * var(--t-sel)); }
+.hora-campos { display: grid; grid-template-columns: 1fr auto; gap: var(--e2); align-items: end; }
+.hora-campos .segmento { min-height: var(--tactil); }
+.hora-campos .segmento button { white-space: nowrap; }
+/* en oscuro la hoja va en elevado, igual que el campo: dentro de una hoja el campo va sobre fondo (aprobado el 27-oct-2026) */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hoja .entrada { background: var(--fondo); } }
+:root[data-theme="dark"] .hoja .entrada { background: var(--fondo); }
+/* sin palabras sueltas al final del párrafo ni títulos desbalanceados (detector, 27-oct-2026) */
+p, li { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; }
+
+/* lámina y maquetas: sin palabras sueltas al final del párrafo */
+p, li, .txt-av, .linea-coach p { text-wrap: pretty; }
+.paso-guia h3, .t-pantalla, .t-seccion { text-wrap: balance; }
+/* ===== flujo 5 · registrar paseo MTB (CAR-01, CAR-02; D-27, D-39) ===== */
+/* cifras del paseo (mismas piezas del resumen del flujo 2) */
+.mtb-cifras { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--e3) 0; padding-top: var(--e2); border-top: var(--t-borde) solid var(--borde); }
+.mtb-cifras > div { display: flex; flex-direction: column; }
+.mtb-cifras .cifra { font-size: 25px; line-height: 30px; white-space: nowrap; }
+.zonas { display: flex; flex-direction: column; gap: var(--e2); }
+.zona { display: grid; grid-template-columns: calc(2 * var(--e7) + var(--e4)) 1fr var(--e7); align-items: center; gap: var(--e3); min-height: var(--e5); }
+.zona b { font-weight: 650; font-size: 15px; }
+.z-nom { display: flex; align-items: baseline; gap: var(--e2); }
+.z-val { display: flex; flex-direction: column; align-items: flex-end; line-height: 20px; text-align: right; }
+.z-val .t-detalle { color: var(--texto-2); }
+.z-pista { height: var(--e2); border-radius: var(--r-pildora); background: var(--elevado); overflow: hidden; }
+.z-pista i { display: block; height: 100%; width: calc(var(--v) * 1%); border-radius: var(--r-pildora); background: var(--dato-1); }
+
+/* tarjeta del paseo en el chat: una sola superficie con divisores, cada cifra se toca */
+.paseo { gap: var(--e3); }
+.paseo > .sep { border-top: var(--t-borde) solid var(--borde); padding-top: var(--e3); }
+.fecha-btn { min-height: var(--tactil); display: flex; align-items: center; gap: var(--e3); margin-inline: calc(-1 * var(--e2)); padding-inline: var(--e2); border-radius: var(--r-control); text-align: left; position: relative; }
+.fecha-btn .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.fecha-btn .t-detalle { color: var(--texto-2); }
+.fecha-btn > .i { color: var(--texto-2); }
+.p-heroe { display: flex; flex-direction: column; position: relative; }
+.p-heroe .cifra { font-size: 56px; line-height: 52px; }
+.datos-p { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-inline: calc(-1 * var(--e2)); }
+.dato { min-height: var(--tactil); display: flex; flex-direction: column; align-items: flex-start; padding: var(--e1) var(--e2); border-radius: var(--r-control); text-align: left; position: relative; min-width: 0; }
+button.dato:active, .fecha-btn:active { background: var(--capa-pressed); }
+.dato .t-detalle { color: var(--texto-2); }
+.dato .cifra { font-size: 25px; line-height: 30px; white-space: nowrap; display: inline-flex; align-items: center; gap: var(--e1); }
+.dato .sin-dato { color: var(--texto-2); font-size: 15px; line-height: 30px; }
+.dato .dudoso { color: var(--texto); display: inline-flex; align-items: center; gap: var(--e1); font-size: 13px; line-height: 18px; font-weight: 650; white-space: nowrap; }
+.dato .dudoso .i, .aviso-linea .i { color: var(--texto); }
+.aviso-linea { display: flex; align-items: flex-start; gap: var(--e2); font-size: 13px; line-height: 18px; font-weight: 650; color: var(--texto); position: relative; }
+.aviso-linea.con-anota { padding-right: var(--e5); }
+/* chat desplazado hasta el final: lo de arriba queda fuera de la pantalla */
+.desliza.al-pie { justify-content: flex-end; }
+/* pestaña interna activa a la vista: la fila de pestañas ya desplazada al final */
+.sub-tabs.al-final { justify-content: flex-end; }
+.guardado { display: flex; align-items: center; gap: var(--e2); font-size: 15px; line-height: 20px; font-weight: 650; }
+.guardado .i { color: var(--texto-acento); }
+.paseo .acciones-c { margin-top: 0; }
+.paseo .acciones-c .btn.primario { flex: 1; }
+.tema { color: var(--texto-acento); font-size: 13px; line-height: 18px; font-weight: 650; }
+
+/* capturas: miniaturas de la imagen (en el producto, la imagen real) */
+.capturas { display: flex; gap: var(--e2); position: relative; }
+.mini-cap { width: var(--e7); height: calc(var(--e7) + var(--e5)); flex: none; display: block; }
+.mini-cap .fondo-c { fill: var(--superficie); }
+.mini-cap .linea-c { fill: var(--dato-gris); }
+.tarjeta .mini-cap .fondo-c { fill: var(--elevado); }
+.mini-cap .linea-c.fuerte-c { fill: var(--texto-2); }
+.burbuja.con-capturas { display: flex; flex-direction: column; align-items: flex-end; gap: var(--e2); position: relative; }
+.en-cola { display: flex; align-items: center; gap: var(--e1); align-self: flex-end; color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; margin-top: calc(-1 * var(--e1)); position: relative; }
+.chat-pie.con-adjuntos { flex-wrap: wrap; padding-top: var(--e3); border-top: var(--t-borde) solid var(--borde); }
+.chat-pie.con-adjuntos .capturas { width: 100%; }
+.chat-pie.con-adjuntos .mini-cap .fondo-c { fill: var(--elevado); }
+.desliza.con-adjuntos { padding-bottom: calc(var(--tactil) + var(--e7) + var(--e7)); }
+
+/* Cardio y MTB: lista por semana con totales */
+.sem-cab { display: flex; flex-direction: column; gap: 0; margin-bottom: calc(-1 * var(--e1)); position: relative; }
+.sem-cab .t-detalle { color: var(--texto-2); }
+.sem-cab .tot { font-size: 15px; line-height: 20px; font-weight: 650; }
+.paseo-fila .txt .t-detalle { color: var(--texto-2); }
+.paseo-fila .km { font-size: 20px; line-height: 24px; white-space: nowrap; }
+.paseo-fila .km .unidad-c { font-size: 13px; }
+
+/* ruta GPX: línea y perfil de desnivel, sin mapa de calles */
+.ruta svg { display: block; width: 100%; height: auto; }
+.ruta .trazo { fill: none; stroke: var(--dato-1); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.ruta .perfil { fill: none; stroke: var(--dato-1); stroke-width: 2; stroke-linejoin: round; }
+.ruta .eje { stroke: var(--borde); stroke-width: 1; }
+.ruta .ext { fill: var(--superficie); stroke: var(--dato-1); stroke-width: 2; }
+.ruta .ext.fin { fill: var(--dato-1); }
+.ruta .lbl { fill: var(--texto-2); font-family: var(--familia); font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.ruta .cab-r { display: flex; justify-content: space-between; align-items: baseline; gap: var(--e2); }
+
+/* detalle: cabecera con editar y borrar */
+.det-cab { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--e2); }
+.det-cab .dia-cab { flex: 1; min-width: 0; }
+.det-acc { display: flex; margin-right: calc(-1 * var(--e3)); }
+.vacio.en-tarjeta { padding-block: var(--e2); }
+
+/* Hoy: día con la línea del coach de recuperación */
+.hoy-cab { display: flex; flex-direction: column; }
+.hoy-cab .t-detalle { color: var(--texto-2); }
+.sesion-fila .txt .t-detalle { color: var(--texto-2); }
+.diagrama .caja-cifras rect { fill: var(--fondo); stroke: var(--borde); }
+
+/* ---------- pieza 3 · mockups del flujo 5 ---------- */
+.pagina h3.sub { text-wrap: balance; }
+.error-linea .i { color: var(--error); }
+.entrada.error.vacia > span:first-child { color: var(--texto-2); }
+/* Comida: el + flota solo, sin franja (cambio pedido por Francis al probar el prototipo del flujo 5 en Android, 27-oct-2026);
+   al final del día, un margen del alto de la antigua franja y antes la línea de cierre «Restan…» */
+.desliza.con-fab { padding-bottom: calc(var(--tactil-gym) + var(--e4)); }
+.cierre-dia { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 500; }
+/* en oscuro la hoja va en elevado, igual que el campo: dentro de una hoja el campo va sobre fondo */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hoja .entrada { background: var(--fondo); } }
+:root[data-theme="dark"] .hoja .entrada { background: var(--fondo); }
+.ejercicio .txt .t-detalle { color: var(--texto-2); }
+.ejercicio .baja { color: var(--texto); font-size: 13px; line-height: 18px; font-weight: 650; white-space: nowrap; }
+
+/* web: chat del coach en una columna, zona para soltar capturas */
+.chat-web { max-width: 760px; width: 100%; display: flex; flex-direction: column; gap: var(--e3); }
+.chat-web .burbuja { max-width: 60%; }
+.pie-chat-web { display: flex; align-items: center; gap: var(--e2); max-width: 760px; width: 100%; }
+.pie-chat-web .entrada { flex: 1; }
+.soltar { min-height: calc(5 * var(--e7)); border-radius: var(--r-tarjeta); background: var(--suave); outline: var(--t-sel) dashed var(--accion); outline-offset: calc(-1 * var(--t-sel)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--e2); text-align: center; padding: var(--e5); }
+.soltar > .i { color: var(--texto-acento); }
+/* sobre el fondo suave, el detalle va en texto principal: el secundario baja a 4.44:1 en oscuro con Mango */
+.soltar .t-detalle { color: var(--texto); max-width: 44ch; }
+.paseo-ancho { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--e5); align-items: start; }
+.paseo-ancho > div { display: flex; flex-direction: column; gap: var(--e3); min-width: 0; }
+.datos-p.tres { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.lista.sin-fondo .opcion-rutina { min-height: 56px; }
+.w-det { display: flex; flex-direction: column; gap: var(--e4); }
+.w-det .mtb-cifras { border-top: 0; padding-top: 0; }
+.w-ruta { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--e5); }
+.w-ruta > div { display: flex; flex-direction: column; gap: var(--e2); min-width: 0; }
+.panel-w .form-scroll { display: flex; flex-direction: column; gap: var(--e3); }
+.w-col-hoy { display: flex; flex-direction: column; gap: var(--e3); }
+
+
+/* ===== flujo 6 · registrar medición (SAL-01, SAL-02, SAL-07; D-40) ===== */
+/* Salud › Composición: peso del día */
+.peso-dia { width: 100%; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e2) var(--e3) var(--e4); display: flex; align-items: center; gap: var(--e2); text-align: left; position: relative; }
+.peso-dia:active { background: color-mix(in srgb, var(--texto) 6%, var(--superficie)); }
+.peso-dia .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.peso-dia .t-detalle { color: var(--texto-2); }
+.peso-dia .cifra { font-size: 56px; line-height: 52px; }
+.peso-dia > .i { color: var(--texto-2); }
+.sinc-linea .btn.texto { margin-left: auto; margin-right: calc(-1 * var(--e3)); }
+.sinc-linea > span { display: inline-flex; align-items: center; gap: var(--e1); }
+/* recordatorio de la cinta: una línea, no una tarjeta */
+.recordatorio { display: flex; align-items: flex-start; gap: var(--e2); font-size: 15px; line-height: 20px; color: var(--texto); position: relative; }
+.recordatorio.con-anota { padding-right: var(--e5); }
+.sinc-linea .btn.texto { white-space: nowrap; }
+.recordatorio > .i { color: var(--texto-acento); margin-top: -2px; }
+/* filas de valores (Renpho, pesajes, mediciones) */
+.val-fila { min-height: var(--tactil); padding: var(--e2) var(--e4); display: flex; align-items: center; justify-content: space-between; gap: var(--e3); width: 100%; text-align: left; position: relative; }
+.val-fila .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.val-fila .t-detalle { color: var(--texto-2); }
+.val-fila .cifra { font-size: 20px; line-height: 24px; white-space: nowrap; }
+.val-fila .cifra .unidad-c { font-size: 13px; }
+.val-fila > .i { color: var(--texto-2); margin-right: calc(-1 * var(--e1)); }
+button.val-fila:active { background: var(--capa-pressed); }
+.val-fila.apagada .txt > span:first-child, .val-fila.apagada .cifra { color: var(--texto-2); }
+.etq { color: var(--texto); font-size: 13px; line-height: 18px; font-weight: 650; }
+/* pantalla de registro: una fila por medida con su campo */
+.med-fila { min-height: 64px; padding: var(--e2) var(--e3) var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e2); position: relative; }
+.med-fila .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.med-fila .nom { display: flex; align-items: center; min-height: 32px; }
+.med-fila .t-detalle { color: var(--texto-2); }
+.info { width: 40px; height: 40px; display: grid; place-items: center; border-radius: var(--r-pildora); color: var(--texto-2); position: relative; flex: none; margin-block: calc(-1 * var(--e1)); }
+.info::after { content: ""; position: absolute; inset: calc(-1 * var(--e1)); }
+.info:active { background: var(--capa-pressed); }
+.med-fila .entrada { width: 112px; flex: none; padding-inline: var(--e3); }
+.med-fila .entrada.lado { width: 84px; }
+.med-fila .entrada .cifra { font-size: 20px; line-height: 24px; }
+.med-fila .entrada .lado-l { color: var(--texto-2); font-size: 13px; line-height: 18px; font-weight: 650; }
+.med-fila .lados { display: flex; gap: var(--e1); flex: none; }
+.revisa { display: inline-flex; align-items: center; gap: var(--e1); color: var(--texto); font-size: 13px; line-height: 18px; font-weight: 650; }
+.revisa .i { color: var(--texto); }
+.mas-btn { min-height: var(--tactil); width: 100%; display: flex; align-items: center; justify-content: space-between; gap: var(--e2); padding-inline: var(--e4) var(--e3); font-size: 15px; line-height: 20px; font-weight: 650; text-align: left; position: relative; }
+.mas-btn .t-detalle { color: var(--texto-2); font-weight: 500; }
+.mas-btn:active { background: var(--capa-pressed); }
+.mas-btn > span { display: flex; flex-direction: column; }
+.interruptor-fila { min-height: 64px; padding: var(--e2) var(--e4); display: flex; align-items: center; gap: var(--e3); width: 100%; text-align: left; position: relative; }
+.interruptor-fila .txt { flex: 1; display: flex; flex-direction: column; }
+.interruptor-fila .t-detalle { color: var(--texto-2); }
+.interruptor { width: 52px; height: 32px; border-radius: var(--r-pildora); background: var(--elevado); outline: var(--t-sel) solid var(--texto-2); outline-offset: calc(-1 * var(--t-sel)); position: relative; flex: none; transition: background var(--rapido) var(--estandar); }
+.interruptor::after { content: ""; position: absolute; width: 16px; height: 16px; border-radius: var(--r-pildora); background: var(--texto-2); top: 8px; left: 8px; transition: all var(--rapido) var(--estandar); }
+[aria-checked="true"] > .interruptor { background: var(--accion); outline-color: var(--accion); }
+[aria-checked="true"] > .interruptor::after { width: 24px; height: 24px; top: 4px; left: 24px; background: var(--texto-accion); }
+/* hoja «Cómo medir»: el dibujo llega en la pieza 3 (ADR 0026) */
+.dibujo-hueco { height: 220px; border-radius: var(--r-control); outline: var(--t-borde) dashed var(--texto-2); outline-offset: calc(-1 * var(--t-borde)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--e2); padding: var(--e4); text-align: center; color: var(--texto-2); position: relative; }
+.dibujo-hueco .t-detalle { max-width: 28ch; }
+.instruccion { font-size: 16px; line-height: 24px; }
+/* resumen al guardar */
+.res-cab { display: flex; flex-direction: column; gap: 2px; }
+.res-cab .t-detalle { color: var(--texto-2); }
+.meta-linea { display: inline-flex; align-items: center; gap: var(--e1); color: var(--texto); font-size: 13px; line-height: 18px; font-weight: 650; }
+.meta-linea .i { color: var(--texto-acento); }
+.segunda { display: flex; background: var(--superficie); border-radius: var(--r-tarjeta); padding: var(--e3) var(--e1); position: relative; }
+.segunda > div { flex: 1 1 0; display: flex; flex-direction: column; gap: 2px; padding-inline: var(--e3); min-width: 0; }
+.segunda > div + div { border-left: var(--t-borde) solid var(--borde); }
+.segunda .cifra { font-size: 32px; line-height: 32px; white-space: nowrap; }
+.segunda .t-detalle { color: var(--texto-2); }
+.falta { display: flex; align-items: flex-start; gap: var(--e2); padding: var(--e3) var(--e4); font-size: 15px; line-height: 20px; color: var(--texto); position: relative; }
+.falta .i { color: var(--texto-2); margin-top: -2px; }
+.desliza.con-acciones { padding-bottom: var(--e2); }
+/* lista de la sección «Cómo medir» de la lámina */
+.como-medir { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: var(--e5) var(--e6); align-items: start; }
+.como-medir h3 { font-size: 20px; line-height: 26px; font-weight: 650; margin: 0 0 var(--e2); }
+.como-medir ol { margin: 0; padding-left: 1.6em; display: grid; gap: var(--e2); max-width: 60ch; }
+.como-medir li b { font-weight: 650; }
+.como-medir li span { color: var(--texto-2); }
+.protocolo { max-width: 60ch; color: var(--texto-2); }
+ ol.casos { padding-left: 1.8em; }
+.protocolo b { color: var(--texto); font-weight: 650; }
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- Tabler Icons 3.49.0, outline (MIT, © Paweł Kuna) -->
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/></symbol>
+  <symbol id="i-barbell" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+  <symbol id="i-kitchen" viewBox="0 0 24 24"><path d="M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12m0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c3.255 2.777 3.695 7.266 1.029 10.501c-2.666 3.235 -7.615 4.215 -11.574 2.293l-4.7 1"/></symbol>
+  <symbol id="i-cloud-check" viewBox="0 0 24 24"><path d="M11 18.004h-4.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.393 -1.762 1.794 -3.2 3.675 -3.773c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.388 0 2.585 .82 3.138 2.007"/><path d="M15 19l2 2l4 -4"/></symbol>
+  <symbol id="i-cloud-off" viewBox="0 0 24 24"><path d="M9.58 5.548c.24 -.11 .492 -.207 .752 -.286c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.913 0 3.464 1.56 3.464 3.486c0 .957 -.383 1.824 -1.003 2.454m-2.997 1.033h-11.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.13 -.582 .37 -1.128 .7 -1.62"/><path d="M3 3l18 18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M5 12l14 0"/><path d="M5 12l6 6"/><path d="M5 12l6 -6"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065"/><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 6l-6 6l6 6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></symbol>
+  <symbol id="i-bike" viewBox="0 0 24 24"><path d="M2 18a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M16 18a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M12 19v-4l-3 -3l5 -4l2 3h3"/><path d="M13.007 5a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></symbol>
+  <symbol id="i-test-pipe-2" viewBox="0 0 24 24"><path d="M15 3v15a3 3 0 0 1 -6 0v-15"/><path d="M9 12h6"/><path d="M8 3h8"/></symbol>
+  <symbol id="i-calendar-plus" viewBox="0 0 24 24"><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v5"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/><path d="M16 19h6"/><path d="M19 16v6"/></symbol>
+  <symbol id="i-calendar-repeat" viewBox="0 0 24 24"><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v3"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h12"/><path d="M20 14l2 2h-3"/><path d="M20 18l2 -2"/><path d="M19 16a3 3 0 1 0 2 5.236"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><path d="M7 9.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667l0 -8.666"/><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1"/></symbol>
+  <symbol id="i-arrow-forward-up" viewBox="0 0 24 24"><path d="M15 14l4 -4l-4 -4"/><path d="M19 10h-11a4 4 0 1 0 0 8h1"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21l8 0"/><path d="M12 17l0 4"/><path d="M7 4l10 0"/><path d="M17 4v8a5 5 0 0 1 -10 0v-8"/><path d="M3 9a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M17 9a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 7v5l3 3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5l0 14"/><path d="M5 12l14 0"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12l14 0"/></symbol>
+  <symbol id="i-alert-circle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/></symbol>
+  <symbol id="i-info-circle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 9h.01"/><path d="M11 12h1v4h1"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6"/></symbol>
+  <symbol id="i-player-play" viewBox="0 0 24 24"><path d="M7 4v16l13 -8l-13 -8"/></symbol>
+  <symbol id="i-player-skip-forward" viewBox="0 0 24 24"><path d="M4 5v14l12 -7l-12 -7"/><path d="M20 5l0 14"/></symbol>
+  <symbol id="i-vibrar" viewBox="0 0 24 24"><path d="M3 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2l0 -14"/><path d="M8 4l2 0"/><path d="M9 17l0 .01"/><path d="M21 6l-2 3l2 3l-2 3l2 3"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1 -7 0a5 5 0 0 0 -7 0v-9"/><path d="M5 21v-7"/></symbol>
+  <symbol id="i-stairs-up" viewBox="0 0 24 24"><path d="M22 6h-5v5h-5v5h-5v5h-5"/><path d="M6 10v-7"/><path d="M3 6l3 -3l3 3"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6l6 -6"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"/><path d="M13.5 6.5l4 4"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M12 8l0 4l2 2"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/></symbol>
+  <symbol id="i-device-mobile" viewBox="0 0 24 24"><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14"/><path d="M11 4h2"/><path d="M12 17v.01"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><path d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/><path d="M21 21l-6 -6"/></symbol>
+  <!-- logo provisional: glifo de packages/brand (barbell) -->
+  <symbol id="logo" viewBox="0 0 24 24"><path d="M2 12h1"/><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2"/><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M9 12h6"/><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1"/><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2"/><path d="M22 12h-1"/></symbol>
+  <symbol id="i-alert-triangle" viewBox="0 0 24 24"><path d="M12 9v4"/><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2"/><path d="M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></symbol>
+  <symbol id="i-barcode" viewBox="0 0 24 24"><path d="M4 7v-1a2 2 0 0 1 2 -2h2"/><path d="M4 17v1a2 2 0 0 0 2 2h2"/><path d="M16 4h2a2 2 0 0 1 2 2v1"/><path d="M16 20h2a2 2 0 0 0 2 -2v-1"/><path d="M5 11h1v2h-1l0 -2"/><path d="M10 11l0 2"/><path d="M14 11h1v2h-1l0 -2"/><path d="M19 11l0 2"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/></symbol>
+  <symbol id="i-ban" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M5.7 5.7l12.6 12.6"/></symbol>
+  <symbol id="i-check-small" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 9l5 -5l5 5"/><path d="M12 4l0 12"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"/></symbol>
+  <symbol id="i-player-stop" viewBox="0 0 24 24"><path d="M5 7a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z"/></symbol>
+  <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 5l0 14"/><path d="M18 11l-6 -6"/><path d="M6 11l6 -6"/></symbol>
+  <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5l0 14"/><path d="M18 13l-6 6"/><path d="M6 13l6 6"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M10 14l11 -11"/><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/><path d="M11 15h1"/><path d="M12 15v3"/></symbol>
+  <symbol id="i-photo" viewBox="0 0 24 24"><path d="M15 8h.01"/><path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z"/><path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5"/><path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3"/></symbol>
+  <symbol id="i-heartbeat" viewBox="0 0 24 24"><path d="M19.5 13.572l-7.5 7.428l-2.896 -2.868m-6.117 -8.104a5 5 0 0 1 9.013 -3.022a5 5 0 1 1 7.5 6.572"/><path d="M3 13h2l2 3l2 -6l1 3h3"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><path d="M3 19a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/><path d="M19 7a2 2 0 1 0 0 -4a2 2 0 0 0 0 4z"/><path d="M11 19h5.5a3.5 3.5 0 0 0 0 -7h-8a3.5 3.5 0 0 1 0 -7h4.5"/></symbol>
+  <symbol id="i-paperclip" viewBox="0 0 24 24"><path d="M15 7l-6.5 6.5a1.5 1.5 0 0 0 3 3l6.5 -6.5a3 3 0 0 0 -6 -6l-6.5 6.5a4.5 4.5 0 0 0 9 9l6.5 -6.5"/></symbol>
+  <symbol id="i-scale" viewBox="0 0 24 24"><path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3l0 -12"/><path d="M12 7c1.956 0 3.724 .802 5 2.095l-2.956 2.904a3 3 0 0 0 -2.038 -.799a3 3 0 0 0 -2.038 .798l-2.956 -2.903a6.979 6.979 0 0 1 5 -2.095"/></symbol>
+  <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M19.875 12c.621 0 1.125 .512 1.125 1.143v5.714c0 .631 -.504 1.143 -1.125 1.143h-15.875a1 1 0 0 1 -1 -1v-5.857c0 -.631 .504 -1.143 1.125 -1.143h15.75"/><path d="M9 12v2"/><path d="M6 12v3"/><path d="M12 12v3"/><path d="M18 12v3"/><path d="M15 12v2"/><path d="M3 3v4"/><path d="M3 5h18"/><path d="M21 3v4"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><path d="M11 12a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M7 12a5 5 0 1 0 10 0a5 5 0 1 0 -10 0"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/></symbol>
+  <symbol id="i-chevron-up" viewBox="0 0 24 24"><path d="M6 15l6 -6l6 6"/></symbol>
+  <symbol id="i-file-import" viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M5 13v-8a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2h-5.5m-9.5 -2h7m-3 -3l3 3l-3 3"/></symbol>
+</svg>
+<main class="lamina">
+  <header class="cabecera">
+    <div>
+      <h1>Flujo 6 · registrar medición</h1>
+      <p>Salud y el chat del coach en el teléfono (SAL-01, SAL-02, SAL-07; D-40, ADR 0026). Datos de Francis: 172 cm, 29 años, peso en lb. Renpho del 17-oct: 172.8 lb, grasa 20.4 %. Cinta del 17-abr sin cuello. Hoy es el miércoles 28 de octubre de 2026: pesaje de 172.2 lb a las 6:44 a. m. y una medición con cinta de ejemplo (cintura 90.5, cuello 38). Metas de ejemplo: cintura 88 cm y peso 76 kg. Los mockups, los 20 dibujos y el prototipo vienen después.</p>
+    </div>
+    <div class="controles">
+      <div class="control">
+        <span class="t-detalle sec" id="lbl-modo">Modo</span>
+        <div class="segmento" role="group" aria-labelledby="lbl-modo" id="ctl-modo">
+          <button type="button" data-modo="" aria-pressed="true">Sistema</button>
+          <button type="button" data-modo="light" aria-pressed="false">Claro</button>
+          <button type="button" data-modo="dark" aria-pressed="false">Oscuro</button>
+        </div>
+      </div>
+      <div class="control">
+        <span class="t-detalle sec" id="lbl-acento">Acento</span>
+        <div class="puntos" role="group" aria-labelledby="lbl-acento">
+          <button type="button" class="punto" data-a="caribe" style="--c:#3B95D1" aria-label="Caribe" aria-pressed="true"></button>
+          <button type="button" class="punto" data-a="mar" style="--c:#22A99C" aria-label="Mar" aria-pressed="false"></button>
+          <button type="button" class="punto" data-a="palma" style="--c:#2FA866" aria-label="Palma" aria-pressed="false"></button>
+          <button type="button" class="punto" data-a="mango" style="--c:#E89A1E" aria-label="Mango" aria-pressed="false"></button>
+          <button type="button" class="punto" data-a="flamboyan" style="--c:#E8603C" aria-label="Flamboyán" aria-pressed="false"></button>
+          <button type="button" class="punto" data-a="uva" style="--c:#8466DB" aria-label="Uva de playa" aria-pressed="false"></button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <nav class="indice" aria-label="Secciones de la lámina">
+    <a href="#diagrama">Diagrama</a><a href="#guia">Guía paso a paso</a><a href="#como-medir">Cómo medir</a><a href="#por-confirmar">Por confirmar</a>
+  </nav>
+
+  <section class="pagina" id="diagrama" aria-labelledby="h-diagrama">
+    <header>
+      <h2 id="h-diagrama">1 · Diagrama del flujo</h2>
+      <ul class="cambios">
+        <li><strong>Cuatro bloques:</strong> A el peso desde Renpho en carriles, B las medidas con cinta, C el resumen y las calculadas, D los casos borde.</li>
+        <li><strong>A va en carriles:</strong> lo que haces, lo que pasa entre Renpho y el servidor, y lo que se guarda.</li>
+        <li><strong>Los números</strong> coinciden con la guía. <strong>Trazo discontinuo:</strong> opcional o alterno. <strong>Borde de acento:</strong> entrada. <strong>Nodo invertido:</strong> aviso.</li>
+        <li><strong>Nada corrige a Renpho:</strong> lo que trae la báscula solo sale de la cuenta. Lo manual se edita y se borra.</li>
+      </ul>
+    </header>
+    <div class="diagrama-envoltura"><svg class="diagrama" viewBox="0 0 1510 1446" role="img" aria-labelledby="dg-t dg-d"><title id="dg-t">Diagrama del flujo 6, registrar medición</title><desc id="dg-d">Cuatro bloques. A: te pesas y la báscula sube el pesaje a Renpho; la app lo trae al abrirse si pasaron más de 15 minutos, cada noche, con Sincronizar ahora o, la primera vez, con todo el historial; cada pesaje se guarda con todos sus campos, el primero de la mañana es el peso del día y alimenta la media de 7 días y la tendencia; Salud › Composición los muestra; No contar saca un pesaje de la cuenta con Deshacer; si el sync falla 2 días, avisa. B: desde Registrar medición, el recordatorio de la cinta o la pregunta del coach se llega a una pantalla por grupos con el último valor de cada medida, la hoja Cómo medir, Más medidas y Revisa este dato; o el coach muestra una tarjeta-propuesta con Guardar medición o Descartar. C: el resumen muestra cada cambio en color neutro, la meta, las medidas calculadas y el % de grasa de la Marina junto al de Renpho, o el dato que falta. D: peso a mano, fallo del sync, importar CSV, fecha pasada, editar o borrar, sin conexión y web.</desc><text class="titulo-alt" x="20" y="28">A · Peso y composición desde Renpho</text><g class="carril"><rect x="10" y="40" width="1490" height="240" rx="12"/><text class="t2" x="24" y="58">Tú y la app</text></g><g class="carril"><rect x="10" y="290" width="1490" height="100" rx="12"/><text class="t2" x="24" y="308">Renpho y el servidor</text></g><g class="carril"><rect x="10" y="400" width="1490" height="100" rx="12"/><text class="t2" x="24" y="418">Datos</text></g><g class="nodo inicio"><rect x="20" y="210" width="166" height="56" rx="10"/><text class="t1" x="32" y="234">Te pesas</text><text class="t2" x="32" y="253">la báscula lo sube</text></g><g class="nodo inicio"><rect x="206" y="70" width="166" height="56" rx="10"/><text class="t1" x="218" y="94">Abres la app</text><text class="t2" x="218" y="113">más de 15 min del último</text></g><g class="nodo inicio"><rect x="206" y="140" width="166" height="56" rx="10"/><text class="t1" x="218" y="164">Sincronizar ahora</text><text class="t2" x="218" y="183">Salud › Composición</text></g><g class="paso"><circle cx="370" cy="142" r="12"/><text x="370" y="146.5" text-anchor="middle">1</text></g><g class="nodo inicio"><rect x="206" y="210" width="166" height="56" rx="10"/><text class="t1" x="218" y="234">Conectar Renpho</text><text class="t2" x="218" y="253">una vez: todo el historial</text></g><g class="paso"><circle cx="370" cy="212" r="12"/><text x="370" y="216.5" text-anchor="middle">4</text></g><g class="nodo "><rect x="20" y="320" width="166" height="56" rx="10"/><text class="t1" x="32" y="344">Nube de Renpho</text><text class="t2" x="32" y="363">cada pesaje con su hora</text></g><g class="nodo "><rect x="392" y="320" width="166" height="56" rx="10"/><text class="t1" x="404" y="344">Sync</text><text class="t2" x="404" y="363">también cada noche</text></g><g class="nodo aviso"><rect x="578" y="320" width="166" height="56" rx="10"/><text class="t1" x="590" y="344">Falla 2 días</text><text class="t2" x="590" y="363">aviso · ver D</text></g><g class="paso"><circle cx="742" cy="322" r="12"/><text x="742" y="326.5" text-anchor="middle">15</text></g><g class="nodo "><rect x="392" y="430" width="166" height="56" rx="10"/><text class="t1" x="404" y="454">Pesajes de Renpho</text><text class="t2" x="404" y="473">todos los campos</text></g><g class="nodo "><rect x="578" y="430" width="166" height="56" rx="10"/><text class="t1" x="590" y="454">Peso del día</text><text class="t2" x="590" y="473">el primero de la mañana</text></g><g class="nodo "><rect x="764" y="430" width="166" height="56" rx="10"/><text class="t1" x="776" y="454">Media y tendencia</text><text class="t2" x="776" y="473">7 días y 4 semanas</text></g><g class="nodo "><rect x="1136" y="430" width="166" height="56" rx="10"/><text class="t1" x="1148" y="454">Fuera de la cuenta</text><text class="t2" x="1148" y="473">Volver a contar</text></g><g class="nodo "><rect x="764" y="140" width="166" height="56" rx="10"/><text class="t1" x="776" y="164">Salud › Composición</text><text class="t2" x="776" y="183">peso del día y sync</text></g><g class="paso"><circle cx="928" cy="142" r="12"/><text x="928" y="146.5" text-anchor="middle">1</text></g><g class="nodo "><rect x="950" y="140" width="166" height="56" rx="10"/><text class="t1" x="962" y="164">Pesajes del día</text><text class="t2" x="962" y="183">todos se guardan</text></g><g class="paso"><circle cx="1114" cy="142" r="12"/><text x="1114" y="146.5" text-anchor="middle">2</text></g><g class="nodo pregunta"><rect x="1136" y="140" width="166" height="56" rx="10"/><text class="t1" x="1148" y="164">No contar</text><text class="t2" x="1148" y="183">aviso con Deshacer</text></g><g class="paso"><circle cx="1300" cy="142" r="12"/><text x="1300" y="146.5" text-anchor="middle">3</text></g><path class="flecha" d="M162 266 L162 314"/><path class="punta" d="M162 320 l-4.5 -7 h9 z"/><path class="flecha" d="M372 98 L382 98"/><path class="flecha" d="M372 168 L382 168"/><path class="flecha" d="M372 238 L382 238"/><path class="flecha" d="M382 98 L382 348"/><path class="flecha" d="M186 348 L386 348"/><path class="punta" d="M392 348 l-7 -4.5 v9 z"/><path class="flecha" d="M558 348 L572 348"/><path class="punta" d="M578 348 l-7 -4.5 v9 z"/><path class="flecha" d="M475 376 L475 424"/><path class="punta" d="M475 430 l-4.5 -7 h9 z"/><path class="flecha" d="M558 458 L572 458"/><path class="punta" d="M578 458 l-7 -4.5 v9 z"/><path class="flecha" d="M744 458 L758 458"/><path class="punta" d="M764 458 l-7 -4.5 v9 z"/><path class="flecha" d="M847 430 L847 202"/><path class="punta" d="M847 196 l-4.5 7 h9 z"/><path class="flecha" d="M930 168 L944 168"/><path class="punta" d="M950 168 l-7 -4.5 v9 z"/><path class="flecha" d="M1116 168 L1130 168" style="stroke-dasharray:4 4"/><path class="punta" d="M1136 168 l-7 -4.5 v9 z"/><path class="flecha" d="M1219 196 L1219 424" style="stroke-dasharray:4 4"/><path class="punta" d="M1219 430 l-4.5 -7 h9 z"/><path class="flecha" d="M1136 458 L936 458"/><path class="punta" d="M930 458 l7 -4.5 v9 z"/><text class="rama" x="940" y="450" text-anchor="start">recalcula</text><text class="rama" x="855" y="330">cada vez que cambia</text><text class="titulo-alt" x="20" y="548">B · Medidas con cinta</text><g class="nodo inicio"><rect x="20" y="570" width="166" height="56" rx="10"/><text class="t1" x="32" y="594">Registrar medición</text><text class="t2" x="32" y="613">Salud</text></g><g class="paso"><circle cx="184" cy="572" r="12"/><text x="184" y="576.5" text-anchor="middle">5</text></g><g class="nodo inicio"><rect x="20" y="650" width="166" height="56" rx="10"/><text class="t1" x="32" y="674">Recordatorio</text><text class="t2" x="32" y="693">4 semanas sin cinta</text></g><g class="paso"><circle cx="184" cy="652" r="12"/><text x="184" y="656.5" text-anchor="middle">1</text></g><g class="nodo inicio"><rect x="20" y="730" width="166" height="56" rx="10"/><text class="t1" x="32" y="754">El coach pregunta</text><text class="t2" x="32" y="773">cada 4 semanas</text></g><g class="paso"><circle cx="184" cy="732" r="12"/><text x="184" y="736.5" text-anchor="middle">12</text></g><g class="nodo "><rect x="206" y="650" width="166" height="56" rx="10"/><text class="t1" x="218" y="674">Pantalla por grupos</text><text class="t2" x="218" y="693">cintura, recomendadas</text></g><g class="paso"><circle cx="370" cy="652" r="12"/><text x="370" y="656.5" text-anchor="middle">5</text></g><g class="nodo "><rect x="392" y="650" width="166" height="56" rx="10"/><text class="t1" x="404" y="674">Escribes</text><text class="t2" x="404" y="693">último valor y su fecha</text></g><g class="nodo "><rect x="578" y="650" width="166" height="56" rx="10"/><text class="t1" x="590" y="674">Guardar</text><text class="t2" x="590" y="693">con una medida basta</text></g><g class="paso"><circle cx="742" cy="652" r="12"/><text x="742" y="656.5" text-anchor="middle">9</text></g><g class="nodo "><rect x="764" y="650" width="166" height="56" rx="10"/><text class="t1" x="776" y="674">Resumen</text><text class="t2" x="776" y="693">sigue en C</text></g><g class="nodo pregunta"><rect x="206" y="570" width="166" height="56" rx="10"/><text class="t1" x="218" y="594">Más medidas</text><text class="t2" x="218" y="613">opcionales, lado izq.</text></g><g class="paso"><circle cx="370" cy="572" r="12"/><text x="370" y="576.5" text-anchor="middle">8</text></g><g class="nodo pregunta"><rect x="392" y="570" width="166" height="56" rx="10"/><text class="t1" x="404" y="594">Cómo medir</text><text class="t2" x="404" y="613">hoja con dibujo</text></g><g class="paso"><circle cx="556" cy="572" r="12"/><text x="556" y="576.5" text-anchor="middle">6</text></g><g class="nodo pregunta"><rect x="578" y="570" width="166" height="56" rx="10"/><text class="t1" x="590" y="594">Revisa este dato</text><text class="t2" x="590" y="613">más de 3 cm, no bloquea</text></g><g class="paso"><circle cx="742" cy="572" r="12"/><text x="742" y="576.5" text-anchor="middle">7</text></g><g class="nodo "><rect x="206" y="730" width="166" height="56" rx="10"/><text class="t1" x="218" y="754">Respondes</text><text class="t2" x="218" y="773">en el chat, lo que tengas</text></g><g class="nodo "><rect x="392" y="730" width="166" height="56" rx="10"/><text class="t1" x="404" y="754">Tarjeta-propuesta</text><text class="t2" x="404" y="773">cada cifra se corrige</text></g><g class="paso"><circle cx="556" cy="732" r="12"/><text x="556" y="736.5" text-anchor="middle">12</text></g><g class="nodo pregunta"><rect x="764" y="730" width="166" height="56" rx="10"/><text class="t1" x="776" y="754">Descartar</text><text class="t2" x="776" y="773">no se guarda nada</text></g><path class="flecha" d="M186 598 L196 598 L196 678 L200 678"/><path class="punta" d="M206 678 l-7 -4.5 v9 z"/><path class="flecha" d="M186 678 L200 678"/><path class="punta" d="M206 678 l-7 -4.5 v9 z"/><path class="flecha" d="M372 678 L386 678"/><path class="punta" d="M392 678 l-7 -4.5 v9 z"/><path class="flecha" d="M558 678 L572 678"/><path class="punta" d="M578 678 l-7 -4.5 v9 z"/><path class="flecha" d="M744 678 L758 678"/><path class="punta" d="M764 678 l-7 -4.5 v9 z"/><path class="flecha" d="M289 650 L289 632" style="stroke-dasharray:4 4"/><path class="punta" d="M289 626 l-4.5 7 h9 z"/><path class="flecha" d="M475 650 L475 632" style="stroke-dasharray:4 4"/><path class="punta" d="M475 626 l-4.5 7 h9 z"/><path class="flecha" d="M538 650 L538 638 L661 638 L661 632" style="stroke-dasharray:4 4"/><path class="punta" d="M661 626 l-4.5 7 h9 z"/><path class="flecha" d="M186 758 L200 758"/><path class="punta" d="M206 758 l-7 -4.5 v9 z"/><path class="flecha" d="M372 758 L386 758"/><path class="punta" d="M392 758 l-7 -4.5 v9 z"/><path class="flecha" d="M558 750 L661 750 L661 712"/><path class="punta" d="M661 706 l-4.5 7 h9 z"/><text class="rama" x="669" y="732" text-anchor="start">Guardar medición</text><path class="flecha" d="M558 770 L758 770" style="stroke-dasharray:4 4"/><path class="punta" d="M764 770 l-7 -4.5 v9 z"/><text class="titulo-alt" x="20" y="830">C · Resumen y medidas calculadas (SAL-07)</text><g class="nodo inicio"><rect x="20" y="852" width="166" height="56" rx="10"/><text class="t1" x="32" y="876">Cada medida</text><text class="t2" x="32" y="895">cambio, en color neutro</text></g><g class="paso"><circle cx="184" cy="854" r="12"/><text x="184" y="858.5" text-anchor="middle">9</text></g><g class="nodo "><rect x="206" y="852" width="166" height="56" rx="10"/><text class="t1" x="218" y="876">Hacia tu meta</text><text class="t2" x="218" y="895">si tiene meta (OBJ-03)</text></g><g class="paso"><circle cx="370" cy="854" r="12"/><text x="370" y="858.5" text-anchor="middle">9</text></g><g class="nodo "><rect x="392" y="852" width="166" height="56" rx="10"/><text class="t1" x="404" y="876">Medidas calculadas</text><text class="t2" x="404" y="895">lo último de cada dato</text></g><g class="paso"><circle cx="556" cy="854" r="12"/><text x="556" y="858.5" text-anchor="middle">10</text></g><g class="nodo "><rect x="578" y="852" width="166" height="56" rx="10"/><text class="t1" x="590" y="876">% de grasa Marina</text><text class="t2" x="590" y="895">junto a Renpho</text></g><g class="paso"><circle cx="742" cy="854" r="12"/><text x="742" y="858.5" text-anchor="middle">10</text></g><g class="nodo "><rect x="764" y="852" width="166" height="56" rx="10"/><text class="t1" x="776" y="876">Listo</text><text class="t2" x="776" y="895">Salud › Mediciones</text></g><g class="paso"><circle cx="928" cy="854" r="12"/><text x="928" y="858.5" text-anchor="middle">11</text></g><g class="nodo pregunta"><rect x="392" y="932" width="166" height="56" rx="10"/><text class="t1" x="404" y="956">Falta un dato</text><text class="t2" x="404" y="975">dice cuál falta</text></g><g class="paso"><circle cx="556" cy="934" r="12"/><text x="556" y="938.5" text-anchor="middle">14</text></g><g class="nodo pregunta"><rect x="578" y="932" width="166" height="56" rx="10"/><text class="t1" x="590" y="956">Medición pasada</text><text class="t2" x="590" y="975">con los datos de ese día</text></g><g class="paso"><circle cx="742" cy="934" r="12"/><text x="742" y="938.5" text-anchor="middle">14</text></g><path class="flecha" d="M186 880 L200 880"/><path class="punta" d="M206 880 l-7 -4.5 v9 z"/><path class="flecha" d="M372 880 L386 880"/><path class="punta" d="M392 880 l-7 -4.5 v9 z"/><path class="flecha" d="M558 880 L572 880"/><path class="punta" d="M578 880 l-7 -4.5 v9 z"/><path class="flecha" d="M744 880 L758 880"/><path class="punta" d="M764 880 l-7 -4.5 v9 z"/><path class="flecha" d="M475 908 L475 926" style="stroke-dasharray:4 4"/><path class="punta" d="M475 932 l-4.5 -7 h9 z"/><path class="flecha" d="M661 908 L661 926" style="stroke-dasharray:4 4"/><path class="punta" d="M661 932 l-4.5 -7 h9 z"/><text class="titulo-alt" x="20" y="1030">D · Casos borde (8)</text><g class="nodo pregunta"><rect x="20" y="1052" width="166" height="56" rx="10"/><text class="t1" x="32" y="1076">Peso a mano</text><text class="t2" x="32" y="1095">Registrar peso</text></g><g class="paso"><circle cx="184" cy="1054" r="12"/><text x="184" y="1058.5" text-anchor="middle">16</text></g><g class="nodo "><rect x="20" y="1142" width="166" height="56" rx="10"/><text class="t1" x="32" y="1166">Resto sin dato</text><text class="t2" x="32" y="1185">a 2 kg: Revisa este dato</text></g><path class="flecha" d="M103 1108 L103 1136"/><path class="punta" d="M103 1142 l-4.5 -7 h9 z"/><g class="nodo pregunta"><rect x="206" y="1052" width="166" height="56" rx="10"/><text class="t1" x="218" y="1076">Sync falla 2 días</text><text class="t2" x="218" y="1095">Salud y Hoy</text></g><g class="paso"><circle cx="370" cy="1054" r="12"/><text x="370" y="1058.5" text-anchor="middle">15</text></g><g class="nodo aviso"><rect x="206" y="1142" width="166" height="56" rx="10"/><text class="t1" x="218" y="1166">Aviso con salidas</text><text class="t2" x="218" y="1185">a mano o Importar CSV</text></g><path class="flecha" d="M289 1108 L289 1136"/><path class="punta" d="M289 1142 l-4.5 -7 h9 z"/><g class="nodo pregunta"><rect x="392" y="1052" width="166" height="56" rx="10"/><text class="t1" x="404" y="1076">Importar CSV</text><text class="t2" x="404" y="1095">exportado de Renpho</text></g><g class="paso"><circle cx="556" cy="1054" r="12"/><text x="556" y="1058.5" text-anchor="middle">17</text></g><g class="nodo "><rect x="392" y="1142" width="166" height="56" rx="10"/><text class="t1" x="404" y="1166">Solo lo nuevo</text><text class="t2" x="404" y="1185">omite lo repetido</text></g><path class="flecha" d="M475 1108 L475 1136"/><path class="punta" d="M475 1142 l-4.5 -7 h9 z"/><g class="nodo pregunta"><rect x="578" y="1052" width="166" height="56" rx="10"/><text class="t1" x="590" y="1076">Fecha pasada</text><text class="t2" x="590" y="1095">punto de partida</text></g><g class="paso"><circle cx="742" cy="1054" r="12"/><text x="742" y="1058.5" text-anchor="middle">13</text></g><g class="nodo "><rect x="578" y="1142" width="166" height="56" rx="10"/><text class="t1" x="590" y="1166">Sin límite atrás</text><text class="t2" x="590" y="1185">nunca una futura</text></g><path class="flecha" d="M661 1108 L661 1136"/><path class="punta" d="M661 1142 l-4.5 -7 h9 z"/><g class="nodo pregunta"><rect x="764" y="1052" width="166" height="56" rx="10"/><text class="t1" x="776" y="1076">Editar o borrar</text><text class="t2" x="776" y="1095">solo lo manual</text></g><g class="paso"><circle cx="928" cy="1054" r="12"/><text x="928" y="1058.5" text-anchor="middle">18</text></g><g class="nodo aviso"><rect x="764" y="1142" width="166" height="56" rx="10"/><text class="t1" x="776" y="1166">Aviso con Deshacer</text><text class="t2" x="776" y="1185">recalcula todo</text></g><path class="flecha" d="M847 1108 L847 1136"/><path class="punta" d="M847 1142 l-4.5 -7 h9 z"/><g class="nodo pregunta"><rect x="950" y="1052" width="166" height="56" rx="10"/><text class="t1" x="962" y="1076">Teléfono sin red</text><text class="t2" x="962" y="1095">cinta o peso a mano</text></g><g class="paso"><circle cx="1114" cy="1054" r="12"/><text x="1114" y="1058.5" text-anchor="middle">19</text></g><g class="nodo "><rect x="950" y="1142" width="166" height="56" rx="10"/><text class="t1" x="962" y="1166">En el teléfono</text><text class="t2" x="962" y="1185">se sube al volver</text></g><path class="flecha" d="M1033 1108 L1033 1136"/><path class="punta" d="M1033 1142 l-4.5 -7 h9 z"/><g class="nodo pregunta"><rect x="1136" y="1052" width="166" height="56" rx="10"/><text class="t1" x="1148" y="1076">Renpho sin red</text><text class="t2" x="1148" y="1095">Sincronizar ahora</text></g><g class="paso"><circle cx="1300" cy="1054" r="12"/><text x="1300" y="1058.5" text-anchor="middle">19</text></g><g class="nodo aviso"><rect x="1136" y="1142" width="166" height="56" rx="10"/><text class="t1" x="1148" y="1166">Sync en espera</text><text class="t2" x="1148" y="1185">necesita internet</text></g><path class="flecha" d="M1219 1108 L1219 1136"/><path class="punta" d="M1219 1142 l-4.5 -7 h9 z"/><g class="nodo pregunta"><rect x="1322" y="1052" width="166" height="56" rx="10"/><text class="t1" x="1334" y="1076">En la web</text><text class="t2" x="1334" y="1095">misma pantalla</text></g><g class="paso"><circle cx="1486" cy="1054" r="12"/><text x="1486" y="1058.5" text-anchor="middle">5</text></g><g class="nodo "><rect x="1322" y="1142" width="166" height="56" rx="10"/><text class="t1" x="1334" y="1166">Sin conexión</text><text class="t2" x="1334" y="1185">no guarda, conserva</text></g><path class="flecha" d="M1405 1108 L1405 1136"/><path class="punta" d="M1405 1142 l-4.5 -7 h9 z"/><g class="estados"><rect x="20" y="1220" width="900" height="216" rx="16"/><text class="t1" x="36" y="1250">Estados</text><text class="t2" x="36" y="1282"><tspan class="fuerte">Carga:</tspan> la medición se guarda al instante; el sync no bloquea la pantalla y la línea dice «Sincronizando…».</text><text class="t2" x="36" y="1312"><tspan class="fuerte">Error:</tspan> «No pude conectar con Renpho» con Reintentar; a los 2 días, la línea de Salud y Hoy.</text><text class="t2" x="36" y="1342"><tspan class="fuerte">Vacío:</tspan> sin pesajes, Salud invita a conectar Renpho o registrar el peso; sin cinta, Registrar medición.</text><text class="t2" x="36" y="1372"><tspan class="fuerte">Nada pide confirmación:</tspan> No contar, Descartar y borrar se deshacen desde el aviso.</text><text class="t2" x="36" y="1402"><tspan class="fuerte">Unidades:</tspan> peso en lb de fábrica (SIS-07), perímetros en cm, pliegues en mm, FC en ppm.</text></g><g class="caja-cifras"><rect x="940" y="1220" width="550" height="216" rx="16"/><text class="t1" x="956" y="1250">Cifras del ejemplo</text><text class="t2" x="956" y="1282"><tspan class="fuerte">Hoy, 28-oct:</tspan> 172.2 lb (6:44) · media 7 días 172.5</text><text class="t2" x="956" y="1312"><tspan class="fuerte">Cinta de ejemplo:</tspan> cintura 90.5 · cuello 38 · cadera 99.5</text><text class="t2" x="956" y="1342"><tspan class="fuerte">Calculadas:</tspan> IMC 26.4 · 0.53 · 0.91 · 1.32</text><text class="t2" x="956" y="1372"><tspan class="fuerte">% de grasa:</tspan> Marina 21.5 % · Renpho 20.4 %</text><text class="t2" x="956" y="1402"><tspan class="fuerte">Solo abril:</tspan> 26.5 · 0.53 · 0.91 · 1.31 · falta el cuello</text></g></svg></div>
+  </section>
+
+  <section class="pagina" id="guia" aria-labelledby="h-guia">
+    <header>
+      <h2 id="h-guia">2 · Guía paso a paso</h2>
+      <ul class="cambios">
+        <li><strong>Propuesta de Salud:</strong> es el primer flujo de Salud. Cuatro pestañas internas como Gym (Composición, Mediciones, Análisis, Informes). Composición abre con el peso del día, la media de 7 días y el cambio, el estado del sync con «Sincronizar ahora», el recordatorio de la cinta y «Registrar medición». Mediciones reúne la cinta y las calculadas. Análisis e Informes no se diseñan aquí.</li>
+        <li><strong>Pasos 1 a 4:</strong> Renpho: Salud, pesajes del día, «No contar» y la primera conexión.</li>
+        <li><strong>Pasos 5 a 12:</strong> la cinta del 28-oct: la pantalla por grupos, «Cómo medir», «Revisa este dato», «Más medidas», el resumen, las calculadas, Mediciones y la pregunta del coach.</li>
+        <li><strong>Pasos 13 a 19:</strong> fecha pasada, el dato que falta, fallo del sync, peso a mano, CSV, editar y borrar, sin conexión.</li>
+        <li>Los círculos numerados son anotaciones de la lámina, no parte de la interfaz.</li>
+      </ul>
+    </header>
+    <div class="guia"><article class="paso-guia"><span class="etapa">Paso 1 · entrar</span><h3>Abre Salud</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:05</span></div><div class="cuerpo"><nav class="sub-tabs" aria-label="Salud"><a class="sub-tab con-anota" href="#" aria-current="page">Composición<span class="anota" aria-hidden="true">1</span></a><a class="sub-tab" href="#">Mediciones</a><a class="sub-tab" href="#">Análisis</a><a class="sub-tab" href="#">Informes</a></nav><div class="desliza"><button type="button" class="peso-dia con-anota"><span class="txt"><span class="t-detalle tnum">Peso de hoy · 6:44&nbsp;a.&nbsp;m.</span><span class="cifra">172.2 <span class="t-seccion sec">lb</span></span><span class="t-detalle tnum">Media de 7 días: 172.5 lb · −0.6 lb desde el 17-oct</span><span class="meta-linea"><svg class="i s16" aria-hidden="true"><use href="#i-target"/></svg><span class="tnum">Meta 167.6 lb (76 kg): faltan 4.6</span></span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg><span class="anota" aria-hidden="true">2</span></button><div class="sinc-linea con-anota"><span><svg class="i s16" aria-hidden="true"><use href="#i-cloud-check"/></svg><span class="tnum">Renpho · 6:45&nbsp;a.&nbsp;m.</span></span><button type="button" class="btn texto">Sincronizar ahora</button><span class="anota" aria-hidden="true">3</span></div><p class="recordatorio con-anota"><svg class="i s20" aria-hidden="true"><use href="#i-ruler"/></svg><span class="tnum">Toca la cinta: la última fue el 17-abr.</span><span class="anota" aria-hidden="true">4</span></p><div class="dos-botones"><button type="button" class="btn primario"><svg class="i s20" aria-hidden="true"><use href="#i-ruler"/></svg>Registrar medición</button><button type="button" class="btn secundario"><svg class="i s20" aria-hidden="true"><use href="#i-scale"/></svg>Registrar peso</button></div><div class="grupo-tit"><span>Composición de hoy · Renpho</span></div><div class="lista"><div class="val-fila"><span class="txt"><span>Grasa corporal</span></span><span class="cifra">20.4 <span class="unidad-c">%</span></span></div><div class="val-fila"><span class="txt"><span>Músculo esquelético</span></span><span class="cifra">51.3 <span class="unidad-c">%</span></span></div><div class="val-fila"><span class="txt"><span>Grasa visceral</span></span><span class="cifra">9</span></div><div class="val-fila"><span class="txt"><span>Agua corporal</span></span><span class="cifra">57.5 <span class="unidad-c">%</span></span></div></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Salud tiene pestañas internas como Gym: <b>Composición</b>, <b>Mediciones</b>, Análisis e Informes. Abre en Composición.</span></li><li><span class="num-a">2</span><span>Arriba, el peso del día en lb (Ajustes › Unidades): el primer pesaje de la mañana. Debajo, la media de 7 días, el cambio y la meta (OBJ-03, ejemplo 76 kg). Con 4 semanas de pesajes, el cambio pasa a «tendencia de 4 semanas».</span></li><li><span class="num-a">3</span><span>Renpho se sincroniza solo al abrir la app (si pasaron más de 15 min), una vez cada noche y con <b>Sincronizar ahora</b>. La línea dice la hora del último.</span></li><li><span class="num-a">4</span><span>Cuando toca la cinta (4 semanas desde la última), una línea lo recuerda. <b>Registrar medición</b> abre la cinta; <b>Registrar peso</b>, el peso a mano. En la web: Salud › Composición en la barra lateral, con el mismo contenido en dos columnas.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 2 · pesajes</span><h3>Mira los pesajes del día</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:06</span></div><div class="cuerpo"><div class="cabeza"><button type="button" class="atras" aria-label="Volver"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><span class="t-pantalla">Pesajes</span><span class="icono-btn" aria-hidden="true"></span></div><div class="desliza"><div class="grupo-tit"><span>Hoy · miércoles 28</span></div><div class="lista"><button type="button" class="val-fila"><span class="txt"><span>6:44&nbsp;a.&nbsp;m.</span><span class="etq">Peso del día</span></span><span class="cifra">172.2 <span class="unidad-c">lb</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg><span class="anota" aria-hidden="true">1</span></button><button type="button" class="val-fila apagada"><span class="txt"><span>6:42&nbsp;a.&nbsp;m.</span><span class="t-detalle tnum">No cuenta</span></span><span class="cifra">174.6 <span class="unidad-c">lb</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg><span class="anota" aria-hidden="true">2</span></button></div><div class="grupo-tit"><span>Martes 27</span></div><div class="lista"><button type="button" class="val-fila"><span class="txt"><span>6:51&nbsp;a.&nbsp;m.</span><span class="etq">Peso del día</span></span><span class="cifra">172.4 <span class="unidad-c">lb</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></button><button type="button" class="val-fila"><span class="txt"><span>9:10&nbsp;p.&nbsp;m.</span></span><span class="cifra">174.0 <span class="unidad-c">lb</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></button></div><p class="nota con-anota"><svg class="i s16" aria-hidden="true"><use href="#i-info-circle"/></svg><span>El peso cambia 1 a 2 lb en el día con la comida y el agua. Solo el primero de la mañana se compara de un día a otro.</span><span class="anota" aria-hidden="true">3</span></p></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Tocar el peso de hoy abre la lista por día. Se guardan todos los pesajes; el primero de la mañana lleva «Peso del día» y es el que entra en la media y la tendencia.</span></li><li><span class="num-a">2</span><span>Un pesaje que no cuenta queda en texto secundario con «No cuenta». Si era el primero, cuenta el siguiente.</span></li><li><span class="num-a">3</span><span>La nota explica por qué solo cuenta el de la mañana, con criterio de coach.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 3 · no contar</span><h3>Saca un pesaje de la cuenta</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:06</span></div><div class="cuerpo"><div class="cabeza"><button type="button" class="atras" aria-label="Volver"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><span class="t-pantalla">6:42&nbsp;a.&nbsp;m.</span><span class="icono-btn" aria-hidden="true"></span></div><div class="desliza"><div class="res-cab"><span class="t-detalle tnum">Miércoles 28 de octubre · Renpho</span></div><div class="lista"><div class="val-fila"><span class="txt"><span>Peso</span></span><span class="cifra">174.6 <span class="unidad-c">lb</span></span></div><div class="val-fila"><span class="txt"><span>Grasa corporal</span></span><span class="cifra">20.9 <span class="unidad-c">%</span></span></div><div class="val-fila"><span class="txt"><span>Músculo esquelético</span></span><span class="cifra">51.0 <span class="unidad-c">%</span></span></div><div class="val-fila"><span class="txt"><span>Grasa visceral</span></span><span class="cifra">9</span></div><div class="val-fila"><span class="txt"><span>Agua corporal</span></span><span class="cifra">57.1 <span class="unidad-c">%</span></span></div></div><div class="dos-botones con-anota"><button type="button" class="btn secundario"><svg class="i s20" aria-hidden="true"><use href="#i-check"/></svg>Volver a contar</button><span class="anota" aria-hidden="true">1</span></div><p class="nota"><svg class="i s16" aria-hidden="true"><use href="#i-info-circle"/></svg><span>Lo que trae Renpho no se edita. Si la lectura salió mal (con zapatos, después de comer), sácala de la cuenta.</span></p></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav><div class="ranura-aviso "><div class="aviso con-anota" role="status"><span class="txt-av">Este pesaje ya no cuenta. Tu peso de hoy es 172.2 lb.</span><button type="button" class="btn texto">Deshacer</button><span class="anota" aria-hidden="true">2</span></div></div></div></div></div><ol><li><span class="num-a">1</span><span>En el detalle de un pesaje de Renpho, <b>No contar</b> lo saca de la media, la tendencia y las medidas calculadas. Después el botón dice <b>Volver a contar</b>.</span></li><li><span class="num-a">2</span><span>Un aviso confirma el cambio con <b>Deshacer</b>. Nada pide confirmación.</span></li><li><span class="num-a">3</span><span>Por qué no se edita: corregir la lectura de la báscula falsea la tendencia; sacarla de la cuenta no.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 4 · primera vez</span><h3>Conecta Renpho una vez</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>8:02</span></div><div class="cuerpo"><nav class="sub-tabs" aria-label="Salud"><a class="sub-tab" href="#" aria-current="page">Composición</a><a class="sub-tab" href="#">Mediciones</a><a class="sub-tab" href="#">Análisis</a><a class="sub-tab" href="#">Informes</a></nav><div class="desliza"><div class="peso-dia"><span class="txt"><span class="t-detalle tnum">Peso de hoy · 7:58&nbsp;a.&nbsp;m.</span><span class="cifra">172.8 <span class="t-seccion sec">lb</span></span><span class="t-detalle">Pésate cada mañana para ver tu media de 7 días.</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></div><div class="sinc-linea"><span><svg class="i s16" aria-hidden="true"><use href="#i-cloud-check"/></svg><span class="tnum">Renpho · 8:02&nbsp;a.&nbsp;m.</span></span><button type="button" class="btn texto">Sincronizar ahora</button></div><div class="grupo-tit con-anota"><span>Historial</span><span class="anota" aria-hidden="true">2</span></div><div class="lista"><button type="button" class="val-fila"><span class="txt"><span>Viernes 17 de octubre</span><span class="t-detalle tnum">Grasa 20.4 % · músculo 51.3 %</span></span><span class="cifra">172.8 <span class="unidad-c">lb</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></button><button type="button" class="val-fila"><span class="txt"><span>Viernes 17 de abril</span><span class="t-detalle tnum">Grasa 20.3 % · músculo 51.4 %</span></span><span class="cifra">172.8 <span class="unidad-c">lb</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></button></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav><div class="ranura-aviso "><div class="aviso con-anota" role="status"><span class="txt-av">Renpho conectado. Traje 2 pesajes: 17-abr y 17-oct.</span><span class="anota" aria-hidden="true">1</span></div></div></div></div></div><ol><li><span class="num-a">1</span><span>Renpho se conecta una vez, en la bienvenida o en Ajustes › Conexiones, con el correo y la contraseña de tu cuenta de Renpho. Al conectar trae todo el historial con su fecha real. Ejemplo: el 17-oct.</span></li><li><span class="num-a">2</span><span>Tus mediciones de abril y octubre aparecen solas, sin escribir nada. Con un solo pesaje reciente, la media de 7 días dice qué falta para verla.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 5 · cinta</span><h3>Registra la cinta</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:10</span></div><div class="cuerpo"><div class="cabeza"><button type="button" class="atras" aria-label="Volver"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><span class="t-pantalla">Registrar medición</span><span class="icono-btn" aria-hidden="true"></span></div><div class="desliza"><button type="button" class="fecha-btn con-anota"><span class="txt"><span class="t-detalle">Fecha</span><span class="tnum">Hoy · miércoles 28 de octubre</span></span><svg class="i s20" aria-hidden="true"><use href="#i-pencil"/></svg><span class="anota" aria-hidden="true">1</span></button><div class="lista"><div class="med-fila"><span class="txt"><span class="nom">Cintura<button type="button" class="info" aria-label="Cómo medir: cintura"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 91 cm · 17-abr</span></span><div class="entrada foco"><span class="cifra tnum">90.5</span><span class="u">cm</span></div><span class="anota" aria-hidden="true">2</span></div></div><div class="grupo-tit con-anota"><span>Recomendadas</span><span class="anota" aria-hidden="true">3</span></div><div class="lista"><div class="med-fila"><span class="txt"><span class="nom">Cuello<button type="button" class="info" aria-label="Cómo medir: cuello"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Primera vez</span></span><div class="entrada"><span class="cifra tnum">38</span><span class="u">cm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Hombros<button type="button" class="info" aria-label="Cómo medir: hombros"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 119 cm · 17-abr</span></span><div class="entrada"><span class="cifra tnum">119.5</span><span class="u">cm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Pecho<button type="button" class="info" aria-label="Cómo medir: pecho"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 98 cm · 17-abr</span></span><div class="entrada vacia"><span class="cifra tnum"></span><span class="u">cm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Cadera<button type="button" class="info" aria-label="Cómo medir: cadera"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 100 cm · 17-abr</span></span><div class="entrada vacia"><span class="cifra tnum"></span><span class="u">cm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Brazo relajado<button type="button" class="info" aria-label="Cómo medir: brazo relajado"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 30.5 cm · 17-abr</span></span><div class="entrada vacia"><span class="cifra tnum"></span><span class="u">cm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Brazo contraído<button type="button" class="info" aria-label="Cómo medir: brazo contraído"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 33 cm · 17-abr</span></span><div class="entrada vacia"><span class="cifra tnum"></span><span class="u">cm</span></div></div></div></div><div class="acciones-form con-anota"><button type="button" class="btn primario ancho">Guardar</button><span class="anota" aria-hidden="true">4</span></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>La fecha es hoy; el lápiz la cambia a cualquier día pasado, nunca a uno futuro (paso 13).</span></li><li><span class="num-a">2</span><span>Una sola pantalla por grupos. Cintura arriba, sola, porque es la que más dice. Cada medida muestra su último valor con fecha («Último: 91 cm · 17-abr»), o «Primera vez».</span></li><li><span class="num-a">3</span><span>Después las recomendadas a la vista: cuello, hombros, pecho, cadera, brazo relajado y contraído, muslo y pantorrilla. Las opcionales, plegadas en «Más medidas» (paso 8).</span></li><li><span class="num-a">4</span><span>Fuera de la bienvenida ninguna es obligatoria: <b>Guardar</b> se activa con una sola medida escrita. En la web, la misma pantalla en dos columnas: recomendadas a la izquierda, Más medidas a la derecha.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 6 · cómo medir</span><h3>Mira cómo medir</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:10</span></div><div class="cuerpo"><div class="cabeza"><button type="button" class="atras" aria-label="Volver"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><span class="t-pantalla">Registrar medición</span><span class="icono-btn" aria-hidden="true"></span></div><div class="desliza"><button type="button" class="fecha-btn con-anota"><span class="txt"><span class="t-detalle">Fecha</span><span class="tnum">Hoy · miércoles 28 de octubre</span></span><svg class="i s20" aria-hidden="true"><use href="#i-pencil"/></svg></button><div class="lista"><div class="med-fila"><span class="txt"><span class="nom">Cintura<button type="button" class="info" aria-label="Cómo medir: cintura"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 91 cm · 17-abr</span></span><div class="entrada foco"><span class="cifra tnum">90.5</span><span class="u">cm</span></div></div></div><div class="grupo-tit con-anota"><span>Recomendadas</span></div><div class="lista"><div class="med-fila"><span class="txt"><span class="nom">Cuello<button type="button" class="info" aria-label="Cómo medir: cuello"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Primera vez</span></span><div class="entrada"><span class="cifra tnum">38</span><span class="u">cm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Hombros<button type="button" class="info" aria-label="Cómo medir: hombros"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 119 cm · 17-abr</span></span><div class="entrada"><span class="cifra tnum">119.5</span><span class="u">cm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Pecho<button type="button" class="info" aria-label="Cómo medir: pecho"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 98 cm · 17-abr</span></span><div class="entrada vacia"><span class="cifra tnum"></span><span class="u">cm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Cadera<button type="button" class="info" aria-label="Cómo medir: cadera"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 100 cm · 17-abr</span></span><div class="entrada vacia"><span class="cifra tnum"></span><span class="u">cm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Brazo relajado<button type="button" class="info" aria-label="Cómo medir: brazo relajado"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 30.5 cm · 17-abr</span></span><div class="entrada vacia"><span class="cifra tnum"></span><span class="u">cm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Brazo contraído<button type="button" class="info" aria-label="Cómo medir: brazo contraído"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 33 cm · 17-abr</span></span><div class="entrada vacia"><span class="cifra tnum"></span><span class="u">cm</span></div></div></div></div><div class="acciones-form con-anota"><button type="button" class="btn primario ancho">Guardar</button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav><div class="velo"><div class="hoja" role="dialog" aria-label="Cómo medir la cintura"><span class="agarre"></span><div class="cab-hoja"><span class="t-seccion">Cómo medir la cintura</span></div><div class="dibujo-hueco con-anota"><svg class="i s32" aria-hidden="true"><use href="#i-ruler"/></svg><span class="t-detalle">Dibujo de la pieza 3: figura de frente con la cinta en el ombligo</span><span class="anota" aria-hidden="true">1</span></div><p class="instruccion con-anota">A la altura del ombligo, con la cinta horizontal y sin apretar, al final de una exhalación normal.<span class="anota" aria-hidden="true">2</span></p><p class="nota"><svg class="i s16" aria-hidden="true"><use href="#i-info-circle"/></svg><span>Mide por la mañana, antes de comer y de entrenar, y siempre en el mismo punto.</span></p><button type="button" class="btn secundario ancho">Cerrar</button></div></div></div></div></div><ol><li><span class="num-a">1</span><span>El ícono de información de cada medida abre la hoja «Cómo medir» con un dibujo del cuerpo (ADR 0026): figura neutra en texto secundario y la cinta o el pliegue en acento. Los 20 dibujos llegan en la pieza 3; su instrucción está en la sección 3.</span></li><li><span class="num-a">2</span><span>Una línea de instrucción, que también es el texto alternativo del dibujo, y debajo el protocolo común. La misma hoja sirve en el paso 6 de la bienvenida.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 7 · revisar</span><h3>Revisa un dato raro</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:12</span></div><div class="cuerpo"><div class="cabeza"><button type="button" class="atras" aria-label="Volver"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><span class="t-pantalla">Registrar medición</span><span class="icono-btn" aria-hidden="true"></span></div><div class="desliza"><button type="button" class="fecha-btn"><span class="txt"><span class="t-detalle">Fecha</span><span class="tnum">Hoy · miércoles 28 de octubre</span></span><svg class="i s20" aria-hidden="true"><use href="#i-pencil"/></svg></button><div class="lista"><div class="med-fila"><span class="txt"><span class="nom">Cintura<button type="button" class="info" aria-label="Cómo medir: cintura"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 91 cm · 17-abr</span><span class="revisa"><svg class="i s16" aria-hidden="true"><use href="#i-alert-triangle"/></svg>Revisa este dato: 4 cm más</span></span><div class="entrada foco"><span class="cifra tnum">95</span><span class="u">cm</span></div><span class="anota" aria-hidden="true">1</span></div></div><div class="grupo-tit"><span>Recomendadas</span></div><div class="lista"><div class="med-fila"><span class="txt"><span class="nom">Cuello<button type="button" class="info" aria-label="Cómo medir: cuello"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Primera vez</span></span><div class="entrada"><span class="cifra tnum">38</span><span class="u">cm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Hombros<button type="button" class="info" aria-label="Cómo medir: hombros"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 119 cm · 17-abr</span></span><div class="entrada"><span class="cifra tnum">119.5</span><span class="u">cm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Pecho<button type="button" class="info" aria-label="Cómo medir: pecho"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 98 cm · 17-abr</span></span><div class="entrada vacia"><span class="cifra tnum"></span><span class="u">cm</span></div></div></div></div><div class="acciones-form con-anota"><button type="button" class="btn primario ancho">Guardar</button><span class="anota" aria-hidden="true">2</span></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Si un perímetro cambia más de 3 cm frente al anterior, aparece el triángulo con «Revisa este dato: 4 cm más», en texto principal, sin rojo. En 6 meses sin gym, 4 cm de cintura suelen ser la cinta en otro sitio.</span></li><li><span class="num-a">2</span><span>No bloquea: <b>Guardar</b> sigue activo. Si el dato es real, se guarda tal cual.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 8 · opcionales</span><h3>Abre Más medidas</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:14</span></div><div class="cuerpo"><div class="cabeza"><button type="button" class="atras" aria-label="Volver"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><span class="t-pantalla">Registrar medición</span><span class="icono-btn" aria-hidden="true"></span></div><div class="desliza"><div class="lista"><div class="med-fila"><span class="txt"><span class="nom">Pantorrilla<button type="button" class="info" aria-label="Cómo medir: pantorrilla"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Primera vez</span></span><div class="lados"><div class="entrada lado"><span class="cifra tnum">37</span><span class="lado-l">D</span></div><div class="entrada lado"><span class="cifra tnum">36.5</span><span class="lado-l">I</span></div></div></div></div><div class="lista"><button type="button" class="mas-btn con-anota" aria-expanded="true"><span>Más medidas<span class="t-detalle">Opcionales, pliegues, FC y presión</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-up"/></svg><span class="anota" aria-hidden="true">1</span></button><button type="button" class="interruptor-fila con-anota" role="switch" aria-checked="true"><span class="txt"><span>Medir también el lado izquierdo</span><span class="t-detalle">Brazos, muslo, pantorrilla, antebrazo, muñeca y tobillo</span></span><span class="interruptor"></span><span class="anota" aria-hidden="true">2</span></button><div class="med-fila"><span class="txt"><span class="nom">Antebrazo<button type="button" class="info" aria-label="Cómo medir: antebrazo"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: D 29 cm · 17-abr</span></span><div class="lados"><div class="entrada lado"><span class="cifra tnum">29</span><span class="lado-l">D</span></div><div class="entrada lado"><span class="cifra tnum">28.5</span><span class="lado-l">I</span></div></div></div><div class="med-fila"><span class="txt"><span class="nom">Muñeca<button type="button" class="info" aria-label="Cómo medir: muñeca"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: D 16.5 cm · 17-abr</span></span><div class="lados"><div class="entrada lado vacia"><span class="cifra tnum"></span><span class="lado-l">D</span></div><div class="entrada lado vacia"><span class="cifra tnum"></span><span class="lado-l">I</span></div></div></div></div><div class="grupo-tit con-anota"><span>Pliegues · mm</span><span class="anota" aria-hidden="true">3</span></div><div class="lista"><div class="med-fila"><span class="txt"><span class="nom">Pecho<button type="button" class="info" aria-label="Cómo medir: pecho"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span></span><div class="entrada vacia"><span class="cifra tnum"></span><span class="u">mm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Axila media<button type="button" class="info" aria-label="Cómo medir: axila media"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span></span><div class="entrada vacia"><span class="cifra tnum"></span><span class="u">mm</span></div></div></div></div><div class="acciones-form"><button type="button" class="btn primario ancho">Guardar</button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Al final de las recomendadas, <b>Más medidas</b> despliega antebrazo, muñeca, tobillo y abdomen bajo, los 7 pliegues, FC en reposo y presión arterial. Se recuerda abierto o cerrado.</span></li><li><span class="num-a">2</span><span><b>Medir también el lado izquierdo</b> muestra un campo D y otro I en cada medida de los dos lados, también en las recomendadas. La elección queda en tus preferencias. De fábrica, solo el derecho.</span></li><li><span class="num-a">3</span><span>Los pliegues se guardan en mm, sin cálculo de % de grasa (D-40, al backlog). Cada uno tiene su hoja «Cómo medir».</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 9 · resumen</span><h3>Mira lo que cambió</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:16</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Medición guardada</span><span class="icono-btn" aria-hidden="true"></span></div><div class="desliza con-acciones"><div class="res-cab"><span class="t-detalle tnum">Miércoles 28 de octubre · 9 medidas con cinta</span></div><div class="lista con-anota"><div class="val-fila"><span class="txt"><span>Cintura</span><span class="t-detalle tnum">−0.5 cm desde el 17-abr</span></span><span class="cifra">90.5 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="meta-linea"><svg class="i s16" aria-hidden="true"><use href="#i-target"/></svg><span class="tnum">Hacia tu meta de 88 cm: faltan 2.5</span></span><span class="anota" aria-hidden="true">2</span></div><div class="val-fila"><span class="txt"><span>Cuello</span><span class="t-detalle tnum">Primera vez</span></span><span class="cifra">38 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Hombros</span><span class="t-detalle tnum">+0.5 cm desde el 17-abr</span></span><span class="cifra">119.5 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Pecho</span><span class="t-detalle tnum">Igual que el 17-abr</span></span><span class="cifra">98 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Cadera</span><span class="t-detalle tnum">−0.5 cm desde el 17-abr</span></span><span class="cifra">99.5 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Brazo relajado</span><span class="t-detalle tnum">Igual que el 17-abr</span></span><span class="cifra">30.5 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Brazo contraído</span><span class="t-detalle tnum">Igual que el 17-abr</span></span><span class="cifra">33 <span class="unidad-c">cm</span></span></div><span class="anota" aria-hidden="true">1</span></div></div><div class="acciones-form con-anota"><button type="button" class="btn primario ancho">Listo</button><span class="anota" aria-hidden="true">3</span></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Al guardar, un resumen con cada medida y su cambio frente a la anterior, en color neutro: ni verde ni rojo. «Igual que…» si no cambió; «Primera vez» si no había.</span></li><li><span class="num-a">2</span><span>Si la medida tiene meta (OBJ-03), una línea con el ícono de meta: «Hacia tu meta de 88 cm: faltan 2.5». Si se aleja, dice «Te alejas de tu meta de 88 cm», igual de neutro.</span></li><li><span class="num-a">3</span><span><b>Listo</b> lleva a Salud › Mediciones. En la web, el resumen ocupa la misma columna que el formulario.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 10 · calculadas</span><h3>Mira las medidas calculadas</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:16</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Medición guardada</span><span class="icono-btn" aria-hidden="true"></span></div><div class="desliza con-acciones al-pie"><div class="lista"><div class="val-fila"><span class="txt"><span>Pantorrilla</span><span class="t-detalle tnum">Primera vez</span></span><span class="cifra">37 <span class="unidad-c">cm</span></span></div></div><div class="grupo-tit"><span>Medidas calculadas</span></div><div class="lista con-anota"><div class="val-fila"><span class="txt"><span>IMC</span><span class="t-detalle tnum">Con tu peso de hoy, 172.2 lb · referencia: menos de 25</span></span><span class="cifra">26.4</span></div><div class="val-fila"><span class="txt"><span>Cintura / estatura</span><span class="t-detalle tnum">Referencia: menos de 0.50</span></span><span class="cifra">0.53</span></div><div class="val-fila"><span class="txt"><span>Cintura / cadera</span><span class="t-detalle tnum">Referencia: menos de 0.90</span></span><span class="cifra">0.91</span></div><div class="val-fila"><span class="txt"><span>Hombros / cintura</span><span class="t-detalle tnum">Antes 1.31</span></span><span class="cifra">1.32</span></div><span class="anota" aria-hidden="true">1</span></div><div class="grupo-tit"><span>% de grasa</span></div><div class="segunda con-anota"><div><span class="t-detalle">Marina · segunda opinión</span><span class="cifra">21.5 <span class="unidad-c">%</span></span><span class="t-detalle">Cuello, cintura y estatura</span></div><div><span class="t-detalle">Renpho · hoy</span><span class="cifra">20.4 <span class="unidad-c">%</span></span><span class="t-detalle">Bioimpedancia</span></div><span class="anota" aria-hidden="true">2</span></div><p class="nota"><svg class="i s16" aria-hidden="true"><use href="#i-info-circle"/></svg><span>Son métodos distintos: compara cada uno con su propio historial, no uno con otro.</span></p></div><div class="acciones-form"><button type="button" class="btn primario ancho">Listo</button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Debajo, las medidas calculadas con la medición más reciente de cada dato: IMC con el peso del día, cintura/estatura, cintura/cadera y hombros/cintura, con su referencia en detalle.</span></li><li><span class="num-a">2</span><span>El % de grasa por el método de la Marina junto al de Renpho, rotulado «segunda opinión». Con cuello 38 y cintura 90.5: 21.5 %, frente a 20.4 % de la báscula.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 11 · mediciones</span><h3>Vuelve a Mediciones</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:17</span></div><div class="cuerpo"><nav class="sub-tabs" aria-label="Salud"><a class="sub-tab" href="#">Composición</a><a class="sub-tab con-anota" href="#" aria-current="page">Mediciones<span class="anota" aria-hidden="true">1</span></a><a class="sub-tab" href="#">Análisis</a><a class="sub-tab" href="#">Informes</a></nav><div class="desliza"><div class="dos-botones"><button type="button" class="btn primario"><svg class="i s20" aria-hidden="true"><use href="#i-ruler"/></svg>Registrar medición</button></div><p class="nota con-anota"><svg class="i s16" aria-hidden="true"><use href="#i-calendar"/></svg><span class="tnum">Próxima cinta: miércoles 25 de noviembre</span><span class="anota" aria-hidden="true">2</span></p><div class="grupo-tit"><span>Última cinta · 28-oct</span></div><div class="lista"><button type="button" class="val-fila"><span class="txt"><span>Cintura</span><span class="t-detalle tnum">Meta 88 cm</span></span><span class="cifra">90.5 <span class="unidad-c">cm</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></button><button type="button" class="val-fila"><span class="txt"><span>Cuello</span></span><span class="cifra">38 <span class="unidad-c">cm</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></button><button type="button" class="val-fila"><span class="txt"><span>Hombros</span></span><span class="cifra">119.5 <span class="unidad-c">cm</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></button><button type="button" class="val-fila"><span class="txt"><span>Ver las 9 medidas</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></button></div><div class="grupo-tit con-anota"><span>Historial</span><span class="anota" aria-hidden="true">3</span></div><div class="lista"><button type="button" class="val-fila"><span class="txt"><span>Miércoles 28 de octubre</span><span class="t-detalle tnum">9 medidas · cinta</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></button><button type="button" class="val-fila"><span class="txt"><span>Viernes 17 de abril</span><span class="t-detalle tnum">9 medidas · cinta</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></button></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Mediciones reúne la cinta: <b>Registrar medición</b>, la última medición por medida y las calculadas (más abajo). Tocar una medida abre su gráfico, que se diseña con Análisis.</span></li><li><span class="num-a">2</span><span>El recordatorio desaparece y queda la fecha de la próxima, a 4 semanas.</span></li><li><span class="num-a">3</span><span>El historial por fecha abre cada medición para verla, editarla o borrarla (paso 18).</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 12 · coach</span><h3>Responde al coach</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:20</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Coach</span></div><div class="desliza con-chat al-pie"><div class="chat"><div class="linea-coach con-anota"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><p>Tu última cinta fue el 17-abr. ¿Te mides hoy antes de entrenar? Cintura, cuello y cadera bastan; lo demás si tienes tiempo.</p><span class="anota" aria-hidden="true">1</span></div><div class="burbuja">cintura 90.5, cuello 38, cadera 99.5</div><div class="linea-coach paseo con-anota"><span class="cab-c"><svg class="i s16" aria-hidden="true"><use href="#i-message"/></svg>Coach</span><p>Anoté esto de tu mensaje. Revisa y guárdalo.</p><div class="datos-p sep"><button type="button" class="dato"><span class="t-detalle">Cintura</span><span class="cifra">90.5 <span class="unidad-c">cm</span></span></button><button type="button" class="dato"><span class="t-detalle">Cuello</span><span class="cifra">38 <span class="unidad-c">cm</span></span></button><button type="button" class="dato"><span class="t-detalle">Cadera</span><span class="cifra">99.5 <span class="unidad-c">cm</span></span></button><button type="button" class="dato"><span class="t-detalle">Fecha</span><span class="cifra">Hoy</span></button></div><div class="acciones-c con-anota"><button type="button" class="btn primario">Guardar medición</button><button type="button" class="btn texto">Descartar</button><span class="anota" aria-hidden="true">3</span></div><span class="anota" aria-hidden="true">2</span></div></div></div><div class="chat-pie"><div class="entrada vacia"><span>Escribe al coach</span></div><button type="button" class="icono-btn" aria-label="Adjuntar capturas"><svg class="i" aria-hidden="true"><use href="#i-paperclip"/></svg></button><button type="button" class="icono-btn acento" aria-label="Enviar"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Cada 4 semanas el coach pregunta por la cinta (COA-05). Si hace más, pregunta en la primera conversación.</span></li><li><span class="num-a">2</span><span>Lo que respondes llega como tarjeta-propuesta, igual que el paseo del flujo 5: cada cifra se toca para corregirla en una hoja con su campo tipado.</span></li><li><span class="num-a">3</span><span><b>Guardar medición</b> guarda y el coach responde con el resumen (cambios, meta y calculadas). <b>Descartar</b> no guarda nada y deja un aviso con Deshacer.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 13 · fecha pasada</span><h3>Carga una medición de abril</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:30</span></div><div class="cuerpo"><div class="cabeza"><button type="button" class="atras" aria-label="Volver"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><span class="t-pantalla">Registrar medición</span><span class="icono-btn" aria-hidden="true"></span></div><div class="desliza"><button type="button" class="fecha-btn con-anota"><span class="txt"><span class="t-detalle">Fecha</span><span class="tnum">Hoy · miércoles 28 de octubre</span></span><svg class="i s20" aria-hidden="true"><use href="#i-pencil"/></svg></button><div class="lista"><div class="med-fila"><span class="txt"><span class="nom">Cintura<button type="button" class="info" aria-label="Cómo medir: cintura"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 91 cm · 17-abr</span></span><div class="entrada foco"><span class="cifra tnum">90.5</span><span class="u">cm</span></div></div></div><div class="grupo-tit con-anota"><span>Recomendadas</span></div><div class="lista"><div class="med-fila"><span class="txt"><span class="nom">Cuello<button type="button" class="info" aria-label="Cómo medir: cuello"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Primera vez</span></span><div class="entrada"><span class="cifra tnum">38</span><span class="u">cm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Hombros<button type="button" class="info" aria-label="Cómo medir: hombros"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 119 cm · 17-abr</span></span><div class="entrada"><span class="cifra tnum">119.5</span><span class="u">cm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Pecho<button type="button" class="info" aria-label="Cómo medir: pecho"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 98 cm · 17-abr</span></span><div class="entrada vacia"><span class="cifra tnum"></span><span class="u">cm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Cadera<button type="button" class="info" aria-label="Cómo medir: cadera"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 100 cm · 17-abr</span></span><div class="entrada vacia"><span class="cifra tnum"></span><span class="u">cm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Brazo relajado<button type="button" class="info" aria-label="Cómo medir: brazo relajado"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 30.5 cm · 17-abr</span></span><div class="entrada vacia"><span class="cifra tnum"></span><span class="u">cm</span></div></div><div class="med-fila"><span class="txt"><span class="nom">Brazo contraído<button type="button" class="info" aria-label="Cómo medir: brazo contraído"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg></button></span><span class="t-detalle tnum">Último: 33 cm · 17-abr</span></span><div class="entrada vacia"><span class="cifra tnum"></span><span class="u">cm</span></div></div></div></div><div class="acciones-form con-anota"><button type="button" class="btn primario ancho">Guardar</button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav><div class="velo"><div class="hoja" role="dialog" aria-label="Fecha de la medición"><span class="agarre"></span><div class="cab-hoja"><span class="t-seccion">Fecha de la medición</span></div><div class="campo"><span class="lbl">Fecha</span><div class="entrada con-anota"><span class="tnum">17/04/2026</span><svg class="i s20" aria-hidden="true"><use href="#i-calendar"/></svg><span class="anota" aria-hidden="true">1</span></div></div><div class="cal-nav"><button type="button" class="icono-btn" aria-label="Mes anterior"><svg class="i" aria-hidden="true"><use href="#i-chevron-left"/></svg></button><span class="cal-titulo"><span class="t-seccion">Abril de 2026</span></span><button type="button" class="icono-btn" aria-label="Mes siguiente"><svg class="i" aria-hidden="true"><use href="#i-chevron-right"/></svg></button></div><div class="mes"><span class="sem">L</span><span class="sem">M</span><span class="sem">M</span><span class="sem">J</span><span class="sem">V</span><span class="sem">S</span><span class="sem">D</span><span class="celda fuera"><span class="n"></span></span><span class="celda fuera"><span class="n"></span></span><button type="button" class="celda"><span class="n">1</span></button><button type="button" class="celda"><span class="n">2</span></button><button type="button" class="celda"><span class="n">3</span></button><button type="button" class="celda"><span class="n">4</span></button><button type="button" class="celda"><span class="n">5</span></button><button type="button" class="celda"><span class="n">6</span></button><button type="button" class="celda"><span class="n">7</span></button><button type="button" class="celda"><span class="n">8</span></button><button type="button" class="celda"><span class="n">9</span></button><button type="button" class="celda"><span class="n">10</span></button><button type="button" class="celda"><span class="n">11</span></button><button type="button" class="celda"><span class="n">12</span></button><button type="button" class="celda"><span class="n">13</span></button><button type="button" class="celda"><span class="n">14</span></button><button type="button" class="celda"><span class="n">15</span></button><button type="button" class="celda"><span class="n">16</span></button><button type="button" class="celda" aria-pressed="true"><span class="n">17</span></button><button type="button" class="celda"><span class="n">18</span></button><button type="button" class="celda"><span class="n">19</span></button><button type="button" class="celda"><span class="n">20</span></button><button type="button" class="celda"><span class="n">21</span></button><button type="button" class="celda"><span class="n">22</span></button><button type="button" class="celda"><span class="n">23</span></button><button type="button" class="celda"><span class="n">24</span></button><button type="button" class="celda"><span class="n">25</span></button><button type="button" class="celda"><span class="n">26</span></button><button type="button" class="celda"><span class="n">27</span></button><button type="button" class="celda"><span class="n">28</span></button><button type="button" class="celda"><span class="n">29</span></button><button type="button" class="celda"><span class="n">30</span></button></div><div class="botones-hoja con-anota"><button type="button" class="btn texto">Hoy</button><button type="button" class="btn primario">Listo</button><span class="anota" aria-hidden="true">2</span></div></div></div></div></div></div><ol><li><span class="num-a">1</span><span>El lápiz de la fecha abre la hoja con máscara dd/mm/aaaa y el selector propio. Fechas pasadas sin límite: sirven de punto de partida (Francis cargó abril así). Los días futuros salen desactivados y escribir uno da «La fecha no puede ser futura».</span></li><li><span class="num-a">2</span><span>Al guardar, la medición entra en su fecha: no cambia «Último», que sigue siendo la más reciente.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 14 · falta un dato</span><h3>Una calculada sin su dato</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:31</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Medición guardada</span><span class="icono-btn" aria-hidden="true"></span></div><div class="desliza con-acciones"><div class="res-cab"><span class="t-detalle tnum">Viernes 17 de abril · 9 medidas con cinta</span></div><div class="grupo-tit"><span>Medidas calculadas · 17-abr</span></div><div class="lista con-anota"><div class="val-fila"><span class="txt"><span>IMC</span><span class="t-detalle tnum">Con tu peso de ese día, 172.8 lb</span></span><span class="cifra">26.5</span></div><div class="val-fila"><span class="txt"><span>Cintura / estatura</span><span class="t-detalle tnum">Referencia: menos de 0.50</span></span><span class="cifra">0.53</span></div><div class="val-fila"><span class="txt"><span>Cintura / cadera</span><span class="t-detalle tnum">Referencia: menos de 0.90</span></span><span class="cifra">0.91</span></div><div class="val-fila"><span class="txt"><span>Hombros / cintura</span></span><span class="cifra">1.31</span></div><span class="anota" aria-hidden="true">1</span></div><div class="grupo-tit"><span>% de grasa</span></div><div class="lista"><div class="falta con-anota"><svg class="i s20" aria-hidden="true"><use href="#i-info-circle"/></svg><span>Falta el cuello para el % de grasa de la Marina.</span><span class="anota" aria-hidden="true">2</span></div><div class="val-fila"><span class="txt"><span>Renpho · 17-abr</span><span class="t-detalle tnum">Bioimpedancia</span></span><span class="cifra">20.3 <span class="unidad-c">%</span></span></div></div></div><div class="acciones-form"><button type="button" class="btn primario ancho">Listo</button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>El resumen de una medición pasada calcula con los datos de ese día: peso del 17-abr (172.8 lb), cintura 91, cadera 100, hombros 119. IMC 26.5, 0.53, 0.91 y 1.31.</span></li><li><span class="num-a">2</span><span>Si falta un dato, en lugar de la cifra dice cuál: «Falta el cuello para el % de grasa de la Marina». En abril no se midió el cuello; la del 28-oct ya lo trae (paso 10).</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 15 · sync falla</span><h3>Renpho deja de sincronizar</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:05</span></div><div class="cuerpo"><nav class="sub-tabs" aria-label="Salud"><a class="sub-tab" href="#" aria-current="page">Composición</a><a class="sub-tab" href="#">Mediciones</a><a class="sub-tab" href="#">Análisis</a><a class="sub-tab" href="#">Informes</a></nav><div class="desliza"><div class="peso-dia"><span class="txt"><span class="t-detalle tnum">Último peso · lunes 26, 6:50&nbsp;a.&nbsp;m.</span><span class="cifra">172.6 <span class="t-seccion sec">lb</span></span><span class="t-detalle tnum">Media de 7 días: 172.6 lb</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></div><div class="sinc-linea con-anota"><span><svg class="i s16" aria-hidden="true"><use href="#i-alert-circle"/></svg><span class="tnum">Renpho · lunes 26, 6:51&nbsp;a.&nbsp;m.</span></span><button type="button" class="btn texto">Sincronizar ahora</button><span class="anota" aria-hidden="true">2</span></div><div class="lista con-anota"><div class="falta"><svg class="i s20" aria-hidden="true"><use href="#i-alert-triangle"/></svg><span class="tnum">Renpho no sincroniza desde el lunes 26. Puedes registrar tu peso a mano o importar el archivo de Renpho.</span></div><div class="comida-pie"><button type="button" class="btn texto"><svg class="i s20" aria-hidden="true"><use href="#i-scale"/></svg>Registrar a mano</button><button type="button" class="btn texto"><svg class="i s20" aria-hidden="true"><use href="#i-file-import"/></svg>Importar CSV</button></div><span class="anota" aria-hidden="true">1</span></div><div class="dos-botones"><button type="button" class="btn primario"><svg class="i s20" aria-hidden="true"><use href="#i-ruler"/></svg>Registrar medición</button><button type="button" class="btn secundario"><svg class="i s20" aria-hidden="true"><use href="#i-scale"/></svg>Registrar peso</button></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Si el sync falla 2 días seguidos, Salud lo dice arriba con <b>Registrar a mano</b> e <b>Importar CSV</b>. Hoy muestra la misma línea. Se va sola con el primer sync bueno.</span></li><li><span class="num-a">2</span><span>La línea del sync dice cuándo fue el último. <b>Sincronizar ahora</b> lo reintenta; si falla, aviso «No pude conectar con Renpho» con Reintentar.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 16 · a mano</span><h3>Registra el peso a mano</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:06</span></div><div class="cuerpo"><div class="cabeza"><button type="button" class="atras" aria-label="Volver"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><span class="t-pantalla">Registrar peso</span><span class="icono-btn" aria-hidden="true"></span></div><div class="desliza form-scroll compacto"><button type="button" class="fecha-btn con-anota"><span class="txt"><span class="t-detalle">Fecha y hora</span><span class="tnum">Hoy · 6:50&nbsp;a.&nbsp;m.</span></span><svg class="i s20" aria-hidden="true"><use href="#i-pencil"/></svg><span class="anota" aria-hidden="true">1</span></button><div class="lista"><div class="med-fila"><span class="txt"><span class="nom">Peso</span><span class="t-detalle tnum">Media de 7 días: 172.6 lb</span><span class="revisa"><svg class="i s16" aria-hidden="true"><use href="#i-alert-triangle"/></svg>Revisa este dato: 4.6 lb más</span></span><div class="entrada foco"><span class="cifra tnum">177.2</span><span class="u">lb</span></div><span class="anota" aria-hidden="true">2</span></div></div><div class="sub-form"><span>Campos de Renpho</span><span class="t-detalle">sin dato</span></div><div class="opcionales con-anota"><div><span>Grasa corporal</span><span class="sin">sin dato</span></div><div><span>Músculo esquelético</span><span class="sin">sin dato</span></div><div><span>Grasa visceral</span><span class="sin">sin dato</span></div><div><span>Agua corporal</span><span class="sin">sin dato</span></div><span class="anota" aria-hidden="true">3</span></div></div><div class="acciones-form"><button type="button" class="btn primario ancho">Guardar</button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav></div></div></div><ol><li><span class="num-a">1</span><span>Fecha y hora de fábrica: ahora. Se cambian a un momento pasado; si es el primero de esa mañana, es el peso del día.</span></li><li><span class="num-a">2</span><span>Solo el peso es obligatorio, en lb (Ajustes › Unidades). A más de 2 kg (4.4 lb) de la media de 7 días: «Revisa este dato», sin bloquear. 177.2 suele ser 172.7 mal tecleado.</span></li><li><span class="num-a">3</span><span>Los demás campos de Renpho quedan «sin dato», nunca 0. Lo manual se edita y se borra.</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 17 · importar</span><h3>Importa el CSV de Renpho</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:08</span></div><div class="cuerpo"><nav class="sub-tabs" aria-label="Salud"><a class="sub-tab" href="#" aria-current="page">Composición</a><a class="sub-tab" href="#">Mediciones</a><a class="sub-tab" href="#">Análisis</a><a class="sub-tab" href="#">Informes</a></nav><div class="desliza"><div class="peso-dia"><span class="txt"><span class="t-detalle tnum">Último peso · lunes 26, 6:50&nbsp;a.&nbsp;m.</span><span class="cifra">172.6 <span class="t-seccion sec">lb</span></span><span class="t-detalle tnum">Media de 7 días: 172.6 lb</span></span><svg class="i s20" aria-hidden="true"><use href="#i-chevron-right"/></svg></div><div class="sinc-linea con-anota"><span><svg class="i s16" aria-hidden="true"><use href="#i-alert-circle"/></svg><span class="tnum">Renpho · lunes 26, 6:51&nbsp;a.&nbsp;m.</span></span><button type="button" class="btn texto">Sincronizar ahora</button></div><div class="lista con-anota"><div class="falta"><svg class="i s20" aria-hidden="true"><use href="#i-alert-triangle"/></svg><span class="tnum">Renpho no sincroniza desde el lunes 26. Puedes registrar tu peso a mano o importar el archivo de Renpho.</span></div><div class="comida-pie"><button type="button" class="btn texto"><svg class="i s20" aria-hidden="true"><use href="#i-scale"/></svg>Registrar a mano</button><button type="button" class="btn texto"><svg class="i s20" aria-hidden="true"><use href="#i-file-import"/></svg>Importar CSV</button></div></div><div class="dos-botones"><button type="button" class="btn primario"><svg class="i s20" aria-hidden="true"><use href="#i-ruler"/></svg>Registrar medición</button><button type="button" class="btn secundario"><svg class="i s20" aria-hidden="true"><use href="#i-scale"/></svg>Registrar peso</button></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav><div class="velo"><div class="hoja" role="dialog" aria-label="Importar CSV de Renpho"><span class="agarre"></span><div class="cab-hoja"><span class="t-seccion">Importar CSV de Renpho</span><span class="t-detalle">Exporta tus datos desde la app de Renpho y elige el archivo.</span></div><div class="lista con-anota"><div class="val-fila"><span class="txt"><span>renpho-datos.csv</span><span class="t-detalle tnum">44 pesajes · del 17-abr al 28-oct</span></span><svg class="i s20" aria-hidden="true"><use href="#i-file-import"/></svg></div><span class="anota" aria-hidden="true">1</span></div><p class="leido con-anota"><svg class="i s16" aria-hidden="true"><use href="#i-check"/></svg><span class="tnum">2 pesajes nuevos: martes 27 y miércoles 28. Los otros 42 ya estaban.</span><span class="anota" aria-hidden="true">2</span></p><div class="botones-hoja"><button type="button" class="btn texto">Cancelar</button><button type="button" class="btn primario">Importar 2 pesajes</button></div></div></div></div></div></div><ol><li><span class="num-a">1</span><span><b>Importar CSV</b> abre el selector de archivos. La app lee el archivo y dice cuántos pesajes trae y de qué fechas.</span></li><li><span class="num-a">2</span><span>Solo entra lo nuevo: un pesaje con la misma fecha y hora que uno guardado se omite. Lo importado cuenta como de Renpho: no se edita, se puede marcar «No contar».</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 18 · editar</span><h3>Edita o borra una medición</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:40</span></div><div class="cuerpo"><div class="cabeza"><button type="button" class="atras" aria-label="Volver"><svg class="i" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><span class="t-pantalla">17 de abril</span><div class="det-acc con-anota"><button type="button" class="icono-btn" aria-label="Editar"><svg class="i" aria-hidden="true"><use href="#i-pencil"/></svg></button><button type="button" class="icono-btn" aria-label="Borrar"><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg></button><span class="anota" aria-hidden="true">1</span></div></div><div class="desliza"><div class="res-cab"><span class="t-detalle tnum">Viernes 17 de abril de 2026 · a mano</span></div><div class="lista"><div class="val-fila"><span class="txt"><span>Cintura</span></span><span class="cifra">91 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Hombros</span></span><span class="cifra">119 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Pecho</span></span><span class="cifra">98 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Cadera</span></span><span class="cifra">100 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Brazo relajado</span></span><span class="cifra">30.5 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Brazo contraído</span></span><span class="cifra">33 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Muslo</span></span><span class="cifra">56 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Antebrazo</span></span><span class="cifra">29 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Muñeca</span></span><span class="cifra">16.5 <span class="unidad-c">cm</span></span></div></div></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav><div class="ranura-aviso "><div class="aviso con-anota" role="status"><span class="txt-av">Medición del 17-abr borrada.</span><button type="button" class="btn texto">Deshacer</button><span class="anota" aria-hidden="true">2</span></div></div></div></div></div><ol><li><span class="num-a">1</span><span>Las mediciones a mano (cinta y peso) se editan con el lápiz, que abre el mismo formulario lleno, y se borran con la papelera. Lo de Renpho solo tiene «No contar».</span></li><li><span class="num-a">2</span><span>Borrar no pregunta: aviso con <b>Deshacer</b>. Al editar o borrar se recalculan las medidas calculadas y «Último».</span></li></ol></article><article class="paso-guia"><span class="etapa">Paso 19 · sin conexión</span><h3>Mide sin conexión</h3><div class="mini"><div class="telefono"><div class="pantalla"><div class="estado tnum"><span>7:16</span></div><div class="cuerpo"><div class="cabeza"><span class="t-pantalla">Medición guardada</span><span class="icono-btn" aria-hidden="true"></span></div><div class="desliza con-acciones"><div class="res-cab"><span class="t-detalle tnum">Miércoles 28 de octubre · 9 medidas con cinta</span><span class="sinc-linea con-anota"><svg class="i s16" aria-hidden="true"><use href="#i-cloud-off"/></svg><span>Guardada en el teléfono · se sube al volver la conexión</span><span class="anota" aria-hidden="true">1</span></span></div><div class="lista con-anota"><div class="val-fila"><span class="txt"><span>Cintura</span><span class="t-detalle tnum">−0.5 cm desde el 17-abr</span></span><span class="cifra">90.5 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="meta-linea"><svg class="i s16" aria-hidden="true"><use href="#i-target"/></svg><span class="tnum">Hacia tu meta de 88 cm: faltan 2.5</span></span></div><div class="val-fila"><span class="txt"><span>Cuello</span><span class="t-detalle tnum">Primera vez</span></span><span class="cifra">38 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Hombros</span><span class="t-detalle tnum">+0.5 cm desde el 17-abr</span></span><span class="cifra">119.5 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Pecho</span><span class="t-detalle tnum">Igual que el 17-abr</span></span><span class="cifra">98 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Cadera</span><span class="t-detalle tnum">−0.5 cm desde el 17-abr</span></span><span class="cifra">99.5 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Brazo relajado</span><span class="t-detalle tnum">Igual que el 17-abr</span></span><span class="cifra">30.5 <span class="unidad-c">cm</span></span></div><div class="val-fila"><span class="txt"><span>Brazo contraído</span><span class="t-detalle tnum">Igual que el 17-abr</span></span><span class="cifra">33 <span class="unidad-c">cm</span></span></div></div></div><div class="acciones-form"><button type="button" class="btn primario ancho">Listo</button></div></div><nav class="barra" aria-label="Secciones"><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Hoy</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-barbell"/></svg></span>Gym</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-kitchen"/></svg></span>Comida</a><a class="pestana" href="#" aria-current="page"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>Salud</a><a class="pestana" href="#"><span class="ovalo"><svg class="i" aria-hidden="true"><use href="#i-message"/></svg></span>Coach</a></nav><div class="ranura-aviso "><div class="aviso con-anota" role="status"><span class="txt-av">Sin conexión. Renpho se sincroniza al volver.</span><span class="anota" aria-hidden="true">2</span></div></div></div></div></div><ol><li><span class="num-a">1</span><span>En el teléfono la cinta y el peso a mano se guardan sin conexión (SQLite) y se suben solos al volver. El resumen y las calculadas salen igual.</span></li><li><span class="num-a">2</span><span>El sync de Renpho necesita internet: <b>Sincronizar ahora</b> da el aviso y espera. En la web sin conexión, el formulario conserva lo escrito y <b>Guardar</b> avisa «Guardar necesita conexión».</span></li></ol></article></div>
+  </section>
+
+  <section class="pagina" id="como-medir" aria-labelledby="h-como">
+    <header>
+      <h2 id="h-como">3 · Cómo medir: las 20 instrucciones</h2>
+      <p class="protocolo"><b>Protocolo común (ISAK y ACSM, simplificado):</b> de pie y relajado, lado derecho, por la mañana antes de comer y de entrenar. La cinta pegada a la piel sin hundirla y horizontal salvo en el cuello; las del tronco, al final de una exhalación normal. Pliegues con plicómetro: pellizca con el pulgar y el índice, pon el plicómetro 1 cm por debajo de los dedos y lee a los 2 segundos. Si dudas, mide dos veces y anota la media. Cada instrucción va con su dibujo en la hoja «Cómo medir» y es su texto alternativo (ADR 0026); los dibujos llegan en la pieza 3.</p>
+    </header>
+    <div class="como-medir"><div><h3>Perímetros con cinta (13)</h3><ol><li><b>Cintura:</b> <span>a la altura del ombligo, con la cinta horizontal y sin apretar, al final de una exhalación normal.</span></li><li><b>Cuello:</b> <span>justo debajo de la nuez, con la cinta un poco más baja por delante que por detrás, sin hundir la piel.</span></li><li><b>Hombros:</b> <span>alrededor de los dos hombros por la parte más ancha, con los brazos relajados a los lados.</span></li><li><b>Pecho:</b> <span>a la altura de los pezones, con la cinta horizontal, al final de una exhalación normal.</span></li><li><b>Cadera:</b> <span>por la parte más saliente de los glúteos, con los pies juntos y la cinta horizontal.</span></li><li><b>Brazo relajado:</b> <span>a mitad de camino entre el hombro y el codo, con el brazo colgando suelto.</span></li><li><b>Brazo contraído:</b> <span>en el punto más alto del bíceps, con el codo a 90° y el bíceps apretado.</span></li><li><b>Muslo:</b> <span>a mitad de camino entre la ingle y la rodilla, con el peso repartido en las dos piernas.</span></li><li><b>Pantorrilla:</b> <span>en la parte más ancha, de pie con el peso repartido en las dos piernas.</span></li><li><b>Antebrazo:</b> <span>en la parte más ancha, cerca del codo, con el brazo estirado y la mano relajada.</span></li><li><b>Muñeca:</b> <span>en la parte más fina, justo después del hueso saliente, hacia la mano.</span></li><li><b>Tobillo:</b> <span>en la parte más fina, justo por encima de los huesos del tobillo.</span></li><li><b>Abdomen bajo:</b> <span>dos dedos (unos 5 cm) por debajo del ombligo, con la cinta horizontal.</span></li></ol></div><div><h3>Pliegues con plicómetro (7)</h3><ol><li><b>Pecho:</b> <span>pliegue en diagonal, a mitad de camino entre la axila y el pezón.</span></li><li><b>Axila media:</b> <span>pliegue vertical, en la línea que baja del centro de la axila, a la altura de la punta del esternón.</span></li><li><b>Tríceps:</b> <span>pliegue vertical, en la parte de atrás del brazo, a mitad de camino entre el hombro y el codo.</span></li><li><b>Subescapular:</b> <span>pliegue en diagonal, 2 cm por debajo de la punta inferior del omóplato.</span></li><li><b>Abdomen:</b> <span>pliegue vertical, 2 cm a la derecha del ombligo.</span></li><li><b>Suprailíaco:</b> <span>pliegue en diagonal, justo por encima del hueso de la cadera, en la línea de la axila.</span></li><li><b>Muslo:</b> <span>pliegue vertical, en la parte delantera, a mitad de camino entre la ingle y la rodilla.</span></li></ol></div></div>
+  </section>
+
+  <section class="pagina" id="por-confirmar" aria-labelledby="h-confirmar">
+    <header>
+      <h2 id="h-confirmar">Por confirmar</h2>
+      <p class="sec" style="max-width:60ch">Decisiones de diseño que tomé en el diagrama y la guía. Lo demás sigue D-40 tal cual.</p>
+    </header>
+    <ol class="casos"><li><b>Salud abre en Composición y tiene cuatro pestañas internas como Gym:</b> Composición, Mediciones, Análisis e Informes. Arriba de Composición, el peso del día como cifra héroe con la media de 7 días y el cambio, la línea del sync con «Sincronizar ahora», el recordatorio de la cinta y los botones «Registrar medición» (principal) y «Registrar peso» (secundario); debajo, los campos de Renpho del día.</li><li><b>El peso a mano tiene su propia entrada, «Registrar peso», siempre visible en Composición,</b> además de «Registrar a mano» en el aviso de fallo. «Registrar medición» abre solo la cinta.</li><li><b>Hasta tener 4 semanas de pesajes, la tendencia se muestra como cambio desde el primer pesaje</b> («−0.6 lb desde el 17-oct»); con un solo pesaje reciente, la media dice «Pésate cada mañana para ver tu media de 7 días».</li><li><b>El peso del día se marca con la etiqueta «Peso del día» en la lista de pesajes, sin color;</b> un pesaje fuera de la cuenta queda en texto secundario con «No cuenta». «No contar» y «Volver a contar» van en el detalle del pesaje, como botón secundario.</li><li><b>El recordatorio de la cinta es una línea con el ícono de regla en acento, no una tarjeta;</b> aparece a las 4 semanas de la última cinta en Composición y Mediciones y se va al registrar. Después, Mediciones dice la fecha de la próxima.</li><li><b>Cada medida es una fila: nombre con el ícono de información al lado, debajo «Último: 91 cm · 17-abr» o «Primera vez», y el campo con su unidad a la derecha.</b> Así caben las 13 medidas y los 7 pliegues sin pantallas extra.</li><li><b>«Revisa este dato» va debajo del último valor con la diferencia</b> («Revisa este dato: 4 cm más»), con triángulo en texto principal, como en el flujo 5.</li><li><b>«Medir también el lado izquierdo» es un interruptor dentro de «Más medidas»;</b> al activarlo, cada medida de los dos lados (también las recomendadas) muestra dos campos, D e I. «Más medidas» se recuerda abierto o cerrado.</li><li><b>La hoja «Cómo medir» lleva el dibujo arriba, la instrucción de una línea y el protocolo común en una nota</b> (mañana, antes de comer y de entrenar, mismo punto), con «Cerrar». Sin otras acciones.</li><li><b>El resumen es una pantalla completa tras guardar, con «Listo» al pie hacia Salud › Mediciones;</b> el cambio dice «−0.5 cm desde el 17-abr», «Igual que el 17-abr» o «Primera vez», y la meta va en su propia línea con el ícono de meta en acento: «Hacia tu meta de 88 cm: faltan 2.5» o «Te alejas de tu meta de 88 cm».</li><li><b>Las calculadas muestran su referencia en detalle</b> (IMC menos de 25, cintura/estatura menos de 0.50, cintura/cadera menos de 0.90), sin color ni juicio. Hombros/cintura muestra el valor anterior, porque su referencia es estética.</li><li><b>El % de grasa va en dos columnas iguales, Marina «segunda opinión» y Renpho,</b> con la nota «Son métodos distintos: compara cada uno con su propio historial».</li><li><b>El resumen de una medición pasada calcula con los datos de ese día</b> (peso del 17-abr para el IMC de abril), no con los de hoy. Así el resumen de abril coincide con el PRD: 26.5, 0.53, 0.91 y 1.31.</li><li><b>Tarjeta-propuesta del coach con las cifras que escribiste y la fecha, cada una se toca para corregirla;</b> «Guardar medición» principal y «Descartar» de texto, como el paseo del flujo 5. Al guardar, el coach responde con el resumen.</li><li><b>El fallo del sync es una línea con triángulo en una lista, no un error rojo:</b> no es culpa tuya. Botones de texto «Registrar a mano» e «Importar CSV». La línea del sync usa el ícono de alerta en texto secundario.</li><li><b>Importar CSV omite los pesajes con la misma fecha y hora que uno guardado</b> y lo dice antes de importar («2 pesajes nuevos… Los otros 42 ya estaban»). Lo importado cuenta como de Renpho: no se edita.</li><li><b>En la web sin conexión, el formulario conserva lo escrito y «Guardar» da el aviso «Guardar necesita conexión»;</b> en el teléfono se guarda en el teléfono y el resumen lo dice con «Guardada en el teléfono · se sube al volver la conexión».</li><li><b>Los umbrales se muestran en tu unidad:</b> 2 kg = 4.4 lb en el peso a mano; 3 cm en los perímetros.</li></ol>
+  </section>
+</main>
+<script>
+  const raiz = document.documentElement;
+  function ponerAcento(a) {
+    if (a === "caribe") delete raiz.dataset.accent; else raiz.dataset.accent = a;
+    document.querySelectorAll("[data-a]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.a === a)));
+  }
+  function ponerModo(m) {
+    if (m) raiz.dataset.theme = m; else delete raiz.dataset.theme;
+    document.querySelectorAll("#ctl-modo button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.modo === m)));
+  }
+  document.querySelectorAll("[data-a]").forEach((b) => b.addEventListener("click", () => ponerAcento(b.dataset.a)));
+  document.querySelectorAll("#ctl-modo button").forEach((b) => b.addEventListener("click", () => ponerModo(b.dataset.modo)));
+  // Los enlaces de las maquetas no navegan.
+  document.querySelectorAll('.telefono a[href="#"]').forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));
+</script>
+
+</body>
+</html>

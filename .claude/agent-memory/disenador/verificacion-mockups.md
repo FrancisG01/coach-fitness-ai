@@ -27,3 +27,4 @@ Ver [[flujo-2-calendario]].
 
 - Excepción aprobada por Francis (27-oct-2026): el detector marca «text-occlusion» del + flotante de Comida › Día en los prototipos; no se corrige. El resto de hallazgos, en cero.
 - Las láminas y prototipos de los flujos 3 y 4 no tenían `<meta charset>`: servidos con http.server salían con mojibake (y el detector medía mal). Desde el 27-oct-2026 todos empiezan con `<meta charset="utf-8">` y llevan `p, li { text-wrap: pretty } h1-h3 { text-wrap: balance }` contra «straggler» y «unbalanced-heading».
+- Contraste: esperar ~400 ms tras cambiar acento o modo antes de medir (transiciones de color de .btn dan falsos).
