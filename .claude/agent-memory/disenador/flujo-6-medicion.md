@@ -1,6 +1,6 @@
 ---
 name: flujo-6-medicion
-description: Flujo 6 (registrar medición, SAL-01/02/07, D-40, ADR 0026): piezas 1 y 2 entregadas el 28-oct-2026 para revisión; propuesta de Salud, cifras de ejemplo y 18 decisiones por confirmar
+description: Flujo 6 (registrar medición, SAL-01/02/07, D-40, ADR 0026): guía y 18 decisiones aprobadas el 28-oct-2026; Renpho sincroniza solo cada noche y a pedido; pieza 3 = 20 dibujos de Cómo medir
 metadata:
   type: project
 ---
@@ -20,3 +20,8 @@ Verificación: detector URL `[]` a 390 y 1440; consola limpia; contraste 0 fallo
 
 **Why:** Francis aprueba guía y decisiones antes de los mockups, los 20 dibujos SVG (pieza 3, `docs/diseno/ilustraciones/medidas/`) y el prototipo.
 **How to apply:** reutiliza estas cifras en las piezas siguientes. Ver [[flujo-5-mtb]] y [[verificacion-mockups]].
+
+Aprobación (28-oct-2026): Francis aprobó la guía y las 18 decisiones con un cambio: Renpho sincroniza solo cada noche y con «Sincronizar ahora»; abrir la app NO sincroniza (el nodo «Abres la app» pasó a «Cada noche · sync automático»; ya aplicado por el coordinador en lámina, plan y PRD, commit 2506e6b). No vuelvas a escribir «al abrir la app (más de 15 min)». Desde entonces la lámina se edita directamente (el coordinador la tocó): no regenerarla con gen_flujo6.py. Publicada por el coordinador en https://claude.ai/artifact/9RmmHHs9Pz7ZbjBUbjbmv4.
+
+Pieza 3, dibujos (28-oct-2026, sin commit): 20 SVG en `docs/diseno/ilustraciones/medidas/` (waist, neck, shoulders, chest, hips, arm-relaxed, arm-flexed, forearm, wrist, thigh, calf, ankle, lower-abdomen, skinfold-chest, -midaxillary, -triceps, -subscapular, -abdomen, -suprailiac, -thigh). Generados con `gen_medidas.py` (se arma con parte_cab/geo/acento/medidas/svg.py del scratchpad de esa sesión): una figura base en cm (172 de alto) de frente con brazos un poco separados, de perfil sin brazo y de espalda con omóplatos; cada dibujo es un encuadre (lienzo 112 como la bienvenida) con grosores compensados por la escala (2.5 figura, 3.5 cinta, 1.5 guías). Variables ilus-secundario e ilus-acento como la bienvenida. Integrados en la lámina (hoja del paso 6 y sección 3) con `reintegrar.py`, que lee los textos de la copia previa `f6-antes-dibujos.html`.
+Lecciones: un comentario XML no admite «--»: los SVG de la bienvenida lo tienen y no son XML válido sueltos. Los textos de la sección 3 se buscan desde «<h3>Pliegues…», no desde la primera aparición (el protocolo también dice «Pliegues con plicómetro»).

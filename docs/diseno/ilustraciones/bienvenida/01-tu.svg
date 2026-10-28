@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 112" width="112" height="112" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
   <!-- Coach Fitness AI · bienvenida (SIS-08, ADR 0024) · Tú: ficha de perfil junto a una regla de estatura; acento en la marca de la estatura.
-       Colores solo de tokens: trazo = currentColor (texto), --ilus-secundario (textoSecundario),
-       --ilus-acento (textoAcento: A4 en claro, A2 en oscuro). Decorativa: oculta a lectores de pantalla. -->
+       Colores solo de tokens: trazo = currentColor (texto), variable ilus-secundario (textoSecundario),
+       variable ilus-acento (textoAcento: A4 en claro, A2 en oscuro). Decorativa: oculta a lectores de pantalla. -->
   <path d="M14 30a8 8 0 0 1 8 -8h44a8 8 0 0 1 8 8v60a8 8 0 0 1 -8 8h-44a8 8 0 0 1 -8 -8z"/><path d="M34 48a10 10 0 1 0 20 0a10 10 0 1 0 -20 0"/><path d="M28 80a16 16 0 0 1 32 0"/><path d="M30 89h28" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M86 16a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v80a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M86 26h7M86 46h7M86 66h7M86 86h7M86 56h4M86 76h4" style="stroke: var(--ilus-secundario, currentColor)"/><path d="M80 36h22M76 32l4 4l-4 4" style="stroke: var(--ilus-acento, currentColor)"/>
 </svg>
