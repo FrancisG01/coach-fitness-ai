@@ -6,4 +6,4 @@
 - [Flujo 5 paseo MTB](flujo-5-mtb.md) — guía, mockups y prototipo aprobados 27-oct (D-39); + sin franja; cifras del sábado 17 y del martes 3-nov
 - [Flujo 10 bienvenida](flujo-10-bienvenida.md) — piezas 1-3 aprobadas (D-33); prototipo con cálculo real y campos tipados por aprobar
 - [Flujo 6 medición](flujo-6-medicion.md) — piezas 1-2 entregadas 28-oct (D-40); Salud con 4 pestañas; cifras del 28-oct y de abril
-- [Flujo 7 coach](flujo-7-coach.md) — piezas 1-2 aprobadas 28-oct (D-41); pieza 3 entregada (40 + 7, 14 por confirmar); semana 5 con 4 de 5
+- [Flujo 7 coach](flujo-7-coach.md) — piezas 1-3 aprobadas 28-oct (D-41); prototipo entregado (8 escenarios); semana 5 con 4 de 5

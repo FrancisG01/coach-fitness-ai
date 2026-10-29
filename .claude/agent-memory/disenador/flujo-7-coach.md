@@ -1,6 +1,6 @@
 ---
 name: flujo-7-coach
-description: Flujo 7 (hablar con el coach, COA-01 a COA-04, D-41): piezas 1-2 aprobadas 28-oct (3cacc5a); pieza 3 (40 móvil + 7 web, 14 decisiones por confirmar) entregada 28-oct sin commit; cifras del 28-oct y de la semana 5
+description: Flujo 7 (hablar con el coach, COA-01 a COA-04, D-41): piezas 1-3 aprobadas 28-oct; prototipo entregado 28-oct sin commit (8 escenarios, decisiones por confirmar); cifras del 28-oct y de la semana 5
 metadata:
   type: project
 ---
@@ -26,3 +26,6 @@ Verificación pieza 3: consola limpia (390 y 1440, claro y oscuro), detector URL
 
 **Why:** Francis aprueba guía y decisiones antes de los mockups y el prototipo del flujo 7.
 **How to apply:** reutiliza estas cifras en las piezas siguientes. Ver [[flujo-6-medicion]], [[flujo-5-mtb]] y [[verificacion-mockups]].
+
+Prototipo (28-oct, sin commit): `flujo-7-coach-prototipo.html`, generado con `gen7.py` + `proto7.js` del scratchpad de la sesión 76215ae1 (CSS y sprite de flujo-7-coach.html; los gráficos y la miniatura se extraen de las figuras 5, 10, 38 y 41). 8 escenarios (mié 28 1:15/3:05/8:10, jue 29, vie 30 con Sonnet, lun 2, mar 3 6:10 y 7:05 con «Caducó»). Respuestas guionizadas por palabras clave; con contexto, la pastilla manda en el primer mensaje.
+Lecciones: `.proto .desliza` del CSS de prototipo pisa el padding de `.desliza.con-chat`: hay que redefinir `.proto .desliza.con-chat` (si no, lo último queda bajo el campo). El guion largo dispara «first-viewport-column-overflow» a 1440: guion en 2 columnas (lista + controles) con `.proto:has(#v-web[hidden])`, y `.sec` a 62ch. El detector solo ve el estado inicial: para estados guarda copias estáticas del DOM (sin script) y córrelo sobre ellas; con hoja o diálogo abierto da «text-occlusion» esperado por el velo.
