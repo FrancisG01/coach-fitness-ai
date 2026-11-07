@@ -8,6 +8,7 @@ dist/
 build/
 .expo/
 .claude/agent-memory-local/
+.claude/agent-memory/
 .claude/settings.local.json
 
 # Herramientas
