@@ -1,8 +1,10 @@
+<!-- generado — editar en el Cerebro: proyectos/fitness-coach/conocimiento/producto-md/ (no edites este archivo) -->
+
 # Product
 
 <!-- impeccable:product-schema 1 -->
 
-<!-- Encabezados en inglés porque Impeccable los lee por nombre; contenido en español. Fuente: docs/prd.md y docs/plan-maestro.md. Si algo choca, mandan esos dos. -->
+<!-- Encabezados en inglés porque Impeccable los lee por nombre; contenido en español. Fuente: el PRD y el plan maestro del Cerebro (proyectos/fitness-coach/conocimiento/prd/ y plan-maestro/). Si algo choca, mandan esos dos. -->
 
 ## Platform
 
@@ -21,13 +23,13 @@ Un mismo producto en tres superficies: web responsive instalable (PWA), app Andr
 
 En seis meses (abril a octubre de 2026) la composición corporal de Francis no se movió: datos dispersos y herramientas que no se hablan. Coach Fitness AI junta todo en un sistema y pone encima un coach que trabaja con esos datos.
 
-Éxito (docs/prd.md §1):
+Éxito (PRD §1):
 
 - Registrar sin fricción: una serie en 3 toques o menos; una comida en 30 s o menos.
 - Uso constante: 90 % o más de sesiones de gym y 80 % o más de días de comida registrados.
 - Coach con datos reales: el 100 % de las respuestas se basa en datos o dice cuáles faltan.
 - Progreso visible y confiable: tendencias a la vista, cero pérdida de datos.
-- Progreso físico: metas de enero de 2027 (docs/prd.md §5), con 2,350 kcal/día como objetivo.
+- Progreso físico: metas de enero de 2027 (PRD §5), con 2,350 kcal/día como objetivo.
 
 ## Positioning
 
@@ -48,7 +50,7 @@ Un coach personal de élite que conoce todos tus datos, sobre una plataforma que
 
 ## Capabilities and Constraints
 
-- **Módulos v1.0:** GYM, WAT (reloj), SAL (salud), NUT (nutrición), SUP (suplementos), CAR (cardio), OBJ (objetivos), COA (coach), DSH (panel) y SIS (sistema, incluida la bienvenida de primer uso). Detalle e IDs en docs/prd.md §2.
+- **Módulos v1.0:** GYM, WAT (reloj), SAL (salud), NUT (nutrición), SUP (suplementos), CAR (cardio), OBJ (objetivos), COA (coach), DSH (panel) y SIS (sistema, incluida la bienvenida de primer uso). Detalle e IDs en el PRD §2.
 - **Fuera de la v1.0:** iOS, Google Play, apertura al público, APIs de Strava y Cronometer, escáner de código de barras, fotos de progreso, mapa corporal, RPE/RIR, comida por foto o texto libre, hábitos y rachas. Los hitos de objetivos (OBJ-04) sí entran.
 - **Coach:** nunca diagnostica, no interpreta síntomas graves (refiere a un médico), no prescribe fármacos, no inventa datos ni valida por comodidad, no recomienda déficits extremos. Tope de $80/mes y $8/día; al 80 % pasa a Sonnet 5.5 y avisa.
 - **Rendimiento:** pantallas en menos de 2 s en 4G; acciones del modo gym en menos de 200 ms.
@@ -66,7 +68,7 @@ Un coach personal de élite que conoce todos tus datos, sobre una plataforma que
 
 ## Evidence on Hand
 
-- Datos reales de Renpho del 17-abr y 17-oct-2026 (docs/plan-maestro.md, Anexo A.2 y A.2b).
+- Datos reales de Renpho del 17-abr y 17-oct-2026 (plan maestro, Anexo A.2 y A.2b).
 - Rutina A/B/C confirmada con la hoja GymTracker; catálogo inicial de suplementos.
 - Propuesta visual B2 en `docs/diseno/Propuesta_Identidad_Visual_B2_Caucho_y_acento.pdf` y `docs/diseno/tokens.json`.
 - **No existen y no se inventan:** medidas con cinta de octubre (pendientes), análisis de sangre, historial de Cronometer, testimonios, usuarios externos, investigación con usuarios, logo definitivo, mockups (Fase 0.5 sin empezar).

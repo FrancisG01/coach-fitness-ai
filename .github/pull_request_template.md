@@ -1,3 +1,5 @@
+<!-- generado — editar en el Cerebro: proyectos/fitness-coach/conocimiento/repo/plantilla-pull-request.md (no edites este archivo) -->
+
 ## Qué cambia
 
 <!-- Requisito (ej. GYM-04) y resumen en una o dos frases. -->

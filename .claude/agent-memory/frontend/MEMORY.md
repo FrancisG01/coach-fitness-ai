@@ -1,1 +1,0 @@
-- [Prototipos artefacto y UTF-8](prototipos-artefacto-utf8.md) — servir mockups sin charset con servidor utf-8; escapes Unicode en JS; cómo correr Impeccable

@@ -1,5 +1,1 @@
-# App Galaxy Watch (Wear OS)
-
-Se crea en la Fase 7b. App nativa en Kotlin + Jetpack Compose for Wear OS, Horologist y Health Services; Wear OS 3+; conectada a la app Android por Data Layer (D-18).
-
-No forma parte del workspace de pnpm: se compila con Gradle desde Android Studio.
+El README de la app del reloj vive en el Cerebro: `proyectos/fitness-coach/conocimiento/repo/readme-apps-watch.md`. No edites este archivo.
