@@ -2,8 +2,8 @@
 
 | Campo | Valor |
 | --- | --- |
-| Versión | 1.4 |
-| Fecha | 28-oct-2026 (1.0 del 18-oct-2026; 1.1 con D-37, 1.2 con D-38, 1.3 con D-39 y 1.4 con D-40, sección 14) |
+| Versión | 1.5 |
+| Fecha | 28-oct-2026 (1.0 del 18-oct-2026; 1.1 con D-37, 1.2 con D-38, 1.3 con D-39, 1.4 con D-40 y 1.5 con D-41, sección 14) |
 | Estado | Aprobado por Francis el 19-oct-2026 (D-36, [ADR 0025](../adr/0025-modelo-conceptual-de-la-base-de-datos.md)) |
 | Fase | 0.5 (ADR 0010, nivel 1 de 3) |
 | Redacta | Arquitecto (Fable 5.1) |
@@ -162,8 +162,8 @@ erDiagram
 | Conexión externa | `connections` | personal | Proveedor (Renpho, Health Connect, reloj), credenciales cifradas cuando aplica, estado (activa, con error, desconectada), último sync correcto. | SAL-01, SAL-06, WAT, SIS-08 paso 5 |
 | Ejecución de sincronización | `sync_runs` | personal | Cada corrida de un sync externo: cuándo, resultado, cuántos registros, error. Sirve para avisar si Renpho falla 2 días. | SAL-01, PRD §8 |
 | Dispositivo | `devices` | personal | Teléfono, reloj o navegador: identificador, nombre, plataforma, versión de la app, token de notificaciones, cursor de la última sincronización. Todo registro sincronizable apunta al dispositivo que lo creó. | GYM-10, WAT-05, WAT-06, plan §10 |
-| Archivo adjunto | `attachments` | personal | Tipo (captura de actividad, captura de zonas de FC, GPX, foto de etiqueta, PDF de informe), ruta en almacenamiento privado, tamaño, fecha. Lo referencian el paseo, el alimento, el informe y el mensaje del chat. | CAR-01, NUT-12, DSH-02 |
-| Aviso | `notifications` | personal | Lo que la app muestra en Hoy y en el panel web: origen (coach o sistema), tipo (consejo diario, alerta de tendencia, hito, récord, recordatorio de toma, stock bajo, sync fallido, sesión cerrada sola, re-pregunta pendiente, paseo listo para confirmar), texto, severidad, fecha, estado (nuevo, visto, descartado), referencia a lo que lo generó. | COA-03, OBJ-04, SUP-03, DSH-01, CAR-01 |
+| Archivo adjunto | `attachments` | personal | Tipo (captura de actividad, captura de zonas de FC, GPX, foto de etiqueta, PDF de informe), ruta en almacenamiento privado, tamaño, fecha. Lo referencian el paseo, el alimento, el informe y el mensaje del chat. Una imagen del clip del chat entra sin tipo y el coach se lo pone al leerla (D-41). | CAR-01, NUT-12, DSH-02 |
+| Aviso | `notifications` | personal | Lo que la app muestra en Hoy y en el panel web: origen (coach o sistema), tipo (consejo diario, alerta de tendencia, hito, récord, recordatorio de toma, stock bajo, sync fallido, sesión cerrada sola, re-pregunta pendiente, paseo listo para confirmar, el coach respondió, plan listo para revisar, revisión semanal lista), texto, severidad, fecha, estado (nuevo, visto, descartado), referencia a lo que lo generó. | COA-03, OBJ-04, SUP-03, DSH-01, CAR-01 |
 | Historial de cambios | `change_log` | personal | Auditoría de conflictos de sincronización y de ediciones sensibles: entidad, registro, campo, valor anterior, valor nuevo, dispositivo, fecha. | Plan §10, RNF-04 |
 
 **Calculado, no guardado:** la semana en curso de cada usuario (desde la fecha de la primera actividad), la próxima revisión del plan (6 semanas), la edad.
@@ -695,21 +695,23 @@ erDiagram
   REVISION ||--o{ AVISO : "deja"
   REVISION ||--o{ LLAMADA : "cuesta"
   REPREGUNTA ||--o{ AVISO : "recuerda con"
+  REVISION ||--|| CONVERSACION : "se lee en"
+  PROPUESTA |o--o| PROPUESTA : "reemplaza a"
 ```
 
 | Entidad | Nombre técnico | Tipo | Qué guarda | Requisitos |
 | --- | --- | --- | --- | --- |
-| Conversación | `conversations` | personal | Título, inicio, última actividad, estado (abierta, archivada), modelo con el que empezó, tokens y costo acumulados. | COA-01 |
-| Mensaje | `messages` | personal | Rol (usuario, coach, sistema), contenido, instante, modelo, tokens, estado (enviado, en cola sin conexión, fallido), embedding para la búsqueda semántica (ADR 0021). | COA-01, COA-02 |
+| Conversación | `conversations` | personal | Título automático, origen (chat o revisión semanal), inicio, última actividad (tras 6 h sin actividad la siguiente pregunta abre otra, D-41), estado (abierta, archivada; archivar se deshace), modelo con el que empezó, tokens y costo acumulados. | COA-01 |
+| Mensaje | `messages` | personal | Rol (usuario, coach, sistema), contenido, instante, modelo, tokens, estado (enviado, en cola sin conexión, detenido, fallido), contexto de entrada si llegó desde "Preguntar al coach" (pantalla y registro o rango de la pastilla, D-41), embedding para la búsqueda semántica (ADR 0021). | COA-01, COA-02 |
 | Llamada a herramienta | `tool_calls` | personal | Mensaje, nombre de la herramienta, argumentos, resultado resumido y qué datos usó (rango de fechas, entidades), duración. Es lo que permite al coach "decir qué datos usó" y a la tarjeta decir "Revisando tus sesiones…". | COA-01, O3 |
-| Propuesta | `proposals` | personal | Toda escritura del coach: tipo (rutina, sesión, plan de comidas, comida, receta, objetivo nutricional, paseo desde captura, alimento desde etiqueta, cambio de perfil o de medidas por re-pregunta), borrador estructurado, mensaje de origen, estado (pendiente, aprobada, aprobada en parte, rechazada, caducada), fecha de decisión, registros creados al aprobar. En un plan de comidas, el borrador guarda las semanas tipo y cada comida con su decisión (aprobada o descartada); "Otra opción" reemplaza una sola comida del borrador (D-38). En un paseo desde captura, el borrador marca los campos de lectura dudosa (baja confianza) para mostrar "Revisa este dato" (D-39). | COA-04, NUT-05, NUT-12, CAR-01, COA-05 |
-| Memoria del coach | `coach_memories` | personal | Tipo (decisión, preferencia, hecho, resumen semanal), texto ("mantener face pull"), fecha, origen (mensaje, revisión, manual), vigente, embedding. | COA-02, ADR 0006, ADR 0021 |
-| Revisión semanal | `weekly_reviews` | personal | Semana, resumen, hallazgos, métricas de la semana en el momento de la revisión, estado, avisos y memorias que generó. La corre el job semanal. | COA-03 |
+| Propuesta | `proposals` | personal | Toda escritura del coach: tipo (rutina, sesión, cambio de sesiones, plan de comidas, comida, receta, suplemento o pauta, objetivo nutricional, paseo desde captura, alimento desde etiqueta, cambio de perfil o de medidas por re-pregunta), borrador estructurado, mensaje de origen, estado (pendiente, aprobada, aprobada en parte, rechazada, caducada), propuesta a la que reemplaza (D-41), fecha de decisión, registros creados al aprobar. En un plan de comidas, el borrador guarda las semanas tipo y cada comida con su decisión (aprobada o descartada); "Otra opción" reemplaza una sola comida del borrador (D-38). En un paseo desde captura, el borrador marca los campos de lectura dudosa (baja confianza) para mostrar "Revisa este dato" (D-39). En un cambio de sesiones (variante "Sesiones", pesos de una semana o bloque, o una descarga), el borrador guarda cada ejercicio con su cambio, su razón y su decisión (D-41). | COA-04, NUT-05, NUT-12, CAR-01, COA-05 |
+| Memoria del coach | `coach_memories` | personal | Tipo (decisión, preferencia, hecho, resumen semanal), texto ("mantener face pull"), fecha, origen (mensaje, revisión, manual), mensaje de la constancia ("Anoté: …", D-41), editada el, vigente (se apaga con "Olvidar" o con el Deshacer de la constancia, y se vuelve a encender con Deshacer), embedding. | COA-02, ADR 0006, ADR 0021 |
+| Revisión semanal | `weekly_reviews` | personal | Semana, resumen, hallazgos, métricas de la semana en el momento de la revisión, estado, avisos y memorias que generó, y su conversación propia ("Semana del 26 oct. al 1 nov.", D-41), donde van sus propuestas. La corre el job semanal cada lunes. | COA-03 |
 | Re-pregunta periódica | `periodic_questions` | personal | Tema (cinta, actividad, salud y lesiones), cada cuántos días (28 o 90), última respuesta, próxima fecha, activa. La respuesta llega como propuesta que actualiza perfil, condiciones o mediciones. | COA-05 |
 | Llamada al modelo | `model_calls` | personal | Cada uso de la API: propósito (chat, consejo diario, revisión semanal, plan, etiqueta, captura, informe, eval), modelo, tokens de entrada, salida, caché leída y escrita, costo, duración, conversación o mensaje si aplica, fecha. | RNF-11, PRD §6 |
 | Presupuesto de IA | `ai_budgets` | personal | Mes, tope mensual ($80) y diario ($8), gasto acumulado (calculado desde las llamadas, cacheado), modo (normal, degradado a Sonnet al 80 %, detenido), avisado. | PRD §6, RNF-11 |
 
-**Calculado, no guardado:** el contexto fijo del coach (perfil, etapa, objetivo, metas vigentes y reglas) se arma en cada llamada desde las entidades; los consejos diarios se guardan como avisos, no como mensajes; las evals viven en el repositorio, no en la base.
+**Calculado, no guardado:** el contexto fijo del coach (perfil, etapa, objetivo, metas vigentes y reglas) se arma en cada llamada desde las entidades; los consejos diarios se guardan como avisos, no como mensajes; las evals viven en el repositorio, no en la base. También se calculan (D-41): "Datos usados" (de las llamadas a herramienta del mensaje), las propuestas por revisar (el punto de la pestaña y la fila del chat), las preguntas sugeridas del saludo y si una propuesta se ve "Reemplazada" o "Caducó".
 
 ## 11. Dashboard (DSH)
 
@@ -785,7 +787,7 @@ El panel del día no guarda nada propio: lee sesión de hoy, comidas, tomas pend
 | RNF-03, RNF-04 | UUID de cliente, Dispositivo, Evento de sesión, Historial de cambios, lápidas |
 | RNF-11 | Llamada al modelo, Presupuesto de IA |
 
-Total: 76 entidades (10 de catálogo, 8 de catálogo con propios, 58 personales). La versión 1.0 aprobada con D-36 tenía 73; D-37 suma Copia de lo programado y Tope máximo seguro (UL); D-38 suma Versión de receta; D-39 y D-40 no suman entidades.
+Total: 76 entidades (10 de catálogo, 8 de catálogo con propios, 58 personales). La versión 1.0 aprobada con D-36 tenía 73; D-37 suma Copia de lo programado y Tope máximo seguro (UL); D-38 suma Versión de receta; D-39, D-40 y D-41 no suman entidades.
 
 ## 14. Decisiones de modelado (aprobadas por Francis el 19-oct-2026)
 
@@ -846,6 +848,16 @@ Cambios con D-40 (revisión del flujo 6, 28-oct-2026):
 - La medición acepta cualquier fecha pasada (sirve de punto de partida) y nunca una futura; las manuales se borran con lápida y recalculan las medidas calculadas.
 - La propuesta "cambio de medidas por re-pregunta" (COA-05) se muestra como tarjeta con "Guardar medición"; al aprobarla crea una medición de fuente "re-pregunta del coach".
 - La ejecución de sincronización sirve también para "Sincronizar ahora" y para importar el historial al conectar; el aviso de fallo a los 2 días ofrece la importación CSV, que crea mediciones de fuente "importación".
+
+Cambios con D-41 (revisión del flujo 7, 28-oct-2026):
+
+- La conversación gana título automático y origen (chat o revisión semanal); la revisión semanal tiene su propia conversación, donde van sus propuestas. Archivar es un cambio de estado y se deshace.
+- El mensaje suma el estado "detenido" (con "Seguir") al de en cola, fallido y enviado, y guarda el contexto de entrada cuando llega desde uno de los 4 sitios de "Preguntar al coach". Un mensaje en cola es el que escribiste sin conexión en el teléfono, también el pedido de un plan (cambia D-38).
+- Propuesta: sin estado nuevo. Lo mínimo es un enlace "reemplaza a" de la propuesta nueva a la anterior. Cuando llega una versión nueva (pedida en el chat) o otra propuesta del mismo tipo y rango, la anterior pendiente pasa a "caducada" con ese enlace. La pantalla dice "Reemplazada" si la nueva está en la misma conversación y "Caducó" si no; "Caducó" también cuando el primer día de un plan o una sesión ya pasó. Paseo desde captura, cambio de medidas y alimento desde etiqueta no caducan por fecha.
+- Tipos nuevos de propuesta: "cambio de sesiones" (variante Sesiones, decisión por ejercicio; también la descarga, que ya no es fija) y "suplemento o pauta" (ya decidido en D-38, faltaba en la lista).
+- La memoria guarda el mensaje de su constancia y cuándo se editó. "Olvidar" y el Deshacer de la constancia apagan "vigente" en lugar de borrar, así Deshacer la recupera. Un recuerdo no es una escritura en los módulos y no pasa por una propuesta (la decisión 5 cubre los datos de los módulos; la memoria es del propio coach).
+- Avisos nuevos: "el coach respondió", "plan listo para revisar" y "revisión semanal lista".
+- El archivo adjunto de una imagen del chat entra sin tipo y el coach se lo pone al leerla (paseo o etiqueta).
 
 ## 15. Lo que queda para la Fase 1 (modelo lógico y físico)
 

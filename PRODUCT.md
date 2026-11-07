@@ -76,7 +76,7 @@ Un coach personal de élite que conoce todos tus datos, sobre una plataforma que
 1. **Registrar cuesta menos que olvidarlo.** Cada toque de más en el gym o en la comida es una razón para dejar de registrar.
 2. **Los datos mandan.** El coach y las pantallas muestran lo que dicen los números y lo que falta, sin adornar.
 3. **Nada se pierde.** Sin señal, sin teléfono o con la sesión a medias, la serie queda guardada.
-4. **El coach propone, Francis decide.** Ningún cambio del coach se guarda sin aprobación.
+4. **El coach propone, Francis decide.** Ningún cambio del coach se guarda sin aprobación; los recuerdos de su memoria no cambian los datos y se anotan con Deshacer (D-41).
 5. **Una sola persona hoy, muchas mañana.** Todo se construye aislado por usuario aunque hoy haya uno.
 
 ## Accessibility & Inclusion
