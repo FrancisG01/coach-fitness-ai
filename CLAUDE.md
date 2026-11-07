@@ -1,13 +1,19 @@
+<!-- generado — editar en el Cerebro: proyectos/fitness-coach/conocimiento/claude-md/ (no edites este archivo) -->
+
 # Coach Fitness AI — reglas del proyecto
 
 Plataforma personal de entrenamiento, nutrición y salud con coach IA. Dueño del producto: Francis Guzman (diseñador gráfico, usuario único en la v1.0, arquitectura multiusuario).
 
 ## Fuente de verdad
 
-- `docs/plan-maestro.md` — plan completo: requisitos (IDs GYM-, WAT-, SAL-, NUT-, SUP-, CAR-, OBJ-, COA-, DSH-, SIS-), stack, fases, decisiones. Léelo antes de planificar cualquier cosa.
-- `docs/estado.md` — dónde quedó la última sesión. Léelo al empezar; actualízalo al terminar.
-- `docs/diseno/` — dirección visual aprobada (B2 "Caucho y acento") y tokens.
-- `docs/adr/` — decisiones técnicas. Una decisión nueva = un ADR nuevo.
+El Cerebro (`/mnt/c/Users/franc/OneDrive/Documentos/000 - Cebrero Claude`, proyecto `fitness-coach`) es la fuente única (ADR 0028). Conéctate con `cerebro_conectar`, baja por los índices y abre solo lo necesario.
+
+- Plan maestro: `proyectos/fitness-coach/conocimiento/plan-maestro/` — requisitos (IDs GYM-, WAT-, SAL-, NUT-, SUP-, CAR-, OBJ-, COA-, DSH-, SIS-), stack, fases, decisiones. Léelo antes de planificar cualquier cosa.
+- PRD: `conocimiento/prd/`. Base de datos: `conocimiento/base-de-datos/`. Diseño (DESIGN.md): `conocimiento/diseno/`.
+- Estado del proyecto: `proyectos/fitness-coach/ESTADO.md`, única fuente (ADR 0027). Lo inyecta el hook al empezar; actualízalo con `cerebro_actualizar` al terminar. `docs/estado.md` ya no se usa.
+- `docs/diseno/` (en el repo) — dirección visual aprobada (B2 "Caucho y acento") y tokens.
+- Decisiones: `proyectos/fitness-coach/decisiones/`. Una decisión nueva = un nodo D-xx nuevo con su ADR, ahí; `docs/adr/` ya no recibe ADR nuevos.
+- CLAUDE.md, DESIGN.md, PRODUCT.md, README.md, la plantilla de PR y `.claude/agents/` son copias generadas (cabecera "generado — editar en el Cerebro"): se edita el nodo y se regenera, nunca el archivo.
 
 Si algo choca con el plan, no improvises: pregunta a Francis y registra la decisión.
 
@@ -49,14 +55,15 @@ Si algo choca con el plan, no improvises: pregunta a Francis y registra la decis
 5. Cambios de esquema: migración Alembic reversible + actualizar `docs/database/schema.dbml`.
 6. Nunca dar una tarea por terminada si falla lint, tipos, tests, detector de diseño o la consola del navegador.
 7. Cada funcionalidad terminada lleva su guía de uso en el Centro de ayuda (agente `documentador`).
-8. Al cerrar la sesión: actualiza `docs/estado.md`.
+8. Al cerrar la sesión: actualiza el ESTADO del proyecto en el Cerebro.
 
 ## Gestión de contexto
 
-- Al terminar cada tarea o cada commit, actualiza `docs/estado.md` sin que te lo pidan: qué se hizo, qué sigue, decisiones tomadas y pendientes. Mantenlo corto (menos de 100 líneas): se inyecta al inicio de cada conversación.
+- Al terminar cada tarea o cada commit, actualiza el ESTADO del proyecto en el Cerebro sin que te lo pidan: qué se hizo, qué sigue, decisiones tomadas y pendientes. Mantenlo corto (menos de 100 líneas): se inyecta al inicio de cada conversación.
+- No uses la memoria local de Claude Code; todo lo que valga recordar se guarda en el Cerebro.
 - Delega a los agentes todo trabajo que lea muchos archivos o produzca salidas largas; la conversación principal solo coordina.
 - Al cerrar un bloque grande de trabajo, dile a Francis: "Buen momento para abrir una conversación nueva".
-- Un hook `SessionStart` (`.claude/settings.json`) inyecta `docs/estado.md` al iniciar, al usar `/clear`, tras compactar y al reanudar (ADR 0019).
+- Un hook `SessionStart` (`.claude/settings.json`) inyecta el ESTADO del Cerebro al iniciar, al usar `/clear`, tras compactar y al reanudar (ADR 0019, cambiado por el ADR 0027).
 
 ## Modelos
 

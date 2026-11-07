@@ -1,4 +1,5 @@
 ---
+# generado — editar en el Cerebro: proyectos/fitness-coach/conocimiento/diseno/design-md/ (no edites este archivo)
 name: Coach Fitness AI
 description: Entrenamiento, nutrición y salud con coach IA. Dirección B2 "Caucho y acento".
 colors:
@@ -736,7 +737,7 @@ Duraciones de tokens.json con su curva:
 | --- | --- | --- |
 | Respuesta (pressed, hover, foco, tachar serie, interruptores) | rapido 120 ms | estándar `cubic-bezier(0.2, 0, 0, 1)` |
 | Mover (reordenar, barras y anillos que avanzan, cambio de pestaña interna) | normal 200 ms | estándar |
-| Entrar pequeño (aviso, menú) | normal 200 ms | entrada `cubic-bezier(0.05, 0.7, 0.1, 1)` |
+| Entrar pequeño (aviso, menú, tooltip) | normal 200 ms | entrada `cubic-bezier(0.05, 0.7, 0.1, 1)` |
 | Entrar grande (diálogo, hoja, pantalla nueva en móvil) | lento 320 ms | entrada |
 | Salir | un paso menos que al entrar | salida `cubic-bezier(0.3, 0, 0.8, 0.15)` |
 
