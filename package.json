@@ -14,7 +14,7 @@
     "generar": "bash scripts/generar-copias.sh"
   },
   "devDependencies": {
-    "impeccable": "4.7.0",
+    "impeccable": "4.8.0",
     "turbo": "2.11.10"
   }
 }
